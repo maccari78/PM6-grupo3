@@ -80,3 +80,67 @@ React Native
 
 Incluir los links con acceso público en todos los casos que consideres necesarios.
 
+## Configuración Inicial del Proyecto
+- Clonar el repositorio:
+
+## Cada miembro del equipo debe clonar el repositorio en su máquina local usando el comando:
+- git clone https://github.com/tu-usuario/nombre-del-repo.git
+
+## Configurar las ramas principales:
+Decide las ramas principales (por ejemplo, main y develop).
+El creador del repositorio debería crear estas ramas si aún no existen:
+- git checkout -b develop
+- git push origin develop
+
+## Flujo de Trabajo con GitHub
+Feature branches (ramas de características):
+
+## Para cada nueva característica o corrección de errores, los desarrolladores deben crear una nueva rama a partir de develop:
+- git checkout -b feature/nombre-de-la-caracteristica
+
+## Realizar cambios y commits:
+Haz los cambios necesarios en tu rama y realiza commits frecuentemente con mensajes descriptivos:
+- git add .
+- git commit -m "Descripción clara de los cambios"
+
+## Pushear la rama al repositorio remoto:
+
+## Sube tus cambios a tu rama en GitHub:
+- git push origin feature/nombre-de-la-caracteristica
+- Pull Request (PR):
+
+## Una vez que una característica esté lista, abre un Pull Request en GitHub desde tu rama hacia develop.
+- Describa los cambios en el PR y solicita revisiones de tus compañeros de equipo.
+- Revisión y aprobación del código:
+
+## Los compañeros de equipo revisarán el PR, dejarán comentarios y solicitarán cambios si es necesario.
+- Una vez aprobados, se puede fusionar (merge) el PR en develop.
+- 
+
+# Integración Continua y Despliegue
+- Configurar CI/CD:
+- Utiliza herramientas como GitHub Actions para configurar la integración continua.
+- Configura un flujo de trabajo que ejecute pruebas y despliegue automáticamente si es necesario.
+
+## Resolución de Conflictos
+Mantén tu rama actualizada:
+
+## Antes de abrir un PR, asegúrate de que tu rama esté actualizada con develop:
+- git fetch origin
+- git checkout develop
+- git pull origin develop
+- git checkout feature/nombre-de-la-caracteristica
+- git merge develop
+
+## Resolución de conflictos:
+Si hay conflictos durante el merge, resuélvelos en tu máquina local y realiza un nuevo commit con los cambios resueltos.
+
+# Buenas Prácticas
+- Realiza commits frecuentemente con cambios pequeños y bien descritos.
+- Código limpio y documentado:
+Asegúrate de que tu código sea limpio y esté bien documentado.
+
+## Revisar y testear:
+- Siempre revisa y prueba tu código antes de abrir un PR.
+
+
