@@ -80,6 +80,7 @@ React Native
 
 Incluir los links con acceso público en todos los casos que consideres necesarios.
 
+--------------------
 
 # Configuración Inicial del Proyecto
 - Clonar el repositorio:
@@ -115,8 +116,7 @@ Haz los cambios necesarios en tu rama y realiza commits frecuentemente con mensa
 - Revisión y aprobación del código:
 
 ## Los compañeros de equipo revisarán el PR, dejarán comentarios y solicitarán cambios si es necesario.
-- Una vez aprobados, se puede fusionar (merge) el PR en develop.
-- 
+- Una vez aprobados, se puede fusionar (merge) el PR en develop.- 
 
 # Integración Continua y Despliegue
 - Configurar CI/CD:
