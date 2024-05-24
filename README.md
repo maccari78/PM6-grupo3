@@ -83,10 +83,9 @@ Incluir los links con acceso público en todos los casos que consideres necesari
 --------------------
 
 # Configuración Inicial del Proyecto
-- Clonar el repositorio:
 
 ## Cada miembro del equipo debe clonar el repositorio en su máquina local usando el comando:
-- git clone https://github.com/tu-usuario/nombre-del-repo.git
+- git clone https://github.com/maccari78/pf-rym-you-drive
 
 ## Configurar las ramas principales:
 Decide las ramas principales (por ejemplo, main y develop).
