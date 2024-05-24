@@ -80,7 +80,8 @@ React Native
 
 Incluir los links con acceso público en todos los casos que consideres necesarios.
 
-## Configuración Inicial del Proyecto
+
+# Configuración Inicial del Proyecto
 - Clonar el repositorio:
 
 ## Cada miembro del equipo debe clonar el repositorio en su máquina local usando el comando:
