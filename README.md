@@ -22,11 +22,11 @@ El proyecto se enfoca en el sector de alquiler de rodados, un área que actualme
 - Información de la aplicación: PostgreSQL conectado con TypeORM
 - Usuario administrador con su respectivo dashboard
 - Autentificación en el front donde dependiendo el usuario se muestran los datos del dashboard.
-- Documentación: Figma donde se haga un modelo de las vistas y Open API para el back
+- Documentación: Figma donde se haga un modelo de las vistas y Open API Swagger para el backend
 - Pagos: Mercadopago o Paypal
 - Despliegue de la totalidad de proyecto: Vercel (Frontend) y Railway o Render (Backend).
 - ChatBot. No necesariamente con IA pero si se puede, mejor. Que al menos pueda tomar datos y responder preguntas básicas a seleccionar.
-Chat usuario/usuario o usuario/admin. Usando websockets y Socket.IO
+- Chat usuario/usuario o usuario/admin. Usando websockets y Socket.IO
 
 ## Sistema de notificación automática de manera periódica (uso de crons). 
 Ejemplos/propuestas:
