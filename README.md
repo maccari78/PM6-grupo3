@@ -15,42 +15,44 @@
 El proyecto se enfoca en el sector de alquiler de rodados, un área que actualmente enfrenta desafíos como la falta de transparencia y eficiencia en la gestión de alquileres. Estamos desarrollando esta aplicación para abordar la necesidad de una plataforma integral que facilite la conexión entre propietarios y arrendatarios de manera segura y eficiente. El sitio web ofrecerá soluciones como la gestión de pagos automatizados, y un sistema de calificaciones y reseñas para ambas partes.
 
 ## Funcionalidades
-- Requisitos tech
-¿Cómo lo aplicarán? (Idea boceto)
+- Requisitos tech ¿Cómo lo aplicarán? (Idea boceto)
 Autenticación propia y externa. Persistencia de sesión.
-Autenticación con Auth0 
+- JWT y Auth0 
 Notificaciones vía mail
-Mailer
-Almacenamiento de archivos (en cloud). El almacenamiento de imágenes será en Cloudinary, un servidor externo.
-Información de la aplicación lo almacenaremos en el PostgreSQL 
+- NodeMailer
+Almacenamiento de archivos (en cloud)
+- Cloudinary
+Información de la aplicación lo almacenaremos en el 
+- PostgreSQL vonectado con TypeORM
 Usuario administrador con su respectivo dashboard
 Autentificación en el front donde dependiendo el usuario se muestran los datos del dashboard.
-Documentación. De la aplicación en general y se puede sumar OpenAPI o herramienta similar para backend
-Figma donde se haga un modelo de las vistas y Open API para el back
-Mercadopago o Paypal
-Despliegue de la totalidad de proyecto
-Despliegue en Vercel (front) back investigar (Railway o Render).
+Documentación:
+- Figma donde se haga un modelo de las vistas y Open API para el back
+Pagos:
+- Mercadopago o Paypal
+Despliegue de la totalidad de proyecto:
+- Vercel (Frontend) y Railway o Render (Backend).
 ChatBot. No necesariamente con IA pero si se puede, mejor. Que al menos pueda tomar datos y responder preguntas básicas a seleccionar.
 Chat usuario/usuario o usuario/admin. Usando websockets y Socket.IO
 
-Sistema de notificación automática de manera periódica (uso de crons). 
+## Sistema de notificación automática de manera periódica (uso de crons). 
 Ejemplos/propuestas:
 - Newsletter diario
 - Implementación de promociones
 
-Implementación de herramientas Google Cloud.
+## Implementación de herramientas Google Cloud.
 Ejemplos/propuestas:
 Google Maps
 Detección de contenido inadecuado en textos y/o imágenes
 Speech-to-Text / Text-to-Speech
 Implementar Google Maps para la localización de los productos alquilados
 
-Investigar y aplicar una nueva tecnología. 
+## Investigar y aplicar una nueva tecnología. 
 Propuestas:
-GraphQL
-Prisma
+- GraphQL
+- Prisma
 Otros FW de Frontend como Vue o Angular
-React Native
+- React Native
 
 ## Historias de usuario
 - Como Invitado quiero poder ingresar a una publicación para ver sus detalles.
