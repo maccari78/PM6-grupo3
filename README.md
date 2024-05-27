@@ -138,21 +138,5 @@ Asegúrate de que tu código sea limpio y esté bien documentado.
 ## Revisar y testear:
 - Siempre revisa y prueba tu código antes de abrir un PR.
 
---------------------
-
-DATABASE_PRIVATE_URL=postgresql://${{PGUSER}}:${{POSTGRES_PASSWORD}}@${{RAILWAY_PRIVATE_DOMAIN}}:5432/${{PGDATABASE}}
-DATABASE_URL=postgresql://${{PGUSER}}:${{POSTGRES_PASSWORD}}@${{RAILWAY_TCP_PROXY_DOMAIN}}:${{RAILWAY_TCP_PROXY_PORT}}/${{PGDATABASE}}
-PGDATA=/var/lib/postgresql/data/pgdata
-PGDATABASE=${{POSTGRES_DB}}
-PGHOST=${{RAILWAY_TCP_PROXY_DOMAIN}}
-PGPASSWORD=${{POSTGRES_PASSWORD}}
-PGPORT=${{RAILWAY_TCP_PROXY_PORT}}
-PGPRIVATEHOST=${{RAILWAY_PRIVATE_DOMAIN}}
-PGUSER=${{POSTGRES_USER}}
-POSTGRES_DB=railway
-POSTGRES_PASSWORD=BTbaPNtYLtXhbvsnMVvBIzExfUjoeslE
-POSTGRES_USER=postgres
-SSL_CERT_DAYS=820
-
 
 
