@@ -6,9 +6,10 @@ import { RentalsModule } from './rentals/rentals.module';
 import { AdressesModule } from './adresses/adresses.module';
 import { CommentsModule } from './comments/comments.module';
 import { CarsModule} from './cars/cars.module'
+import { ReviewsModule } from './reviews/reviews.module';
 
 @Module({
-  imports: [UsersModule, RentalsModule, AdressesModule, CommentsModule,CarsModule],
+  imports: [UsersModule, RentalsModule, AdressesModule, CommentsModule,CarsModule, ReviewsModule],
   controllers: [AppController],
   providers: [AppService],
 })
