@@ -15,23 +15,16 @@
 El proyecto se enfoca en el sector de alquiler de rodados, un área que actualmente enfrenta desafíos como la falta de transparencia y eficiencia en la gestión de alquileres. Estamos desarrollando esta aplicación para abordar la necesidad de una plataforma integral que facilite la conexión entre propietarios y arrendatarios de manera segura y eficiente. El sitio web ofrecerá soluciones como la gestión de pagos automatizados, y un sistema de calificaciones y reseñas para ambas partes.
 
 ## Funcionalidades
-- Requisitos tech ¿Cómo lo aplicarán? (Idea boceto)
-Autenticación propia y externa. Persistencia de sesión.
-- JWT y Auth0 
-Notificaciones vía mail
-- NodeMailer
-Almacenamiento de archivos (en cloud)
-- Cloudinary
-Información de la aplicación lo almacenaremos en el 
-- PostgreSQL vonectado con TypeORM
+Requisitos tech ¿Cómo lo aplicarán? (Idea boceto)
+Autenticación propia y externa. Persistencia de sesión: Auth0 
+Notificaciones vía mail: NodeMailer
+Almacenamiento de archivos: Cloudinary
+Información de la aplicación: PostgreSQL conectado con TypeORM
 Usuario administrador con su respectivo dashboard
 Autentificación en el front donde dependiendo el usuario se muestran los datos del dashboard.
-Documentación:
-- Figma donde se haga un modelo de las vistas y Open API para el back
-Pagos:
-- Mercadopago o Paypal
-Despliegue de la totalidad de proyecto:
-- Vercel (Frontend) y Railway o Render (Backend).
+Documentación: Figma donde se haga un modelo de las vistas y Open API para el back
+Pagos: Mercadopago o Paypal
+Despliegue de la totalidad de proyecto: Vercel (Frontend) y Railway o Render (Backend).
 ChatBot. No necesariamente con IA pero si se puede, mejor. Que al menos pueda tomar datos y responder preguntas básicas a seleccionar.
 Chat usuario/usuario o usuario/admin. Usando websockets y Socket.IO
 
