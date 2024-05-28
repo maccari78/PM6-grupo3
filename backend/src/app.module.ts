@@ -5,11 +5,26 @@ import { UsersModule } from './users/users.module';
 import { RentalsModule } from './rentals/rentals.module';
 import { AdressesModule } from './adresses/adresses.module';
 import { CommentsModule } from './comments/comments.module';
-import { CarsModule} from './cars/cars.module'
+import { CarsModule } from './cars/cars.module';
 import { ReviewsModule } from './reviews/reviews.module';
+import { ConfigModuleRoot } from './config/config.module';
+import { ConfigTypOrmModule } from './config/configTypOrm.module';
+import { PostsModule } from './posts/posts.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
-  imports: [UsersModule, RentalsModule, AdressesModule, CommentsModule,CarsModule, ReviewsModule],
+  imports: [
+    ConfigModuleRoot,
+    ConfigTypOrmModule,
+    PostsModule,
+    NotificationsModule,
+    UsersModule,
+    RentalsModule,
+    AdressesModule,
+    CommentsModule,
+    CarsModule,
+    ReviewsModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
