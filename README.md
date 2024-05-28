@@ -1,4 +1,4 @@
-## Carrera: Full Stack.
+## Carrera: Full Stack
 
 # Alquiler de Autos: YouDrive 🚍
 
