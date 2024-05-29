@@ -11,6 +11,7 @@ import { ConfigModuleRoot } from './config/config.module';
 import { ConfigTypOrmModule } from './config/configTypOrm.module';
 import { PostsModule } from './posts/posts.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { FileUploadModule } from './file-upload/file-upload.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { NotificationsModule } from './notifications/notifications.module';
     CommentsModule,
     CarsModule,
     ReviewsModule,
+    FileUploadModule,
   ],
   controllers: [AppController],
   providers: [AppService],
