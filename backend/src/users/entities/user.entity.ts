@@ -20,6 +20,14 @@ export class User {
 
   @OneToMany(() => Rental, rental => rental.user)
   rentals: Rental[];
+  
+  // @OneToMany(() => Notifications, (notification) => notification.user)
+  // @JoinColumm()
+  // notifications: Notification[];
+
+  // @OneToMany(() => Addresses, (address) => address.user)
+  // @JoinColumn()
+  // addresses: Address[];
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
