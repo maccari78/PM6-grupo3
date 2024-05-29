@@ -1,5 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { CarsService } from './cars.service';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
+import { CarsService, FiltersCars } from './cars.service';
 import { CreateCarDto } from './dto/create-cars.dto';
 import { UpdateCarDto } from './dto/update-cars.dto';
 
@@ -15,6 +24,16 @@ export class CarsController {
   @Get()
   findAll() {
     return this.carsService.findAll();
+  }
+
+  @Get('seeder')
+  seeder() {
+    return this.carsService.seeder();
+  }
+
+  @Get('filter')
+  findByFilter(@Query() filter: FiltersCars) {
+    return this.carsService.findByFilter(filter);
   }
 
   @Get(':id')
