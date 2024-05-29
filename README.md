@@ -1,15 +1,15 @@
 ## Carrera: Full Stack
 
-# Alquiler de Autos: YouDrive 🚍
+# Alquiler de Autos: YouDrive
 
 ## Integrantes del equipo: 
-- Geronimo Kramar - Front End
-- Camila Fabre - Front End
-- Camilo Sierra - Front End
-- Victor Emanuel Elias Cuello - Back End
-- Juan Carlos Alvarez Martinez - Back End
-- Darvin Ricardo Alania Inoecencio - Back End
-- Danilo Maccari - Back End
+- Geronimo Kramar - Front End: 'GeroKramar'
+- Camila Fabre - Front End: 'cfcamilafabre'
+- Camilo Sierra - Front End: 'CAndresSierra'
+- Victor Emanuel Elias Cuello - Back End: 'emacuello'
+- Juan Carlos Alvarez Martinez - Back End: 'AlvarezMar'
+- Darvin Ricardo Alania Inoecencio - Back End: 'DAlaniaInoceccio'
+- Danilo Maccari - Back End: 'maccari78'
 
 ## Caso de negocio
 El proyecto se enfoca en el sector de alquiler de rodados, un área que actualmente enfrenta desafíos como la falta de transparencia y eficiencia en la gestión de alquileres. Estamos desarrollando esta aplicación para abordar la necesidad de una plataforma integral que facilite la conexión entre propietarios y arrendatarios de manera segura y eficiente. El sitio web ofrecerá soluciones como la gestión de pagos automatizados, y un sistema de calificaciones y reseñas para ambas partes.
@@ -137,6 +137,10 @@ Asegúrate de que tu código sea limpio y esté bien documentado.
 
 ## Revisar y testear:
 - Siempre revisa y prueba tu código antes de abrir un PR.
+
+## Consult an IA
+Buen dia! Este es nuestro proyecto 'YouDrive' en un repositorio de Github 'https://github.com/maccari78/PM6-grupo3', el mismo es un web app de alquiler de automoviles, tenemos ramas 'main', 'develop' y dependientes de develop una para cada desarrollador (Somos 7, 3 frontenders y 4 backenders).
+Mi asignacion actual requiere que implemente 'auth0', me mostras los pasos exactos para implementarla incluyendo el manejo de ramas de github?
 
 
 
