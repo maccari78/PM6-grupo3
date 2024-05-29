@@ -1,6 +1,6 @@
 import React from 'react'
 
-const UserData = ({ params }: { params: { id: string } }) => {
+const UserData = ({ params }: { params: { username: string } }) => {
   return (
     <>
       
