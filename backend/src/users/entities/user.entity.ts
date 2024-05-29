@@ -1,5 +1,15 @@
+import { Address } from 'src/addresses/entities/address.entity';
+import { Notification } from 'src/notifications/entities/notification.entity';
 import { Rental } from 'src/rentals/entities/rental.entity';
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+  JoinColumn,
+} from 'typeorm';
 
 @Entity('users')
 export class User {
@@ -18,16 +28,16 @@ export class User {
   @Column()
   public_id: string;
 
-  @OneToMany(() => Rental, rental => rental.user)
+  @OneToMany(() => Rental, (rental) => rental.user)
   rentals: Rental[];
-  
-  // @OneToMany(() => Notifications, (notification) => notification.user)
-  // @JoinColumm()
-  // notifications: Notification[];
 
-  // @OneToMany(() => Addresses, (address) => address.user)
-  // @JoinColumn()
-  // addresses: Address[];
+  @OneToMany(() => Notification, (notification) => notification.user)
+  @JoinColumn()
+  notifications: Notification[];
+
+  @OneToMany(() => Address, (address) => address.user)
+  @JoinColumn()
+  addresses: Address[];
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
@@ -35,4 +45,3 @@ export class User {
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
 }
-

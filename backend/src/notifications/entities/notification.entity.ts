@@ -31,8 +31,4 @@ export class Notification {
   @ManyToOne(() => User, (user) => user.notifications)
   @JoinColumn({ name: 'user_id' })
   user: User;
-
-  @OneToMany(() => Notifications, (notification) => notification.user)
-  @JoinColumn()
-  notifications: Notification[];
 }
