@@ -1,7 +1,9 @@
+import { Rental } from 'src/rentals/entities/rental.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   Timestamp,
   UpdateDateColumn,
@@ -27,13 +29,17 @@ export class Car {
   @Column({ type: 'varchar' })
   color: string;
 
-  @Column({ type: 'boolean' })
+  @Column({ type: 'boolean', default: true })
   availability: boolean;
 
   @Column({ type: 'int' })
   price: number;
 
-  @Column({ type: 'varchar' })
+  @Column({
+    type: 'varchar',
+    default:
+      'https://res.cloudinary.com/dkent00db/image/upload/f_auto,q_auto/v1/image%20car%20placeholder/fpm93xvjp26mpdde0ses',
+  })
   image_url: string;
 
   @CreateDateColumn({ type: 'timestamp' })
@@ -41,6 +47,9 @@ export class Car {
 
   @UpdateDateColumn({ type: 'timestamp' })
   updated_at: Timestamp;
+
+  @OneToMany(() => Rental, (rental) => rental.car)
+  rentals: Rental[];
 
   // USER ID --->
 }

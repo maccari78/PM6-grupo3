@@ -121,8 +121,12 @@ export class CarsService {
       image_url: 'outback.jpg',
     },
   ];
-  create(createCarDto: CreateCarDto) {
-    return 'This action adds a new car';
+  async create(createCarDto: CreateCarDto) {
+    const newCar = await this.carsRepository.save(createCarDto);
+    if (!newCar) {
+      throw new BadRequestException('El auto no fue creado');
+    }
+    return newCar;
   }
 
   findAll() {
@@ -131,8 +135,10 @@ export class CarsService {
     return cars;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} car`;
+  findOne(id: string) {
+    const findCar = this.carsRepository.findOneBy({ id });
+    if (!findCar) throw new NotFoundException('Auto no encontrado');
+    return findCar;
   }
 
   async seeder() {
@@ -180,11 +186,23 @@ export class CarsService {
       return result;
     }
   }
-  update(id: number, updateCarDto: UpdateCarDto) {
-    return `This action updates a #${id} car`;
+  async update(id: string, updateCarDto: UpdateCarDto) {
+    const car = await this.carsRepository.findOneBy({ id });
+    if (!car) throw new NotFoundException('Auto no encontrado');
+    const updateCar = await this.carsRepository.update(id, updateCarDto);
+    if (!updateCar) {
+      throw new BadRequestException('El auto no fue actualizado');
+    }
+    return 'Auto actualizado exitosamente';
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} car`;
+  async remove(id: string) {
+    const car = await this.carsRepository.findOneBy({ id });
+    if (!car) throw new NotFoundException('Auto no encontrado');
+    const deleteCar = await this.carsRepository.delete(id);
+    if (!deleteCar) {
+      throw new BadRequestException('El auto no fue eliminado');
+    }
+    return 'Auto eliminado exitosamente';
   }
 }
