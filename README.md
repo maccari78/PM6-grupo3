@@ -9,7 +9,7 @@
 - Camilo Sierra - Front End: 'CAndresSierra'
 - Victor Emanuel Elias Cuello - Back End: 'emacuello'
 - Juan Carlos Alvarez Martinez - Back End: 'AlvarezMar'
-- Darvin Ricardo Alania Inoecencio - Back End: 'DAlaniaInoceccio'
+- Darvin Ricardo Alania Inoecencio - Back End: 'DAlaniaInocecio'
 - Danilo Maccari - Back End: 'maccari78'
 
 ## Caso de negocio
