@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn, Timestamp, UpdateDateColumn } from "typeorm";
 
 @Entity("posts")
 export class PostEntity {
@@ -14,16 +14,21 @@ export class PostEntity {
     @Column({ type: "decimal", precision: 10, scale: 2, nullable: false })
     price: number;
 
-    // @OneToMany(() => USERENTITY, (userRELATION) => userRELATION.xd)
+    // @OneToMany(() => USERENTITY, (userRELATION) => userRELATION.id)
     // @JoinColumn()
-    // user_id: USERENTITY[]
-
-    // @OneToMany(() => CARENTITY, (carRELATION) => carRELATION.xd)
+    // user_id: USERENTITY;
+ 
+    @Column({ primary: true, generated: true, select: false }) // ID de carro generado automáticamente y oculto al front (ejemplo: car_id: 100, luego 101)
+    car_id: number;
+    // @OneToOne(()=> CARENTITY, carRelation=>carRelation.id)
     // @JoinColumn()
-    // car_id: CARENTITY[]
+    // car: CARENTITY;
 
-    // created_at: Date;
-    // updated_at Date;
+    @CreateDateColumn()
+    created_at: Timestamp;
+
+    @UpdateDateColumn()
+    updated_at: Timestamp;
 
 }
 
