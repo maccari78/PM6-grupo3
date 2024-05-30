@@ -22,7 +22,7 @@ const VehicleForm = () => {
                 <h1 className=" text-xl font-semibold mt-6">¡Publica tu vehiculo ahora!</h1>
                 <span className="text-lg">Rápido, sencillo, y gratuito.</span>
             </div>
-            <form onSubmit={handleSubmit} className="max-w-md mx-auto p-4 flex-wrap">
+            <form onSubmit={handleSubmit} className="max-w-md mx-auto p-6 flex-wrap bg-[#222222] rounded">
                     <div className="block mb-4">
                         <label className=" text-slate-50">Título</label>
                         <input
