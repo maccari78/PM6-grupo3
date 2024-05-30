@@ -20,7 +20,7 @@ export class FileUploadController {
   @Post('uploadProfilePicture/:id')
   @UseInterceptors(FileInterceptor('file'))
   async uploadProfilePicture(
-    @Param('id') objectId: string,
+    @Param('id') userId: string,
     @UploadedFile(
       new ParseFilePipe({
         validators: [
@@ -36,7 +36,7 @@ export class FileUploadController {
     )
     file: Express.Multer.File,
   ) {
-    return this.fileUploadService.uploadProfilePicture(file, objectId);
+    return this.fileUploadService.uploadProfilePicture(file, userId);
   }
 
   @Post('uploadVehicleImages/:id')

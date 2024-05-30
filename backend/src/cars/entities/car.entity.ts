@@ -37,10 +37,17 @@ export class Car {
 
   @Column({
     type: 'varchar',
-    default:
+    default: [
       'https://res.cloudinary.com/dkent00db/image/upload/f_auto,q_auto/v1/image%20car%20placeholder/fpm93xvjp26mpdde0ses',
+    ],
   })
-  image_url: string;
+  image_url: string[];
+
+  @Column({
+    type: 'varchar',
+    default: null,
+  })
+  public_id: string[];
 
   @CreateDateColumn({ type: 'timestamp' })
   created_at: Timestamp;

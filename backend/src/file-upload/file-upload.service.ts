@@ -1,30 +1,17 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { UploadApiResponse, v2 } from 'cloudinary';
 import toStream = require('buffer-to-stream');
-
-const carMock = [
-  {
-    id: '1',
-    brand: 'Toyota',
-    model: 'Tacoma',
-    year: '2020',
-    imgUrl: [],
-    public_id: null,
-  },
-];
-
-const userMock = [
-  {
-    id: '1',
-    email: 'test@hotmail.com',
-    password: 'test1234',
-    imgUrl: 'http://test',
-    public_id: null,
-  },
-];
+import { InjectRepository } from '@nestjs/typeorm';
+import { Car } from 'src/cars/entities/car.entity';
+import { Repository } from 'typeorm';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class FileUploadService {
+  constructor(
+    @InjectRepository(Car) private readonly carsRepository: Repository<Car>,
+    @InjectRepository(User) private readonly usersRepository: Repository<User>,
+  ) {}
   async uploadStream(file: Express.Multer.File): Promise<UploadApiResponse> {
     return new Promise((resolve, reject) => {
       const upload = v2.uploader.upload_stream(
@@ -39,32 +26,42 @@ export class FileUploadService {
   }
 
   async uploadProfilePicture(file: Express.Multer.File, userId: string) {
-    const user = userMock.find((user) => user.id === userId);
+    const user = await this.usersRepository.findOneBy({ id: userId });
     if (!user) throw new NotFoundException('Usuario no encontrado');
 
     const uploadedImage = await this.uploadStream(file);
-    user.imgUrl = uploadedImage.secure_url;
 
-    user.public_id = uploadedImage.public_id;
+    await this.usersRepository.update(user.id, {
+      image_url: uploadedImage.secure_url,
+      public_id: uploadedImage.public_id,
+    });
 
-    return user;
+    const updatedUser = this.usersRepository.findOneBy({ id: userId });
+    return updatedUser;
   }
 
   async uploadVehicleImages(vehicleId: string, files: Express.Multer.File[]) {
-    const car = carMock.find((car) => car.id === vehicleId);
+    const car = await this.carsRepository.findOneBy({ id: vehicleId });
 
     if (!car) throw new NotFoundException('Vehiculo no encontrado');
 
     const urls = [];
+    const publicIds = [];
 
     for (const file of files) {
       const uploadedImage = await this.uploadStream(file);
       urls.push(uploadedImage.secure_url);
+      publicIds.push(uploadedImage.public_id);
     }
 
-    car.imgUrl = urls;
+    await this.carsRepository.update(car.id, {
+      image_url: urls,
+      public_id: publicIds,
+    });
 
-    return car;
+    const updatedCar = this.carsRepository.findOneBy({ id: vehicleId });
+
+    return updatedCar;
   }
 
   deleteImage(publicId: string) {
