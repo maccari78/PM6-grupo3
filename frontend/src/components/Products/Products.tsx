@@ -46,7 +46,7 @@ const Products = () => {
                 />
                 <label
                   htmlFor="green-checkbox"
-                  className="ms-2 text-sm font-medium text-[#222222] dark:text-gray-300"
+                  className="ms-2 text-base  text-[#222222] dark:text-gray-300"
                 >
                   Azul
                 </label>
@@ -62,7 +62,7 @@ const Products = () => {
                 />
                 <label
                   htmlFor="green-checkbox"
-                  className="ms-2 text-sm font-medium text-[#222222] dark:text-gray-300"
+                  className="ms-2 text-base text-[#222222] dark:text-gray-300"
                 >
                   Verde
                 </label>
@@ -78,7 +78,7 @@ const Products = () => {
                 />
                 <label
                   htmlFor="black-checkbox"
-                  className="ms-2 text-sm font-medium text-[#222222] dark:text-gray-300"
+                  className="ms-2 text-base  text-[#222222] dark:text-gray-300"
                 >
                   Negro
                 </label>
@@ -94,7 +94,7 @@ const Products = () => {
                 />
                 <label
                   htmlFor="black-checkbox"
-                  className="ms-2 text-sm font-medium text-[#222222] dark:text-gray-300"
+                  className="ms-2 text-base  text-[#222222] dark:text-gray-300"
                 >
                   Blanco
                 </label>
@@ -110,7 +110,7 @@ const Products = () => {
                 />
                 <label
                   htmlFor="red-checkbox"
-                  className="ms-2 text-sm font-medium text-[#222222] dark:text-gray-300"
+                  className="ms-2 text-base  text-[#222222] dark:text-gray-300"
                 >
                   Rojo
                 </label>
