@@ -28,7 +28,7 @@ export class CarsService {
       color: 'blue',
       price: 1000000,
       availability: true,
-      image_url: 'image.jpg',
+      image_url: ['image.jpg'],
     },
     {
       brand: 'Audi',
@@ -38,7 +38,7 @@ export class CarsService {
       color: 'black',
       price: 900000,
       availability: true,
-      image_url: 'audi.jpg',
+      image_url: ['audi.jpg'],
     },
     {
       brand: 'Mercedes-Benz',
@@ -48,7 +48,7 @@ export class CarsService {
       color: 'white',
       price: 1200000,
       availability: false,
-      image_url: 'mercedes.jpg',
+      image_url: ['mercedes.jpg'],
     },
     {
       brand: 'Toyota',
@@ -58,7 +58,7 @@ export class CarsService {
       color: 'silver',
       price: 800000,
       availability: true,
-      image_url: 'corolla.jpg',
+      image_url: ['corolla.jpg'],
     },
     {
       brand: 'Honda',
@@ -68,7 +68,7 @@ export class CarsService {
       color: 'red',
       price: 850000,
       availability: false,
-      image_url: 'civic.jpg',
+      image_url: ['civic.jpg'],
     },
     {
       brand: 'Ford',
@@ -78,7 +78,7 @@ export class CarsService {
       color: 'yellow',
       price: 1500000,
       availability: true,
-      image_url: 'mustang.jpg',
+      image_url: ['mustang.jpg'],
     },
     {
       brand: 'Chevrolet',
@@ -88,7 +88,7 @@ export class CarsService {
       color: 'orange',
       price: 1300000,
       availability: true,
-      image_url: 'camaro.jpg',
+      image_url: ['camaro.jpg'],
     },
     {
       brand: 'Tesla',
@@ -98,7 +98,7 @@ export class CarsService {
       color: 'gray',
       price: 2000000,
       availability: true,
-      image_url: 'tesla.jpg',
+      image_url: ['tesla.jpg'],
     },
     {
       brand: 'Volkswagen',
@@ -108,7 +108,7 @@ export class CarsService {
       color: 'blue',
       price: 950000,
       availability: false,
-      image_url: 'golf.jpg',
+      image_url: ['golf.jpg'],
     },
     {
       brand: 'Subaru',
@@ -118,7 +118,7 @@ export class CarsService {
       color: 'blue',
       price: 1100000,
       availability: true,
-      image_url: 'outback.jpg',
+      image_url: ['outback.jpg'],
     },
   ];
   async create(createCarDto: CreateCarDto) {

@@ -13,8 +13,8 @@ import {
 
 @Entity('users')
 export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column({ unique: true })
   email: string;
@@ -25,7 +25,15 @@ export class User {
   @Column()
   password: string;
 
-  @Column()
+  @Column({
+    default:
+      'https://res-console.cloudinary.com/dkent00db/thumbnails/v1/image/upload/v1717035367/aWNvbi03Nzk3NzA0XzY0MF9mb2ZjOGk=/drilldown',
+  })
+  image_url: string;
+
+  @Column({
+    default: null,
+  })
   public_id: string;
 
   @OneToMany(() => Rental, (rental) => rental.user)
