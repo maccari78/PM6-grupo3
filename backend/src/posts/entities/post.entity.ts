@@ -1,6 +1,6 @@
 import { Car } from "src/cars/entities/car.entity";
 import { User } from "src/users/entities/user.entity";
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, Timestamp, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, Timestamp, UpdateDateColumn } from "typeorm";
 
 @Entity("posts")
 export class Posts {
@@ -28,12 +28,16 @@ export class Posts {
     //..........relations end........//
  
     //..........relations start........//
-    // @ManyToOne(() => Car, (car) => car.post)
+    @OneToOne(() => Car)
+    @JoinColumn({ name: "carId" })
+    car: Car;
+
+    // @OneToOne(() => Car, (car) => car.post)
     // @JoinColumn({ name: "carId" })
     // car: Car;
 
-    //Para la tablar User desde Posts:
-    //@OneToMany(() => Posts, (post) => post.car)
+    //Para la tablar Car desde Posts:
+    //@OneToOne(() => Posts, (post) => post.car)
     //@JoinColumn({ name: "carId", referencedColumnName: "id" })
     //post: Posts[];
     //..........relations end........//
