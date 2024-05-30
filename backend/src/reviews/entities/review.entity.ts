@@ -1,29 +1,38 @@
 
-import { Max, Min } from "class-validator";
-import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn, Timestamp, UpdateDateColumn } from "typeorm";
+import { Car } from "src/cars/entities/car.entity";
+import { User } from "src/users/entities/user.entity";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, Timestamp, UpdateDateColumn } from "typeorm";
 
 @Entity("reviews")
 export class Review {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
-    @Column({ type: "number", nullable: false })
-    @Min(1)
-    @Max(5)
+    @Column({ type: "int", nullable: false })
     rating: number;
     
     @Column({ type: "text", nullable: false})
     comment: string;
 
-    // @OneToMany(() => USERENTITY, (userRELATION) => userRELATION.id)
-    // @JoinColumn()
-    // user_id: USERENTITY;
- 
-    // @Column({ primary: true, generated: true, select: false }) // ID de carro generado automáticamente y oculto al front (ejemplo: car_id: 100, luego 101)
-    // car_id: number;
-    // // @OneToOne(()=> CARENTITY, carRelation=>carRelation.id)
-    // // @JoinColumn()
-    // // car: CARENTITY;
+    //..........relations start........//
+    // @ManyToOne(() => User, (user) => user.reviews)
+    // @JoinColumn({ name: "userId" })
+    // user: User;
+
+    //Para la tablar user desde Review:
+    // @OneToMany(() => Review, review => review.user)
+    // reviews: Review[];
+    //..........relations end........//
+    
+    //..........relations start ........//
+    // @OneToOne(()=> Car, car=>car.id)
+    // @JoinColumn({ name: "carId" })
+    // car: Car;
+
+    //Para la tablar Car desde Review:
+    // @OneToOne(() => Review, review => review.car)
+    // reviews: Review[];
+    //..........relations end........//
 
     @CreateDateColumn()
     created_at: Timestamp;

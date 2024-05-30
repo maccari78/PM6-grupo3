@@ -7,28 +7,40 @@ import { UpdatePostDto } from './dto/update-post.dto';
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
-  @Post()
-  create(@Body() createPostDto: CreatePostDto) {
-    return this.postsService.create(createPostDto);
+  // Seeder Controller
+  @Post('seeder')
+  SeederController() {
+    return this.postsService.SeederService();
   }
 
+  // Get All posts controller
   @Get()
-  findAll() {
-    return this.postsService.findAll();
+  getPostsAllController() {
+    return this.postsService.getPostsAllServices();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.postsService.findOne(+id);
-  }
+  // @Post()
+  // create(@Body() createPostDto: CreatePostDto) {
+  //   return this.postsService.create(createPostDto);
+  // }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-    return this.postsService.update(+id, updatePostDto);
-  }
+  // @Get()
+  // findAll() {
+  //   return this.postsService.findAll();
+  // }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.postsService.remove(+id);
-  }
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.postsService.findOne(+id);
+  // }
+
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
+  //   return this.postsService.update(+id, updatePostDto);
+  // }
+
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.postsService.remove(+id);
+  // }
 }

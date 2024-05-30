@@ -1,7 +1,9 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn, Timestamp, UpdateDateColumn } from "typeorm";
+import { Car } from "src/cars/entities/car.entity";
+import { User } from "src/users/entities/user.entity";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, Timestamp, UpdateDateColumn } from "typeorm";
 
 @Entity("posts")
-export class PostEntity {
+export class Posts {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
@@ -14,15 +16,27 @@ export class PostEntity {
     @Column({ type: "decimal", precision: 10, scale: 2, nullable: false })
     price: number;
 
-    // @OneToMany(() => USERENTITY, (userRELATION) => userRELATION.id)
-    // @JoinColumn()
-    // user_id: USERENTITY;
+    //..........relations start........//
+    @ManyToOne(() => User, (user) => user.post)
+    @JoinColumn({ name: "userId"})
+    user: User;
+
+    //Para la tablar User desde Posts:
+    //@OneToMany(() => Posts, (post) => post.user)
+    //@JoinColumn({ name: "userId", referencedColumnName: "id" })
+    //post: Posts[];
+    //..........relations end........//
  
-    @Column({ primary: true, generated: true, select: false }) // ID de carro generado automáticamente y oculto al front (ejemplo: car_id: 100, luego 101)
-    car_id: number;
-    // @OneToOne(()=> CARENTITY, carRelation=>carRelation.id)
-    // @JoinColumn()
-    // car: CARENTITY;
+    //..........relations start........//
+    // @ManyToOne(() => Car, (car) => car.post)
+    // @JoinColumn({ name: "carId" })
+    // car: Car;
+
+    //Para la tablar User desde Posts:
+    //@OneToMany(() => Posts, (post) => post.car)
+    //@JoinColumn({ name: "carId", referencedColumnName: "id" })
+    //post: Posts[];
+    //..........relations end........//
 
     @CreateDateColumn()
     created_at: Timestamp;

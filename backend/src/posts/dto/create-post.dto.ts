@@ -1,23 +1,41 @@
-import { ApiProperty } from "@nestjs/swagger";
-import {  IsNumber, IsString } from "class-validator";
+import {  IsArray, IsNotEmpty, IsNumber, IsOptional, IsString, Length } from "class-validator";
 
 export class CreatePostDto {
-
-
-    @ApiProperty({ description: 'name', example: 'Panasonic' })   
+    //characteristics of the Posts
     @IsString()
     title: string;
 
-    @ApiProperty({ description: 'description', example: 'Modelo XYZ' })   
     @IsString()
     description: string;
 
-    @ApiProperty({ description: 'price', example: '100.50' })   
     @IsNumber()
     price: number;
 
-    // user_id: number;
-    // car_id: number;
-    // create_at: Date;
-    // updated_at: Date;
+    //characteristics of the car
+    @IsNotEmpty()
+    @IsString()
+    @Length(2, 20)
+    brand: string;
+
+    @IsNotEmpty()
+    @IsString()
+    @Length(1, 50)
+    model: string;
+
+    @IsNumber()
+    @IsNotEmpty()
+    year: number;
+
+    @IsString()
+    @IsNotEmpty()
+    mileage: string;
+
+    @IsString()
+    color: string;
+
+    @IsString()
+    @IsOptional()
+    @IsArray()
+    image_url: string[];
+
 }
