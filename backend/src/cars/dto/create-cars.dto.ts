@@ -28,5 +28,5 @@ export class CreateCarDto {
   price: number;
   @IsString()
   @IsOptional()
-  image_url: string;
+  image_url: string[];
 }
