@@ -1,3 +1,5 @@
+import Products from "@/components/Products/Products";
+
 export default function Home() {
   return (
     <div className="bg-[#444343] text-white flex flex-col  min-h-screen">
@@ -17,7 +19,16 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="h-[50%] w-full"></section>
+      <section className="w-full mt-4 flex flex-col justify-around">
+        <div className="flex flex-col w-full justify-center items-center">
+          <h1 className="text-4xl font-bold ">¡Vehiculos!</h1>
+          <p className="text-lg text-[#dcffc1] font-bold">
+            {" "}
+            Amplia variedad y a los mejores precios del mercado
+          </p>
+        </div>
+        <Products />
+      </section>
     </div>
   );
 }
