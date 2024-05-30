@@ -1,5 +1,6 @@
 import { Address } from 'src/addresses/entities/address.entity';
 import { Notification } from 'src/notifications/entities/notification.entity';
+import { Posts } from 'src/posts/entities/post.entity';
 import { Rental } from 'src/rentals/entities/rental.entity';
 import {
   Entity,
@@ -52,4 +53,10 @@ export class User {
 
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
+
+    //Para la tablar User desde Posts:
+  @OneToMany(() => Posts, (post) => post.user)
+  @JoinColumn({ name: "userId", referencedColumnName: "id" })
+  post: Posts[];
+
 }
