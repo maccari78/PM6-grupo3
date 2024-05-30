@@ -23,9 +23,7 @@ export class CreateCarDto {
   mileage: string;
   @IsString()
   color: string;
-  @IsNumber()
-  @IsNotEmpty()
-  price: number;
+
   @IsString()
   @IsOptional()
   image_url: string[];
