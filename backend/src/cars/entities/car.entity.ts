@@ -32,9 +32,6 @@ export class Car {
   @Column({ type: 'boolean', default: true })
   availability: boolean;
 
-  @Column({ type: 'int' })
-  price: number;
-
   @Column({
     type: 'varchar',
     default: [
