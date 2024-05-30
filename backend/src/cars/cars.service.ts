@@ -26,7 +26,7 @@ export class CarsService {
       year: 2022,
       mileage: '10.000 km',
       color: 'blue',
-      price: 1000000,
+
       availability: true,
       image_url: ['image.jpg'],
     },
@@ -36,7 +36,7 @@ export class CarsService {
       year: 2023,
       mileage: '5,000 km',
       color: 'black',
-      price: 900000,
+
       availability: true,
       image_url: ['audi.jpg'],
     },
@@ -46,7 +46,7 @@ export class CarsService {
       year: 2021,
       mileage: '20,000 km',
       color: 'white',
-      price: 1200000,
+
       availability: false,
       image_url: ['mercedes.jpg'],
     },
@@ -56,7 +56,7 @@ export class CarsService {
       year: 2020,
       mileage: '15,000 km',
       color: 'silver',
-      price: 800000,
+
       availability: true,
       image_url: ['corolla.jpg'],
     },
@@ -66,7 +66,7 @@ export class CarsService {
       year: 2022,
       mileage: '8,000 km',
       color: 'red',
-      price: 850000,
+
       availability: false,
       image_url: ['civic.jpg'],
     },
@@ -76,7 +76,7 @@ export class CarsService {
       year: 2023,
       mileage: '3,000 km',
       color: 'yellow',
-      price: 1500000,
+
       availability: true,
       image_url: ['mustang.jpg'],
     },
@@ -86,7 +86,7 @@ export class CarsService {
       year: 2021,
       mileage: '12,000 km',
       color: 'orange',
-      price: 1300000,
+
       availability: true,
       image_url: ['camaro.jpg'],
     },
@@ -96,7 +96,7 @@ export class CarsService {
       year: 2024,
       mileage: '2,000 km',
       color: 'gray',
-      price: 2000000,
+
       availability: true,
       image_url: ['tesla.jpg'],
     },
@@ -106,7 +106,7 @@ export class CarsService {
       year: 2022,
       mileage: '7,000 km',
       color: 'blue',
-      price: 950000,
+
       availability: false,
       image_url: ['golf.jpg'],
     },
@@ -116,7 +116,7 @@ export class CarsService {
       year: 2023,
       mileage: '4,000 km',
       color: 'blue',
-      price: 1100000,
+
       availability: true,
       image_url: ['outback.jpg'],
     },
@@ -129,14 +129,16 @@ export class CarsService {
     return newCar;
   }
 
-  findAll() {
-    const cars = this.carsRepository.find();
+  async findAll() {
+    const cars = await this.carsRepository.find();
     if (!cars) throw new NotFoundException('No se encontraron autos');
     return cars;
   }
 
-  findOne(id: string) {
-    const findCar = this.carsRepository.findOneBy({ id });
+  async findOne(id: string) {
+    const findCar = await this.carsRepository.findOneBy({ id });
+    console.log(findCar);
+
     if (!findCar) throw new NotFoundException('Auto no encontrado');
     return findCar;
   }
@@ -188,8 +190,10 @@ export class CarsService {
   }
   async update(id: string, updateCarDto: UpdateCarDto) {
     const car = await this.carsRepository.findOneBy({ id });
+
     if (!car) throw new NotFoundException('Auto no encontrado');
     const updateCar = await this.carsRepository.update(id, updateCarDto);
+
     if (!updateCar) {
       throw new BadRequestException('El auto no fue actualizado');
     }
