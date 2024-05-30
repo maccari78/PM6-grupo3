@@ -69,7 +69,7 @@ const Navbar = () => {
       {isMenuOpen && (
         <>
           {userSession ? (
-            <div className="absolute right-0 w-56 mt-2 origin-top-right top-16 bg-[#222222] border border-gray-200 divide-y divide-gray-100 rounded-md shadow-lg">
+            <div className="absolute right-0 z-50 w-56 mt-2 origin-top-right top-16 bg-[#222222] divide-y divide-gray-100 rounded-md shadow-lg">
               <div className="py-1">
                 <Link
                   href="/user"
@@ -99,7 +99,7 @@ const Navbar = () => {
               </div>
             </div>
           ) : (
-            <div className="absolute right-0 w-56 mt-2 origin-top-right top-16 bg-[#222222] border border-gray-200 divide-y divide-gray-100 rounded-md shadow-lg">
+            <div className="absolute z-50 right-0 w-56 mt-2 origin-top-right top-16 bg-[#222222] divide-y divide-gray-100 rounded-md shadow-lg">
               <div className="py-1">
                 <Link
                   href="/login"
