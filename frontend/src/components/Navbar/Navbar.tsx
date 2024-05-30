@@ -10,7 +10,7 @@ const Navbar = () => {
   const pathname = usePathname();
   const router = useRouter();
   
-  const [userSession, setUserSession] = useState(false);
+  const [userSession, setUserSession] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // useEffect(() => {
@@ -40,7 +40,7 @@ const Navbar = () => {
           alt="Logo de la aplicacion You Drive"
         />
         </Link>
-        <form className="flex gap-4 w-full md:w-52">
+        <form className="flex gap-4 w-1/2 md:w-52">
           <input type="string" placeholder="Buscar" className="h-8 rounded-md focus:outline-none text-black p-2 w-full" />
           <button type="button" className="b-none bg-transparent">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" className="h-4 fill-white">
