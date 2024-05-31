@@ -47,11 +47,11 @@ export class FileUploadController {
       new ParseFilePipe({
         validators: [
           new MaxFileSizeValidator({
-            maxSize: 200000,
-            message: 'Una de las imagenes es demasiado grande',
+            maxSize: 5000000, // 5MB
+            message: 'Uno de los archivos es demasiado grande',
           }),
           new FileTypeValidator({
-            fileType: /(jpg|jpeg|png|webp)$/,
+            fileType: /(jpg|jpeg|png|webp|mp4|avi|mov)$/,
           }),
         ],
       }),
