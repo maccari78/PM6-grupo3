@@ -1,9 +1,10 @@
 import { Rental } from 'src/rentals/entities/rental.entity';
+import { User } from 'src/users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
-  OneToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
   Timestamp,
   UpdateDateColumn,
@@ -52,8 +53,8 @@ export class Car {
   @UpdateDateColumn({ type: 'timestamp' })
   updated_at: Timestamp;
 
-  @OneToMany(() => Rental, (rental) => rental.car)
-  rentals: Rental[];
-
   // USER ID --->
+
+  @ManyToOne(() => User, (user) => user.car)
+  user: User;
 }
