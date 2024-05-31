@@ -26,7 +26,7 @@ const Dropdown = () => {
         Mi cuenta
       </button>
       {isOpen && (
-        <div className="absolute z-50 right-0 w-56 mt-2 origin-top-right top-12 bg-[#222222] border border-gray-200 divide-y divide-gray-100 rounded-md shadow-lg">
+        <div className="absolute z-50 right-0 w-56 mt-2 origin-top-right top-12 bg-[#222222]  divide-y divide-gray-100 rounded-md shadow-lg">
           <div className="py-1">
             <Link
               href="/user"
@@ -35,7 +35,7 @@ const Dropdown = () => {
               Mi cuenta
             </Link>
             <Link
-              href="/publicar-vehiculo"
+              href="/vehicleForm"
               className="block px-4 py-2 text-sm text-white hover:bg-[#494949] "
             >
               Publicar mi vehículo
