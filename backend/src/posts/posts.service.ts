@@ -2,10 +2,19 @@ import { Injectable } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import {PostsRepository} from "./posts.repository"
+import { Posts } from './entities/post.entity';
+import { Repository } from 'typeorm';
+import { Car } from 'src/cars/entities/car.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+// import { FileUploadService } from 'src/file-upload/file-upload.service';
 @Injectable()
 export class PostsService {
 
-  constructor(private readonly postsService: PostsRepository) { }
+  constructor(
+    private readonly postsService: PostsRepository,
+    @InjectRepository(Car)
+    private readonly carService: Repository<Car>,
+  ) { }
 
   //Seeder Services
   async SeederService() {
@@ -24,39 +33,27 @@ export class PostsService {
   }
 
 
-  // //Service: Add products
-  // async AddProductsServices (posts: CreatePostDto){
+  //Service: Add products
+  async AddProductsServices (posts: CreatePostDto){
   //   const { title } = posts;
   //   const existProduct = await this.postsService.getProductsByName(title);
   //   if(existProduct) throw new Error("Product already exists");
     
   //   return await this.postsService.AddProductsRepository({...product});    
-  // }
-
-
-
-
-
-
-  create(createPostDto: CreatePostDto) {
-    return 'This action adds a new post';
   }
 
-  findAll() {
-    return `This action returns all posts`;
+
+
+  // Service: Update posts by Id 
+  async updatePostsIdServices(id: string, posts: Partial<Posts>){
+    return await this.postsService.UpdatePostsRepository(id,posts)
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} post`;
+  // Service: Delete posts by Id
+  async deletePostsIdServices(id: string) {
+    return await this.postsService.DeletePostsRepository(id)
   }
 
-  update(id: number, updatePostDto: UpdatePostDto) {
-    return `This action updates a #${id} post`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} post`;
-  }
 
 
 }
