@@ -20,7 +20,7 @@ export class FileUploadController {
   @Post('uploadProfilePicture/:id')
   @UseInterceptors(FileInterceptor('file'))
   async uploadProfilePicture(
-    @Param('id') objectId: string,
+    @Param('id') userId: string,
     @UploadedFile(
       new ParseFilePipe({
         validators: [
@@ -36,7 +36,7 @@ export class FileUploadController {
     )
     file: Express.Multer.File,
   ) {
-    return this.fileUploadService.uploadProfilePicture(file, objectId);
+    return this.fileUploadService.uploadProfilePicture(file, userId);
   }
 
   @Post('uploadVehicleImages/:id')
@@ -47,11 +47,11 @@ export class FileUploadController {
       new ParseFilePipe({
         validators: [
           new MaxFileSizeValidator({
-            maxSize: 200000,
-            message: 'Una de las imagenes es demasiado grande',
+            maxSize: 5000000, // 5MB
+            message: 'Uno de los archivos es demasiado grande',
           }),
           new FileTypeValidator({
-            fileType: /(jpg|jpeg|png|webp)$/,
+            fileType: /(jpg|jpeg|png|webp|mp4|avi|mov)$/,
           }),
         ],
       }),
