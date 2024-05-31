@@ -1,22 +1,36 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToOne,
+  ManyToMany,
+  JoinTable,
+} from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { Car } from '../../cars/entities/car.entity';
 
 @Entity('rentals')
 export class Rental {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  @Column({ type: 'timestamp' })
-  rentalStartDate: Date;
+  @Column()
+  rentalStartDate: string;
 
-  @Column({ type: 'timestamp' })
-  rentalEndDate: Date;
+  @Column()
+  rentalEndDate: string;
 
-  @ManyToOne(() => User, user => user.rentals)
-  user: User;
+  @ManyToMany(() => User, (user) => user.rentals)
+  @JoinTable({
+    name: 'user_rental',
+    joinColumn: { name: 'rental_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'user_id', referencedColumnName: 'id' },
+  })
+  users: User[];
 
-  @ManyToOne(() => Car, car => car.rentals)
+  @OneToOne(() => Car)
   car: Car;
 
   @CreateDateColumn({ type: 'timestamp' })
@@ -25,4 +39,3 @@ export class Rental {
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
 }
-

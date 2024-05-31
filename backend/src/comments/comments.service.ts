@@ -19,24 +19,24 @@ export class CommentsService {
     return 'Comentario creado con exito';
   }
 
-  findOne(id: string) {
-    const comment = this.commentRepository.findOneBy({ id });
+  async findOne(id: string) {
+    const comment = await this.commentRepository.findOneBy({ id });
     if (!comment) {
       throw new BadRequestException('Comentario no encontrado');
     }
     return comment;
   }
 
-  update(id: string, updateCommentDto: UpdateCommentDto) {
-    const comment = this.commentRepository.update(id, updateCommentDto);
+  async update(id: string, updateCommentDto: UpdateCommentDto) {
+    const comment = await this.commentRepository.update(id, updateCommentDto);
     if (!comment) {
       throw new BadRequestException('Error al actualizar el comentario');
     }
     return 'Comentario actualizado con exito';
   }
 
-  remove(id: string) {
-    const comment = this.commentRepository.delete(id);
+  async remove(id: string) {
+    const comment = await this.commentRepository.delete(id);
     if (!comment) {
       throw new BadRequestException('Error al eliminar el comentario');
     }
