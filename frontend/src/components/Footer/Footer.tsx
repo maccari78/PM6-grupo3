@@ -3,9 +3,9 @@ import React from "react";
 const Footer = () => {
   return (
     <>
-      <footer className="bg-gray-800 p-4 mt-8">
-        <div className="container mx-auto text-center text-gray-400">
-          <p>&copy; 2024 MiSitioWeb. Todos los derechos reservados.</p>
+      <footer className="bg-[#222222] p-4 font-sans">
+        <div className="container mx-auto text-center text-gray-200 font-sans  text-xs">
+          <p>&copy; 2024 You Drive. Todos los derechos reservados.</p>
           <div className="mt-2 space-x-4">
             <a href="#" className="hover:text-white">
               Política de Privacidad
