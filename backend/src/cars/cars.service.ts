@@ -150,7 +150,7 @@ export class CarsService {
       id,
       files,
     );
-    if (createdPicture.length === 0)
+    if (createdPicture.image_url.length === 0)
       throw new BadRequestException('Error al subir la imagen');
     return createdPicture;
   }
