@@ -2,10 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import {PostsRepository} from "./posts.repository"
+import { Posts } from './entities/post.entity';
+// import { FileUploadService } from 'src/file-upload/file-upload.service';
 @Injectable()
 export class PostsService {
 
-  constructor(private readonly postsService: PostsRepository) { }
+  constructor(
+    private readonly postsService: PostsRepository,
+    // private readonly fileUploadService: FileUploadService,
+  ) { }
 
   //Seeder Services
   async SeederService() {
@@ -24,7 +29,7 @@ export class PostsService {
   }
 
 
-  // //Service: Add products
+  //Service: Add products
   // async AddProductsServices (posts: CreatePostDto){
   //   const { title } = posts;
   //   const existProduct = await this.postsService.getProductsByName(title);
@@ -35,28 +40,16 @@ export class PostsService {
 
 
 
-
-
-
-  create(createPostDto: CreatePostDto) {
-    return 'This action adds a new post';
+  // Service: Update posts by Id 
+  async updatePostsIdServices(id: string, posts: Partial<Posts>){
+    return await this.postsService.UpdatePostsRepository(id,posts)
   }
 
-  findAll() {
-    return `This action returns all posts`;
+  // Service: Delete posts by Id
+  async deletePostsIdServices(id: string) {
+    return await this.postsService.DeletePostsRepository(id)
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} post`;
-  }
-
-  update(id: number, updatePostDto: UpdatePostDto) {
-    return `This action updates a #${id} post`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} post`;
-  }
 
 
 }
