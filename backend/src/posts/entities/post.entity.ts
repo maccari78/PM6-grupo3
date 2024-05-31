@@ -18,30 +18,14 @@ export class Posts {
 
     //..........relations start........//
     @ManyToOne(() => User, (user) => user.post)
-    @JoinColumn({ name: "userId"})
+    @JoinColumn({  name: "userId"})
     user: User;
-
-    //Para la tablar User desde Posts:
-    //@OneToMany(() => Posts, (post) => post.user)
-    //@JoinColumn({ name: "userId", referencedColumnName: "id" })
-    //post: Posts[];
-    //..........relations end........//
- 
+    
     //..........relations start........//
     @OneToOne(() => Car)
     @JoinColumn({ name: "carId" })
-    car: Car;
-
-    // @OneToOne(() => Car, (car) => car.post)
-    // @JoinColumn({ name: "carId" })
-    // car: Car;
-
-    //Para la tablar Car desde Posts:
-    //@OneToOne(() => Posts, (post) => post.car)
-    //@JoinColumn({ name: "carId", referencedColumnName: "id" })
-    //post: Posts[];
-    //..........relations end........//
-
+    car: Car; 
+    
     @CreateDateColumn()
     created_at: Timestamp;
 

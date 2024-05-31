@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, ParseUUIDPipe } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -8,7 +8,7 @@ export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   // Seeder Controller
-  @Post('seeder')
+  @Get('seeder')
   SeederController() {
     return this.postsService.SeederService();
   }
@@ -19,28 +19,24 @@ export class PostsController {
     return this.postsService.getPostsAllServices();
   }
 
-  // @Post()
-  // create(@Body() createPostDto: CreatePostDto) {
-  //   return this.postsService.create(createPostDto);
-  // }
+  @Get(':id')
+  getPostsByIdController(@Param('id') id: string) {
+    return this.postsService.getPostsIdServices(id);
+  }
+  
+  //Controller:Create  new posts
+  @Post()
+  create(@Body() createPostDto: CreatePostDto) {
+    // return this.postsService.create(createPostDto);
+  }
 
-  // @Get()
-  // findAll() {
-  //   return this.postsService.findAll();
-  // }
+  @Put(':id')
+  putPostsByIdController(@Param("id", ParseUUIDPipe) id: string, @Body() updatePostDto: UpdatePostDto) {
+    return this.postsService.updatePostsIdServices(id, updatePostDto);
+  }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.postsService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-  //   return this.postsService.update(+id, updatePostDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.postsService.remove(+id);
-  // }
+  @Delete(':id')
+  deletePostsByIdController(@Param("id", ParseUUIDPipe) id: string) {
+    return this.postsService.deletePostsIdServices(id);
+  }
 }
