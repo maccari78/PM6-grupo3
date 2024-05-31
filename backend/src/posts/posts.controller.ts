@@ -25,10 +25,10 @@ export class PostsController {
   }
   
   //Controller:Create  new posts
-  @Post()
-  create(@Body() createPostDto: CreatePostDto) {
-    // return this.postsService.create(createPostDto);
-  }
+  // @Post()
+  // create(@Body() createPostDto: CreatePostDto) {
+  //   // return this.postsService.create(createPostDto);
+  // }
 
   @Put(':id')
   putPostsByIdController(@Param("id", ParseUUIDPipe) id: string, @Body() updatePostDto: UpdatePostDto) {

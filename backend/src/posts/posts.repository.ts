@@ -6,7 +6,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { CreatePostDto } from "./dto/create-post.dto";
 import { Car } from "src/cars/entities/car.entity";
 import * as data from "./data.json"
-import { FileUploadService } from "src/file-upload/file-upload.service";
+// import { FileUploadService } from "src/file-upload/file-upload.service";
 
 
 
@@ -25,7 +25,7 @@ export class PostsRepository {
     constructor(
         @InjectRepository(Posts) 
         private readonly postsRepository: Repository<Posts>,
-        private readonly fileUploadService: FileUploadService
+        // private readonly fileUploadService: FileUploadService
       ) {}
         
         public postsssToPreLoad = [
@@ -189,24 +189,24 @@ export class PostsRepository {
 
     //.......................//
     //Repository: Add Posts  //
-    async CreatePostsRepository(post: CreatePostDto, file?: Express.Multer.File){
-      const { title, description, price } = post;
+    // async CreatePostsRepository(post: CreatePostDto, file?: Express.Multer.File){
+    //   const { title, description, price } = post;
 
-      let imageUrl;
-      if (file) {
-        imageUrl = await this.fileUploadService.uploadProfilePicture(file, post.userId); // Use uploadProfilePicture
-      }
+    //   let imageUrl;
+    //   if (file) {
+    //     imageUrl = await this.fileUploadService.uploadProfilePicture(file, post.userId); // Use uploadProfilePicture
+    //   }
   
-      const newPost = {
-        title,
-        description,
-        price,
-        imageUrl,
-        /* other post properties */
-      };
+    //   const newPost = {
+    //     title,
+    //     description,
+    //     price,
+    //     imageUrl,
+    //     /* other post properties */
+    //   };
   
-      return await this.postsRepository.AddProductsRepository(newPost);
-    }
+    //   return await this.postsRepository.AddProductsRepository(newPost);
+    // }
   
   
 

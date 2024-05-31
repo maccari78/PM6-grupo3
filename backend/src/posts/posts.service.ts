@@ -3,13 +3,17 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import {PostsRepository} from "./posts.repository"
 import { Posts } from './entities/post.entity';
+import { Repository } from 'typeorm';
+import { Car } from 'src/cars/entities/car.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 // import { FileUploadService } from 'src/file-upload/file-upload.service';
 @Injectable()
 export class PostsService {
 
   constructor(
     private readonly postsService: PostsRepository,
-    // private readonly fileUploadService: FileUploadService,
+    @InjectRepository(Car)
+    private readonly carService: Repository<Car>,
   ) { }
 
   //Seeder Services
@@ -30,13 +34,13 @@ export class PostsService {
 
 
   //Service: Add products
-  // async AddProductsServices (posts: CreatePostDto){
+  async AddProductsServices (posts: CreatePostDto){
   //   const { title } = posts;
   //   const existProduct = await this.postsService.getProductsByName(title);
   //   if(existProduct) throw new Error("Product already exists");
     
   //   return await this.postsService.AddProductsRepository({...product});    
-  // }
+  }
 
 
 
