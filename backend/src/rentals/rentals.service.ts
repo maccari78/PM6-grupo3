@@ -20,18 +20,19 @@ export class RentalsService {
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(Posts) private postRepository: Repository<Posts>,
     @InjectRepository(Car) private carRepository: Repository<Car>,
-    private jwtService: JwtService,
+    // private jwtService: JwtService,
   ) {}
-  async create(createRentalDto: CreateRentalDto, currentUser: string) {
-    const { postId, ...rest } = createRentalDto;
-    const secret = process.env.JWT_SECRET_KEY;
-    const payload = this.jwtService.verify(currentUser, {
-      secret,
-    });
+  async create(createRentalDto: CreateRentalDto /*currentUser: string*/) {
+    const { postId, user_id, ...rest } = createRentalDto;
+    // const secret = process.env.JWT_SECRET_KEY;
+    // const payload = this.jwtService.verify(currentUser, {
+    //   secret,
+    // });
     const rental_user = await this.userRepository.findOne({
-      where: { id: payload.id },
+      where: { id: user_id },
     });
     if (!rental_user) throw new NotFoundException('Usuario no encontrado');
+
     const newRental = this.rentalRepository.create(rest);
     if (!newRental)
       throw new BadRequestException(
