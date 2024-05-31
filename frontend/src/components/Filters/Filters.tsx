@@ -1,4 +1,4 @@
-const Filters = () => {
+const Filters: React.FC = () => {
   return (
     <div className="flex flex-col w-[200px] justify-around items-center bg-[#A29E9E] px-5 py-5 rounded-lg border-solid border-2 border-[#d4e79c]">
       <div className="mb-5 w-[152px] flex flex-col justify-start">
