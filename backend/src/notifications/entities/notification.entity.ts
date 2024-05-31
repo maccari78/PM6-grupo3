@@ -1,7 +1,6 @@
 import { User } from 'src/users/entities/user.entity';
 import {
   Column,
-  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -22,10 +21,14 @@ export class Notification {
 
   @Column({
     type: 'boolean',
+    default: false,
   })
   isRead: boolean;
 
-  @CreateDateColumn()
+  @Column({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
   createdAt: Date;
 
   @ManyToOne(() => User, (user) => user.notifications)
