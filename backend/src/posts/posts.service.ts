@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import {PostsRepository} from "./posts.repository"
@@ -6,16 +6,22 @@ import { Posts } from './entities/post.entity';
 import { Repository } from 'typeorm';
 import { Car } from 'src/cars/entities/car.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CarsService } from 'src/cars/cars.service';
 // import { FileUploadService } from 'src/file-upload/file-upload.service';
+import { JwtService } from '@nestjs/jwt';
+import { User } from 'src/users/entities/user.entity';
+
 @Injectable()
 export class PostsService {
 
   constructor(
     private readonly postsService: PostsRepository,
-    @InjectRepository(Car)
-    private readonly carService: Repository<Car>,
+    @Inject()private carService: CarsService,
+    @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(Posts) private postsRepository: Repository<Posts>,
+    private jwtService: JwtService,
   ) { }
-
+  
   //Seeder Services
   async SeederService() {
     return this.postsService.SeederPostsRepository();
@@ -33,13 +39,26 @@ export class PostsService {
   }
 
 
-  //Service: Add products
-  async AddProductsServices (posts: CreatePostDto){
-  //   const { title } = posts;
-  //   const existProduct = await this.postsService.getProductsByName(title);
-  //   if(existProduct) throw new Error("Product already exists");
+  //Service: Add Posts
+  async AddPostsServices (posts: CreatePostDto,currentUser:string,files:Express.Multer.File[]){
+    const { title,description,price, ...rest } = posts;
+
+    // const secret = process.env.JWT_SECRET_KEY;
+    const secret = process.env.JWT_SECRET_KEY;
+    const payload = await this.jwtService.verify(currentUser, {
+      secret,
+    });
+    const user = await this.userRepository.findOne({
+      where: { id: payload.id },
+    });
+    if (!user) throw new NotFoundException('Usuario no encontrado');
+
+    const newCar= this.carService.createdCar(files,rest, user.id);
+    if(!newCar) throw new BadRequestException('No se pudo crear el auto');
+    const newPosts= this.postsRepository.create({title,description,price, car: newCar, user});
     
-  //   return await this.postsService.AddProductsRepository({...product});    
+    await this.postsRepository.save(newPosts);
+    return "Publicación insertada" ;    
   }
 
 

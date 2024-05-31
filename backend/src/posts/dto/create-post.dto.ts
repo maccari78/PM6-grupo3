@@ -33,9 +33,9 @@ export class CreatePostDto {
     @IsString()
     color: string;
 
-    @IsString()
-    @IsOptional()
-    @IsArray()
-    image_url: string[];
+    // @IsString()
+    // @IsOptional()
+    // @IsArray()
+    // image_url: string[];
 
 }
