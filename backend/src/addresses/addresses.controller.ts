@@ -3,40 +3,50 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
+  Query,
+  Put,
 } from '@nestjs/common';
 import { AddressesService } from './addresses.service';
 import { CreateAddressDto } from './dto/create-address.dto';
 import { UpdateAddressDto } from './dto/update-address.dto';
 
-@Controller('adresses')
+@Controller('addresses')
 export class AddressesController {
   constructor(private readonly addressesService: AddressesService) {}
 
-  @Post()
-  create(@Body() createAddressDto: CreateAddressDto) {
-    return this.addressesService.create(createAddressDto);
-  }
-
   @Get()
-  findAll() {
-    return this.addressesService.findAll();
+  getAddresses(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+  ) {
+    return this.addressesService.getAddresses(page, limit);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.addressesService.findOne(+id);
+  getAddressById(@Param('id') id: string) {
+    return this.addressesService.getAddressById(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAddressDto: UpdateAddressDto) {
-    return this.addressesService.update(+id, updateAddressDto);
+  @Post(':id')
+  async newAddress(
+    @Body() createAddressDto: CreateAddressDto,
+    @Param('id') id: string,
+  ) {
+    return this.addressesService.newAddress(id, createAddressDto);
+  }
+
+  @Put(':id')
+  updateAddress(
+    @Param('id') id: string,
+    @Body() updateAddressDto: UpdateAddressDto,
+  ) {
+    return this.addressesService.updateAddress(id, updateAddressDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.addressesService.remove(+id);
+  deleteAddress(@Param('id') id: string) {
+    return this.addressesService.deleteAddress(id);
   }
 }
