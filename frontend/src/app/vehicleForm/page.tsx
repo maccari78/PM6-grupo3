@@ -43,15 +43,57 @@ const VehicleForm = () => {
         }));
     }
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const validationErrors = validate(vehicleData);
         setErrors(validationErrors);
 
         if (Object.keys(validationErrors).length === 0) {
-            console.log("Form submitted successfully", vehicleData);
+            try {
+                const uploadedImages = await Promise.all(
+                    Array.from(vehicleData.image!).map(async (file) => {
+                        const formData = new FormData();
+                        formData.append("file", file);
+                        formData.append("upload_preset", "g3henry"); 
+
+                        const res = await fetch(
+                            "https://api.cloudinary.com/v1_1/Untitled/image/upload", 
+                            {
+                                method: "POST",
+                                body: formData,
+                            }
+                        );
+
+                        const data = await res.json();
+                        console.log(data)
+                        return data.secure_url;
+                    })
+                );
+
+                const vehicleDataWithImages = {
+                    ...vehicleData,
+                    image: uploadedImages
+                };
+
+                const response = await fetch("/api/vehicles", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(vehicleDataWithImages),
+                });
+
+                if (response.ok) {
+                    alert("Vehículo publicado con éxito");
+                } else {
+                    alert("Error al publicar el vehículo");
+                }
+            } catch (error) {
+                console.error("Error al subir las imágenes o publicar el vehículo", error);
+            }
         }
     };
+
 
     return (
         <div className="bg-[#2c2c2c] font-sans text-white">
