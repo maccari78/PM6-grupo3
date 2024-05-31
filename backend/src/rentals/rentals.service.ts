@@ -18,8 +18,8 @@ export class RentalsService {
   constructor(
     @InjectRepository(Rental) private rentalRepository: Repository<Rental>,
     @InjectRepository(User) private userRepository: Repository<User>,
-    @InjectRepository(Car) private carRepository: Repository<Car>,
     @InjectRepository(Posts) private postRepository: Repository<Posts>,
+    @InjectRepository(Car) private carRepository: Repository<Car>,
     private jwtService: JwtService,
   ) {}
   async create(createRentalDto: CreateRentalDto, currentUser: string) {
@@ -49,6 +49,8 @@ export class RentalsService {
     });
     if (!findCar) throw new NotFoundException('Vehiculo no encontrado');
     // LOGICA DE PAGO!!!! SI ES TRUE PASO AL SIGUIENTE PASO!
+    // asdjaksdjaskj
+    // ad
     const carUpdate = await this.carRepository.update(findPost.car.id, {
       availability: false,
     });
@@ -75,7 +77,7 @@ export class RentalsService {
   async findOne(id: string) {
     const contract = await this.rentalRepository.findOne({
       where: { id },
-      relations: ['car', 'leasing_user', 'rental_user'],
+      relations: ['car', 'users'],
     });
     if (!contract) throw new NotFoundException('Contrato no encontrado');
     return contract;

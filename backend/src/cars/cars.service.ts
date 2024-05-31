@@ -136,16 +136,23 @@ export class CarsService {
     return newCar;
   }
 
-  async createdCar(createCarDto: CreateCarDto, id: string) {
-    const { image_url, ...rest } = createCarDto;
+  async createdCar(
+    files: Express.Multer.File[],
+    car: CreateCarDto,
+    id: string,
+  ) {
+    `FIND WHERE ID = ${id}`;
     const user = await this.usersRepository.findOneBy({ id });
     if (!user) throw new NotFoundException('Usuario no encontrado');
-    const newCar = await this.carsRepository.save({ ...rest, user });
+    const newCar = await this.carsRepository.save({ user, ...car });
     if (!newCar) throw new BadRequestException('Error al crear el auto');
-    const createdPicture = await this.fileUploadService.uploadProfilePicture(
-      createCarDto.image_url,
+    const createdPicture = await this.fileUploadService.uploadVehicleImages(
       id,
+      files,
     );
+    if (createdPicture.length === 0)
+      throw new BadRequestException('Error al subir la imagen');
+    return createdPicture;
   }
 
   async findAll() {
