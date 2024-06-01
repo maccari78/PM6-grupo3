@@ -24,7 +24,7 @@ export class CarsService {
   constructor(
     @InjectRepository(Car) private carsRepository: Repository<Car>,
     @InjectRepository(User) private usersRepository: Repository<User>,
-    @Inject() private fileUploadService: FileUploadService,
+    private fileUploadService: FileUploadService,
   ) {}
   public cars = [
     {
@@ -138,7 +138,7 @@ export class CarsService {
 
   async createdCar(
     files: Express.Multer.File[],
-    car: CreateCarDto,
+    car: Omit<CreateCarDto, 'image_url'>,
     id: string,
   ) {
     `FIND WHERE ID = ${id}`;
@@ -147,7 +147,7 @@ export class CarsService {
     const newCar = await this.carsRepository.save({ user, ...car });
     if (!newCar) throw new BadRequestException('Error al crear el auto');
     const createdPicture = await this.fileUploadService.uploadVehicleImages(
-      id,
+      newCar.id,
       files,
     );
     if (createdPicture.image_url.length === 0)

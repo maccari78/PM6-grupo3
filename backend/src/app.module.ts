@@ -13,7 +13,7 @@ import { PostsModule } from './posts/posts.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { FileUploadModule } from './file-upload/file-upload.module';
 // import { AuthModule } from './auth/auth.module';
-import * as morgan from 'morgan';
+import morgan from 'morgan';
 
 @Module({
   imports: [

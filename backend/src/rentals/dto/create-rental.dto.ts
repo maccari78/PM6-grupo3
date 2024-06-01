@@ -1,15 +1,18 @@
-import { IsDate, IsNotEmpty, IsNumber } from 'class-validator';
+import { IsDate, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateRentalDto {
-  @IsDate()
+  @IsString()
   @IsNotEmpty()
   rentalStartDate: string;
 
-  @IsDate()
+  @IsString()
   @IsNotEmpty()
   rentalEndDate: string;
 
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
   postId: string;
+
+  @IsString()
+  user_id: string;
 }
