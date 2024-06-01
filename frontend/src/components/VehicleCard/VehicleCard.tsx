@@ -21,7 +21,7 @@ const VehicleCard: React.FC<ICar> = ({
           className="rounded-t-xl h-full w-full"
         />
       </div>
-      <div className="w-[85%] h-[152px] items-center  mt-4">
+      <div className="w-[85%] h-[152px] items-center   mt-4">
         <div className="flex  justify-between h-[full] w-full">
           <h1 className="text-xl font-semibold  text-gray-300">
             {carBrand} {carModel} {carYear}
