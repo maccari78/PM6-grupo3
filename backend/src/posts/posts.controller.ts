@@ -23,25 +23,26 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 @Controller('posts')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
+                                              
+  //Controllers | Seeder
+  @Get('seeder')
+  SeederController() {
+    return this.postsService.SeederPostsServices();
+  }
 
-  // // Seeder Controller
-  // @Get('seeder')
-  // SeederController() {
-  //   return this.postsService.SeederService();
-  // }
+  //Controllers | Get All posts 
+  @Get()
+  getPostsAllController() {
+    return this.postsService.getPostsAllServices();
+  }
 
-  // // Get All posts controller
-  // @Get()
-  // getPostsAllController() {
-  //   return this.postsService.getPostsAllServices();
-  // }
+  //Controllers | Get posts by Id   
+  @Get(':id')
+  getPostsByIdController(@Param('id') id: string) {
+    return this.postsService.getPostsServiceId(id);
+  }
 
-  // @Get(':id')
-  // getPostsByIdController(@Param('id') id: string) {
-  //   return this.postsService.getPostsIdServices(id);
-  // }
-
-  //Controller:Create  new posts
+  //Controllers | Create new posts
   @Post()
   @UseInterceptors(FilesInterceptor('file', 5))
   create(
@@ -66,13 +67,15 @@ export class PostsController {
     return this.postsService.AddPostsServices(createPostDto, /*token*/ files);
   }
 
-  // @Put(':id')
-  // putPostsByIdController(@Param("id", ParseUUIDPipe) id: string, @Body() updatePostDto: UpdatePostDto) {
-  //   return this.postsService.updatePostsIdServices(id, updatePostDto);
-  // }
 
-  // @Delete(':id')
-  // deletePostsByIdController(@Param("id", ParseUUIDPipe) id: string) {
-  //   return this.postsService.deletePostsIdServices(id);
-  // }
+  //Controllers | Update posts by Id
+  @Put(':id')
+  putPostsByIdController(@Param("id", ParseUUIDPipe) id: string, @Body() updatePostDto: UpdatePostDto) {
+    return this.postsService.UpdatePostsServices(id, updatePostDto);
+  }
+
+  @Delete(':id')
+  deletePostsByIdController(@Param("id", ParseUUIDPipe) id: string) {
+    return this.postsService.DeletePostsServices(id);
+  }
 }
