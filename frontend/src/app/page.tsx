@@ -4,7 +4,7 @@ export default function Home() {
   return (
     <div className="bg-[#444343] text-white flex flex-col  min-h-screen">
       <section className="md:h-[900px] w-full flex justify-center">
-        <div className="md:h-full h-[250px]  w-full bg-no-repeat bg-contain shadow-xl md:bg-cover bg-[url('../../public/imagenBanner2.jpg')] flex md:justify-center items-center ">
+        <div className="md:h-full h-[250px]  w-full bg-no-repeat bg-contain md:shadow-xl md:bg-cover bg-[url('../../public/imagenBanner2.jpg')] flex md:justify-center items-center ">
           <div className="flex flex-col ml-5 md:ml-0 md:mr-96 justify-between items-center">
             <div className="rounded-2xl border-gray-300 border-2 md:border-4 md:mb-4 backdrop-blur-md">
               <h1 className="md:text-7xl text-base font-medium px-2 py-2 md:px-4 md:py-4  text-gray-300 text-center antialiased">
