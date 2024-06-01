@@ -165,6 +165,3 @@ Si hay conflictos durante el merge, resuélvelos en tu máquina local y realiza 
 
 - Siempre revisa y prueba tu código antes de abrir un PR.
 
-## Consult an IA
-Buen dia! Este es nuestro proyecto 'YouDrive' en un repositorio de Github 'https://github.com/maccari78/PM6-grupo3', el mismo es un web app de alquiler de automoviles creada con NestJS y NextJS, tenemos ramas 'main', 'develop' y dependientes de develop una para cada desarrollador (Somos 7, 3 frontenders y 4 backenders).
-Podes analizarlo y decirme porque sale el siguiente error y como solucionarlo?
