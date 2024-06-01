@@ -1,23 +1,30 @@
-// import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
-// import { AuthGuard } from '@nestjs/passport';
+import { Controller, Get, Req, UseGuards } from "@nestjs/common";
+import { GoogleAuthGuard } from "./utils/Guards";
+import { Request } from "express";
 
-// @Controller('auth')
-// export class AuthController {
-//   @Get('login')
-//   @UseGuards(AuthGuard('auth0'))
-//   login() {
-//     // Auth0 login will redirect here
-//   }
+@Controller('auth')
+export class AuthController {
 
-//   @Get('callback')
-//   @UseGuards(AuthGuard('auth0'))
-//   callback(@Req() req, @Res() res) {
-//     res.redirect('/');
-//   }
+    @Get('google/login')
+    @UseGuards(GoogleAuthGuard)
+    handleLogin() {
+        return { msg: 'Google Authentication' }
+    }
 
-//   @Get('logout')
-//   logout(@Req() req, @Res() res) {
-//     req.logout();
-//     res.redirect('/');
-//   }
-// }
+    @Get('google/redirect')
+    @UseGuards(GoogleAuthGuard)
+    handleRedirect() {
+        return { msg: 'OK' }
+    }
+
+    @Get('status')
+    user(@Req() request: Request) {
+        console.log(request.user);
+        if (request.user) {
+            return { msg: 'Authenticated' }
+        } else {
+            return { msg: 'Not Authenticated' }
+        }
+    }
+
+}

@@ -1,30 +1,28 @@
-// import { Injectable } from '@nestjs/common';
-// import * as passport from 'passport';
-// import { Strategy as Auth0Strategy } from 'passport-auth0';
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { User } from "../users/entities/user.entity";
+import { UserDetails } from "src/utils/types";
+import { Repository } from "typeorm";
 
-// @Injectable()
-// export class AuthService {
-//   constructor() {
-//     passport.use(
-//       new Auth0Strategy(
-//         {
-//           domain: process.env.AUTH0_ISSUER_BASE_URL,
-//           clientID: process.env.AUTH0_CLIENT_ID,
-//           clientSecret: process.env.AUTH0_CLIENT_SECRET,
-//           callbackURL: `${process.env.AUTH0_BASE_URL}/callback`,
-//         },
-//         (accessToken, refreshToken, extraParams, profile, done) => {
-//           return done(null, profile);
-//         },
-//       ),
-//     );
+@Injectable()
+export class AuthService {
 
-//     passport.serializeUser((user, done) => {
-//       done(null, user);
-//     });
+    constructor(@InjectRepository(User) private readonly userRepository: Repository<User>) { }
 
-//     passport.deserializeUser((user, done) => {
-//       done(null, user);
-//     });
-//   }
-// }
+    async validateUser(details: UserDetails) {
+        console.log('AuthService');
+        console.log(details);
+        const user = await this.userRepository.findOneBy({ email: details.email })
+        console.log(user);
+
+        if (user) return user
+        console.log('User not found. Creating...');
+
+        const newUser = this.userRepository.create(details)
+        return this.userRepository.save(newUser)
+    }
+    async findUser(id: string) {
+        const user = await this.userRepository.findOneBy({ id })
+        return user
+    }
+}

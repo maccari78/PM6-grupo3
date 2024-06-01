@@ -12,8 +12,9 @@ import { ConfigTypOrmModule } from './config/configTypOrm.module';
 import { PostsModule } from './posts/posts.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { FileUploadModule } from './file-upload/file-upload.module';
-// import { AuthModule } from './auth/auth.module';
+import { AuthModule } from './auth/auth.module';
 import morgan from 'morgan';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
@@ -28,7 +29,8 @@ import morgan from 'morgan';
     CarsModule,
     ReviewsModule,
     FileUploadModule,
-    // AuthModule,
+    AuthModule,
+    PassportModule.register({ session: true }),
   ],
   controllers: [AppController],
   providers: [AppService],
