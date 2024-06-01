@@ -57,7 +57,7 @@ const VehicleForm = () => {
                         formData.append("upload_preset", "g3henry"); 
 
                         const res = await fetch(
-                            "https://api.cloudinary.com/v1_1/Untitled/image/upload", 
+                            "https://api.cloudinary.com/v1_1/dkent00db/image/upload", 
                             {
                                 method: "POST",
                                 body: formData,
