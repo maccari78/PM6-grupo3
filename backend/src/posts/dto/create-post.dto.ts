@@ -45,6 +45,7 @@ export class CreatePostDto {
 
   @IsString()
   user_id: string;
+  
   // @IsString()
   // @IsOptional()
   // @IsArray()
