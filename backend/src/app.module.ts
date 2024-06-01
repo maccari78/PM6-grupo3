@@ -12,9 +12,10 @@ import { ConfigTypOrmModule } from './config/configTypOrm.module';
 import { PostsModule } from './posts/posts.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { FileUploadModule } from './file-upload/file-upload.module';
-import { AuthModule } from './auth/auth.module';
 import morgan from 'morgan';
 import { PassportModule } from '@nestjs/passport';
+import { GoogleStrategy } from './auth/utils/GoogleStrategy';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -30,13 +31,15 @@ import { PassportModule } from '@nestjs/passport';
     ReviewsModule,
     FileUploadModule,
     AuthModule,
-    PassportModule.register({ session: true }),
+    PassportModule.register({ defaultStrategy: 'google' }), 
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, GoogleStrategy],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(morgan('dev')).forRoutes('*');
   }
 }
+
+
