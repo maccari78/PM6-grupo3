@@ -29,6 +29,15 @@ export class User {
   @Column()
   password: string;
 
+  @Column({ type: 'int', default: 0 })
+  nDni: number;
+
+  @Column({ nullable: true })
+  rExpiration: string;
+
+  @Column({ type: 'bigint', nullable: true })
+  phone: number;
+
   @Column({
     default:
       'https://res-console.cloudinary.com/dkent00db/thumbnails/v1/image/upload/v1717035367/aWNvbi03Nzk3NzA0XzY0MF9mb2ZjOGk=/drilldown',

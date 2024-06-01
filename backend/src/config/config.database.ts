@@ -13,7 +13,7 @@ const configDatabase = {
   entities: ['dist/**/*.entity{.ts,.js}'],
   synchronize: true,
   logging: true,
-  //dropSchema: true,
+  // dropSchema: true,
   migrations: ['dist/migrations/*.{ts,js}'],
 };
 
