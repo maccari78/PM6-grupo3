@@ -96,7 +96,7 @@ const VehicleForm = () => {
 
 
     return (
-        <div className="bg-[#2c2c2c] font-sans text-white">
+        <div className="bg-gradient-to-bl from-[#222222] to-[#313139]  font-sans text-white">
             <div className="flex flex-col gap-2 p-4 items-center">
                 <h1 className=" text-4xl font-semibold mt-6">¡Publica tu vehículo ahora!</h1>
                 <span className="text-xl">Rápido, sencillo, y gratuito.</span>

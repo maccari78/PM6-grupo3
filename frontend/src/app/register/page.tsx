@@ -52,11 +52,6 @@ const Register = () => {
   return (
     <>
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-bl from-[#222222] to-[#313139] font-sans text-white">
-        <img
-          src="imagenBanner2.jpg"
-          alt="imagen"
-          className="hidden md:absolute h-full w-full object-cover z-0"/>
-
         <div className="max-w-xl mx-auto p-8 flex-wrap z-10 bg-[#222222] rounded-lg ">
           <h2 className="text-2xl font-bold mb-6 text-center">Registrarse</h2>
           <div
@@ -168,9 +163,6 @@ const Register = () => {
           </form>
         </div>
       </div>
-
-
-
     </>
   );
 };
