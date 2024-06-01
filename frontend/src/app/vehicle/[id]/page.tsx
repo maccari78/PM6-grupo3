@@ -44,7 +44,7 @@ const VehicleDetail = ({ params }: { params: { id: number } }) => {
 
       <div className="flex  flex-col md:flex-row w-[60%] justify-between my-5">
         <div className="flex flex-col justify-around h-[350px] max-h-[100%]">
-          <div className="flex flex-col px-4 py-4 border-b-[1px] border-b-gray-200">
+          <div className="flex flex-col  pb-4 border-b-[1px] border-b-gray-200">
             <h1 className="text-lg md:text-2xl font-semibold text-gray-100">
               Descripcion
             </h1>
@@ -55,7 +55,7 @@ const VehicleDetail = ({ params }: { params: { id: number } }) => {
               </li>
             </ul>
           </div>
-          <div className="flex flex-col px-4 py-4">
+          <div className="flex flex-col  py-4">
             <h1 className="text-xl md:text-2xl text-gray-100 font-semibold ">
               Datos del vehiculo
             </h1>
