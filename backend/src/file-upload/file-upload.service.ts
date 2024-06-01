@@ -59,7 +59,7 @@ export class FileUploadService {
       public_id: publicIds,
     });
 
-    const updatedCar = this.carsRepository.findOneBy({ id: vehicleId });
+    const updatedCar = await this.carsRepository.findOneBy({ id: vehicleId });
 
     return updatedCar;
   }

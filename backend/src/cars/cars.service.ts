@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -8,6 +9,8 @@ import { UpdateCarDto } from './dto/update-cars.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Car } from './entities/car.entity';
 import { Repository } from 'typeorm';
+import { FileUploadService } from 'src/file-upload/file-upload.service';
+import { User } from 'src/users/entities/user.entity';
 export interface FiltersCars {
   brand: string;
   model: string;
@@ -18,7 +21,11 @@ export interface FiltersCars {
 }
 @Injectable()
 export class CarsService {
-  constructor(@InjectRepository(Car) private carsRepository: Repository<Car>) {}
+  constructor(
+    @InjectRepository(Car) private carsRepository: Repository<Car>,
+    @InjectRepository(User) private usersRepository: Repository<User>,
+    private fileUploadService: FileUploadService,
+  ) {}
   public cars = [
     {
       brand: 'BMW',
@@ -129,6 +136,25 @@ export class CarsService {
     return newCar;
   }
 
+  async createdCar(
+    files: Express.Multer.File[],
+    car: Omit<CreateCarDto, 'image_url'>,
+    id: string,
+  ) {
+    `FIND WHERE ID = ${id}`;
+    const user = await this.usersRepository.findOneBy({ id });
+    if (!user) throw new NotFoundException('Usuario no encontrado');
+    const newCar = await this.carsRepository.save({ user, ...car });
+    if (!newCar) throw new BadRequestException('Error al crear el auto');
+    const createdPicture = await this.fileUploadService.uploadVehicleImages(
+      newCar.id,
+      files,
+    );
+    if (createdPicture.image_url.length === 0)
+      throw new BadRequestException('Error al subir la imagen');
+    return createdPicture;
+  }
+
   async findAll() {
     const cars = await this.carsRepository.find();
     if (!cars) throw new NotFoundException('No se encontraron autos');
@@ -194,7 +220,7 @@ export class CarsService {
     if (!car) throw new NotFoundException('Auto no encontrado');
     const updateCar = await this.carsRepository.update(id, updateCarDto);
 
-    if (!updateCar) {
+    if (updateCar.affected === 0) {
       throw new BadRequestException('El auto no fue actualizado');
     }
     return 'Auto actualizado exitosamente';
@@ -204,7 +230,7 @@ export class CarsService {
     const car = await this.carsRepository.findOneBy({ id });
     if (!car) throw new NotFoundException('Auto no encontrado');
     const deleteCar = await this.carsRepository.delete(id);
-    if (!deleteCar) {
+    if (deleteCar.affected === 0) {
       throw new BadRequestException('El auto no fue eliminado');
     }
     return 'Auto eliminado exitosamente';

@@ -1,31 +1,31 @@
-const Filters = () => {
+const Filters: React.FC = () => {
   return (
-    <div className="flex flex-col w-[200px] justify-around items-center bg-[#A29E9E] px-5 py-5 rounded-lg border-solid border-2 border-[#d4e79c]">
+    <div className="flex flex-col mb-5 md:mb-0 md:w-[200px] justify-around items-center bg-[#A29E9E] px-5 py-5 rounded-lg border-solid border-2 border-[#d4e79c]">
       <div className="mb-5 w-[152px] flex flex-col justify-start">
         <h1 className="text-lg text-[#C4FF0D]">Marca</h1>
         <ul>
           <li>
-            <a href="" className="text-[#222222]">
+            <a href="" className="text-[#222222] text-sm md:text-base ">
               Kia
             </a>
           </li>
           <li>
-            <a href="" className="text-[#222222]">
+            <a href="" className="text-[#222222] text-sm md:text-base">
               Chevrolet
             </a>
           </li>
           <li>
-            <a href="" className="text-[#222222]">
+            <a href="" className="text-[#222222] text-sm md:text-base">
               Mazda
             </a>
           </li>
           <li>
-            <a href="" className="text-[#222222]">
+            <a href="" className="text-[#222222] text-sm md:text-base">
               Ford
             </a>
           </li>
           <li>
-            <a href="" className="text-[#222222]">
+            <a href="" className="text-[#222222] text-sm md:text-base">
               Nissan
             </a>
           </li>
@@ -45,7 +45,7 @@ const Filters = () => {
               />
               <label
                 htmlFor="green-checkbox"
-                className="ms-2 text-base  text-[#222222]"
+                className="ms-2 text-sm md:text-base  text-[#222222]"
               >
                 Azul
               </label>
@@ -61,7 +61,7 @@ const Filters = () => {
               />
               <label
                 htmlFor="green-checkbox"
-                className="ms-2 text-base text-[#222222]"
+                className="ms-2 text-sm md:text-base text-[#222222]"
               >
                 Verde
               </label>
@@ -77,7 +77,7 @@ const Filters = () => {
               />
               <label
                 htmlFor="black-checkbox"
-                className="ms-2 text-base  text-[#222222]"
+                className="ms-2 text-sm md:text-base  text-[#222222]"
               >
                 Negro
               </label>
@@ -93,7 +93,7 @@ const Filters = () => {
               />
               <label
                 htmlFor="black-checkbox"
-                className="ms-2 text-base  text-[#222222]"
+                className="ms-2 text-sm md:text-base text-[#222222]"
               >
                 Blanco
               </label>
@@ -109,7 +109,7 @@ const Filters = () => {
               />
               <label
                 htmlFor="red-checkbox"
-                className="ms-2 text-base  text-[#222222]"
+                className="ms-2 text-sm md:text-base  text-[#222222]"
               >
                 Rojo
               </label>
@@ -122,31 +122,31 @@ const Filters = () => {
         <h1 className="text-lg text-[#C4FF0D]">Tipo</h1>
         <ul>
           <li>
-            <a href="" className="text-[#222222]">
+            <a href="" className="text-[#222222] text-sm md:text-base">
               4*4
             </a>
           </li>
           <li>
             {" "}
-            <a href="" className="text-[#222222]">
+            <a href="" className="text-[#222222] text-sm md:text-base">
               SUV
             </a>
           </li>
           <li>
             {" "}
-            <a href="" className="text-[#222222]">
+            <a href="" className="text-[#222222] text-sm md:text-base">
               Sedan
             </a>
           </li>
           <li>
             {" "}
-            <a href="" className="text-[#222222]">
+            <a href="" className="text-[#222222] text-sm md:text-base">
               Deportivos
             </a>
           </li>
           <li>
             {" "}
-            <a href="" className="text-[#222222]">
+            <a href="" className="text-[#222222] text-sm md:text-base">
               Camionetas
             </a>
           </li>
