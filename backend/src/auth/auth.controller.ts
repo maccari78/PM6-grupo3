@@ -1,23 +1,18 @@
-// import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
-// import { AuthGuard } from '@nestjs/passport';
+import { Body, Controller, Post } from '@nestjs/common';
+import { AuthService } from './auth.service';
+import { CreateUserDto, signIn } from 'src/users/dto/create-user.dto';
 
-// @Controller('auth')
-// export class AuthController {
-//   @Get('login')
-//   @UseGuards(AuthGuard('auth0'))
-//   login() {
-//     // Auth0 login will redirect here
-//   }
+@Controller('auth')
+export class AuthController {
+  constructor(private authService: AuthService) {}
 
-//   @Get('callback')
-//   @UseGuards(AuthGuard('auth0'))
-//   callback(@Req() req, @Res() res) {
-//     res.redirect('/');
-//   }
+  @Post('signin')
+  signIn(@Body() user: signIn) {
+    return this.authService.signIn(user);
+  }
 
-//   @Get('logout')
-//   logout(@Req() req, @Res() res) {
-//     req.logout();
-//     res.redirect('/');
-//   }
-// }
+  @Post('signup')
+  signUp(@Body() user: CreateUserDto) {
+    return this.authService.signUp(user);
+  }
+}
