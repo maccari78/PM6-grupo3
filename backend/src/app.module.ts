@@ -1,6 +1,4 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { RentalsModule } from './rentals/rentals.module';
 import { AddressesModule } from './addresses/addresses.module';
@@ -12,7 +10,6 @@ import { ConfigTypOrmModule } from './config/configTypOrm.module';
 import { PostsModule } from './posts/posts.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { FileUploadModule } from './file-upload/file-upload.module';
-// import { AuthModule } from './auth/auth.module';
 import morgan from 'morgan';
 
 @Module({
@@ -28,10 +25,9 @@ import morgan from 'morgan';
     CarsModule,
     ReviewsModule,
     FileUploadModule,
-    // AuthModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
