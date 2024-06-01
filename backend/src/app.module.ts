@@ -10,6 +10,7 @@ import { ConfigTypOrmModule } from './config/configTypOrm.module';
 import { PostsModule } from './posts/posts.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { FileUploadModule } from './file-upload/file-upload.module';
+import { AuthModule } from './auth/auth.module';
 import morgan from 'morgan';
 
 @Module({
@@ -25,6 +26,7 @@ import morgan from 'morgan';
     CarsModule,
     ReviewsModule,
     FileUploadModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],

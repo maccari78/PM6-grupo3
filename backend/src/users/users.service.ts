@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -20,7 +21,7 @@ export class UsersService {
     { email: 'jorge@mail.com', name: 'jorge', password: '3456' },
   ];
   constructor(
-    @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(User) private usersRepository: Repository<User>,
   ) {}
   create(createUserDto: CreateUserDto) {
     return 'This action adds a new user';
@@ -29,7 +30,7 @@ export class UsersService {
   async seeder() {
     Promise.all(
       this.user.map(async (user) => {
-        await this.userRepository.save(user);
+        await this.usersRepository.save(user);
         return 'Usuarios creados con exito';
       }),
     );
@@ -38,8 +39,8 @@ export class UsersService {
     return `This action returns all users`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(email: string): Promise<User | undefined> {
+    return this.usersRepository.findOne({ where: { email } });
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
