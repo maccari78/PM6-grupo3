@@ -43,6 +43,10 @@ export class UsersService {
     return this.usersRepository.findOne({ where: { email } });
   }
 
+  async findOneById(id: number): Promise<User | undefined> {
+    return this.usersRepository.findOne({ where: { id: id.toString() } });
+  }
+
   update(id: number, updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} user`;
   }

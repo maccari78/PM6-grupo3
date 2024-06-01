@@ -4,16 +4,7 @@ import { Notification } from 'src/notifications/entities/notification.entity';
 import { Posts } from 'src/posts/entities/post.entity';
 import { Rental } from 'src/rentals/entities/rental.entity';
 import { Review } from 'src/reviews/entities/review.entity';
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  OneToMany,
-  JoinColumn,
-  ManyToMany,
-} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany, JoinColumn, ManyToMany} from 'typeorm';
 
 @Entity('users')
 export class User {

@@ -11,7 +11,7 @@ import { AuthController } from './auth.controller';
     UsersModule,
     PassportModule,
     JwtModule.register({
-      secret: 'SECRET_KEY', // Reemplaza con una clave secreta fuerte
+      secret: 'SECRET_KEY', 
       signOptions: { expiresIn: '60s' },
     }),
   ],
