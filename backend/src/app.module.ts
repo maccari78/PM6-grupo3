@@ -12,9 +12,11 @@ import { ConfigTypOrmModule } from './config/configTypOrm.module';
 import { PostsModule } from './posts/posts.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { FileUploadModule } from './file-upload/file-upload.module';
-// import { AuthModule } from './auth/auth.module';
 import { MailModule } from './mail/mail.module';
 import morgan from 'morgan';
+import { AuthModule } from './auth/auth.module';
+import { JwtConfigModule } from './config/jwt.module';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
@@ -30,7 +32,9 @@ import morgan from 'morgan';
     ReviewsModule,
     FileUploadModule,
     MailModule,
-    // AuthModule,
+    AuthModule,
+    JwtConfigModule,
+    PassportModule.register({ session: true }),
   ],
   controllers: [AppController],
   providers: [AppService],

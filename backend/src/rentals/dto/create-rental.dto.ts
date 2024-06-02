@@ -12,7 +12,4 @@ export class CreateRentalDto {
   @IsString()
   @IsNotEmpty()
   postId: string;
-
-  @IsString()
-  user_id: string;
 }

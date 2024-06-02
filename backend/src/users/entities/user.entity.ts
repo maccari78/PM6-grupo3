@@ -26,10 +26,10 @@ export class User {
   @Column()
   name: string;
 
-  @Column()
+  @Column({ nullable: true })
   password: string;
 
-  @Column({ type: 'int', default: 0 })
+  @Column({ type: 'int', nullable: true })
   nDni: number;
 
   @Column({ nullable: true })
@@ -48,6 +48,9 @@ export class User {
     default: null,
   })
   public_id: string;
+
+  @Column({ default: false })
+  userGoogle: boolean;
 
   @ManyToMany(() => Rental, (rental) => rental.users)
   rentals: Rental[];
