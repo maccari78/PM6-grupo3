@@ -20,7 +20,7 @@ export class Review {
   @Column({ type: 'int', nullable: false })
   rating: number;
 
-  @Column({ type: 'text', nullable: false })
+  @Column({ type: 'text', nullable: true })
   comment: string;
 
   //..........relations start........//
