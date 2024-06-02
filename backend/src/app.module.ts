@@ -1,6 +1,4 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { RentalsModule } from './rentals/rentals.module';
 import { AddressesModule } from './addresses/addresses.module';
@@ -36,8 +34,8 @@ import { PassportModule } from '@nestjs/passport';
     JwtConfigModule,
     PassportModule.register({ session: true }),
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
