@@ -59,8 +59,8 @@ export class AuthService {
     });
     newUser.addresses = [newAdress];
     await this.userRepository.save(newUser);
-
-    return newUser;
+    // ENVIO DE EMAIL!
+    return { message: 'Usuario registrado con exito!' };
   }
   async validateUser(user: UserGoogle) {
     console.log('AuthService');

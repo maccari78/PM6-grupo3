@@ -3,11 +3,13 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
+import { FileUploadService } from 'src/file-upload/file-upload.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
+    private fileUploadService: FileUploadService,
   ) {}
 
   async findAll() {
@@ -32,13 +34,27 @@ export class UsersService {
     return user;
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
+  async update(
+    id: string,
+    updateUserDto: UpdateUserDto,
+    file?: Express.Multer.File,
+  ) {
     const user = await this.userRepository.findOneBy({ id });
     if (!user) throw new NotFoundException('Usuario no encontrado');
     const updateUser = await this.userRepository.update(id, updateUserDto);
     if (updateUser.affected === 0)
       throw new NotFoundException('Error al actualizar usuario');
-    return 'Usuario actualizado con exito';
+    if (!file) {
+      return 'Usuario actualizado con exito';
+    }
+    const uploadedImage = await this.fileUploadService.uploadProfilePicture(
+      file,
+      user.id,
+    );
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...rest } = uploadedImage;
+    return { message: 'Usuario actualizado con exito', ...rest };
   }
 
   async remove(id: string) {
