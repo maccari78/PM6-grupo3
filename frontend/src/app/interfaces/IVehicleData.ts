@@ -1,12 +1,12 @@
 interface IVehicleData {
     title: string;
     description: string;
-    price: string;
+    price: number;
     color: string;
-    vehicleModel: string;
+    model: string;
     image: FileList | null;
     brand: string;
-    vehicleYear: string;
+    year: number;
     mileage: string;
 }
 

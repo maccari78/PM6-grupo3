@@ -12,12 +12,12 @@ const VehicleForm = () => {
     const [vehicleData, setVehicleData] = useState<IVehicleData>({
         title: '',
         description: '',
-        price: '',
+        price: 0,
         color: '',
-        vehicleModel: '',
+        model: '',
         image: null,
         brand: '',
-        vehicleYear: '',
+        year: 0,
         mileage: '',
     })
 
@@ -171,30 +171,30 @@ const VehicleForm = () => {
                     <div className="mb-4">
                         <label className="text-slate-50">Modelo</label>
                         <input
-                            name='vehicleModel'
+                            name='model'
                             type="text"
-                            value={vehicleData.vehicleModel}
+                            value={vehicleData.model}
                             onChange={handleChange}
                             onBlur={handleBlur}
                             required
                             className="w-full px-3 mt-3 py-2 border rounded text-[#222222]"
                         />
-                        {errors.vehicleModel && <span className="text-red-500">{errors.vehicleModel}</span>}
+                        {errors.model && <span className="text-red-500">{errors.model}</span>}
                     </div>
                 </div>
                 <div className="flex gap-8">
                     <div className="mb-4 w-1/2">
                         <label className="text-slate-50">Año</label>
                         <input
-                            name='vehicleYear'
+                            name='year'
                             type="number"
-                            value={vehicleData.vehicleYear}
+                            value={vehicleData.year}
                             onChange={handleChange}
                             onBlur={handleBlur}
                             required
                             className="w-full px-3 mt-3 py-2 border rounded text-[#222222]"
                         />
-                        {errors.vehicleYear && <span className="text-red-500">{errors.vehicleYear}</span>}
+                        {errors.year && <span className="text-red-500">{errors.year}</span>}
                     </div>
                     <div className="mb-4 w-1/2">
                         <label className="text-slate-50">Kilometraje</label>
