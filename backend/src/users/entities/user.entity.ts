@@ -52,6 +52,9 @@ export class User {
   @Column({ default: false })
   userGoogle: boolean;
 
+  @Column({ type: 'text', nullable: true })
+  aboutMe: string;
+
   @ManyToMany(() => Rental, (rental) => rental.users)
   rentals: Rental[];
 

@@ -1,4 +1,5 @@
-import { PartialType, PickType } from '@nestjs/swagger';
+import { PickType } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import {
   IsEmail,
   IsNotEmpty,
@@ -24,6 +25,7 @@ export class CreateUserDto {
 
   @IsNumber()
   @IsNotEmpty()
+  @Transform((value) => Number(value))
   nDni: number;
 
   @IsString()
@@ -31,6 +33,7 @@ export class CreateUserDto {
 
   @IsNumber()
   @IsNotEmpty()
+  @Transform((value) => Number(value))
   phone: number;
 
   // ABAJO ES ADRESS
