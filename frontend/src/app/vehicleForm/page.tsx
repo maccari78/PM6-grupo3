@@ -3,6 +3,7 @@ import validate from "@/helpers/validate";
 import { useState } from "react";
 import IVehicleData from "../interfaces/IVehicleData";
 import IErrorsVehicleForm from "../interfaces/IErrorsVehicleForm";
+import axios from 'axios';
 
 
 const VehicleForm = () => {
@@ -49,48 +50,46 @@ const VehicleForm = () => {
         setErrors(validationErrors);
 
         if (Object.keys(validationErrors).length === 0) {
-            try {
-                const uploadedImages = await Promise.all(
-                    Array.from(vehicleData.image!).map(async (file) => {
-                        const formData = new FormData();
-                        formData.append("file", file);
-                        formData.append("upload_preset", "g3henry"); 
 
-                        const res = await fetch(
-                            "https://api.cloudinary.com/v1_1/dkent00db/image/upload", 
-                            {
-                                method: "POST",
-                                body: formData,
-                            }
-                        );
+            // const uploadedImages = await Promise.all(
+            //     Array.from(vehicleData.image!).map(async (file) => {
+            //         const formData = new FormData();
+            //         formData.append("file", file);
+            //         formData.append("upload_preset", "g3henry"); 
 
-                        const data = await res.json();
-                        console.log(data)
-                        return data.secure_url;
-                    })
-                );
+            //         const res = await fetch(
+            //             "https://api.cloudinary.com/v1_1/dkent00db/image/upload", 
+            //             {
+            //                 method: "POST",
+            //                 body: formData,
+            //             }
+            //         );
 
-                const vehicleDataWithImages = {
-                    ...vehicleData,
-                    image: uploadedImages
-                };
+            //         const data = await res.json();
+            //         console.log(data)
+            //         return data.secure_url;
+            //     })
+            // );
 
-                const response = await fetch("/api/vehicles", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(vehicleDataWithImages),
+            // const vehicleDataWithImages = {
+            //     ...vehicleData,
+            //     image: uploadedImages
+            // };
+
+            axios.post('http://localhost:3001/posts', vehicleData
+            )
+                .then(response => {
+                    if (response.data.success) {
+                        alert(`El vehiculo se ha publicado correctamente`);
+                    } else {
+                        alert(response.data.message);
+                    }
+                })
+                .catch(error => {
+                    alert('Ha ocurrido un error en la conexión');
+                    console.error('Error:', error);
                 });
 
-                if (response.ok) {
-                    alert("Vehículo publicado con éxito");
-                } else {
-                    alert("Error al publicar el vehículo");
-                }
-            } catch (error) {
-                console.error("Error al subir las imágenes o publicar el vehículo", error);
-            }
         }
     };
 
@@ -220,6 +219,8 @@ const VehicleForm = () => {
                         required
                         multiple
                         className="w-full px-3 mt-3 py-4 border rounded text-slate-50"
+                        onChange={handleChange}
+                        onBlur={handleBlur}
                     />
                     {errors.image && <span className="text-red-500">{errors.image}</span>}
                 </div>
