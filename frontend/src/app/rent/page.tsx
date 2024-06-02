@@ -1,8 +1,12 @@
+import Sidebar from '@/components/DashboardComponents/Sidebar';
 import React from 'react';
 
 const DashboardVendedor: React.FC = () => {
   return (
-    <div className="p-4">
+    <>
+    <div className='bg-[#313139]'>
+    <Sidebar/>    
+    <div className="p-4 max-w-6xl mx-auto rounded-xl bg-[#313139]">
       {/* Sección de bienvenida */}
       <div className="bg-white rounded-lg shadow-md p-6 mb-6 flex justify-between items-center">
         <div>
@@ -75,7 +79,9 @@ const DashboardVendedor: React.FC = () => {
         </div>
       </div>
     </div>
-  );
+    </div>
+    </>
+    );
 };
 
 // Componente para mostrar una venta reciente
@@ -117,6 +123,7 @@ const ListedCarCard: React.FC<ListedCarCardProps> = ({ carModel, price, imageUrl
       </div>
     </div>
   </div>
+  
 );
 
 // Componente para mostrar estadísticas de ventas
