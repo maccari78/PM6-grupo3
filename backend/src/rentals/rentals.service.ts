@@ -12,6 +12,11 @@ import { User } from 'src/users/entities/user.entity';
 import { Car } from 'src/cars/entities/car.entity';
 import { Posts } from 'src/posts/entities/post.entity';
 import { JwtService } from '@nestjs/jwt';
+import {
+  GoogleTokenPayload,
+  JwtPayload,
+} from './interfaces/payload.interfaces';
+import { OAuth2Client } from 'google-auth-library';
 
 @Injectable()
 export class RentalsService {
@@ -20,16 +25,32 @@ export class RentalsService {
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(Posts) private postRepository: Repository<Posts>,
     @InjectRepository(Car) private carRepository: Repository<Car>,
-    // private jwtService: JwtService,
+    private jwtService: JwtService,
   ) {}
-  async create(createRentalDto: CreateRentalDto /*currentUser: string*/) {
-    const { postId, user_id, ...rest } = createRentalDto;
-    // const secret = process.env.JWT_SECRET_KEY;
-    // const payload = this.jwtService.verify(currentUser, {
-    //   secret,
-    // });
+  async create(createRentalDto: CreateRentalDto, currentUser: string) {
+    const { postId, ...rest } = createRentalDto;
+    const decode = this.jwtService.decode(currentUser, {
+      complete: true,
+    });
+    console.log(decode);
+
+    if (!decode) {
+      return await this.createWhithGoogle(currentUser, rest, postId);
+    }
+    const secret = process.env.JWT_SECRET_KEY;
+    const payload: JwtPayload = this.jwtService.verify(currentUser, {
+      secret,
+    });
+    return await this.createWhithJWT(payload, rest, postId);
+  }
+
+  async createWhithJWT(
+    payload: JwtPayload,
+    rest: Omit<CreateRentalDto, 'postId'>,
+    postId: string,
+  ) {
     const rental_user = await this.userRepository.findOne({
-      where: { id: user_id },
+      where: { id: payload.sub },
     });
     if (!rental_user) throw new NotFoundException('Usuario no encontrado');
 
@@ -50,8 +71,58 @@ export class RentalsService {
     });
     if (!findCar) throw new NotFoundException('Vehiculo no encontrado');
     // LOGICA DE PAGO!!!! SI ES TRUE PASO AL SIGUIENTE PASO!
-    // asdjaksdjaskj
-    // ad
+    const carUpdate = await this.carRepository.update(findPost.car.id, {
+      availability: false,
+    });
+    if (carUpdate.affected === 0)
+      throw new BadRequestException('Error al actualizar el vehiculo');
+
+    newRental.car = findPost.car;
+
+    const rental = await this.rentalRepository.save(newRental);
+    if (!rental)
+      throw new BadRequestException(
+        'Error al crear el contrato, verifique las relaciones con otras entidades',
+      );
+    return 'Contrato creado con exito';
+  }
+  async createWhithGoogle(
+    currentUser: string,
+    rest: Omit<CreateRentalDto, 'postId'>,
+    postId: string,
+  ) {
+    const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+    const client = new OAuth2Client(CLIENT_ID);
+
+    const ticket = await client.verifyIdToken({
+      idToken: currentUser,
+      audience: CLIENT_ID,
+    });
+    if (!ticket) throw new NotFoundException('Token no valido');
+    const payload: GoogleTokenPayload = ticket.getPayload();
+    console.log(payload);
+    const rental_user = await this.userRepository.findOne({
+      where: { email: payload.email },
+    });
+    if (!rental_user) throw new NotFoundException('Usuario no encontrado');
+
+    const newRental = this.rentalRepository.create(rest);
+    if (!newRental)
+      throw new BadRequestException(
+        'Error al crear el contrato, verifique los datos',
+      );
+    const findPost = await this.postRepository.findOne({
+      where: { id: postId },
+      relations: ['car', 'user'],
+    });
+    if (!findPost)
+      throw new NotFoundException('Publicación no encontrada en la BD');
+    newRental.users = [rental_user, findPost.user];
+    const findCar = this.carRepository.findOne({
+      where: { id: findPost.car.id },
+    });
+    if (!findCar) throw new NotFoundException('Vehiculo no encontrado');
+    // LOGICA DE PAGO!!!! SI ES TRUE PASO AL SIGUIENTE PASO!
     const carUpdate = await this.carRepository.update(findPost.car.id, {
       availability: false,
     });
