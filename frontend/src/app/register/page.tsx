@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from "react";
 import IUserData from "../interfaces/IRegisterProps";
 import { validateRegister } from "@/helpers/validateRegister";
-import Image from "next/image";
 import axios from "axios";
 
 interface IErrors {
