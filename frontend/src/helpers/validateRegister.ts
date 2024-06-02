@@ -1,5 +1,5 @@
-import IRegisterErrorProps from "@/app/interfaces/IRegisterErrorProps";
-import IRegisterProps from "@/app/interfaces/IRegisterProps";
+import IRegisterErrorProps from "@/interfaces/IRegisterErrorProps";
+import IRegisterProps from "@/interfaces/IRegisterProps";
 
 export const validateRegister = (values: IRegisterProps): IRegisterErrorProps => {
     let errors:any = [];

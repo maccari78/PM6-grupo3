@@ -1,9 +1,9 @@
 'use client'
 import React, { useEffect, useState } from "react";
-import IUserData from "../interfaces/IRegisterProps";
+import IUserData from "../../interfaces/IRegisterProps";
 import { validateRegister } from "@/helpers/validateRegister";
 import axios from "axios";
-import IRegisterErrorProps from "../interfaces/IRegisterErrorProps";
+import IRegisterErrorProps from "../../interfaces/IRegisterErrorProps";
 
 const Register = () => {
 
