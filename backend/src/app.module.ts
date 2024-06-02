@@ -1,9 +1,9 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { RentalsModule } from './rentals/rentals.module';
-import { AdressesModule } from './adresses/adresses.module';
+import { AddressesModule } from './addresses/addresses.module';
 import { CommentsModule } from './comments/comments.module';
 import { CarsModule } from './cars/cars.module';
 import { ReviewsModule } from './reviews/reviews.module';
@@ -12,6 +12,11 @@ import { ConfigTypOrmModule } from './config/configTypOrm.module';
 import { PostsModule } from './posts/posts.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { FileUploadModule } from './file-upload/file-upload.module';
+import { MailModule } from './mail/mail.module';
+import morgan from 'morgan';
+import { AuthModule } from './auth/auth.module';
+import { JwtConfigModule } from './config/jwt.module';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
@@ -21,13 +26,21 @@ import { FileUploadModule } from './file-upload/file-upload.module';
     NotificationsModule,
     UsersModule,
     RentalsModule,
-    AdressesModule,
+    AddressesModule,
     CommentsModule,
     CarsModule,
     ReviewsModule,
     FileUploadModule,
+    MailModule,
+    AuthModule,
+    JwtConfigModule,
+    PassportModule.register({ session: true }),
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(morgan('dev')).forRoutes('*');
+  }
+}
