@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Notification } from './entities/notification.entity';
 import { Repository } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class NotificationsService {
@@ -12,6 +13,7 @@ export class NotificationsService {
     @InjectRepository(Notification)
     private readonly notificationsRepository: Repository<Notification>,
     @InjectRepository(User) private readonly userRepository: Repository<User>,
+    private readonly mailService: MailService,
   ) {}
   async getNotifications(page: number, limit: number) {
     const notifications = await this.notificationsRepository.find({
@@ -35,17 +37,16 @@ export class NotificationsService {
     return notification;
   }
 
-  async newNotification(
-    id: string,
-    createNotificationDto: CreateNotificationDto,
-  ) {
-    const user = await this.userRepository.findOneBy({ id });
+  async newNotification(email: string, template: string) {
+    const user = await this.userRepository.findOneBy({ email });
 
     if (!user) throw new NotFoundException('Usuario no encontrado');
 
-    const notification = this.notificationsRepository.create(
-      createNotificationDto,
-    );
+    await this.mailService.sendEmail(user.email, template);
+
+    const notification = this.notificationsRepository.create({
+      template_message: template,
+    });
 
     notification.user = user;
 

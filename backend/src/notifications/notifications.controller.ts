@@ -28,12 +28,10 @@ export class NotificationsController {
     return this.notificationsService.getNotificationById(id);
   }
 
-  @Post(':id')
-  newNotification(
-    @Param('id') id: string,
-    @Body() createNotificationDto: CreateNotificationDto,
-  ) {
-    return this.notificationsService.newNotification(id, createNotificationDto);
+  @Post()
+  newNotification(@Body() createNotificationDto: CreateNotificationDto) {
+    const { email, template_message } = createNotificationDto;
+    return this.notificationsService.newNotification(email, template_message);
   }
 
   @Put(':id')
