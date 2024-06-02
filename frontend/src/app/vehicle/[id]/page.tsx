@@ -1,8 +1,8 @@
 const VehicleDetail = ({ params }: { params: { id: number } }) => {
   return (
-    <div className="bg-[#444343] flex flex-col items-center min-h-screen">
-      <div className="flex flex-col md:flex-row w-[60%] justify-between my-5">
-        <div className="flex flex-col justify-start ">
+    <div className="bg-[#444343] flex flex-col items-center md:flex-row  md:items-start justify-evenly min-h-screen">
+      <div className="flex flex-col w-[70%] md:w-[40%] justify-between my-5">
+        <div className="flex flex-col md:justify-start ">
           <h1 className=" text-lg md:text-3xl font-semibold text-gray-100">
             Alquilo Ford F-150 modelo 2018
           </h1>
@@ -14,35 +14,7 @@ const VehicleDetail = ({ params }: { params: { id: number } }) => {
             />
           </div>
         </div>
-        <div className="flex flex-col rounded-b-xl md:w-[295px] min-w-[200px] h-[200px] items-center justify-center bg-[#222222] px-5 py-5 md:h-[230px] md:rounded-xl border-b-[2px] md:border-t-[2px] boder-gray-300">
-          <div className="flex flex-row items-center ">
-            <svg
-              className="w-4 h-4  md:w-6  md:h-6 text-[#C4FF0D] "
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              viewBox="0 0 18 20"
-            >
-              <path d="M16 0H4a2 2 0 0 0-2 2v1H1a1 1 0 0 0 0 2h1v2H1a1 1 0 0 0 0 2h1v2H1a1 1 0 0 0 0 2h1v2H1a1 1 0 0 0 0 2h1v1a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-5.5 4.5a3 3 0 1 1 0 6 3 3 0 0 1 0-6ZM13.929 17H7.071a.5.5 0 0 1-.5-.5 3.935 3.935 0 1 1 7.858 0 .5.5 0 0 1-.5.5Z" />
-            </svg>
-            <h1 className="ml-2 md:ml-3 text-base md:text-2xl text-gray-100 font-semibold">
-              Propietario
-            </h1>
-          </div>
-          <div className="my-5">
-            <ol>
-              <li className="text-gray-300 text-sm md:text-base mb-5">
-                Nombre: Camilo Sierra
-              </li>
-              <li className="text-gray-300 text-sm md:text-base mb-5">
-                Email: camilosierra@example.com
-              </li>
-            </ol>
-          </div>
-        </div>
-      </div>
 
-      <div className="flex  flex-col md:flex-row w-[60%] justify-between my-5">
         <div className="flex flex-col justify-around h-[350px] max-h-[100%]">
           <div className="flex flex-col  pb-4 border-b-[1px] border-b-gray-200">
             <h1 className="text-lg md:text-2xl font-semibold text-gray-100">
@@ -64,8 +36,8 @@ const VehicleDetail = ({ params }: { params: { id: number } }) => {
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#4bb214"
+                  fill="#C4FF0D"
+                  stroke="#222222"
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -88,8 +60,8 @@ const VehicleDetail = ({ params }: { params: { id: number } }) => {
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#4bb214"
+                  fill="#C4FF0D"
+                  stroke="#222222"
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -112,8 +84,8 @@ const VehicleDetail = ({ params }: { params: { id: number } }) => {
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#4bb214"
+                  fill="#C4FF0D"
+                  stroke="#222222"
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -136,8 +108,8 @@ const VehicleDetail = ({ params }: { params: { id: number } }) => {
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#4bb214"
+                  fill="#C4FF0D"
+                  stroke="#222222"
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -163,8 +135,8 @@ const VehicleDetail = ({ params }: { params: { id: number } }) => {
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#4bb214"
+                  fill="#C4FF0D"
+                  stroke="#222222"
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -185,8 +157,8 @@ const VehicleDetail = ({ params }: { params: { id: number } }) => {
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#4bb214"
+                  fill="#C4FF0D"
+                  stroke="#222222"
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -209,7 +181,37 @@ const VehicleDetail = ({ params }: { params: { id: number } }) => {
             </ul>
           </div>
         </div>
-        <div className="flex flex-col md:w-[295px] h-[290px] bg-[#222222] px-5 py-5 border-b-[2px] border-t-[2px] rounded-xl border-gray-300 items-center ">
+      </div>
+
+      <div className="flex  flex-col w-[70%] md:w-[30%] justify-between items-center my-5">
+        <div className="flex flex-col rounded-t-xl md:w-[295px] w-full h-[200px] items-center justify-center bg-[#222222] px-5 py-5 md:h-[230px]  border-t-[2px] boder-gray-300">
+          <div className="flex flex-row items-center ">
+            <svg
+              className="w-4 h-4  md:w-6  md:h-6 text-[#C4FF0D] "
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              viewBox="0 0 18 20"
+            >
+              <path d="M16 0H4a2 2 0 0 0-2 2v1H1a1 1 0 0 0 0 2h1v2H1a1 1 0 0 0 0 2h1v2H1a1 1 0 0 0 0 2h1v2H1a1 1 0 0 0 0 2h1v1a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-5.5 4.5a3 3 0 1 1 0 6 3 3 0 0 1 0-6ZM13.929 17H7.071a.5.5 0 0 1-.5-.5 3.935 3.935 0 1 1 7.858 0 .5.5 0 0 1-.5.5Z" />
+            </svg>
+            <h1 className="ml-2 md:ml-3 text-base md:text-2xl text-gray-100 font-semibold">
+              Propietario
+            </h1>
+          </div>
+          <div className="my-5">
+            <ol>
+              <li className="text-gray-300 text-sm md:text-base mb-5">
+                Nombre: Camilo Sierra
+              </li>
+              <li className="text-gray-300 text-sm md:text-base mb-5">
+                Email: camilosierra@example.com
+              </li>
+            </ol>
+          </div>
+        </div>
+
+        <div className="flex flex-col rounded-b-xl w-full md:w-[295px] h-[290px] bg-[#222222] px-5 py-5 border-b-[2px]  border-gray-300 items-center ">
           <div className="flex flex-col items-center">
             <div className="flex flex-row items-center">
               <svg
