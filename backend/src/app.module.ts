@@ -17,6 +17,7 @@ import morgan from 'morgan';
 import { AuthModule } from './auth/auth.module';
 import { JwtConfigModule } from './config/jwt.module';
 import { PassportModule } from '@nestjs/passport';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { PassportModule } from '@nestjs/passport';
     AuthModule,
     JwtConfigModule,
     PassportModule.register({ session: true }),
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService],
