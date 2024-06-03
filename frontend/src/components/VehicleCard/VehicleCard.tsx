@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { ICar } from "./interfaces/ICar";
 import Link from "next/link";
 
@@ -17,10 +16,10 @@ const VehicleCard: React.FC<ICar> = ({
     <div className="flex flex-col items-center h-[400px] min-h-[100px]  w-[350px]  mb-5 bg-[#222222] rounded-xl shadow-xl">
       <div className="h-[196px] w-full">
         <img
-          src={carImg}
+          src={carImg[0]}
           alt="You Drive car"
           className="rounded-t-xl h-full w-full"
-          />
+        />
       </div>
       <div className="w-[85%] h-[152px] items-center   mt-4">
         <div className="flex  justify-between h-[full] w-full">

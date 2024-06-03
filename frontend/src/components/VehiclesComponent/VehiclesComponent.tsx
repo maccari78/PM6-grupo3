@@ -1,9 +1,7 @@
-import { useEffect } from "react";
 import VehicleCard from "../VehicleCard/VehicleCard";
 import { IPost } from "./interfaces/IPost";
 
 const VehiclesComponent: React.FC<{ posts: IPost[] }> = ({ posts }) => {
-
   return (
     <div className="flex justify-evenly  flex-wrap">
       {posts.map((post: IPost) => {
@@ -13,12 +11,12 @@ const VehiclesComponent: React.FC<{ posts: IPost[] }> = ({ posts }) => {
             id={post.id}
             description={post.description}
             carId={post.car.id}
-            carImg={post.car.image_url[0]}
+            carImg={post.car.image_url}
             carBrand={post.car.brand}
             carModel={post.car.model}
             carYear={post.car.year}
             carMileage={post.car.mileage}
-            carPrice={post.car.price}
+            carPrice={post.price}
           />
         );
       })}
