@@ -1,7 +1,58 @@
+"use client"
 import Sidebar from '@/components/DashboardComponents/Sidebar';
-import React from 'react';
+import { IUserData } from '@/interfaces/IUser';
+import { redirect, useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 
 const DashboardVendedor: React.FC = () => {
+  const [userToken, setUserToken] = useState<string | null>(null);
+  const [userData, setUserData] = useState<IUserData | null >(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.localStorage) {
+      const userSession = localStorage.getItem("userSession");
+      if (userSession) {
+        const parsedSession = JSON.parse(userSession);
+        setUserToken(parsedSession.token);  
+      } else {
+        alert("Necesitas estar logueado para ingresar");
+        redirect("/login")
+      }
+    }
+  }, [router]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`http://localhost:3001/users/token`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('Error fetching user data');
+        }
+
+        const data = await response.json();
+        setUserData(data);
+      } catch (error:any) {
+        throw new Error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (userToken) {
+      fetchData();
+    }
+  }, [userToken]);
+
   return (
     <>
     <div className='bg-[#313139]'>
@@ -10,7 +61,7 @@ const DashboardVendedor: React.FC = () => {
       {/* Sección de bienvenida */}
       <div className="bg-white rounded-lg shadow-md p-6 mb-6 flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Bienvenido, [Nombre del Vendedor]</h1>
+          <h1 className="text-2xl font-bold text-gray-800">Bienvenido, {userData?.name}</h1>
           <p className="text-gray-600 mt-2">Estamos encantados de verte de nuevo. Aquí tienes un resumen de tu actividad reciente y herramientas para gestionar tus ventas.</p>
         </div>
         <button className="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-700">

@@ -4,10 +4,11 @@ import StatCard from './StatCard';
 import ReservationCard from './ReservationCard';
 import PublicationCard from './PublicationCard';
 import { redirect, useRouter } from 'next/navigation';
+import { IUserData } from '@/interfaces/IUser';
 
 const DashboardComprador: React.FC = () => {
-  const [userToken, setUserToken] = useState<string>();
-  const [userData, setUserData] = useState<any>(null);
+  const [userToken, setUserToken] = useState<string | null>(null);
+  const [userData, setUserData] = useState<IUserData | null >(null);
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
 
@@ -19,7 +20,7 @@ const DashboardComprador: React.FC = () => {
         setUserToken(parsedSession.token);  
       } else {
         alert("Necesitas estar logueado para ingresar");
-        router.push("/login");
+        redirect("/login")
       }
     }
   }, [router]);
@@ -54,8 +55,6 @@ const DashboardComprador: React.FC = () => {
     }
   }, [userToken]);
 
-  console.log(userToken);
-  console.log(userData);
   return (
     <>
     <div className='p-4 bg-[#313139]'>
@@ -64,7 +63,7 @@ const DashboardComprador: React.FC = () => {
     <div className="max-w-6xl mx-auto rounded-xl bg-[#313139]">
       {/* Sección de bienvenida */}
       <div className="bg-[#333333] rounded-lg shadow-md p-6 mb-2">
-        <h1 className="text-3xl font-bold text-gray-200">Bienvenido, <span className='text-[#C4FF0D]'>[Nombre de Usuario]!</span></h1>
+        <h1 className="text-3xl font-bold text-gray-200">Bienvenido, <span className='text-[#C4FF0D]'>{userData?.name}!</span></h1>
         <p className="text-gray-300 mt-2">Estamos encantados de tenerte de vuelta. Aquí tienes un resumen de tus actividades recientes.</p>
         <button className="mt-4 bg-[#232326] text-white px-4 py-2 rounded-full hover:bg-gray-700">
           Crear Nueva Publicación
@@ -132,7 +131,7 @@ const DashboardComprador: React.FC = () => {
         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <StatCard
             title="Total de Reservas"
-            value="12"
+            value={String(userData?.rentals.length)}
             description="Número total de reservas realizadas."
           />
           <StatCard
@@ -142,7 +141,7 @@ const DashboardComprador: React.FC = () => {
           />
           <StatCard
             title="Reseñas Recibidas"
-            value="8"
+            value={String(userData?.reviews.length)}
             description="Número total de reseñas recibidas."
           />
           {/* Agrega más StatCards según sea necesario */}
