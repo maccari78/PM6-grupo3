@@ -17,7 +17,7 @@ const Login = () => {
     password: "",
   });
  
-  const [session, setSession] = useState({ token: null, user: null });
+  const [session, setSession] = useState({ token: null});
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserData({
@@ -49,9 +49,9 @@ const Login = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const json = await response.json();
-      const { token, user } = json;
-      localStorage.setItem("userSession", JSON.stringify({ token, userData: user }));
-      setSession({ token, user });
+      const token = json;
+      localStorage.setItem("userSession", JSON.stringify({token}));
+      setSession({ token});
       alert("login success");
       router.push("/");
     } catch (error) {
