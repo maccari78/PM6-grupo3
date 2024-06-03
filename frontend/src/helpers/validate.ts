@@ -37,8 +37,8 @@ const validate = (data: IVehicleData) => {
         errors.mileage = 'Este campo es requerido';
     }
 
-    if (!data.image) {
-        errors.image = 'Este campo es requerido';
+    if (!data.file) {
+        errors.file = 'Este campo es requerido';
     }
 
     return errors;
