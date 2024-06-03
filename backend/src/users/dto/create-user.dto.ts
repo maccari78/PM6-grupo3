@@ -25,15 +25,15 @@ export class CreateUserDto {
 
   @IsNumber()
   @IsNotEmpty()
-  @Transform((value) => Number(value))
+  // @Transform((value) => Number(value))
   nDni: number;
 
-  @IsString()
-  rExpiration: string;
+  // @IsString()
+  // rExpiration: string;
 
   @IsNumber()
   @IsNotEmpty()
-  @Transform((value) => Number(value))
+  // @Transform((value) => Number(value))
   phone: number;
 
   // ABAJO ES ADRESS

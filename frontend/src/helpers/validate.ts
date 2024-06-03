@@ -12,7 +12,7 @@ const validate = (data: IVehicleData) => {
         errors.description = 'Este campo es requerido';
     }
 
-    if (!data.price || parseFloat(data.price) <= 0)  {
+    if (!data.price || (data.price) <= 0)  {
         errors.price = 'El precio debe ser un número positivo';
     }
 
@@ -20,8 +20,8 @@ const validate = (data: IVehicleData) => {
         errors.color = 'Este campo es requerido';
     }
 
-    if (!data.vehicleModel || data.vehicleModel.trim() === '') {
-        errors.vehicleModel = 'Este campo es requerido';
+    if (!data.model || data.model.trim() === '') {
+        errors.model = 'Este campo es requerido';
     }
 
     if (!data.brand || data.brand.trim() === '') {
@@ -29,7 +29,7 @@ const validate = (data: IVehicleData) => {
     }
 
     const currentYear = new Date().getFullYear();
-    if (!data.vehicleYear || parseInt(data.vehicleYear) < 1886 || parseInt(data.vehicleYear) > currentYear + 1) {
+    if (!data.year || data.year < 1886 || data.year > currentYear + 1) {
         errors.vehicleYear = 'El año debe ser un número válido';
     }
 
