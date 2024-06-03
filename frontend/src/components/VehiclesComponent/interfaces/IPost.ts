@@ -2,6 +2,7 @@ export interface IPost {
   id: string;
   title: string;
   description: string;
+  price: number;
   user: {
     id: string;
     name: string;
@@ -14,8 +15,7 @@ export interface IPost {
     year: number;
     mileage: string;
     color: string;
-    price: number;
     availability: boolean;
-    image_url: string;
+    image_url: string[];
   };
 }

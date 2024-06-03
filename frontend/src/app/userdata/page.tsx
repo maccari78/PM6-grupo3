@@ -118,7 +118,7 @@ const UserProfile: React.FC = () => {
         </div>
       </div>
       </div>
-            </div>
+    </div>
       </>
     );
   };
