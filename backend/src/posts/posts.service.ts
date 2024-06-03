@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-
 import { Posts } from './entities/post.entity';
 import { Repository } from 'typeorm';
 import { Car } from 'src/cars/entities/car.entity';
@@ -20,7 +19,7 @@ import { User } from 'src/users/entities/user.entity';
 @Injectable()
 export class PostsService {
   constructor(
-    private readonly carService: CarsService,
+    private readonly carService: CarsService,   
     @InjectRepository(Posts) private postRepository: Repository<Posts>,
     @InjectRepository(User) private userRepository: Repository<User>,
     // private jwtService: JwtService,
@@ -156,21 +155,16 @@ export class PostsService {
   }
 
   //Services | Add Posts
-  async AddPostsServices(
-    posts: CreatePostDto,
-    // currentUser: string,
-    files?: Express.Multer.File[],
-  ) {
+  async AddPostsServices(posts: CreatePostDto,
+     /*currentUser: string,*/ files?: Express.Multer.File[],) {
     const { title, description, price, user_id, ...rest } = posts;
 
-    // const secret = process.env.JWT_SECRET_KEY;
+    
     // const secret = process.env.JWT_SECRET_KEY;
     // const payload = await this.jwtService.verify(currentUser, {
     //   secret,
     // });
-    const user = await this.userRepository.findOne({
-      where: { id: user_id },
-    });
+    const user = await this.userRepository.findOne({ where: { id: user_id },});
     if (!user) throw new NotFoundException('Usuario no encontrado');
 
     const newCar = await this.carService.createdCar(files, rest, user.id);
@@ -178,9 +172,9 @@ export class PostsService {
     const newPosts = this.postRepository.create({ title, description, price });
     newPosts.car = newCar;
     newPosts.user = user;
-
+    
     await this.postRepository.save(newPosts);
-    return 'Publicación insertada';
+    return 'Publicación agregada exitosamente';
   }
 
   //Services | Update posts by Id
