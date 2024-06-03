@@ -35,6 +35,7 @@ export class Car {
 
   @Column({
     type: 'varchar',
+    array: true,
     default: [
       'https://res.cloudinary.com/dkent00db/image/upload/f_auto,q_auto/v1/image%20car%20placeholder/fpm93xvjp26mpdde0ses',
     ],
@@ -44,6 +45,7 @@ export class Car {
   @Column({
     type: 'varchar',
     default: null,
+    array: true,
   })
   public_id: string[];
 

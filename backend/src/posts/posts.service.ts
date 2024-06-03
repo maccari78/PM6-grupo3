@@ -16,6 +16,8 @@ import { CarsService } from 'src/cars/cars.service';
 // import { FileUploadService } from 'src/file-upload/file-upload.service';
 // import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/users/entities/user.entity';
+import { JwtPayload } from 'src/rentals/interfaces/payload.interfaces';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class PostsService {
@@ -23,7 +25,7 @@ export class PostsService {
     private readonly carService: CarsService,
     @InjectRepository(Posts) private postRepository: Repository<Posts>,
     @InjectRepository(User) private userRepository: Repository<User>,
-    // private jwtService: JwtService,
+    private jwtService: JwtService,
   ) {}
 
   public postsssToPreLoad = [
@@ -158,18 +160,18 @@ export class PostsService {
   //Services | Add Posts
   async AddPostsServices(
     posts: CreatePostDto,
-    // currentUser: string,
+    currentUser: string,
     files?: Express.Multer.File[],
   ) {
-    const { title, description, price, user_id, ...rest } = posts;
+    const { title, description, price, ...rest } = posts;
 
-    // const secret = process.env.JWT_SECRET_KEY;
-    // const secret = process.env.JWT_SECRET_KEY;
-    // const payload = await this.jwtService.verify(currentUser, {
-    //   secret,
-    // });
+    const secret = process.env.JWT_SECRET_KEY;
+    const payload: JwtPayload = await this.jwtService.verify(currentUser, {
+      secret,
+    });
+    if (!payload) throw new BadRequestException('token invalido 3');
     const user = await this.userRepository.findOne({
-      where: { id: user_id },
+      where: { id: payload.sub },
     });
     if (!user) throw new NotFoundException('Usuario no encontrado');
 

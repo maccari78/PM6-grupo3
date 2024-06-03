@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { UserGoogle } from './types/userGoogle.type';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Injectable()
 export class AuthService {
@@ -14,10 +15,14 @@ export class AuthService {
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(Address) private addressRepository: Repository<Address>,
     private jwtService: JwtService,
+    private notificationService: NotificationsService,
   ) {}
   async signIn(user: signIn) {
     const { email, password } = user;
-    const userDB = await this.userRepository.findOneBy({ email });
+    const userDB = await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.email = :email', { email: email })
+      .getOne();
     if (!userDB) throw new BadRequestException('Credenciales incorrectas');
     if (userDB.userGoogle)
       throw new BadRequestException(
@@ -27,7 +32,11 @@ export class AuthService {
     if (!pass) throw new BadRequestException('Credenciales incorrectas');
     const payload = { sub: userDB.id, email: userDB.email };
     const token = this.jwtService.sign(payload);
-    return { message: 'Login exitoso', token: token };
+
+    if (!token) {
+      throw new BadRequestException('token invalido');
+    }
+    return token;
   }
 
   async signUp(user: CreateUserDto) {
@@ -41,7 +50,7 @@ export class AuthService {
     if (duplicateUser)
       throw new BadRequestException('El ya se encuentra registrado');
 
-    const { email, name, password, nDni,  phone, ...rest } = user;
+    const { email, name, password, nDni, phone, ...rest } = user;
     const newUser = this.userRepository.create({
       email,
       name,
@@ -59,7 +68,13 @@ export class AuthService {
     newUser.addresses = [newAdress];
     await this.userRepository.save(newUser);
     // ENVIO DE EMAIL!
+    await this.notificationService.newNotification(email, 'welcome');
     return { message: 'Usuario registrado con exito!' };
+  }
+  async generateJwtToken(user: Omit<UserGoogle, 'token'>) {
+    const payload = { email: user.email, name: user.displayName };
+
+    return this.jwtService.sign(payload);
   }
   async validateUser(user: UserGoogle) {
     console.log('AuthService');
@@ -69,22 +84,26 @@ export class AuthService {
       .getOne();
     console.log(findUser, 'BUSQUEDA FALLLIA O NO?');
     console.log(user.token, 'ESTE ES EL TOKEN');
-    if (findUser)
+    if (!findUser) {
       return {
         message: 'Inicio de sesión exitosamente mediante Google',
         token: user.token,
       };
-    console.log(
-      'Usuario no encontrado. Ingresando datos en la base de datos....',
-    );
+    } else {
+      console.log(
+        'Usuario no encontrado. Ingresando datos en la base de datos....',
+      );
 
-    const newUser = this.userRepository.create({
-      email: user.email,
-      name: user.displayName,
-      image_url: user.image_url,
-      userGoogle: true,
-    });
-    return await this.userRepository.save(newUser);
+      const newUser = this.userRepository.create({
+        email: user.email,
+        name: user.displayName,
+        image_url: user.image_url,
+        userGoogle: true,
+      });
+      await this.notificationService.newNotification(user.email, 'welcome');
+
+      return await this.userRepository.save(newUser);
+    }
   }
   async findUser(id: string) {
     console.log(id);

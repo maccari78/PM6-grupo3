@@ -43,9 +43,9 @@ export class CreatePostDto {
   @IsString()
   color: string;
 
-  @IsString()
-  user_id: string;
-  
+  // @IsString()
+  // user_id: string;
+
   // @IsString()
   // @IsOptional()
   // @IsArray()

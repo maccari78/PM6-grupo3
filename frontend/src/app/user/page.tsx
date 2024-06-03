@@ -1,5 +1,5 @@
 import Sidebar from '@/components/DashboardComponents/Sidebar';
-import DashboardComprador from '@/components/DashboardComponents/paginats';
+import DashboardComprador from '@/components/DashboardComponents/DashboardComprador';
 import React, { FC } from 'react';
 
 const Userpage: FC = () => {

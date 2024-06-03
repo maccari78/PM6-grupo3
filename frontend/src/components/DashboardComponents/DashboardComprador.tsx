@@ -1,6 +1,60 @@
-import React from 'react';
+'use client'
+import React, { useEffect, useState } from 'react';
+import StatCard from './StatCard';
+import ReservationCard from './ReservationCard';
+import PublicationCard from './PublicationCard';
+import { redirect, useRouter } from 'next/navigation';
+import { IUserData } from '@/interfaces/IUser';
 
 const DashboardComprador: React.FC = () => {
+  const [userToken, setUserToken] = useState<string | null>(null);
+  const [userData, setUserData] = useState<IUserData | null >(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.localStorage) {
+      const userSession = localStorage.getItem("userSession");
+      if (userSession) {
+        const parsedSession = JSON.parse(userSession);
+        setUserToken(parsedSession.token);  
+      } else {
+        alert("Necesitas estar logueado para ingresar");
+        redirect("/login")
+      }
+    }
+  }, [router]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`http://localhost:3001/users/token`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('Error fetching user data');
+        }
+
+        const data = await response.json();
+        setUserData(data);
+      } catch (error:any) {
+        throw new Error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (userToken) {
+      fetchData();
+    }
+  }, [userToken]);
+
   return (
     <>
     <div className='p-4 bg-[#313139]'>
@@ -9,7 +63,7 @@ const DashboardComprador: React.FC = () => {
     <div className="max-w-6xl mx-auto rounded-xl bg-[#313139]">
       {/* Sección de bienvenida */}
       <div className="bg-[#333333] rounded-lg shadow-md p-6 mb-2">
-        <h1 className="text-3xl font-bold text-gray-200">Bienvenido, <span className='text-[#C4FF0D]'>[Nombre de Usuario]!</span></h1>
+        <h1 className="text-3xl font-bold text-gray-200">Bienvenido, <span className='text-[#C4FF0D]'>{userData?.name}!</span></h1>
         <p className="text-gray-300 mt-2">Estamos encantados de tenerte de vuelta. Aquí tienes un resumen de tus actividades recientes.</p>
         <button className="mt-4 bg-[#232326] text-white px-4 py-2 rounded-full hover:bg-gray-700">
           Crear Nueva Publicación
@@ -39,8 +93,6 @@ const DashboardComprador: React.FC = () => {
             price="$23"
             imageUrl="https://via.placeholder.com/150"
             />
-          
-          {/* Agrega más ReservationCards según sea necesario */}
         </div>
        
         
@@ -79,7 +131,7 @@ const DashboardComprador: React.FC = () => {
         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <StatCard
             title="Total de Reservas"
-            value="12"
+            value={String(userData?.rentals.length)}
             description="Número total de reservas realizadas."
           />
           <StatCard
@@ -89,7 +141,7 @@ const DashboardComprador: React.FC = () => {
           />
           <StatCard
             title="Reseñas Recibidas"
-            value="8"
+            value={String(userData?.reviews.length)}
             description="Número total de reseñas recibidas."
           />
           {/* Agrega más StatCards según sea necesario */}
@@ -99,58 +151,5 @@ const DashboardComprador: React.FC = () => {
 </>
   );
 };
-// Componente para mostrar estadísticas
-interface StatCardProps {
-    title: string;
-    value: string;
-    description: string;
-  }
-  
-  const StatCard: React.FC<StatCardProps> = ({ title, value, description }) => (
-    <div className="bg-[#313139] p-4 rounded-lg shadow">
-      <h4 className="font-bold text-slate-300 text-lg">{title}</h4>
-      <p className="text-gray-100 text-2xl font-semibold mt-2">{value}</p>
-      <p className="text-gray-300 text-sm mt-1">{description}</p>
-    </div>
-  );
-// Componente para mostrar una reserva activa
-interface ReservationCardProps {
-    carModel: string;
-    reservationDate: string;
-    price: string;
-    imageUrl: string;
-}
-
-const ReservationCard: React.FC<ReservationCardProps> = ({ carModel, reservationDate, price, imageUrl }) => (
-  <div className="bg-[#313139] p-4 rounded-lg shadow">
-    <img className="w-full h-32 object-cover rounded-t-lg" src={imageUrl} alt={carModel} />
-    <div className="mt-2">
-      <h4 className="font-bold text-lg">{carModel}</h4>
-      <p className="text-gray-300 text-sm mt-1">Fecha de reserva: {reservationDate}</p>
-      <p className="text-gray-100 font-semibold mt-2">{price}</p>
-      <button className="mt-4 bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-700">
-          Cancelar Reserva
-        </button>
-    </div>
-  </div>
-);
-
-// Componente para mostrar una publicación reciente
-interface PublicationCardProps {
-  carModel: string;
-  postDate: string;
-  author: string;
-  imageUrl: string;
-}
-
-const PublicationCard: React.FC<PublicationCardProps> = ({ carModel, postDate, author, imageUrl }) => (
-  <div className="bg-[#313139] p-4 rounded-lg shadow">
-    <img className="w-full h-32 object-cover rounded-t-lg" src={imageUrl} alt={carModel} />
-    <div className="mt-2">
-      <h4 className="font-bold text-lg">{carModel}</h4>
-      <p className="text-gray-300 text-sm mt-1">{author} - {postDate}</p>
-    </div>
-  </div>
-);
 
 export default DashboardComprador;

@@ -1,8 +1,59 @@
+'use client'
 import SalePostCard from '@/components/DashboardComponents/PostUser';
+import ReviewCard from '@/components/DashboardComponents/ReviewCard';
 import Sidebar from '@/components/DashboardComponents/Sidebar'
-import React from 'react'
+import { IUserData } from '@/interfaces/IUser';
+import { redirect, useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react'
 
 const UserProfile: React.FC = () => {
+  const [userToken, setUserToken] = useState<string | null>(null);
+  const [userData, setUserData] = useState<IUserData | null >(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.localStorage) {
+      const userSession = localStorage.getItem("userSession");
+      if (userSession) {
+        const parsedSession = JSON.parse(userSession);
+        setUserToken(parsedSession.token);  
+      } else {
+        alert("Necesitas estar logueado para ingresar");
+        redirect("/login")
+      }
+    }
+  }, [router]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`http://localhost:3001/users/token`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('Error fetching user data');
+        }
+
+        const data = await response.json();
+        setUserData(data);
+      } catch (error:any) {
+        throw new Error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (userToken) {
+      fetchData();
+    }
+  }, [userToken]);
     return (
         <>
         <div className='bg-[#313139] p-6'></div>
@@ -12,20 +63,18 @@ const UserProfile: React.FC = () => {
       <div className="max-w-6xl mx-auto rounded-xl">
         <div className="flex justify-center">
         <img
-        src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+        src={userData?.image_url}
         alt="Profile"
         className="w-32 h-32 rounded-full"
         />
         </div>
         <div className="text-center mt-2">
-          <h2 className="text-lg font-medium text-gray-100">Luis Perez</h2>
+          <h2 className="text-lg font-medium text-gray-100">{userData?.name}</h2>
           <p className="text-sm text-gray-300">Buenos Aires, Argentina</p>
         </div>
         <div className="px-6 py-4">
           <p className="text-gray-100 text-base">
-            An artist of considerable range, Mike is the name taken by
-            Melbourne-raised, Brooklyn-based Nick Murphy writes, performs and
-            records all of his own music, giving it a warm.
+            {userData?.aboutMe}
           </p>
         </div>
         <div className="px-6 py-4">
@@ -76,19 +125,6 @@ const UserProfile: React.FC = () => {
   
   export default UserProfile;
     
-    interface ReviewCardProps {
-        rating: string;
-        text: string;
-      }
-      
-      const ReviewCard: React.FC<ReviewCardProps> = ({ rating, text }) => (
-        <div className="bg-gray-100 p-4 rounded-lg shadow">
-          <div className="flex items-center">
-            <span className="text-yellow-500">{rating}</span>
-            <span className="ml-2 text-sm text-gray-100">{text}</span>
-          </div>
-        </div>
-      );
     
     
 

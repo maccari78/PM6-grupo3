@@ -1,22 +1,20 @@
 export interface IPost {
-  id: number;
+  id: string;
   title: string;
   description: string;
-  user_id: {
-    id: number;
+  user: {
+    id: string;
     name: string;
-    lastname: string;
     email: string;
   };
-  cars_id: {
-    id: number;
+  car: {
+    id: string;
     brand: string;
     model: string;
     year: number;
     mileage: string;
     color: string;
     price: number;
-    type: string;
     availability: boolean;
     image_url: string;
   };

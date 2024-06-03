@@ -3,6 +3,8 @@ interface IRegisterErrorProps {
     email?: string,
     password?: string,
     confirmPassword?: string,
+    city?: string,
+    phoneNumber?: string
     phone?: number,
     nDni?: number,
     city?: string,

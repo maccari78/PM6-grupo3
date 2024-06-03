@@ -10,15 +10,15 @@ const Navbar = () => {
   const pathname = usePathname();
   const router = useRouter();
   
-  const [userSession, setUserSession] = useState(true);
+  const [userSession, setUserSession] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // useEffect(() => {
-  //   if (typeof window !== "undefined" && window.localStorage) {
-  //     const userToken = localStorage.getItem('userSession');
-  //     setUserSession(JSON.parse(userToken!));
-  //   }
-  // }, [pathname]);
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.localStorage) {
+      const userToken = localStorage.getItem('userSession');
+      setUserSession(JSON.parse(userToken!));
+    }
+  }, [pathname]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
