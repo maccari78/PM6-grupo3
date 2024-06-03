@@ -36,7 +36,7 @@ export class AuthService {
     if (!token) {
       throw new BadRequestException('token invalido');
     }
-    return { message: 'Login exitoso', token: token };
+    return token;
   }
 
   async signUp(user: CreateUserDto) {
@@ -84,24 +84,26 @@ export class AuthService {
       .getOne();
     console.log(findUser, 'BUSQUEDA FALLLIA O NO?');
     console.log(user.token, 'ESTE ES EL TOKEN');
-    if (findUser)
+    if (!findUser) {
       return {
         message: 'Inicio de sesión exitosamente mediante Google',
         token: user.token,
       };
-    console.log(
-      'Usuario no encontrado. Ingresando datos en la base de datos....',
-    );
+    } else {
+      console.log(
+        'Usuario no encontrado. Ingresando datos en la base de datos....',
+      );
 
-    const newUser = this.userRepository.create({
-      email: user.email,
-      name: user.displayName,
-      image_url: user.image_url,
-      userGoogle: true,
-    });
-    await this.notificationService.newNotification(user.email, 'welcome');
+      const newUser = this.userRepository.create({
+        email: user.email,
+        name: user.displayName,
+        image_url: user.image_url,
+        userGoogle: true,
+      });
+      await this.notificationService.newNotification(user.email, 'welcome');
 
-    return await this.userRepository.save(newUser);
+      return await this.userRepository.save(newUser);
+    }
   }
   async findUser(id: string) {
     console.log(id);

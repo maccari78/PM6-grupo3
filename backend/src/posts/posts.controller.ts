@@ -62,7 +62,13 @@ export class PostsController {
     files: Express.Multer.File[],
     @Headers('Authorization') headers: string,
   ) {
+    if (!headers) {
+      throw new Error('token invalido 1');
+    }
     const token = headers.split(' ')[1];
+    if (!token) {
+      throw new Error('token invalido 2');
+    }
     return this.postsService.AddPostsServices(createPostDto, token, files);
   }
 
