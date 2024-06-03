@@ -1,10 +1,29 @@
-const VehicleDetail = ({ params }: { params: { id: number } }) => {
+"use client";
+
+import { IPost } from "@/components/VehiclesComponent/interfaces/IPost";
+import { useEffect, useState } from "react";
+
+const VehicleDetail = ({ params }: { params: { id: string } }) => {
+  const [postState, setPostState] = useState<IPost>();
+
+  useEffect(() => {
+    const fetchDta = async () => {
+      const post = await fetch(`http://localhost:3001/posts/${params.id}`, {
+        method: "GET",
+      });
+      const data = await post.json();
+      setPostState(data);
+    };
+
+    fetchDta();
+  }, []);
+
   return (
     <div className="bg-[#444343] flex flex-col items-center md:flex-row  md:items-start justify-evenly min-h-screen">
       <div className="flex flex-col w-[70%] md:w-[40%] justify-between my-5">
         <div className="flex flex-col md:justify-start ">
           <h1 className=" text-lg md:text-3xl font-semibold text-gray-100">
-            Alquilo Ford F-150 modelo 2018
+            {postState?.title}
           </h1>
           <div className=" mt-9 ">
             <img
@@ -21,10 +40,7 @@ const VehicleDetail = ({ params }: { params: { id: number } }) => {
               Descripcion
             </h1>
             <ul className="text-base text-gray-300   mt-2">
-              <li className="text-sm md:text-base">
-                - El Ford F-150 es un camión de tamaño completo fabricado por
-                Ford
-              </li>
+              <li className="text-sm md:text-base">{postState?.description}</li>
             </ul>
           </div>
           <div className="flex flex-col  py-4">
@@ -53,7 +69,9 @@ const VehicleDetail = ({ params }: { params: { id: number } }) => {
                 </svg>
                 <span className="text-sm md:text-base">
                   Marca:{" "}
-                  <span className="font-semibold  text-[#c2e94e]">Ford</span>
+                  <span className="font-semibold  text-[#c2e94e]">
+                    {postState?.car.brand}
+                  </span>
                 </span>
               </li>
               <li className=" flex items-center space-x-3 rtl:space-x-reverse">
@@ -77,7 +95,9 @@ const VehicleDetail = ({ params }: { params: { id: number } }) => {
                 </svg>
                 <span className="text-sm md:text-base">
                   Modelo:{" "}
-                  <span className="font-semibold text-[#c2e94e]">F-150</span>
+                  <span className="font-semibold text-[#c2e94e]">
+                    {postState?.car.model}
+                  </span>
                 </span>
               </li>
               <li className=" flex items-center space-x-3 rtl:space-x-reverse">
@@ -101,7 +121,9 @@ const VehicleDetail = ({ params }: { params: { id: number } }) => {
                 </svg>
                 <span className="text-sm md:text-base">
                   Año:{" "}
-                  <span className="font-semibold text-[#c2e94e]">2018</span>
+                  <span className="font-semibold text-[#c2e94e]">
+                    {postState?.car.year}
+                  </span>
                 </span>
               </li>
               <li className=" flex items-center space-x-3 rtl:space-x-reverse">
@@ -127,7 +149,7 @@ const VehicleDetail = ({ params }: { params: { id: number } }) => {
                 <span className="text-sm md:text-base">
                   Kilometraje:{" "}
                   <span className="font-semibold text-[#c2e94e]">
-                    30,000 km
+                    {postState?.car.mileage}
                   </span>
                 </span>
               </li>
@@ -150,31 +172,8 @@ const VehicleDetail = ({ params }: { params: { id: number } }) => {
                 </svg>
                 <span className="text-sm md:text-base">
                   Color:{" "}
-                  <span className="font-semibold text-[#c2e94e]">Negro</span>
-                </span>
-              </li>
-              <li className=" flex items-center space-x-3 rtl:space-x-reverse">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="#C4FF0D"
-                  stroke="#222222"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="w-6 h-6"
-                >
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                  <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" />
-                  <path d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" />
-                  <path d="M9 12v-1h6v1" />
-                  <path d="M12 11v6" />
-                  <path d="M11 17h2" />
-                </svg>
-                <span className="text-sm md:text-base">
-                  Tipo:{" "}
                   <span className="font-semibold text-[#c2e94e]">
-                    Camioneta
+                    {postState?.car.color}
                   </span>
                 </span>
               </li>
@@ -202,10 +201,10 @@ const VehicleDetail = ({ params }: { params: { id: number } }) => {
           <div className="my-5">
             <ol>
               <li className="text-gray-300 text-sm md:text-base mb-5">
-                Nombre: Camilo Sierra
+                {postState?.user.name}
               </li>
               <li className="text-gray-300 text-sm md:text-base mb-5">
-                Email: camilosierra@example.com
+                {postState?.user.email}
               </li>
             </ol>
           </div>
@@ -251,9 +250,15 @@ const VehicleDetail = ({ params }: { params: { id: number } }) => {
                 Disponibilidad:{" "}
               </h1>
             </div>
-            <span className="bg-[#b0d63f]  text-[#222222] font-semibold  text-[11px] md:text-sm me-2  md:px-2.5 md:py-0.5 rounded ">
-              En Stock
-            </span>
+            {postState?.car.availability ? (
+              <span className="bg-[#b0d63f]  text-[#222222] font-semibold  text-[11px] md:text-sm me-2  md:px-2.5 md:py-0.5 rounded ">
+                En Stock
+              </span>
+            ) : (
+              <span className="bg-red-800  text-gray-300 font-semibold  text-[11px] md:text-sm me-2  md:px-2.5 md:py-0.5 rounded ">
+                Sin Stock
+              </span>
+            )}
           </div>
         </div>
       </div>
