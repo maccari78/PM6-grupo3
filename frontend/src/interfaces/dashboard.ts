@@ -15,3 +15,8 @@ export interface PublicationCardProps {
     author: string;
     imageUrl: string;
   }
+
+ export interface ReviewCardProps {
+    rating: string;
+    text: string;
+  }
