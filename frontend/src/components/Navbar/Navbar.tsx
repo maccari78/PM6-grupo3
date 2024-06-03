@@ -13,12 +13,12 @@ const Navbar = () => {
   const [userSession, setUserSession] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // useEffect(() => {
-  //   if (typeof window !== "undefined" && window.localStorage) {
-  //     const userToken = localStorage.getItem('userSession');
-  //     setUserSession(JSON.parse(userToken!));
-  //   }
-  // }, [pathname]);
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.localStorage) {
+      const userToken = localStorage.getItem('userSession');
+      setUserSession(JSON.parse(userToken!));
+    }
+  }, [pathname]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);

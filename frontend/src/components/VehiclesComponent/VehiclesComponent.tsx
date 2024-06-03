@@ -1,22 +1,24 @@
+import { useEffect } from "react";
 import VehicleCard from "../VehicleCard/VehicleCard";
 import { IPost } from "./interfaces/IPost";
 
-const VehiclesComponent: React.FC<{ mockPosts: IPost[] }> = ({ mockPosts }) => {
+const VehiclesComponent: React.FC<{ posts: IPost[] }> = ({ posts }) => {
+
   return (
     <div className="flex justify-evenly  flex-wrap">
-      {mockPosts.map((post: IPost) => {
+      {posts.map((post: IPost) => {
         return (
           <VehicleCard
             key={post.id}
             id={post.id}
             description={post.description}
-            carId={post.cars_id.id}
-            carImg={post.cars_id.image_url}
-            carBrand={post.cars_id.brand}
-            carModel={post.cars_id.model}
-            carYear={post.cars_id.year}
-            carMileage={post.cars_id.mileage}
-            carPrice={post.cars_id.price}
+            carId={post.car.id}
+            carImg={post.car.image_url[0]}
+            carBrand={post.car.brand}
+            carModel={post.car.model}
+            carYear={post.car.year}
+            carMileage={post.car.mileage}
+            carPrice={post.car.price}
           />
         );
       })}
