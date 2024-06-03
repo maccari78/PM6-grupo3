@@ -8,6 +8,7 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { UserGoogle } from './types/userGoogle.type';
 import { NotificationsService } from 'src/notifications/notifications.service';
+import { PayloadGoogleType, ResponseGoogle } from './types/response.interfaces';
 
 @Injectable()
 export class AuthService {
@@ -36,7 +37,7 @@ export class AuthService {
     if (!token) {
       throw new BadRequestException('token invalido');
     }
-    return { message: 'Login exitoso', token: token };
+    return token;
   }
 
   async signUp(user: CreateUserDto) {
@@ -76,32 +77,32 @@ export class AuthService {
 
     return this.jwtService.sign(payload);
   }
-  async validateUser(user: UserGoogle) {
-    console.log('AuthService');
+  async validateUser(user: PayloadGoogleType) {
+    const { email, name, image_url } = user;
+    console.log('BUSCANDO AL USUARIO!!!!');
+
     const findUser = await this.userRepository
       .createQueryBuilder('user')
-      .where('user.email = :email', { email: user.email })
+      .where('user.email = :email', { email })
       .getOne();
-    console.log(findUser, 'BUSQUEDA FALLLIA O NO?');
-    console.log(user.token, 'ESTE ES EL TOKEN');
-    if (findUser)
-      return {
-        message: 'Inicio de sesión exitosamente mediante Google',
-        token: user.token,
-      };
+    console.log('----BUSQUEDA----', findUser);
+
+    if (findUser !== null) {
+      return true;
+    }
     console.log(
       'Usuario no encontrado. Ingresando datos en la base de datos....',
     );
 
-    const newUser = this.userRepository.create({
-      email: user.email,
-      name: user.displayName,
-      image_url: user.image_url,
+    const newUser = await this.userRepository.save({
+      email,
+      name,
+      image_url,
       userGoogle: true,
     });
-    await this.notificationService.newNotification(user.email, 'welcome');
-
-    return await this.userRepository.save(newUser);
+    if (!newUser) false;
+    await this.notificationService.newNotification(newUser.email, 'welcome');
+    return true;
   }
   async findUser(id: string) {
     console.log(id);

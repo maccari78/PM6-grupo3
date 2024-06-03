@@ -37,9 +37,14 @@ export class AuthController {
 
   @Get('google/redirect')
   @UseGuards(GoogleAuthGuard)
-  handleRedirect(@Req() req: Request, @Res() res: Response) {
-    const token = req.user;
-    res.redirect(`http://localhost:3000/login?token=${token}`);
+  async handleRedirect(@Req() req: Request, @Res() res: Response) {
+    const { token, payload } = req.user;
+    const createUser = await this.authService.validateUser(payload);
+    if (!createUser) {
+      res.redirect(`http://localhost:3000/login`);
+      return { msg: 'Error al crear el usuario' };
+    }
+    res.redirect(`http://localhost:3000/auth?token=${token}`);
   }
 
   @Get('status')
