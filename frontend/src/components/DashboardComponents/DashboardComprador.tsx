@@ -1,31 +1,60 @@
+'use client'
 import React, { useEffect, useState } from 'react';
 import StatCard from './StatCard';
 import ReservationCard from './ReservationCard';
 import PublicationCard from './PublicationCard';
+import { redirect, useRouter } from 'next/navigation';
 
 const DashboardComprador: React.FC = () => {
-  const [userToken, setUserToken] = useState()
-  const [ordersData, setOrdersData] = useState()
-  useEffect(()=>{
-    if (typeof window !== "undefined" && window.localStorage) {
-      const userToken = localStorage.getItem("userSession")
-      setUserToken(JSON.parse(userToken!))
-      if(!userToken){
-        alert("You need to be logged in to access the Dashboard.")
-        redirect("/login")
-      }
+  const [userToken, setUserToken] = useState<string>();
+  const [userData, setUserData] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const router = useRouter();
 
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.localStorage) {
+      const userSession = localStorage.getItem("userSession");
+      if (userSession) {
+        const parsedSession = JSON.parse(userSession);
+        setUserToken(parsedSession.token);  
+      } else {
+        alert("Necesitas estar logueado para ingresar");
+        router.push("/login");
+      }
     }
-  },[])
-  useEffect(()=>{
-    const fetchData = async ()=>{
-      const response = await getOrderDB(userData?.token!)
-      setOrdersData(response)
+  }, [router]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`http://localhost:3001/users/${userToken}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('Error fetching user data');
+        }
+
+        const data = await response.json();
+        setUserData(data);
+      } catch (error) {
+        
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (userToken) {
+      fetchData();
     }
-    userData && fetchData()
-  },[userData])
-console.log(userData)
-console.log(ordersData)
+  }, [userToken]);
+
+  console.log(userToken);
+  console.log(userData);
   return (
     <>
     <div className='p-4 bg-[#313139]'>

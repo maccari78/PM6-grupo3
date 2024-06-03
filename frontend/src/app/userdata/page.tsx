@@ -1,4 +1,5 @@
 import SalePostCard from '@/components/DashboardComponents/PostUser';
+import ReviewCard from '@/components/DashboardComponents/ReviewCard';
 import Sidebar from '@/components/DashboardComponents/Sidebar'
 import React from 'react'
 
@@ -76,19 +77,6 @@ const UserProfile: React.FC = () => {
   
   export default UserProfile;
     
-    interface ReviewCardProps {
-        rating: string;
-        text: string;
-      }
-      
-      const ReviewCard: React.FC<ReviewCardProps> = ({ rating, text }) => (
-        <div className="bg-gray-100 p-4 rounded-lg shadow">
-          <div className="flex items-center">
-            <span className="text-yellow-500">{rating}</span>
-            <span className="ml-2 text-sm text-gray-100">{text}</span>
-          </div>
-        </div>
-      );
     
     
 
