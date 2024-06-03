@@ -169,6 +169,7 @@ export class PostsService {
     const payload: JwtPayload = await this.jwtService.verify(currentUser, {
       secret,
     });
+    if (!payload) throw new BadRequestException('token invalido 3');
     const user = await this.userRepository.findOne({
       where: { id: payload.sub },
     });
