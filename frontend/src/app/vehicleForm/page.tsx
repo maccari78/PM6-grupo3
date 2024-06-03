@@ -1,13 +1,17 @@
 'use client'
 import validate from "@/helpers/validate";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import IVehicleData from "../../interfaces/IVehicleData";
 import IErrorsVehicleForm from "../../interfaces/IErrorsVehicleForm";
 import axios from 'axios';
+import { useRouter } from "next/navigation";
 
 
 const VehicleForm = () => {
 
+    const router = useRouter();
+
+    const [userSession, setUserSession] = useState()
     const [errors, setErrors] = useState<IErrorsVehicleForm>({});
     const [vehicleData, setVehicleData] = useState<IVehicleData>({
         title: '',
@@ -15,19 +19,35 @@ const VehicleForm = () => {
         price: 0,
         color: '',
         model: '',
-        image: null,
+        file: null,
         brand: '',
         year: 0,
         mileage: '',
     })
+    useEffect(() => {
+        if (typeof window !== "undefined" && window.localStorage) {
+            const token = localStorage.getItem("userSession");
+            if (token) {
+                const parsedSession = JSON.parse(token);
+                setUserSession(parsedSession.token);
+            }
+        }
+    }, [router]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
+        const { name, value, files } = e.target as HTMLInputElement;
 
-        setVehicleData(prevData => ({
-            ...prevData,
-            [name]: value
-        }));
+        if (name === "file") {
+            setVehicleData(prevData => ({
+                ...prevData,
+                [name]: files
+            }));
+        } else {
+            setVehicleData(prevData => ({
+                ...prevData,
+                [name]: value
+            }));
+        }
 
         setErrors(prevErrors => ({
             ...prevErrors,
@@ -45,58 +65,47 @@ const VehicleForm = () => {
     }
 
     const handleSubmit = async (e: React.FormEvent) => {
+
         e.preventDefault();
         const validationErrors = validate(vehicleData);
         setErrors(validationErrors);
 
         if (Object.keys(validationErrors).length === 0) {
+            const formData = new FormData();
+            formData.append("title", vehicleData.title);
+            formData.append("description", vehicleData.description);
+            formData.append("price", vehicleData.price.toString());
+            formData.append("color", vehicleData.color);
+            formData.append("model", vehicleData.model);
+            formData.append("brand", vehicleData.brand);
+            formData.append("year", vehicleData.year.toString());
+            formData.append("mileage", vehicleData.mileage);
 
-            // const uploadedImages = await Promise.all(
-            //     Array.from(vehicleData.image!).map(async (file) => {
-            //         const formData = new FormData();
-            //         formData.append("file", file);
-            //         formData.append("upload_preset", "g3henry"); 
-
-            //         const res = await fetch(
-            //             "https://api.cloudinary.com/v1_1/dkent00db/image/upload", 
-            //             {
-            //                 method: "POST",
-            //                 body: formData,
-            //             }
-            //         );
-
-            //         const data = await res.json();
-            //         console.log(data)
-            //         return data.secure_url;
-            //     })
-            // );
-
-            // const vehicleDataWithImages = {
-            //     ...vehicleData,
-            //     image: uploadedImages
-            // };
-
-            const postData = {
-                ...vehicleData,
-                user_id: '82549df1-51d5-47bd-9022-56d816e46ad6'
+            if (vehicleData.file) {
+                Array.from(vehicleData.file).forEach(file => {
+                    formData.append("file", file);
+                });
             }
 
-            axios.post('http://localhost:3001/posts', postData, 
-            )
-                .then(response => {
-                    if (response.data.success) {
-                        alert(`El vehiculo se ha publicado correctamente`);
-                    } else {
-                        alert(response.data.message);
+            try {
+                const response = await axios.post('http://localhost:3001/posts', formData, {
+                    headers: {
+                        Authorization: `Bearer ${userSession}`,
+                        'Content-Type': 'multipart/form-data'
                     }
-                })
-                .catch(error => {
-                    alert('Ha ocurrido un error en la conexión');
-                    console.error('Error:', error);
                 });
 
+                if (response.data.success) {
+                    alert('El vehículo se ha publicado correctamente');
+                } else {
+                    alert(response.data.message);
+                }
+            } catch (error) {
+                console.error('Error al publicar el vehículo:', error);
+                alert('Hubo un error al intentar publicar el vehículo.');
+            }
         }
-    };
+    }
 
 
     return (
@@ -218,10 +227,9 @@ const VehicleForm = () => {
                 <div className="mb-4">
                     <label className="text-slate-50">Fotos</label>
                     <input
-                        name='image'
+                        name='file'
                         type="file"
                         accept="image/*"
-                        required
                         multiple
                         className="w-full px-3 mt-3 py-4 border rounded text-slate-50"
                         onChange={handleChange}
@@ -240,4 +248,5 @@ const VehicleForm = () => {
 };
 
 export default VehicleForm;
+
 
