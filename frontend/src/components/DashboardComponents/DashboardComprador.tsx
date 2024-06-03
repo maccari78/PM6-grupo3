@@ -28,9 +28,10 @@ const DashboardComprador: React.FC = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`http://localhost:3001/users/${userToken}`, {
+        const response = await fetch(`http://localhost:3001/users/token`, {
           method: "GET",
           headers: {
+            Authorization: `Bearer ${userToken}`,
             "Content-Type": "application/json",
           },
         });
@@ -41,8 +42,8 @@ const DashboardComprador: React.FC = () => {
 
         const data = await response.json();
         setUserData(data);
-      } catch (error) {
-        
+      } catch (error:any) {
+        throw new Error(error);
       } finally {
         setLoading(false);
       }
