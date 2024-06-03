@@ -62,7 +62,9 @@ export class User {
   @JoinColumn()
   notifications: Notification[];
 
-  @OneToMany(() => Address, (address) => address.user)
+  @OneToMany(() => Address, (address) => address.user, {
+    cascade: true,
+  })
   @JoinColumn()
   addresses: Address[];
 

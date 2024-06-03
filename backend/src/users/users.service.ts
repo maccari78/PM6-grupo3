@@ -4,12 +4,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { FileUploadService } from 'src/file-upload/file-upload.service';
+import { JwtService } from '@nestjs/jwt';
+import { JwtPayload } from 'src/rentals/interfaces/payload.interfaces';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
     private fileUploadService: FileUploadService,
+    private jwtService: JwtService,
   ) {}
 
   async findAll() {
@@ -21,6 +24,29 @@ export class UsersService {
   findOne(id: string) {
     const user = this.userRepository.findOne({
       where: { id },
+      relations: [
+        'car',
+        'post',
+        'rentals',
+        'notifications',
+        'addresses',
+        'reviews',
+      ],
+    });
+    if (!user) throw new NotFoundException('Usuario no encontrado');
+    return user;
+  }
+
+  async getUserByToken(token: string) {
+    const currentUser = token?.split(' ')[1];
+    if (!currentUser)
+      throw new NotFoundException('No hay un usuario autenticado');
+    const payload: JwtPayload = this.jwtService.verify(currentUser, {
+      secret: process.env.JWT_SECRET_KEY,
+    });
+    if (!payload) throw new NotFoundException('Error al decodificar token');
+    const user = this.userRepository.findOne({
+      where: { id: payload.sub },
       relations: [
         'car',
         'post',

@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { UserGoogle } from './types/userGoogle.type';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Injectable()
 export class AuthService {
@@ -14,10 +15,14 @@ export class AuthService {
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(Address) private addressRepository: Repository<Address>,
     private jwtService: JwtService,
+    private notificationService: NotificationsService,
   ) {}
   async signIn(user: signIn) {
     const { email, password } = user;
-    const userDB = await this.userRepository.findOneBy({ email });
+    const userDB = await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.email = :email', { email: email })
+      .getOne();
     if (!userDB) throw new BadRequestException('Credenciales incorrectas');
     if (userDB.userGoogle)
       throw new BadRequestException(
@@ -41,7 +46,7 @@ export class AuthService {
     if (duplicateUser)
       throw new BadRequestException('El ya se encuentra registrado');
 
-    const { email, name, password, nDni,  phone, ...rest } = user;
+    const { email, name, password, nDni, phone, ...rest } = user;
     const newUser = this.userRepository.create({
       email,
       name,
@@ -59,7 +64,13 @@ export class AuthService {
     newUser.addresses = [newAdress];
     await this.userRepository.save(newUser);
     // ENVIO DE EMAIL!
+    await this.notificationService.newNotification(email, 'welcome');
     return { message: 'Usuario registrado con exito!' };
+  }
+  async generateJwtToken(user: Omit<UserGoogle, 'token'>) {
+    const payload = { email: user.email, name: user.displayName };
+
+    return this.jwtService.sign(payload);
   }
   async validateUser(user: UserGoogle) {
     console.log('AuthService');
@@ -84,6 +95,8 @@ export class AuthService {
       image_url: user.image_url,
       userGoogle: true,
     });
+    await this.notificationService.newNotification(user.email, 'welcome');
+
     return await this.userRepository.save(newUser);
   }
   async findUser(id: string) {
