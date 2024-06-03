@@ -44,7 +44,7 @@ export class AuthController {
       res.redirect(`http://localhost:3000/login`);
       return { msg: 'Error al crear el usuario' };
     }
-    res.redirect(`http://localhost:3000/login?token=${token}`);
+    res.redirect(`http://localhost:3000/auth?token=${token}`);
   }
 
   @Get('status')
