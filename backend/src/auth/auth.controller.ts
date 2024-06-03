@@ -21,7 +21,7 @@ export class AuthController {
   ) {}
 
   @Post('signin')
-  signIn(@Body() user: signIn) {
+  signIn(@Body() user: signIn, @Req() req: Request) {
     return this.authService.signIn(user);
   }
 
@@ -40,6 +40,7 @@ export class AuthController {
   handleRedirect(@Req() req: Request, @Res() res: Response) {
     const token = req.user;
     res.redirect(`http://localhost:3000/login?token=${token}`);
+    return { msg: token };
   }
 
   @Get('status')
