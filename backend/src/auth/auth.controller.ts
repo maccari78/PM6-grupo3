@@ -21,7 +21,7 @@ export class AuthController {
   ) {}
 
   @Post('signin')
-  signIn(@Body() user: signIn, @Req() req: Request) {
+  signIn(@Body() user: signIn) {
     return this.authService.signIn(user);
   }
 
@@ -37,10 +37,14 @@ export class AuthController {
 
   @Get('google/redirect')
   @UseGuards(GoogleAuthGuard)
-  handleRedirect(@Req() req: Request, @Res() res: Response) {
-    const token = req.user;
+  async handleRedirect(@Req() req: Request, @Res() res: Response) {
+    const { token, payload } = req.user;
+    const createUser = await this.authService.validateUser(payload);
+    if (!createUser) {
+      res.redirect(`http://localhost:3000/login`);
+      return { msg: 'Error al crear el usuario' };
+    }
     res.redirect(`http://localhost:3000/login?token=${token}`);
-    return { msg: token };
   }
 
   @Get('status')
