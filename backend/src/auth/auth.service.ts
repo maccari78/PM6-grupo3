@@ -37,7 +37,7 @@ export class AuthService {
     if (!token) {
       throw new BadRequestException('token invalido');
     }
-    return token;
+    return { token: token };
   }
 
   async signUp(user: CreateUserDto) {
