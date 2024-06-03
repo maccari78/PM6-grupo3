@@ -50,8 +50,8 @@ const Login = () => {
       }
       const json = await response.json();
       const token = json;
-      localStorage.setItem("userSession", JSON.stringify(token));
-      setSession({ token});
+      localStorage.setItem("userSession", token);
+      setSession(token);
       alert("login success");
       router.push("/");
     } catch (error) {
