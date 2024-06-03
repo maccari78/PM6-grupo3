@@ -1,6 +1,31 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import StatCard from './StatCard';
+import ReservationCard from './ReservationCard';
+import PublicationCard from './PublicationCard';
 
 const DashboardComprador: React.FC = () => {
+  const [userToken, setUserToken] = useState()
+  const [ordersData, setOrdersData] = useState()
+  useEffect(()=>{
+    if (typeof window !== "undefined" && window.localStorage) {
+      const userToken = localStorage.getItem("userSession")
+      setUserToken(JSON.parse(userToken!))
+      if(!userToken){
+        alert("You need to be logged in to access the Dashboard.")
+        redirect("/login")
+      }
+
+    }
+  },[])
+  useEffect(()=>{
+    const fetchData = async ()=>{
+      const response = await getOrderDB(userData?.token!)
+      setOrdersData(response)
+    }
+    userData && fetchData()
+  },[userData])
+console.log(userData)
+console.log(ordersData)
   return (
     <>
     <div className='p-4 bg-[#313139]'>
@@ -39,8 +64,6 @@ const DashboardComprador: React.FC = () => {
             price="$23"
             imageUrl="https://via.placeholder.com/150"
             />
-          
-          {/* Agrega más ReservationCards según sea necesario */}
         </div>
        
         
@@ -99,58 +122,5 @@ const DashboardComprador: React.FC = () => {
 </>
   );
 };
-// Componente para mostrar estadísticas
-interface StatCardProps {
-    title: string;
-    value: string;
-    description: string;
-  }
-  
-  const StatCard: React.FC<StatCardProps> = ({ title, value, description }) => (
-    <div className="bg-[#313139] p-4 rounded-lg shadow">
-      <h4 className="font-bold text-slate-300 text-lg">{title}</h4>
-      <p className="text-gray-100 text-2xl font-semibold mt-2">{value}</p>
-      <p className="text-gray-300 text-sm mt-1">{description}</p>
-    </div>
-  );
-// Componente para mostrar una reserva activa
-interface ReservationCardProps {
-    carModel: string;
-    reservationDate: string;
-    price: string;
-    imageUrl: string;
-}
-
-const ReservationCard: React.FC<ReservationCardProps> = ({ carModel, reservationDate, price, imageUrl }) => (
-  <div className="bg-[#313139] p-4 rounded-lg shadow">
-    <img className="w-full h-32 object-cover rounded-t-lg" src={imageUrl} alt={carModel} />
-    <div className="mt-2">
-      <h4 className="font-bold text-lg">{carModel}</h4>
-      <p className="text-gray-300 text-sm mt-1">Fecha de reserva: {reservationDate}</p>
-      <p className="text-gray-100 font-semibold mt-2">{price}</p>
-      <button className="mt-4 bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-700">
-          Cancelar Reserva
-        </button>
-    </div>
-  </div>
-);
-
-// Componente para mostrar una publicación reciente
-interface PublicationCardProps {
-  carModel: string;
-  postDate: string;
-  author: string;
-  imageUrl: string;
-}
-
-const PublicationCard: React.FC<PublicationCardProps> = ({ carModel, postDate, author, imageUrl }) => (
-  <div className="bg-[#313139] p-4 rounded-lg shadow">
-    <img className="w-full h-32 object-cover rounded-t-lg" src={imageUrl} alt={carModel} />
-    <div className="mt-2">
-      <h4 className="font-bold text-lg">{carModel}</h4>
-      <p className="text-gray-300 text-sm mt-1">{author} - {postDate}</p>
-    </div>
-  </div>
-);
 
 export default DashboardComprador;
