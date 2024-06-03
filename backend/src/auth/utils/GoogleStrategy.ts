@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ExecutionContext, Inject, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy } from 'passport-google-oauth20';
 import { AuthService } from '../auth.service';
@@ -20,22 +20,17 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(accessToken: string, refreshToken: string, profile: Profile) {
-    console.log(accessToken);
-    console.log(refreshToken, 'ESTE ES EL UNDEFINED');
-    console.log(
-      'ESTE ES EL PROFILE DE ACA SACO DATOS',
-      profile,
-      'ESTE ES EL PROFILE DE ACA SACO DATOS',
-    );
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const user = await this.authService.validateUser({
       email: profile.emails[0].value,
       displayName: profile.displayName,
       token: accessToken,
       image_url: profile.photos[0].value,
     });
-    console.log('Validate');
-    console.log(user, 'ES ES EL USUARIO');
-
-    return user || null;
+    const token = await this.authService.generateJwtToken({
+      email: profile.emails[0].value,
+      displayName: profile.displayName,
+    });
+    return token || null;
   }
 }

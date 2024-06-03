@@ -1,4 +1,8 @@
-import { ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
 @Injectable()
@@ -9,4 +13,11 @@ export class GoogleAuthGuard extends AuthGuard('google') {
     await super.logIn(request);
     return activate;
   }
+  // handleRequest(err, user, info, context) {
+  //   if (err || !user) {
+  //     throw err || new UnauthorizedException();
+  //   }
+  //   context.getRequest().user = user;
+  //   return user;
+  // }
 }
