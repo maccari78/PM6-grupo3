@@ -1,8 +1,8 @@
 'use client'
 import validate from "@/helpers/validate";
 import { useState } from "react";
-import IVehicleData from "../interfaces/IVehicleData";
-import IErrorsVehicleForm from "../interfaces/IErrorsVehicleForm";
+import IVehicleData from "../../interfaces/IVehicleData";
+import IErrorsVehicleForm from "../../interfaces/IErrorsVehicleForm";
 
 
 const VehicleForm = () => {

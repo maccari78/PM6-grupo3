@@ -1,5 +1,5 @@
-import IErrorsVehicleForm from "@/app/interfaces/IErrorsVehicleForm";
-import IVehicleData from "@/app/interfaces/IVehicleData";
+import IErrorsVehicleForm from "@/interfaces/IErrorsVehicleForm";
+import IVehicleData from "@/interfaces/IVehicleData";
 
 const validate = (data: IVehicleData) => {
     let errors: IErrorsVehicleForm = {};

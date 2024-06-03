@@ -1,5 +1,5 @@
 'use client'
-import { IUser } from "@/app/interfaces/IUser";
+import { IUser } from "@/interfaces/IUser";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
