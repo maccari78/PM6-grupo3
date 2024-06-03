@@ -41,13 +41,12 @@ export class AuthService {
     if (duplicateUser)
       throw new BadRequestException('El ya se encuentra registrado');
 
-    const { email, name, password, nDni, rExpiration, phone, ...rest } = user;
+    const { email, name, password, nDni,  phone, ...rest } = user;
     const newUser = this.userRepository.create({
       email,
       name,
       password,
       nDni,
-      rExpiration,
       phone,
     });
     const hashPass = await bcrypt.hash(newUser.password, 10);
