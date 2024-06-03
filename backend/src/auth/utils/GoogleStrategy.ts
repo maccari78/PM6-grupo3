@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy } from 'passport-google-oauth20';
 import { AuthService } from '../auth.service';
 import * as dotenv from 'dotenv';
+import { PayloadGoogleType } from '../types/response.interfaces';
 
 dotenv.config();
 
@@ -21,16 +22,22 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
 
   async validate(accessToken: string, refreshToken: string, profile: Profile) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const user = await this.authService.validateUser({
+    // const user = await this.authService.validateUser({
+    //   email: profile.emails[0].value,
+    //   displayName: profile.displayName,
+    //   token: accessToken,
+    //   image_url: profile.photos[0].value,
+    // });
+    const payload: PayloadGoogleType = {
       email: profile.emails[0].value,
-      displayName: profile.displayName,
-      token: accessToken,
+      name: profile.displayName,
       image_url: profile.photos[0].value,
-    });
+      aToken: accessToken,
+    };
     const token = await this.authService.generateJwtToken({
       email: profile.emails[0].value,
       displayName: profile.displayName,
     });
-    return token || null;
+    return { token, payload } || null;
   }
 }

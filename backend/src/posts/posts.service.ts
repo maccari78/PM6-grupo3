@@ -1,9 +1,9 @@
 import {
   BadRequestException,
   ConflictException,
-  Inject,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -18,6 +18,7 @@ import { CarsService } from 'src/cars/cars.service';
 import { User } from 'src/users/entities/user.entity';
 import { JwtPayload } from 'src/rentals/interfaces/payload.interfaces';
 import { JwtService } from '@nestjs/jwt';
+import { FiltersPosts } from './interfaces/filter.interfaces';
 
 @Injectable()
 export class PostsService {
@@ -134,6 +135,44 @@ export class PostsService {
       }),
     );
   }
+  async getPostsByFilterServices(filters: FiltersPosts) {
+    if (filters.year && typeof filters.year !== 'number') {
+      filters.year = Number(filters.year);
+    }
+    if (filters.price && typeof filters.price !== 'number') {
+      filters.price = Number(filters.price);
+    }
+    const query = this.postRepository
+      .createQueryBuilder('post')
+      .leftJoinAndSelect('post.car', 'car');
+
+    if (filters.brand) {
+      query.andWhere('car.brand = :brand', { brand: filters.brand });
+    }
+    if (filters.model) {
+      query.andWhere('car.model = :model', { model: filters.model });
+    }
+    if (filters.year) {
+      query.andWhere('car.year = :year', { year: filters.year });
+    }
+    if (filters.mileage) {
+      query.andWhere('car.mileage = :mileage', { mileage: filters.mileage });
+    }
+    if (filters.color) {
+      query.andWhere('car.color = :color', { color: filters.color });
+    }
+    if (filters.price) {
+      query.andWhere('car.price = :price', { price: filters.price });
+    }
+
+    const posts = await query.getMany();
+
+    if (posts.length === 0) {
+      throw new NotFoundException('No se encontraron resultados');
+    } else {
+      return posts;
+    }
+  }
 
   //Services | Get All Posts
   async getPostsAllServices() {
@@ -169,7 +208,7 @@ export class PostsService {
     const payload: JwtPayload = await this.jwtService.verify(currentUser, {
       secret,
     });
-    if (!payload) throw new BadRequestException('token invalido 3');
+    if (!payload) throw new UnauthorizedException('token invalido 3');
     const user = await this.userRepository.findOne({
       where: { id: payload.sub },
     });
@@ -186,31 +225,28 @@ export class PostsService {
   }
 
   //Services | Update posts by Id
-  async UpdatePostsServices(id: string, posts: Partial<Posts>) {
-    const updatePost = await this.postRepository.findOneBy({ id });
-    // if(!updateProduct) throw new NotAcceptableException( `Not found product with id ${id}`);
+  async UpdatePostsServices(
+    id: string,
+    posts: UpdatePostDto,
+    token: string,
+    files?: Express.Multer.File[],
+  ) {
+    const secret = process.env.JWT_SECRET_KEY;
+    const payload: JwtPayload = await this.jwtService.verify(token, {
+      secret,
+    });
+    if (!payload) throw new UnauthorizedException('token invalido 3');
+    const user = await this.userRepository.findOne({
+      where: { id: payload.sub },
+    });
+    if (!user) throw new NotFoundException('Usuario no encontrado');
+    const findPosts = await this.postRepository.findOneBy({ id });
 
-    if (!updatePost)
+    if (!findPosts)
       throw new NotFoundException(`No se encontro publicación con ${id}`);
 
-    try {
-      await this.postRepository.update(id, posts);
-    } catch (error) {
-      throw new NotFoundException(
-        'No se puede actualizar publicación porque UUID is invalido',
-      );
-    }
-
-    // return updatePost
-
-    // Obtener el post actualizado
-    const newupdatedPost = await this.postRepository.findOne({ where: { id } });
-    if (!newupdatedPost)
-      throw new NotFoundException(
-        `No se pudo obtener la publicación actualizada con ${id}`,
-      );
-
-    return newupdatedPost;
+    const updatePosts = await this.postRepository.update(id, posts);
+    console.log(updatePosts, files);
   }
 
   //Services | Delete Posts by Id
