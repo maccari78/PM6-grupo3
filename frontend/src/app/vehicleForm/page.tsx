@@ -76,7 +76,12 @@ const VehicleForm = () => {
             //     image: uploadedImages
             // };
 
-            axios.post('http://localhost:3001/posts', vehicleData
+            const postData = {
+                ...vehicleData,
+                user_id: '82549df1-51d5-47bd-9022-56d816e46ad6'
+            }
+
+            axios.post('http://localhost:3001/posts', postData, 
             )
                 .then(response => {
                     if (response.data.success) {
