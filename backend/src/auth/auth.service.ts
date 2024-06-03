@@ -32,6 +32,10 @@ export class AuthService {
     if (!pass) throw new BadRequestException('Credenciales incorrectas');
     const payload = { sub: userDB.id, email: userDB.email };
     const token = this.jwtService.sign(payload);
+
+    if (!token) {
+      throw new BadRequestException('token invalido');
+    }
     return { message: 'Login exitoso', token: token };
   }
 
