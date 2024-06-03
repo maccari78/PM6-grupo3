@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Put,
+} from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { UpdateNotificationDto } from './dto/update-notification.dto';
@@ -7,28 +15,38 @@ import { UpdateNotificationDto } from './dto/update-notification.dto';
 export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) {}
 
-  @Post()
-  create(@Body() createNotificationDto: CreateNotificationDto) {
-    return this.notificationsService.create(createNotificationDto);
-  }
-
   @Get()
-  findAll() {
-    return this.notificationsService.findAll();
+  getNotifications(
+    @Param('page') page: number = 1,
+    @Param('limit') limit: number = 10,
+  ) {
+    return this.notificationsService.getNotifications(page, limit);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.notificationsService.findOne(+id);
+  getNotificationById(@Param('id') id: string) {
+    return this.notificationsService.getNotificationById(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateNotificationDto: UpdateNotificationDto) {
-    return this.notificationsService.update(+id, updateNotificationDto);
+  @Post()
+  newNotification(@Body() createNotificationDto: CreateNotificationDto) {
+    const { email, template_message } = createNotificationDto;
+    return this.notificationsService.newNotification(email, template_message);
+  }
+
+  @Put(':id')
+  updateNotification(
+    @Param('id') id: string,
+    @Body() updateNotificationDto: UpdateNotificationDto,
+  ) {
+    return this.notificationsService.updateNotification(
+      id,
+      updateNotificationDto,
+    );
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.notificationsService.remove(+id);
+  deleteNotification(@Param('id') id: string) {
+    return this.notificationsService.deleteNotification(id);
   }
 }
