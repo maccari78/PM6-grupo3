@@ -38,11 +38,14 @@ export class NotificationsService {
   }
 
   async newNotification(email: string, template: string) {
-    const user = await this.userRepository.findOneBy({ email });
+    const user = await this.userRepository.findOne({
+      where: { email },
+      relations: ['post', 'rentals'],
+    });
 
     if (!user) throw new NotFoundException('Usuario no encontrado');
 
-    await this.mailService.sendEmail(user.email, template);
+    await this.mailService.sendEmail(user, template);
 
     const notification = this.notificationsRepository.create({
       template_message: template,
@@ -51,6 +54,14 @@ export class NotificationsService {
     notification.user = user;
 
     return await this.notificationsRepository.save(notification);
+  }
+
+  async sendNotifications(template: string) {
+    const users = await this.userRepository.find();
+
+    for (const user of users) {
+      await this.mailService.sendEmail(user.email, template);
+    }
   }
 
   async updateNotification(
