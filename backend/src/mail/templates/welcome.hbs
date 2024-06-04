@@ -1,14 +1,74 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Bienvenido a YouDrive!</title>
-    </head>
-    <body style="color: black;">
-        <h1>Bienvenido a YouDrive!</h1>
-        <p style= "font-size: 14px">Gracias por registrarte en nuestra plataforma. Estamos encantados de tenerte como parte de nuestra comunidad. <br><br> Con You Drive, puedes alquilar autos fácilmente y explorar nuevos destinos con comodidad y seguridad. Ya sea que estés planeando un viaje por carretera o simplemente necesites un vehículo para desplazarte por la ciudad, estamos aquí para ayudarte. <br><br> No dudes en explorar nuestra plataforma y descubrir todas las opciones disponibles para ti. <br><br> Si tienes alguna pregunta o necesitas asistencia, no dudes en contactarnos. ¡Estamos aquí para ayudarte a hacer realidad tu próximo viaje! Gracias de nuevo por unirte a You Drive. ¡Esperamos verte pronto en la carretera!</p> <br><br>
-        
-        <p style="font-weight: bold; font-style: italic">Atentamente, <br> El equipo de YouDrive</p>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenida</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            color: white;
+        }: p{
+            font-size: 14px;
+        }
 
-        <img src="cid:imagename" alt="Logo de You Drive" style="border-radius: .5rem">
-    </body>
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: rgb(34, 34, 34);
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            padding: 10px 0;
+            background-color: rgb(196, 255, 13);
+            color: rgb(34, 34, 34);
+            border-radius: .2rem;
+        }
+        .content {
+            padding: 20px;
+        }
+        .footer {
+            text-align: center;
+            padding: 10px 0;
+            background-color: #f4f4f4;
+            color: #777777;
+            font-size: 10px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 20px 0;
+            background-color: rgb(196, 255, 13);
+            color: rgb(34, 34, 34);
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>¡Bienvenido/a!</h2>
+        </div>
+        <div class="content">
+            <h1><span style="color: rgb(196, 255, 13) ;">{{username}}</span> bienvenido/a a YouDrive!</h1>
+
+            <p style= "font-size: 14px">Gracias por registrarte en nuestra plataforma. Estamos encantados de tenerte como parte de nuestra comunidad. <br><br> Con You Drive, puedes alquilar autos fácilmente y explorar nuevos destinos con comodidad y seguridad. Ya sea que estés planeando un viaje por carretera o simplemente necesites un vehículo para desplazarte por la ciudad, estamos aquí para ayudarte. <br><br> No dudes en explorar nuestra plataforma y descubrir todas las opciones disponibles para ti. <br><br> Si tienes alguna pregunta o necesitas asistencia, no dudes en contactarnos. ¡Estamos aquí para ayudarte a hacer realidad tu próximo viaje! Gracias de nuevo por unirte a You Drive. ¡Esperamos verte pronto en la carretera!</p> <br>
+        
+            <p style="font-weight: bold; font-style: italic">Atentamente, <br> El equipo de YouDrive</p>
+
+            <a href="Aqui iria la url" class="button">You Drive</a>
+        </div>
+        <div class="footer">
+             <img src="cid:imagename" alt="Logo de You Drive" style="max-width: 600px">
+            <p>&copy; 2024 You Drive. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</body>
 </html>

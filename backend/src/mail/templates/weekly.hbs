@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>¡Ofertas!</title>
+    <title>Resumen Semanal</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,9 +11,10 @@
             margin: 0;
             padding: 0;
             color: white;
-        }: p{
+        }p{
             font-size: 14px;
         }
+
         .container {
             width: 100%;
             max-width: 600px;
@@ -53,15 +54,43 @@
 <body>
     <div class="container">
         <div class="header">
-            <h2>¡Ofertas!</h2>
+            <h2>Resumen Semanal</h2>
         </div>
         <div class="content">
-            <h1><span style="color: rgb(196, 255, 13);">{{username}}</span> ¡Aprovecha nuestras increíbles ofertas de vehículos!</h1>
-        <p style= "font-size: 14px">Estamos emocionados de anunciar nuestras nuevas ofertas exclusivas en una amplia gama de vehículos. <br><br> Ahora es el momento perfecto para encontrar el auto de tus sueños a precios inigualables. Con descuentos especiales, financiamiento flexible y bonos adicionales, nunca ha sido tan fácil y accesible adquirir un vehículo nuevo o usado. <br><br> ¡No dejes pasar esta oportunidad única! Visítanos hoy y descubre todas las promociones que tenemos para ti. <br>
-        
-        <p style="font-weight: bold; font-style: italic">Atentamente, <br> El equipo de YouDrive</p>
+            <h1>Hola <span style="color: rgb(196, 255, 13);">{{username}}</span></h1>
+            <p>Esperamos que hayas tenido una excelente semana. Aquí tienes un resumen de tus actividades y ofertas más relevantes:</p>
             
-            <a href="Aqui iria la url" class="button">You Drive</a>
+            <h2>Actividades Recientes</h2>
+            <ul>
+                {{#if posts}}
+                    {{#each posts}}
+                    <li>{{this}}</li>
+                    {{/each}}
+                {{else}}
+                    <li>{{posts}}</li>
+                {{/if}}
+            </ul>
+
+            <ul>
+                {{#if rentals}}
+                    {{#each rentals}}
+                    <li>{{this}}</li>
+                    {{/each}}
+                {{else}}
+                    <li>{{rentals}}</li>
+                {{/if}}
+            </ul>
+
+            <h2>Ofertas Destacadas</h2>
+            <ul>
+                {{#each offers}}
+                <li>{{this}}</li>
+                {{/each}}
+            </ul>
+
+            <p>No te pierdas nuestras últimas novedades y ofertas exclusivas. ¡Aprovecha y saca el máximo provecho de nuestra plataforma!</p>
+
+            <a href="Aqui iria la url" class="button">Ver Más</a>
         </div>
         <div class="footer">
              <img src="cid:imagename" alt="Logo de You Drive" style="max-width: 600px">
