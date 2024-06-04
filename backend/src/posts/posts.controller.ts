@@ -32,12 +32,10 @@ export class PostsController {
     return this.postsService.getPostsAllServices();
   }
 
-  //Controllers | Filter
-  @Get("filter")
-  getPostsByFilter(@Query() filter: FiltersPosts) { 
-      return this.postsService.getPostsByFilterServices(filter);
+  @Get('filter')
+  getPostsByFilter(@Query() filter: FiltersPosts) {
+    return this.postsService.getPostsByFilterServices(filter);
   }
-
   //Controllers | Seeder
   @Get('seeder')
   SeederController() {
@@ -72,19 +70,19 @@ export class PostsController {
       }),
     )
     files?: Express.Multer.File[],
-  ) { 
-    if (!headers) { 
-      throw new UnauthorizedException('token invalido 1'); 
+  ) {
+    if (!headers) {
+      throw new UnauthorizedException('token invalido 1');
     }
-    const token = headers.split(' ')[1]; 
-    if (!token) { 
-      throw new UnauthorizedException('token invalido 2'); 
+    const token = headers.split(' ')[1];
+    if (!token) {
+      throw new UnauthorizedException('token invalido 2');
     }
-    if (files?.length !== 0 || files) { 
-      return this.postsService.AddPostsServices(createPostDto, token, files); 
+    if (files?.length !== 0 || files) {
+      return this.postsService.AddPostsServices(createPostDto, token, files);
     }
 
-    return this.postsService.AddPostsServices(createPostDto, token); 
+    return this.postsService.AddPostsServices(createPostDto, token);
   }
 
   //Controllers | Update posts by Id
