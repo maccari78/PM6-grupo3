@@ -45,7 +45,7 @@ export class User {
   image_url: string;
 
   @Column({
-    default: null,
+    nullable: true,
   })
   public_id: string;
 

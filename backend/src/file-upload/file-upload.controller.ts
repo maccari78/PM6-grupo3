@@ -65,4 +65,9 @@ export class FileUploadController {
   async deleteImage(@Param('publicId') publicId: string) {
     return this.fileUploadService.deleteImage(publicId);
   }
+
+  @Delete('deleteVehicleImage/:publicId')
+  async deleteVehicleImage(@Param('PublicId') publicId: string) {
+    return this.fileUploadService.deleteVehicleImage(publicId);
+  }
 }

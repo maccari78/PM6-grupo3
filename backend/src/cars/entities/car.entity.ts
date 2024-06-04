@@ -44,7 +44,7 @@ export class Car {
 
   @Column({
     type: 'varchar',
-    default: null,
+    nullable: true,
     array: true,
   })
   public_id: string[];
