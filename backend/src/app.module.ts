@@ -1,10 +1,7 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { RentalsModule } from './rentals/rentals.module';
 import { AddressesModule } from './addresses/addresses.module';
-import { CommentsModule } from './comments/comments.module';
 import { CarsModule } from './cars/cars.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { ConfigModuleRoot } from './config/config.module';
@@ -28,7 +25,6 @@ import { ChatModule } from './chat/chat.module';
     UsersModule,
     RentalsModule,
     AddressesModule,
-    CommentsModule,
     CarsModule,
     ReviewsModule,
     FileUploadModule,
@@ -38,8 +34,8 @@ import { ChatModule } from './chat/chat.module';
     PassportModule.register({ session: true }),
     ChatModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
