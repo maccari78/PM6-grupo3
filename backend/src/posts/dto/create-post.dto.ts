@@ -3,7 +3,6 @@ import {
   IsArray,
   IsNotEmpty,
   IsNumber,
-  IsOptional,
   IsString,
   Length,
 } from 'class-validator';
@@ -11,37 +10,37 @@ import {
 export class CreatePostDto {
   //characteristics of the Posts
   @IsString()
-  title: string;
+  title: string; 
 
   @IsString()
-  description: string;
+  description: string; 
 
   @IsNumber()
   @Transform(({ value }) => parseInt(value))
-  price: number;
+  price: number; 
 
   //characteristics of the car
   @IsNotEmpty()
   @IsString()
   @Length(2, 20)
-  brand: string;
+  brand: string; 
 
   @IsNotEmpty()
   @IsString()
   @Length(1, 50)
-  model: string;
+  model: string; 
 
   @IsNumber()
   @IsNotEmpty()
   @Transform(({ value }) => parseInt(value))
-  year: number;
+  year: number; 
 
   @IsString()
   @IsNotEmpty()
   mileage: string;
 
   @IsString()
-  color: string;
+  color: string; 
 
   // @IsString()
   // user_id: string;

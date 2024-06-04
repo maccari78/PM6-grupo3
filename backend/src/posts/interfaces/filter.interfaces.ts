@@ -4,5 +4,5 @@ export interface FiltersPosts {
   year: number;
   mileage: string;
   color: string;
-  price: number;
+  price: number; //?
 }
