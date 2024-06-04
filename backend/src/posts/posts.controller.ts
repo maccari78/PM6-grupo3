@@ -14,14 +14,15 @@ import {
   UseInterceptors,
   Headers,
   Query,
-  BadRequestException,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { FiltersPosts } from './interfaces/filter.interfaces';
+import { TokenGuard } from './guards/token.guard';
 
 @Controller('posts')
 export class PostsController {
@@ -36,26 +37,18 @@ export class PostsController {
   getPostsByFilter(@Query() filter: FiltersPosts) {
     return this.postsService.getPostsByFilterServices(filter);
   }
-  //Controllers | Seeder
-  @Get('seeder')
-  SeederController() {
-    return this.postsService.SeederPostsServices();
-  }
 
-  //Controllers | Get All posts
-
-  //Controllers | Get posts by Id
   @Get(':id')
   getPostsByIdController(@Param('id') id: string) {
     return this.postsService.getPostsServiceId(id);
   }
 
-  //Controllers | Create new posts
   @Post()
+  @UseGuards(TokenGuard)
   @UseInterceptors(FilesInterceptor('file', 5))
   create(
     @Body() createPostDto: CreatePostDto,
-    @Headers('Authorization') headers: string,
+    @Headers('Authorization') headers?: string,
     @UploadedFiles(
       new ParseFilePipe({
         validators: [
@@ -71,6 +64,8 @@ export class PostsController {
     )
     files?: Express.Multer.File[],
   ) {
+    console.log(headers);
+
     if (!headers) {
       throw new UnauthorizedException('token invalido 1');
     }
@@ -78,6 +73,8 @@ export class PostsController {
     if (!token) {
       throw new UnauthorizedException('token invalido 2');
     }
+    console.log(files);
+
     if (files?.length !== 0 || files) {
       return this.postsService.AddPostsServices(createPostDto, token, files);
     }
@@ -85,7 +82,6 @@ export class PostsController {
     return this.postsService.AddPostsServices(createPostDto, token);
   }
 
-  //Controllers | Update posts by Id
   @Put(':id')
   @UseInterceptors(FilesInterceptor('file', 5))
   putPostsByIdController(
