@@ -102,7 +102,7 @@ export class PostsService {
 
     if (!payload) throw new UnauthorizedException('token invalido 3');
     const user = await this.userRepository.findOne({
-      where: { id: payload.sub },
+      where: { email: payload.sub },
     });
     if (!user) throw new NotFoundException('Usuario no encontrado');
 

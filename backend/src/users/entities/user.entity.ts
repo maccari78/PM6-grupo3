@@ -55,6 +55,9 @@ export class User {
   @Column({ type: 'text', nullable: true })
   aboutMe: string;
 
+  @Column({ type: 'varchar', default: 'user' })
+  roles: string;
+
   @ManyToMany(() => Rental, (rental) => rental.users)
   rentals: Rental[];
 
