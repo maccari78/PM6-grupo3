@@ -1,34 +1,84 @@
-const Filters: React.FC = () => {
+import { useState } from "react";
+import { FiltersProps } from "./interface/IFilterProps";
+
+const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
+  const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
+  const [selectedModel, setSelectedModel] = useState<string | null>(null);
+  const [selectedColors, setSelectedColors] = useState<string[]>([]);
+  const [selectedMileage, setSelectedMileage] = useState<string | null>(null);
+  const [selectedPrice, setSelectedPrice] = useState<string | null>(null);
+
+  const handleBrandChange = (brand: string) => {
+    setSelectedBrand(brand);
+    onFilterChange({
+      brand,
+    });
+  };
+
+  const handleColorChange = (color: string) => {
+    const newColors = selectedColors.includes(color)
+      ? selectedColors.filter((c) => c !== color)
+      : [color];
+    setSelectedColors(newColors);
+    onFilterChange({
+      color: newColors,
+    });
+  };
+
+  const handleMileageChange = (mileage: string) => {
+    setSelectedMileage(mileage);
+    onFilterChange({
+      mileage,
+    });
+  };
+
+  const handlePriceChange = (price: string) => {
+    setSelectedPrice(price);
+    onFilterChange({
+      price,
+    });
+  };
+
+  const handleModelChange = (model: string) => {
+    setSelectedModel(model);
+    onFilterChange({
+      model,
+    });
+  };
+
   return (
     <div className="flex flex-col mb-5 md:mb-0 md:w-[200px] justify-around items-center bg-[#A29E9E] px-5 py-5 rounded-lg border-solid border-2 border-[#d4e79c]">
       <div className="mb-5 w-[152px] flex flex-col justify-start">
         <h1 className="text-lg text-[#C4FF0D]">Marca</h1>
         <ul>
-          <li>
-            <a href="" className="text-[#222222] text-sm md:text-base ">
-              Kia
-            </a>
-          </li>
-          <li>
-            <a href="" className="text-[#222222] text-sm md:text-base">
-              Chevrolet
-            </a>
-          </li>
-          <li>
-            <a href="" className="text-[#222222] text-sm md:text-base">
-              Mazda
-            </a>
-          </li>
-          <li>
-            <a href="" className="text-[#222222] text-sm md:text-base">
-              Ford
-            </a>
-          </li>
-          <li>
-            <a href="" className="text-[#222222] text-sm md:text-base">
-              Nissan
-            </a>
-          </li>
+          {["Kia", "Chevrolet", "Mazda", "Ford", "Ferrari"].map((brand) => (
+            <li key={brand}>
+              <button
+                onClick={() => handleBrandChange(brand)}
+                className="text-[#222222] text-sm md:text-base"
+              >
+                {brand}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="mb-5 w-[152px] flex flex-col justify-start">
+        <h1 className="text-lg text-[#C4FF0D]">Modelo</h1>
+        <ul>
+          {["F-150", "Sorento", "Camaro", "Stradale", "Picanto"].map(
+            (model) => (
+              <li key={model}>
+                <button
+                  onClick={() => handleModelChange(model)}
+                  className="text-[#222222] text-sm md:text-base"
+                >
+                  {model}
+                </button>
+              </li>
+            )
+          )}
         </ul>
       </div>
 
@@ -40,11 +90,13 @@ const Filters: React.FC = () => {
               <input
                 id="blue-checkbox"
                 type="checkbox"
-                value=""
+                value="azul"
+                checked={selectedColors.includes("azul")}
+                onChange={() => handleColorChange("azul")}
                 className=" relative w-4 h-4 rounded-sm appearance-none focus:cursor-pointer focus:outline-none bg-blue-900 checked:bg-blue-700 "
               />
               <label
-                htmlFor="green-checkbox"
+                htmlFor="blue-checkbox"
                 className="ms-2 text-sm md:text-base  text-[#222222]"
               >
                 Azul
@@ -56,7 +108,9 @@ const Filters: React.FC = () => {
               <input
                 id="green-checkbox"
                 type="checkbox"
-                value=""
+                value="verde"
+                checked={selectedColors.includes("verde")}
+                onChange={() => handleColorChange("verde")}
                 className="relative w-4 h-4 rounded-sm appearance-none focus:cursor-pointer focus:outline-none bg-green-900 checked:bg-green-700 "
               />
               <label
@@ -72,7 +126,9 @@ const Filters: React.FC = () => {
               <input
                 id="black-checkbox"
                 type="checkbox"
-                value=""
+                value="negro"
+                checked={selectedColors.includes("negro")}
+                onChange={() => handleColorChange("negro")}
                 className="relative w-4 h-4 rounded-sm appearance-none focus:cursor-pointer focus:outline-none bg-gray-800 checked:bg-gray-900 "
               />
               <label
@@ -86,9 +142,11 @@ const Filters: React.FC = () => {
           <li>
             <div className="flex items-center me-4">
               <input
-                id="blanco-checkbox"
+                id="white-checkbox"
                 type="checkbox"
-                value=""
+                value="blanco"
+                checked={selectedColors.includes("blanco")}
+                onChange={() => handleColorChange("blanco")}
                 className="relative w-4 h-4 rounded-sm appearance-none focus:cursor-pointer focus:outline-none bg-gray-200 checked:bg-gray-50 "
               />
               <label
@@ -104,7 +162,9 @@ const Filters: React.FC = () => {
               <input
                 id="red-checkbox"
                 type="checkbox"
-                value=""
+                value="rojo"
+                checked={selectedColors.includes("rojo")}
+                onChange={() => handleColorChange("rojo")}
                 className="relative w-4 h-4 rounded-sm appearance-none focus:cursor-pointer focus:outline-none bg-red-900 checked:bg-red-700 "
               />
               <label
@@ -119,66 +179,40 @@ const Filters: React.FC = () => {
       </div>
 
       <div className="mb-5 w-[152px] flex flex-col justify-start">
-        <h1 className="text-lg text-[#C4FF0D]">Tipo</h1>
+        <h1 className="text-lg text-[#C4FF0D]">Kilometraje</h1>
         <ul>
-          <li>
-            <a href="" className="text-[#222222] text-sm md:text-base">
-              4*4
-            </a>
-          </li>
-          <li>
-            {" "}
-            <a href="" className="text-[#222222] text-sm md:text-base">
-              SUV
-            </a>
-          </li>
-          <li>
-            {" "}
-            <a href="" className="text-[#222222] text-sm md:text-base">
-              Sedan
-            </a>
-          </li>
-          <li>
-            {" "}
-            <a href="" className="text-[#222222] text-sm md:text-base">
-              Deportivos
-            </a>
-          </li>
-          <li>
-            {" "}
-            <a href="" className="text-[#222222] text-sm md:text-base">
-              Camionetas
-            </a>
-          </li>
+          {["10000", "15000", "20000", "30000", "40000"].map((mileage) => (
+            <li key={mileage}>
+              <button
+                onClick={() => handleMileageChange(mileage)}
+                className="text-[#222222] text-sm md:text-base"
+              >
+                {mileage}
+              </button>
+            </li>
+          ))}
         </ul>
       </div>
 
       <div className="mb-5 w-[152px] flex flex-col justify-start">
         <h1 className="text-lg text-[#C4FF0D]">Precio</h1>
         <ul>
-          <li>
-            <a href="" className="text-[#222222] text-sm">
-              $1.000.000-$1.500.000
-            </a>
-          </li>
-          <li>
-            {" "}
-            <a href="" className="text-[#222222] text-sm">
-              Hasta $ 2.000.0000
-            </a>
-          </li>
-          <li>
-            {" "}
-            <a href="" className="text-[#222222] text-sm">
-              Menos de $ 1.000.000
-            </a>
-          </li>
-          <li>
-            {" "}
-            <a href="" className="text-[#222222] text-sm">
-              Mas de $ 1.300.000
-            </a>
-          </li>
+          {[
+            "$1.000.000a$1.500.000",
+            " Menos de $ 1.000.000",
+            " Hasta $ 2.000.0000",
+            "Menos de $ 1.000.000",
+            " Mas de $ 1.300.000",
+          ].map((price) => (
+            <li key={price}>
+              <button
+                onClick={() => handlePriceChange(price)}
+                className="text-[#222222] text-sm "
+              >
+                {price}
+              </button>
+            </li>
+          ))}
         </ul>
       </div>
     </div>

@@ -8,11 +8,15 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
 
   useEffect(() => {
     const fetchDta = async () => {
-      const post = await fetch(`http://localhost:3001/posts/${params.id}`, {
-        method: "GET",
-      });
-      const data = await post.json();
-      setPostState(data);
+      try {
+        const post = await fetch(`http://localhost:3001/posts/${params.id}`, {
+          method: "GET",
+        });
+        const data = await post.json();
+        setPostState(data);
+      } catch (error: any) {
+        console.log(error.message);
+      }
     };
 
     fetchDta();
@@ -27,7 +31,7 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
           </h1>
           <div className=" mt-9 ">
             <img
-              src="https://acnews.blob.core.windows.net/imgnews/medium/NAZ_918487fd7b3e4c6b8f3eefb369a0853b.webp"
+              src={postState?.car.image_url[0]}
               alt="Ford F-150"
               className="h-auto w-[50%] shadow-xl rounded-t-xl md:rounded-xl"
             />
