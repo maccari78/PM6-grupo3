@@ -141,7 +141,6 @@ export class CarsService {
     car: Omit<CreateCarDto, 'image_url'>,
     id: string,
   ) {
-    `FIND WHERE ID = ${id}`;
     const user = await this.usersRepository.findOneBy({ id });
     if (!user) throw new NotFoundException('Usuario no encontrado');
     const newCar = await this.carsRepository.save({ user, ...car });
