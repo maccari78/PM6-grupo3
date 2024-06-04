@@ -1,5 +1,6 @@
 "use client";
 
+import DateRangePicker from "@/components/DateRangePicker/DateRangePicker";
 import { IPost } from "@/components/VehiclesComponent/interfaces/IPost";
 import { useEffect, useState } from "react";
 
@@ -19,7 +20,8 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
   }, []);
 
   return (
-    <div className="bg-[#444343] flex flex-col items-center md:flex-row  md:items-start justify-evenly min-h-screen">
+    <>
+    <div className="bg-[#444343] flex flex-col items-center md:flex-row  md:items-start justify-evenly min-h-screen pt-10">
       <div className="flex flex-col w-[70%] md:w-[40%] justify-between my-5">
         <div className="flex flex-col md:justify-start ">
           <h1 className=" text-lg md:text-3xl font-semibold text-gray-100">
@@ -263,6 +265,12 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
         </div>
       </div>
     </div>
+
+    <div className="bg-[#444343] px-40 pb-10 ">
+      <h1 className="font-sans text-lg md:text-2xl font-semibold text-gray-100 pb-8">¡Reserva ahora!</h1>
+    <DateRangePicker></DateRangePicker>
+    </div>
+    </>
   );
 };
 
