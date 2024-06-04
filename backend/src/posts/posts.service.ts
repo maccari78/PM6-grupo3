@@ -13,6 +13,8 @@ import { Repository } from 'typeorm';
 import { Car } from 'src/cars/entities/car.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CarsService } from 'src/cars/cars.service';
+// import { FileUploadService } from 'src/file-upload/file-upload.service';
+// import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/users/entities/user.entity';
 import { JwtPayload } from 'src/rentals/interfaces/payload.interfaces';
 import { JwtService } from '@nestjs/jwt';
@@ -120,23 +122,22 @@ export class PostsService {
 
   ////////////////////////////..........
   //Services | Seeder
-  async SeederPostsServices() { 
-    return Promise.all( 
-      this.postsssToPreLoad.map(async (post) => { 
-        const newPost = this.postRepository.create(post); 
-        if (!newPost) { 
-          throw new BadRequestException('Error al insertar publicaciones'); 
+  async SeederPostsServices() {
+    return Promise.all(
+      this.postsssToPreLoad.map(async (post) => {
+        const newPost = this.postRepository.create(post);
+        if (!newPost) {
+          throw new BadRequestException('Error al insertar publicaciones');
         }
-        await this.postRepository.save(newPost);  
-        return 'Publicaciones insertadas'; 
-        // return await this.postsRepository.save(newPost); 
+        await this.postRepository.save(newPost);
+        return 'Publicaciones insertadas';
+        // return await this.postsRepository.save(newPost);
       }),
     );
-  } 
+  }
   async getPostsByFilterServices(filters: FiltersPosts) {
     if (filters.year && typeof filters.year !== 'number') {
       filters.year = Number(filters.year);
-      if (isNaN(filters.year)) throw new BadRequestException("El año debe ser un número válido")
     }
     if (filters.price && typeof filters.price !== 'number') {
       filters.price = Number(filters.price);
@@ -160,9 +161,9 @@ export class PostsService {
     if (filters.color) {
       query.andWhere('car.color = :color', { color: filters.color });
     }
-    // if (filters.price) {
-    //   query.andWhere('car.price = :price', { price: filters.price });
-    // } //Borrar?
+    if (filters.price) {
+      query.andWhere('car.price = :price', { price: filters.price });
+    }
 
     const posts = await query.getMany();
 

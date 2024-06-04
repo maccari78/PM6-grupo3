@@ -1,5 +1,4 @@
 import { Car } from 'src/cars/entities/car.entity';
-import { Posts } from 'src/posts/entities/post.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
   Column,
@@ -8,7 +7,6 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
   Timestamp,
   UpdateDateColumn,
@@ -26,7 +24,7 @@ export class Review {
   comment: string;
 
   //..........relations start........//
-  @OneToOne(() => User, (user) => user.reviews)
+  @ManyToOne(() => User, (user) => user.reviews)
   @JoinColumn({ name: 'userId' })
   user: User;
 
@@ -36,13 +34,13 @@ export class Review {
   //..........relations end........//
 
   //..........relations start ........//
-  @ManyToOne(()=> Posts, posts=>posts.review)
-  @JoinColumn({ name: "postId" })
-  post: Posts;
+  // @OneToOne(()=> Car, car=>car.id)
+  // @JoinColumn({ name: "carId" })
+  // car: Car;
 
-  //Para la tablar Posts desde Review:
-  // @OneToOne(() => Review, reviews => reviews.post)
-  // review: Review[];
+  //Para la tablar Car desde Review:
+  // @OneToOne(() => Review, review => review.car)
+  // reviews: Review[];
   //..........relations end........//
 
   @CreateDateColumn()

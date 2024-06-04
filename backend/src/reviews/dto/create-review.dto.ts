@@ -1,16 +1,16 @@
-import { IsNotEmpty, IsNumber, IsString, Length, Max, Min } from "class-validator";
+import { IsNotEmpty, IsString, Length, Max, Min } from "class-validator";
 
 export class CreateReviewDto {
 
     @IsNotEmpty()
-    @IsNumber()
+    @IsString()
     @Min(1)
     @Max(5)
     rating: number;
 
     @IsString()
     @IsNotEmpty()
-    @Length(1, 50)
+    @Length(1, 20)
     comment: string;
  
 }
