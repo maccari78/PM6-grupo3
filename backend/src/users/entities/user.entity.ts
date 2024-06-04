@@ -13,6 +13,7 @@ import {
   OneToMany,
   JoinColumn,
   ManyToMany,
+  OneToOne,
 } from 'typeorm';
 
 @Entity('users')
@@ -83,6 +84,6 @@ export class User {
   @JoinColumn({ name: 'userId', referencedColumnName: 'id' })
   car: Car;
 
-  @OneToMany(() => Review, (review) => review.user)
+  @OneToOne(() => Review, (review) => review.user)
   reviews: Review[];
 }

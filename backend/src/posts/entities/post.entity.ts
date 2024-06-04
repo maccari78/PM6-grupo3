@@ -1,4 +1,5 @@
 import { Car } from "src/cars/entities/car.entity";
+import { Review } from "src/reviews/entities/review.entity";
 import { User } from "src/users/entities/user.entity";
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, Timestamp, UpdateDateColumn } from "typeorm";
 
@@ -10,7 +11,7 @@ export class Posts {
     @Column({ length: 50, type: "varchar", unique: true, nullable: false })
     title: string;
 
-    @Column({ type: "text", nullable: false })
+    @Column({ type: "text", nullable: false }) //nullable: false -> No puede contener valores nulos
     description: string;
 
     @Column({ type: "decimal", precision: 10, scale: 2, nullable: false })
@@ -26,10 +27,15 @@ export class Posts {
     @JoinColumn({ name: "carId" })
     car: Car; 
     
-    @CreateDateColumn()
-    created_at: Timestamp;
+    //..........relations start........//
+    @OneToMany(() => Review, reviews => reviews.post)
+    review: Review[];
+  
 
-    @UpdateDateColumn()
+    @CreateDateColumn() //Almacena la fecha de creacion el registro
+    created_at: Timestamp; //timestamp: permite guardar fechas y horas de forma automatica en typeorm 
+
+    @UpdateDateColumn() //Almacena la fecha de actualizacion del registro
     updated_at: Timestamp;
 
 }
