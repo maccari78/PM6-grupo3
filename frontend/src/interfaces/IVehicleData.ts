@@ -4,7 +4,7 @@ interface IVehicleData {
     price: number;
     color: string;
     model: string;
-    image: FileList | null;
+    file: FileList | null;
     brand: string;
     year: number;
     mileage: string;

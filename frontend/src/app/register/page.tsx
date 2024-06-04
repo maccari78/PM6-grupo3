@@ -4,8 +4,11 @@ import IUserData from "../../interfaces/IRegisterProps";
 import { validateRegister } from "@/helpers/validateRegister";
 import axios from "axios";
 import IRegisterErrorProps from "../../interfaces/IRegisterErrorProps";
+import { useRouter } from "next/navigation";
 
 const Register = () => {
+
+  const router = useRouter();
 
   const initialUserData = {
     name: '',
@@ -68,6 +71,7 @@ const Register = () => {
         if (response.data.success) {
           setUserData(initialUserData);
           alert(`Usuario registrado correctamente`);
+          router.push("/")
         } else {
           alert(response.data.message);
         }
