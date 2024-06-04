@@ -41,12 +41,13 @@ export class UsersService {
     const currentUser = token?.split(' ')[1];
     if (!currentUser)
       throw new NotFoundException('No hay un usuario autenticado');
-    const payload: JwtPayload = this.jwtService.verify(currentUser, {
-      secret: process.env.JWT_SECRET_KEY,
+    const payload: JwtPayload = await this.jwtService.verify(currentUser, {
+      secret: process.env.JWT_SECRET,
     });
+
     if (!payload) throw new NotFoundException('Error al decodificar token');
     const user = this.userRepository.findOne({
-      where: { id: payload.sub },
+      where: { email: payload.sub },
       relations: [
         'car',
         'post',
