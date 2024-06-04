@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { validateLogin } from "@/helpers/validateLogin";
 import { IErrorlogin, Ilogin } from "@/interfaces/ILogin";
 import Link from "next/link";
@@ -16,8 +16,8 @@ const Login = () => {
     email: "",
     password: "",
   });
- 
-  const [session, setSession] = useState({ token: null});
+
+  const [session, setSession] = useState({ token: null });
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserData({
@@ -51,11 +51,11 @@ const Login = () => {
       const json = await response.json();
       const token = json;
       localStorage.setItem("userSession", JSON.stringify(token));
-      setSession({ token});
+      setSession({ token });
       alert("login success");
       router.push("/");
     } catch (error) {
-      console.error('Login failed:', error);
+      console.error("Login failed:", error);
       alert("Login failed");
     }
   };
@@ -120,8 +120,8 @@ const Login = () => {
                     className="w-4 h-4 inline-block"
                   >
                     <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                       strokeWidth="2"
                       d="M17 8l4 4m0 0l-4 4m4-4H3"
                     />
@@ -130,25 +130,26 @@ const Login = () => {
               </form>
             </div>
             <div className="p-5">
-              <div className="grid grid-cols-3 gap-1">
-                <button
+              <div className="grid grid-cols-1 gap-1">
+                {/* <button
                   type="button"
                   className="transition duration-200 border border-gray-200 text-gray-500 w-full py-2.5 rounded-lg text-sm shadow-sm hover:shadow-md font-normal text-center inline-block"
                 >
                   Twitter
-                </button>
-                <button
-                  type="button"
-                  className="transition duration-200 border border-gray-200 text-gray-500 w-full py-2.5 rounded-lg text-sm shadow-sm hover:shadow-md font-normal text-center inline-block"
-                >
-                  Google
-                </button>
-                <button
+                </button> */}
+                <a href="http://localhost:3001/auth/google/login">
+                  <button
+                    type="button"
+                    className="transition duration-200 border border-gray-200 text-gray-500 w-full py-2.5 rounded-lg text-sm shadow-sm hover:shadow-md font-normal text-center inline-block"
+                  >Google</button>
+                </a>
+
+                {/* <button
                   type="button"
                   className="transition duration-200 border border-gray-200 text-gray-500 w-full py-2.5 rounded-lg text-sm shadow-sm hover:shadow-md font-normal text-center inline-block"
                 >
                   Github
-                </button>
+                </button> */}
               </div>
             </div>
             <div className="py-5">
@@ -163,8 +164,8 @@ const Login = () => {
                       className="w-4 h-4 inline-block align-text-top"
                     >
                       <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                         strokeWidth="2"
                         d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"
                       />
@@ -188,8 +189,8 @@ const Login = () => {
                       className="w-4 h-4 inline-block align-text-top"
                     >
                       <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                         strokeWidth="2"
                         d="M10 19l-7-7m0 0l7-7m-7 7h18"
                       />

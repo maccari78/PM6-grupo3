@@ -5,6 +5,7 @@ import { validateRegister } from "@/helpers/validateRegister";
 import axios from "axios";
 import IRegisterErrorProps from "../../interfaces/IRegisterErrorProps";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const Register = () => {
 
@@ -82,18 +83,18 @@ const Register = () => {
       });
   }
 
-  const handleGoogleAuth = async () => {
-    try {
-      const { data } = await axios.get('http://localhost:3001/auth/google/login')
-      // const { data } = await axios.get('http://localhost:3001/auth/google/redirect')
-      return data;
-    } catch (error: any) {
-      return {
-        message: error.message,
-        status: error.response?.status
-      }
-    }
-  }
+  // const handleGoogleAuth = async () => {
+  //   try {
+  //     const { data } = await axios.get('http://localhost:3001/auth/google/login')
+  //     // const { data } = await axios.get('http://localhost:3001/auth/google/redirect')
+  //     return data;
+  //   } catch (error: any) {
+  //     return {
+  //       message: error.message,
+  //       status: error.response?.status
+  //     }
+  //   }
+  // }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-bl from-[#222222] to-[#313139] font-sans text-white">
@@ -295,7 +296,15 @@ const Register = () => {
             Registrarse
           </button>
         </form>
-        <button type="button" onClick={handleGoogleAuth}>Continuar con google</button>
+        
+        <a href='http://localhost:3001/auth/google/login'>
+        <button
+                  type="button"
+                  className="transition duration-200 border border-gray-200 text-gray-500 w-full py-2.5 rounded-lg text-sm shadow-sm hover:shadow-md font-normal text-center inline-block"
+                >
+                  Google
+                </button>
+        </a>
       </div>
     </div>
   );
