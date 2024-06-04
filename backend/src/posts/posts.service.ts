@@ -122,7 +122,7 @@ export class PostsService {
     token: string,
     files?: Express.Multer.File[],
   ) {
-    const secret = process.env.JWT_SECRET_KEY;
+    const secret = process.env.JWT_SECRET;
     const payload: JwtPayload = await this.jwtService.verify(token, {
       secret,
     });
