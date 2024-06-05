@@ -6,6 +6,11 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 const Login = () => {
+  interface ApiError {
+    message: string;
+    error: string;
+    statusCode: number;
+  }
   const router = useRouter();
 
   const [userData, setUserData] = useState<Ilogin>({
@@ -16,7 +21,7 @@ const Login = () => {
     email: "",
     password: "",
   });
-
+  const [errorAPI, setErrorAPI] = useState<ApiError | null>(null);
   const [session, setSession] = useState({ token: null });
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,19 +49,42 @@ const Login = () => {
           password: userData.password,
         }),
       });
-
+  
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorData: ApiError = await response.json();
+        throw errorData;
       }
+  
       const json = await response.json();
       const token = json;
       localStorage.setItem("userSession", JSON.stringify(token));
       setSession({ token });
-      alert("login success");
+      alert("Login success");
       router.push("/");
-    } catch (error) {
-      console.error("Login failed:", error);
-      alert("Login failed");
+    } catch (err) {
+      if (typeof err === 'object' && err !== null && 'message' in err) {
+        // Si el error es un objeto y contiene la propiedad 'message'
+        const apiError = err as ApiError;
+        setErrorAPI(apiError);
+        alert(`Error: ${apiError.message}`);
+      } else if (err instanceof Error) {
+        // Si el error es una instancia de Error nativa
+        setErrorAPI({
+          message: err.message,
+          error: "Error",
+          statusCode: 500,
+        });
+        alert(`Error: ${err.message}`);
+      } else {
+        // Otro tipo de error
+        const unknownError: ApiError = {
+          message: "An unknown error occurred",
+          error: "Unknown Error",
+          statusCode: 500,
+        };
+        setErrorAPI(unknownError);
+        alert(`Error: ${unknownError.message}`);
+      }
     }
   };
   return (
@@ -87,7 +115,7 @@ const Login = () => {
                   <p className="text-sm text-red-500 lg:mt-0 ">{error.email}</p>
                 )}
                 <label className="font-semibold text-sm text-gray-600 pb-1 block">
-                  Password
+                  Contraseña
                 </label>
                 <input
                   id="password-login"
@@ -170,7 +198,7 @@ const Login = () => {
                         d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"
                       />
                     </svg>
-                    <span className="inline-block ml-1">Forgot Password</span>
+                    <span className="inline-block ml-1">Olvide mi contraseña</span>
                   </button>
                 </div>
               </div>
@@ -195,7 +223,7 @@ const Login = () => {
                         d="M10 19l-7-7m0 0l7-7m-7 7h18"
                       />
                     </svg>
-                    <span className="inline-block ml-1">Back to HomePage</span>
+                    <span className="inline-block ml-1">Volver al inicio</span>
                   </button>
                 </Link>
               </div>
