@@ -51,6 +51,14 @@ export class UsersService {
     if (!payload) throw new NotFoundException('Error al decodificar token');
     const user = this.userRepository.findOne({
       where: { email: payload.sub },
+      relations: [
+        'car',
+        'post',
+        'rentals',
+        'notifications',
+        'addresses',
+        'reviews',
+      ],
     });
     if (!user) throw new NotFoundException('Usuario no encontrado');
     return user;
