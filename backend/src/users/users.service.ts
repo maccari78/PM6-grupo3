@@ -17,7 +17,10 @@ export class UsersService {
 
   async findAll() {
     const users = await this.userRepository.find();
-    if (!users) throw new NotFoundException('No se encontraron usuarios');
+    console.log(users);
+
+    if (users.length === 0 || !users)
+      throw new NotFoundException('No se encontraron usuarios');
     return users;
   }
 
@@ -41,20 +44,13 @@ export class UsersService {
     const currentUser = token?.split(' ')[1];
     if (!currentUser)
       throw new NotFoundException('No hay un usuario autenticado');
-    const payload: JwtPayload = this.jwtService.verify(currentUser, {
-      secret: process.env.JWT_SECRET_KEY,
+    const payload: JwtPayload = await this.jwtService.verify(currentUser, {
+      secret: process.env.JWT_SECRET,
     });
+
     if (!payload) throw new NotFoundException('Error al decodificar token');
     const user = this.userRepository.findOne({
-      where: { id: payload.sub },
-      relations: [
-        'car',
-        'post',
-        'rentals',
-        'notifications',
-        'addresses',
-        'reviews',
-      ],
+      where: { email: payload.sub },
     });
     if (!user) throw new NotFoundException('Usuario no encontrado');
     return user;

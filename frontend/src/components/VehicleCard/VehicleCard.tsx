@@ -13,7 +13,7 @@ const VehicleCard: React.FC<ICar> = ({
   carPrice,
 }) => {
   return (
-    <div className="flex flex-col items-center h-[400px] min-h-[100px]  w-[350px]  mb-5 bg-[#222222] rounded-xl shadow-xl">
+    <div className="flex flex-col items-center h-[400px] min-h-[100px]  w-[350px]  mb-5 bg-[#222222] rounded-xl shadow-xl mr-4">
       <div className="h-[196px] w-full">
         <img
           src={carImg[0]}

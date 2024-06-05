@@ -72,4 +72,16 @@ export class FileUploadService {
       });
     });
   }
+
+  async deleteVehicleImage(publicId: string) {
+    const car = await this.carsRepository.findOneBy({
+      public_id: publicId,
+    });
+
+    if (!car) throw new NotFoundException('Vehiculo no encontrado');
+
+    await this.deleteImage(publicId);
+
+    console.log(car);
+  }
 }
