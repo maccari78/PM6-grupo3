@@ -1,3 +1,4 @@
+
 import { Car } from 'src/cars/entities/car.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
@@ -25,6 +26,7 @@ export class Posts {
 
   @Column({ type: 'decimal', precision: 10, scale: 2, nullable: false })
   price: number;
+
 
   //..........relations start........//
   @ManyToOne(() => User, (user) => user.post)
