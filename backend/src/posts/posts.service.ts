@@ -109,8 +109,13 @@ export class PostsService {
     const newCar = await this.carService.createdCar(files, rest, user.id);
     if (!newCar) throw new BadRequestException('No se pudo crear el auto');
     const newPosts = this.postRepository.create({ title, description, price });
+    console.log(newCar);
+
     newPosts.car = newCar;
+    console.log('ESTOY ACA');
     newPosts.user = user;
+    console.log('ERROR?');
+    console.log(newPosts);
 
     await this.postRepository.save(newPosts);
     return 'Publicación insertada';
