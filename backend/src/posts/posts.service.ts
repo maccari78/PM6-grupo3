@@ -22,6 +22,7 @@ import { FiltersPosts } from './interfaces/filter.interfaces';
 export class PostsService {
   constructor(
     private readonly carService: CarsService,
+    @InjectRepository(Car) private carRepository: Repository<Car>,
     @InjectRepository(Posts) private postRepository: Repository<Posts>,
     @InjectRepository(User) private userRepository: Repository<User>,
     private jwtService: JwtService,
@@ -127,22 +128,32 @@ export class PostsService {
     token: string,
     files?: Express.Multer.File[],
   ) {
+    const { title, description, price, ...rest } = posts;
+
     const secret = process.env.JWT_SECRET;
     const payload: JwtPayload = await this.jwtService.verify(token, {
       secret,
     });
     if (!payload) throw new UnauthorizedException('token invalido 3');
     const user = await this.userRepository.findOne({
-      where: { id: payload.sub },
+      where: { email: payload.sub },
     });
     if (!user) throw new NotFoundException('Usuario no encontrado');
-    const findPosts = await this.postRepository.findOneBy({ id });
-
+    
+    const findPosts = await this.postRepository.findOne({ 
+      where: { id }, relations: ['car'] 
+       });
     if (!findPosts)
       throw new NotFoundException(`No se encontro publicación con ${id}`);
 
-    const updatePosts = await this.postRepository.update(id, posts);
+    const car =  await this.carRepository.findOneBy({
+      id: findPosts.car.id,})
+      if(!car) throw new NotFoundException('Auto no encontrado')
+    const updateCar = await this.carRepository.update(car.id, rest);
+    const updatePosts = await this.postRepository.update(id, {
+      title, description, price});
     console.log(updatePosts, files);
+    return 'Publicación actualizada';
   }
 
   async DeletePostsServices(id: string) {
