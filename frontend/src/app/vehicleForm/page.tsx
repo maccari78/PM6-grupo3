@@ -78,11 +78,13 @@ const VehicleForm = () => {
     }
 
     const handleSubmit = async (e: React.FormEvent) => {
-
         e.preventDefault();
+    
+        // Validar los datos del vehículo
         const validationErrors = validate(vehicleData);
         setErrors(validationErrors);
-
+    
+        // Si no hay errores de validación, proceder con el envío
         if (Object.keys(validationErrors).length === 0) {
             const formData = new FormData();
             formData.append("title", vehicleData.title);
@@ -93,34 +95,40 @@ const VehicleForm = () => {
             formData.append("brand", vehicleData.brand);
             formData.append("year", vehicleData.year.toString());
             formData.append("mileage", vehicleData.mileage);
-
+    
+            // Si hay archivos, adjuntarlos al formData
             if (vehicleData.file) {
                 Array.from(vehicleData.file).forEach(file => {
                     formData.append("file", file);
                 });
             }
-
+    
             try {
+                // Enviar los datos al servidor
                 const response = await axios.post(apiUrl, formData, {
                     headers: {
                         Authorization: `Bearer ${userSession}`,
                         'Content-Type': 'multipart/form-data'
                     }
                 });
-
-                if (response.data.success) {
+    
+                // Log de la respuesta completa para inspeccionar su estructura
+                console.log('Respuesta del servidor:', response);
+    
+                // Manejar la respuesta del servidor
+                if (response.data && response.data.success) {
                     alert('El vehículo se ha publicado correctamente');
-                    router.push("/")
+                    router.push("/");
                 } else {
-                    alert(response.data.message);
+                    const errorMessage = response.data?.message || 'Respuesta del servidor no válida.';
+                    alert(errorMessage);
                 }
             } catch (error) {
                 console.error('Error al publicar el vehículo:', error);
                 alert('Hubo un error al intentar publicar el vehículo.');
             }
         }
-    }
-
+    };
 
     return (
         <div className="bg-gradient-to-bl from-[#222222] to-[#313139]  font-sans text-white">
@@ -238,16 +246,21 @@ const VehicleForm = () => {
                         {errors.year && <span className="text-red-500">{errors.year}</span>}
                     </div>
                     <div className="mb-4 w-1/2">
-                        <label className="text-slate-50">Kilometraje</label>
-                        <input
+                        <label className="text-slate-50">Selecciona el kilometraje</label>
+                        <select
                             name='mileage'
-                            type="text"
                             value={vehicleData.mileage}
                             onChange={handleChange}
                             onBlur={handleBlur}
                             required
                             className="w-full px-3 mt-3 py-2 border rounded text-[#222222]"
-                        />
+                        >
+                            <option value="" disabled>Selecciona el kilometraje...</option>
+                            <option value="Menos de 50.000km">Menos de 50.000km</option>
+                            <option value="50.000km - 100-000km">50.000km - 100-000km</option>
+                            <option value="100.000km - 150.000km">100.000km - 150.000km</option>
+                            <option value="Más de 150.000km">Más de 150.000km</option>
+                        </select>
                         {errors.mileage && <span className="text-red-500">{errors.mileage}</span>}
                     </div>
                 </div>
