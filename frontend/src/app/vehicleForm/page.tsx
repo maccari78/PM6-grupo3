@@ -5,12 +5,13 @@ import IVehicleData from "../../interfaces/IVehicleData";
 import IErrorsVehicleForm from "../../interfaces/IErrorsVehicleForm";
 import axios from 'axios';
 import { redirect, useRouter } from "next/navigation";
-import { getApiUrl } from "@/helpers/getApiUrl";
-
 
 const VehicleForm = () => {
 
-    const postsUrl = getApiUrl('NEXT_PUBLIC_API_POSTS')
+    const apiUrl = process.env.NEXT_PUBLIC_API_POSTS;
+    if (!apiUrl) {
+      throw new Error('Environment variable NEXT_PUBLIC_API_POSTS is not set');
+    }
 
     const [token, setToken] = useState();
     useEffect(() => {
@@ -100,7 +101,7 @@ const VehicleForm = () => {
             }
 
             try {
-                const response = await axios.post(postsUrl, formData, {
+                const response = await axios.post(apiUrl, formData, {
                     headers: {
                         Authorization: `Bearer ${userSession}`,
                         'Content-Type': 'multipart/form-data'
@@ -109,6 +110,7 @@ const VehicleForm = () => {
 
                 if (response.data.success) {
                     alert('El vehículo se ha publicado correctamente');
+                    router.push("/")
                 } else {
                     alert(response.data.message);
                 }

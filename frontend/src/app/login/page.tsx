@@ -4,9 +4,11 @@ import { IErrorlogin, Ilogin } from "@/interfaces/ILogin";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { getApiUrl } from "@/helpers/getApiUrl";
 
-const signInUrl = getApiUrl('NEXT_PUBLIC_API_SIGNIN_URL');
+const apiUrl = process.env.NEXT_PUBLIC_API_SIGNIN_URL;
+if (!apiUrl) {
+  throw new Error('Environment variable NEXT_PUBLIC_API_POSTS is not set');
+}
 
 const Login = () => {
   const router = useRouter();
@@ -37,7 +39,7 @@ const Login = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      const response = await fetch(signInUrl, {
+      const response = await fetch(apiUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

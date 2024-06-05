@@ -1,12 +1,14 @@
 "use client"
 import Sidebar from '@/components/DashboardComponents/Sidebar';
-import { getApiUrl } from '@/helpers/getApiUrl';
 import { IUserData } from '@/interfaces/IUser';
 import Link from 'next/link';
 import { redirect, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
-const getUsersTokenUrl = getApiUrl('NEXT_PUBLIC_API_GET_USERS_TOKEN')
+const apiUrl = process.env.NEXT_PUBLIC_API_GET_USERS_TOKEN;
+if (!apiUrl) {
+  throw new Error('Environment variable NEXT_PUBLIC_API_GET_USERS_TOKEN is not set');
+}
 
 const DashboardVendedor: React.FC = () => {
   const [userToken, setUserToken] = useState<string | null>(null);
@@ -31,7 +33,7 @@ const DashboardVendedor: React.FC = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await fetch(getUsersTokenUrl, {
+        const response = await fetch(apiUrl, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${userToken}`,

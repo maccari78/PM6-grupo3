@@ -5,10 +5,11 @@ import { validateRegister } from "@/helpers/validateRegister";
 import axios from "axios";
 import IRegisterErrorProps from "../../interfaces/IRegisterErrorProps";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { getApiUrl } from "@/helpers/getApiUrl";
 
-const signUpUrl = getApiUrl('NEXT_PUBLIC_API_SIGNUP_URL');
+const apiUrl = process.env.NEXT_PUBLIC_API_SIGNUP_URL;
+if (!apiUrl) {
+  throw new Error('Environment variable NEXT_PUBLIC_API_POSTS is not set');
+}
 
 const Register = () => {
 
@@ -70,7 +71,7 @@ const Register = () => {
 
     const auth = { ...userData, nDni: Number(userData.nDni), phone: Number(userData.phone) }
 
-    axios.post(signUpUrl, auth)
+    axios.post(apiUrl, auth)
       .then(response => {
         if (response.data.success) {
           setUserData(initialUserData);

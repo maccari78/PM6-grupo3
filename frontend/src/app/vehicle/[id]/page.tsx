@@ -2,18 +2,22 @@
 
 import DateRangePicker from "@/components/DateRangePicker/DateRangePicker";
 import { IPost } from "@/components/VehiclesComponent/interfaces/IPost";
-import { getApiUrl } from "@/helpers/getApiUrl";
+
 import { useEffect, useState } from "react";
 
+const apiUrl = process.env.NEXT_PUBLIC_API_POSTS;
+if (!apiUrl) {
+  throw new Error('Environment variable NEXT_PUBLIC_API_POSTS is not set');
+}
+
 const VehicleDetail = ({ params }: { params: { id: string } }) => {
-  const getPostsUrl = getApiUrl(`/posts/${params.id}`);
   
   const [postState, setPostState] = useState<IPost>();
 
   useEffect(() => {
     const fetchDta = async () => {
       try {
-        const post = await fetch(getPostsUrl, {
+        const post = await fetch((`${apiUrl}/${params.id}`), {
           method: "GET",
         });
         const data = await post.json();

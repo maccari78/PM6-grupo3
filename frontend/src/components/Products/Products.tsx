@@ -4,10 +4,18 @@ import VehiclesComponent from "../VehiclesComponent/VehiclesComponent";
 import { useEffect, useState } from "react";
 import { IPost } from "../VehiclesComponent/interfaces/IPost";
 import ShowAndDeleteFilter from "../ShowAndDeleteFilter/ShowAndDeleteFilter";
-import { getApiUrl } from "@/helpers/getApiUrl";
+
+const apiUrl = process.env.NEXT_PUBLIC_API_POSTS;
+if (!apiUrl) {
+  throw new Error('Environment variable NEXT_PUBLIC_API_POSTS is not set');
+}
+
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+if (!apiBaseUrl) {
+  throw new Error('Environment variable NEXT_PUBLIC_API_URL is not set');
+}
 
 const Products: React.FC = () => {
-  const getPostsUrl = getApiUrl('NEXT_PUBLIC_API_POSTS')
   const [posts, setPosts] = useState<IPost[]>([]);
   const [filters, setFilters] = useState<any>(null);
   const [notShowFilter, setNotShowFilter] = useState(true);
@@ -15,7 +23,7 @@ const Products: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(getPostsUrl, {
+        const response = await fetch(apiUrl, {
           method: "GET",
         });
         const data: IPost[] = await response.json();
@@ -33,7 +41,7 @@ const Products: React.FC = () => {
       try {
         const queryParams = new URLSearchParams(filters);
         const response = await fetch(
-          `http://localhost:3001/posts/filter?${queryParams}`,
+          `${apiBaseUrl}/posts/filter?${queryParams}`,
           {
             method: "GET",
             headers: {
