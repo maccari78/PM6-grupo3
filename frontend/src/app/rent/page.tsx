@@ -1,6 +1,7 @@
 "use client"
 import Sidebar from '@/components/DashboardComponents/Sidebar';
 import { IUserData } from '@/interfaces/IUser';
+import Link from 'next/link';
 import { redirect, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
@@ -64,14 +65,16 @@ const DashboardVendedor: React.FC = () => {
           <h1 className="text-2xl font-bold text-gray-800">Bienvenido, {userData?.name}</h1>
           <p className="text-gray-600 mt-2">Estamos encantados de verte de nuevo. Aquí tienes un resumen de tu actividad reciente y herramientas para gestionar tus ventas.</p>
         </div>
+        <Link href='/vehicleForm'>
         <button className="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-700">
           Crear Nueva Publicación
         </button>
+        </Link>
       </div>
       
       {/* Sección de ventas recientes */}
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-        <h2 className="text-xl font-semibold text-gray-800">Tus Ventas Recientes</h2>
+        <h2 className="text-xl font-semibold text-gray-800">Tus alquileres Recientes</h2>
         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <SaleCard
             carModel="Toyota Corolla 2021"
@@ -112,19 +115,19 @@ const DashboardVendedor: React.FC = () => {
         <h2 className="text-xl font-semibold text-gray-800">Estadísticas de Ventas</h2>
         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <StatCard
-            title="Ventas Totales"
+            title="Alquileres Totales"
             value="120"
-            description="Total de ventas realizadas este mes."
+            description="Total de Alquileres recibidos en la plataforma"
           />
           <StatCard
             title="Ingresos"
             value="$240,000"
-            description="Ingresos generados este mes."
+            description="Ingresos generados"
           />
           <StatCard
             title="Promedio de Precio"
             value="$20,000"
-            description="Precio promedio de los vehículos vendidos."
+            description="Precio promedio de los vehículos alquilados"
           />
           {/* Agrega más StatCards según sea necesario */}
         </div>
