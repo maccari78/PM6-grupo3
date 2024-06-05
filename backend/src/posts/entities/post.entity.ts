@@ -1,5 +1,5 @@
-
 import { Car } from 'src/cars/entities/car.entity';
+import { Review } from 'src/reviews/entities/review.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
   Column,
@@ -27,7 +27,6 @@ export class Posts {
   @Column({ type: 'decimal', precision: 10, scale: 2, nullable: false })
   price: number;
 
-
   //..........relations start........//
   @ManyToOne(() => User, (user) => user.post)
   @JoinColumn({ name: 'userId' })
@@ -43,4 +42,6 @@ export class Posts {
 
   @UpdateDateColumn()
   updated_at: Timestamp;
+  @ManyToOne(() => Review, (review) => review.post)
+  review: Review[];
 }
