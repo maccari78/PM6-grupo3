@@ -12,16 +12,22 @@ import {
   MaxFileSizeValidator,
   FileTypeValidator,
   Headers,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
+import { RolesGuard } from 'src/roles/utils/roles.guard';
+import { Roles } from 'src/roles/utils/roles.decorator';
+import { Role } from 'src/roles/utils/role.enum';
 
 @Controller('users')
+@UseGuards(RolesGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
+  @Roles(Role.Admin)
   findAll() {
     return this.usersService.findAll();
   }
