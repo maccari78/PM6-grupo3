@@ -132,7 +132,7 @@ const DashboardComprador: React.FC = () => {
         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <StatCard
             title="Total de Reservas"
-            value={String(userData?.rentals.length)}
+            value={String(userData?.rentals?.length)}
             description="Número total de reservas realizadas."
           />
           <StatCard
@@ -142,7 +142,7 @@ const DashboardComprador: React.FC = () => {
           />
           <StatCard
             title="Reseñas Recibidas"
-            value={String(userData?.reviews.length)}
+            value={String(userData?.reviews?.length)}
             description="Número total de reseñas recibidas."
           />
           {/* Agrega más StatCards según sea necesario */}
