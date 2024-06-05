@@ -5,19 +5,22 @@ import IVehicleData from "../../interfaces/IVehicleData";
 import IErrorsVehicleForm from "../../interfaces/IErrorsVehicleForm";
 import axios from 'axios';
 import { redirect, useRouter } from "next/navigation";
+import { getApiUrl } from "@/helpers/getApiUrl";
 
 
 const VehicleForm = () => {
 
+    const postsUrl = getApiUrl('NEXT_PUBLIC_API_POSTS')
+
     const [token, setToken] = useState();
     useEffect(() => {
         if (typeof window !== "undefined" && window.localStorage) {
-          const userToken = localStorage.getItem('userSession');
-          setToken(JSON.parse(userToken!))
-          !userToken && redirect("/login")
+            const userToken = localStorage.getItem('userSession');
+            setToken(JSON.parse(userToken!))
+            !userToken && redirect("/login")
         }
-      }, [])
-      
+    }, [])
+
     const router = useRouter();
 
     const [userSession, setUserSession] = useState()
@@ -43,7 +46,7 @@ const VehicleForm = () => {
         }
     }, [router]);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleChange = (e:  React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value, files } = e.target as HTMLInputElement;
 
         if (name === "file") {
@@ -64,7 +67,7 @@ const VehicleForm = () => {
         }));
     }
 
-    const handleBlur = (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleBlur = (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = event.target;
 
         setErrors(prevErrors => ({
@@ -97,7 +100,7 @@ const VehicleForm = () => {
             }
 
             try {
-                const response = await axios.post('http://localhost:3001/posts', formData, {
+                const response = await axios.post(postsUrl, formData, {
                     headers: {
                         Authorization: `Bearer ${userSession}`,
                         'Content-Type': 'multipart/form-data'
@@ -163,34 +166,47 @@ const VehicleForm = () => {
                         />
                         {errors.price && <span className="text-red-500">{errors.price}</span>}
                     </div>
-                    <div className="mb-4">
-                        <label className="text-slate-50">Marca</label>
-                        <input
+                    <div className="mb-4 w-1/2">
+                        <label className="text-slate-50">Selecciona la marca</label>
+                        <select
                             name='brand'
-                            type="text"
                             value={vehicleData.brand}
                             onChange={handleChange}
                             onBlur={handleBlur}
                             required
                             className="w-full px-3 mt-3 py-2 border rounded text-[#222222]"
-                        />
+                        >
+                            <option value="" disabled>Selecciona la marca...</option>
+                            <option value="Kia">Kia</option>
+                            <option value="Chevrolet">Chevrolet</option>
+                            <option value="Mazda">Mazda</option>
+                            <option value="Ford">Ford</option>
+                            <option value="Ferrari">Ferrari</option>
+                        </select>
                         {errors.brand && <span className="text-red-500">{errors.brand}</span>}
                     </div>
                 </div>
                 <div className="flex gap-8">
-                    <div className="mb-4">
-                        <label className="text-slate-50">Color</label>
-                        <input
+                    <div className="mb-4 w-1/2">
+                        <label className="text-slate-50">Selecciona el color</label>
+                        <select
                             name='color'
-                            type="text"
                             value={vehicleData.color}
                             onChange={handleChange}
                             onBlur={handleBlur}
                             required
                             className="w-full px-3 mt-3 py-2 border rounded text-[#222222]"
-                        />
+                        >
+                            <option value="" disabled>Selecciona el color...</option>
+                            <option value="Azul">Azul</option>
+                            <option value="Verde">Verde</option>
+                            <option value="Negro">Negro</option>
+                            <option value="Blanco">Blanco</option>
+                            <option value="Rojo">Rojo</option>
+                        </select>
                         {errors.color && <span className="text-red-500">{errors.color}</span>}
                     </div>
+
                     <div className="mb-4">
                         <label className="text-slate-50">Modelo</label>
                         <input

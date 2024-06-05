@@ -2,15 +2,18 @@
 
 import DateRangePicker from "@/components/DateRangePicker/DateRangePicker";
 import { IPost } from "@/components/VehiclesComponent/interfaces/IPost";
+import { getApiUrl } from "@/helpers/getApiUrl";
 import { useEffect, useState } from "react";
 
 const VehicleDetail = ({ params }: { params: { id: string } }) => {
+  const getPostsUrl = getApiUrl(`/posts/${params.id}`);
+  
   const [postState, setPostState] = useState<IPost>();
 
   useEffect(() => {
     const fetchDta = async () => {
       try {
-        const post = await fetch(`http://localhost:3001/posts/${params.id}`, {
+        const post = await fetch(getPostsUrl, {
           method: "GET",
         });
         const data = await post.json();

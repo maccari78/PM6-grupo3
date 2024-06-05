@@ -1,9 +1,12 @@
 "use client"
 import Sidebar from '@/components/DashboardComponents/Sidebar';
+import { getApiUrl } from '@/helpers/getApiUrl';
 import { IUserData } from '@/interfaces/IUser';
 import Link from 'next/link';
 import { redirect, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+
+const getUsersTokenUrl = getApiUrl('NEXT_PUBLIC_API_GET_USERS_TOKEN')
 
 const DashboardVendedor: React.FC = () => {
   const [userToken, setUserToken] = useState<string | null>(null);
@@ -28,7 +31,7 @@ const DashboardVendedor: React.FC = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`http://localhost:3001/users/token`, {
+        const response = await fetch(getUsersTokenUrl, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${userToken}`,

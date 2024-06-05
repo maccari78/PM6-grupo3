@@ -6,6 +6,9 @@ import axios from "axios";
 import IRegisterErrorProps from "../../interfaces/IRegisterErrorProps";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { getApiUrl } from "@/helpers/getApiUrl";
+
+const signUpUrl = getApiUrl('NEXT_PUBLIC_API_SIGNUP_URL');
 
 const Register = () => {
 
@@ -67,7 +70,7 @@ const Register = () => {
 
     const auth = { ...userData, nDni: Number(userData.nDni), phone: Number(userData.phone) }
 
-    axios.post('http://localhost:3001/auth/signup', auth)
+    axios.post(signUpUrl, auth)
       .then(response => {
         if (response.data.success) {
           setUserData(initialUserData);

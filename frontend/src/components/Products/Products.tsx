@@ -4,8 +4,10 @@ import VehiclesComponent from "../VehiclesComponent/VehiclesComponent";
 import { useEffect, useState } from "react";
 import { IPost } from "../VehiclesComponent/interfaces/IPost";
 import ShowAndDeleteFilter from "../ShowAndDeleteFilter/ShowAndDeleteFilter";
+import { getApiUrl } from "@/helpers/getApiUrl";
 
 const Products: React.FC = () => {
+  const getPostsUrl = getApiUrl('NEXT_PUBLIC_API_POSTS')
   const [posts, setPosts] = useState<IPost[]>([]);
   const [filters, setFilters] = useState<any>(null);
   const [notShowFilter, setNotShowFilter] = useState(true);
@@ -13,7 +15,7 @@ const Products: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:3001/posts", {
+        const response = await fetch(getPostsUrl, {
           method: "GET",
         });
         const data: IPost[] = await response.json();

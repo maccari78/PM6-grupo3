@@ -4,6 +4,9 @@ import { IErrorlogin, Ilogin } from "@/interfaces/ILogin";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { getApiUrl } from "@/helpers/getApiUrl";
+
+const signInUrl = getApiUrl('NEXT_PUBLIC_API_SIGNIN_URL');
 
 const Login = () => {
   const router = useRouter();
@@ -34,7 +37,7 @@ const Login = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      const response = await fetch("http://localhost:3001/auth/signin", {
+      const response = await fetch(signInUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
