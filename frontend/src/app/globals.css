@@ -2,3 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
+.bg-home {
+    background-image: url('/imagenhomefinal.svg');
+  }

@@ -54,7 +54,6 @@ const DashboardComprador: React.FC = () => {
       fetchData();
     }
   }, [userToken]);
-  console.log(userData)
 
   return (
     <>
@@ -101,7 +100,7 @@ const DashboardComprador: React.FC = () => {
 
       {/* Sección de publicaciones recientes */}
       <div className="bg-[#333333] rounded-lg shadow-md p-6">
-        <h2 className="text-2xl font-semibold text-[#C4FF0D]">Reservas recientes</h2>
+        <h2 className="text-2xl font-semibold text-[#C4FF0D]">Hisotiral de reservas</h2>
         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <PublicationCard
             carModel="Ford Mustang"
@@ -132,7 +131,7 @@ const DashboardComprador: React.FC = () => {
         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <StatCard
             title="Total de Reservas"
-            value={String(userData?.rentals?.length)}
+            value={String(userData?.rentals.length)}
             description="Número total de reservas realizadas."
           />
           <StatCard
@@ -142,7 +141,7 @@ const DashboardComprador: React.FC = () => {
           />
           <StatCard
             title="Reseñas Recibidas"
-            value={String(userData?.reviews?.length)}
+            value={String(userData?.reviews.length)}
             description="Número total de reseñas recibidas."
           />
           {/* Agrega más StatCards según sea necesario */}

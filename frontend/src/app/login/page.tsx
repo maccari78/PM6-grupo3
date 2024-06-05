@@ -5,7 +5,17 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
+const apiUrl = process.env.NEXT_PUBLIC_API_SIGNIN_URL;
+if (!apiUrl) {
+  throw new Error('Environment variable NEXT_PUBLIC_API_POSTS is not set');
+}
+
 const Login = () => {
+  interface ApiError {
+    message: string;
+    error: string;
+    statusCode: number;
+  }
   const router = useRouter();
 
   const [userData, setUserData] = useState<Ilogin>({
@@ -16,7 +26,7 @@ const Login = () => {
     email: "",
     password: "",
   });
-
+  const [errorAPI, setErrorAPI] = useState<ApiError | null>(null);
   const [session, setSession] = useState({ token: null });
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,7 +44,7 @@ const Login = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      const response = await fetch("http://localhost:3001/auth/signin", {
+      const response = await fetch(apiUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -44,26 +54,49 @@ const Login = () => {
           password: userData.password,
         }),
       });
-
+  
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorData: ApiError = await response.json();
+        throw errorData;
       }
+  
       const json = await response.json();
       const token = json;
       localStorage.setItem("userSession", JSON.stringify(token));
       setSession({ token });
-      alert("login success");
+      alert("Login success");
       router.push("/");
-    } catch (error) {
-      console.error("Login failed:", error);
-      alert("Login failed");
+    } catch (err) {
+      if (typeof err === 'object' && err !== null && 'message' in err) {
+        // Si el error es un objeto y contiene la propiedad 'message'
+        const apiError = err as ApiError;
+        setErrorAPI(apiError);
+        alert(`Error: ${apiError.message}`);
+      } else if (err instanceof Error) {
+        // Si el error es una instancia de Error nativa
+        setErrorAPI({
+          message: err.message,
+          error: "Error",
+          statusCode: 500,
+        });
+        alert(`Error: ${err.message}`);
+      } else {
+        // Otro tipo de error
+        const unknownError: ApiError = {
+          message: "An unknown error occurred",
+          error: "Unknown Error",
+          statusCode: 500,
+        };
+        setErrorAPI(unknownError);
+        alert(`Error: ${unknownError.message}`);
+      }
     }
   };
   return (
     <>
       <div className="min-h-screen bg-gray-100 flex flex-col justify-center sm:py-12">
         <div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
-          <h1 className="font-bold text-center text-2xl mb-5">Welcome Back!</h1>
+          <h1 className="font-bold text-center text-2xl mb-5">Bienvenido a YouCars!</h1>
           <div className="bg-white shadow w-full rounded-lg divide-y divide-gray-200">
             <div className="px-5 py-7">
               <form onSubmit={handleSubmit}>
@@ -87,7 +120,7 @@ const Login = () => {
                   <p className="text-sm text-red-500 lg:mt-0 ">{error.email}</p>
                 )}
                 <label className="font-semibold text-sm text-gray-600 pb-1 block">
-                  Password
+                  Contraseña
                 </label>
                 <input
                   id="password-login"
@@ -111,7 +144,7 @@ const Login = () => {
                   type="submit"
                   className="transition duration-200 bg-blue-500 hover:bg-blue-600 focus:bg-blue-700 focus:shadow-sm focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 text-white w-full py-2.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center inline-block"
                 >
-                  <span className="inline-block mr-2">Login</span>
+                  <span className="inline-block mr-2">Iniciar Sesion</span>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -170,7 +203,7 @@ const Login = () => {
                         d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"
                       />
                     </svg>
-                    <span className="inline-block ml-1">Forgot Password</span>
+                    <span className="inline-block ml-1">Olvide mi contraseña</span>
                   </button>
                 </div>
               </div>
@@ -195,7 +228,7 @@ const Login = () => {
                         d="M10 19l-7-7m0 0l7-7m-7 7h18"
                       />
                     </svg>
-                    <span className="inline-block ml-1">Back to HomePage</span>
+                    <span className="inline-block ml-1">Volver al inicio</span>
                   </button>
                 </Link>
               </div>
