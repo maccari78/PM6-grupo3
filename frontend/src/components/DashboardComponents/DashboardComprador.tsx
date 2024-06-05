@@ -54,6 +54,7 @@ const DashboardComprador: React.FC = () => {
       fetchData();
     }
   }, [userToken]);
+  console.log(userData)
 
   return (
     <>
