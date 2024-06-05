@@ -31,7 +31,7 @@ export class Review {
   updated_at: Timestamp;
 
   //..........relations start........//
-  @ManyToOne(() => User, (user) => user.reviews)
+  @ManyToOne(() => User, (user) => user.reviews, { eager: true })
   @JoinColumn({ name: 'userId' })
   user: User;
 
@@ -41,13 +41,12 @@ export class Review {
   //..........relations end........//
 
   //..........relations start ........//
-  @ManyToOne(()=> Posts, posts=>posts.review)
-  @JoinColumn({ name: "postId" })
+  @ManyToOne(() => Posts, (posts) => posts.review, { eager: true })
+  @JoinColumn({ name: 'postId' })
   post: Posts;
 
   //Para la tablar Posts desde Review:
   // @OneToOne(() => Review, review => review.car)
   // reviews: Review[];
   //..........relations end........//
-
 }
