@@ -12,7 +12,7 @@ import { CreateChatDto } from './dto/create-chat.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
 import { Server, Socket } from 'socket.io';
 
-@WebSocketGateway(80, { namespace: 'chat', cors: true })
+@WebSocketGateway(81, { namespace: 'chat', cors: true })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   public server: Server;
