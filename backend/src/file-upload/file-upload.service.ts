@@ -64,7 +64,14 @@ export class FileUploadService {
     return updatedCar;
   }
 
-  deleteImage(publicId: string) {
+  async deleteImage(publicId: string) {
+    const user = await this.usersRepository.findOneBy({ public_id: publicId });
+
+    await this.usersRepository.update(user.id, {
+      image_url: null,
+      public_id: null,
+    });
+
     return new Promise((resolve, reject) => {
       v2.uploader.destroy(publicId, (error, result) => {
         if (error) reject(error);
@@ -74,14 +81,37 @@ export class FileUploadService {
   }
 
   async deleteVehicleImage(publicId: string) {
-    const car = await this.carsRepository.findOneBy({
-      public_id: publicId,
-    });
+    const car = await this.carsRepository
+      .createQueryBuilder('car')
+      .where(':publicId = ANY(car.public_id)', { publicId })
+      .getOne();
 
     if (!car) throw new NotFoundException('Vehiculo no encontrado');
 
-    await this.deleteImage(publicId);
+    car.image_url = car.image_url.filter((url) => !url.includes(publicId));
+    car.public_id = car.public_id.filter((id) => id !== publicId);
 
-    console.log(car);
+    await this.carsRepository.save(car);
+
+    return new Promise((resolve, reject) => {
+      v2.uploader.destroy(publicId, (error, result) => {
+        if (error) reject(error);
+        else resolve(result);
+      });
+    });
+  }
+
+  async updateProfilePicture(userid: string, file: Express.Multer.File) {
+    const user = await this.usersRepository.findOneBy({ id: userid });
+
+    if (!user) throw new NotFoundException('Usuario no encontrado');
+
+    if (user.public_id) {
+      await this.deleteImage(user.public_id);
+    }
+
+    const uploadImage = await this.uploadProfilePicture(file, userid);
+
+    return uploadImage;
   }
 }
