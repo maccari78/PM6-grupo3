@@ -2,15 +2,23 @@
 
 import DateRangePicker from "@/components/DateRangePicker/DateRangePicker";
 import { IPost } from "@/components/VehiclesComponent/interfaces/IPost";
+import Link from "next/link";
+
 import { useEffect, useState } from "react";
 
+const apiUrl = process.env.NEXT_PUBLIC_API_POSTS;
+if (!apiUrl) {
+  throw new Error('Environment variable NEXT_PUBLIC_API_POSTS is not set');
+}
+
 const VehicleDetail = ({ params }: { params: { id: string } }) => {
+  
   const [postState, setPostState] = useState<IPost>();
 
   useEffect(() => {
     const fetchDta = async () => {
       try {
-        const post = await fetch(`http://localhost:3001/posts/${params.id}`, {
+        const post = await fetch((`${apiUrl}/${params.id}`), {
           method: "GET",
         });
         const data = await post.json();
@@ -274,6 +282,8 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
       <h1 className="font-sans text-lg md:text-2xl font-semibold text-gray-100 pb-8">¡Reserva ahora!</h1>
     <DateRangePicker></DateRangePicker>
     </div>
+
+    <Link href={`/vehicle/${params.id}/upload_post`}> Editar </Link>
     </>
   );
 };

@@ -25,27 +25,33 @@ const Navbar = () => {
   };
 
   const handleLogOut = () => {
+
     localStorage.removeItem("userSession");
     router.push("/login");
   };
+
 
   return (
     <header className="flex flex-row justify-between items-center bg-[#222222] text-white p-6 font-sans">
       <div className="flex flex-row gap-4 items-center">
         <Link href="/">
           <Image
+
             src="/logo.png"
+
             width={160}
             height={90}
             alt="Logo de la aplicacion You Drive"
           />
         </Link>
         <form className="flex gap-4 w-1/2 md:w-52">
+
           <input
             type="string"
             placeholder="Buscar"
             className="h-8 rounded-md focus:outline-none text-black p-2 w-full"
           />
+
           <button type="button" className="b-none bg-transparent">
             <svg
               xmlns="http://www.w3.org/2000/svg"
