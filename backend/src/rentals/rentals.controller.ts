@@ -24,6 +24,7 @@ export class RentalsController {
     @Headers('Authorization') authorization: string,
   ) {
     const currentUser = authorization?.split(' ')[1];
+
     if (!currentUser)
       throw new BadRequestException('No hay un usuario autenticado');
     return this.rentalsService.create(createRentalDto, currentUser);

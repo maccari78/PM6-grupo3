@@ -7,6 +7,7 @@ import {
   OneToOne,
   ManyToMany,
   JoinTable,
+  JoinColumn,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 
@@ -32,6 +33,7 @@ export class Rental {
   users: User[];
 
   @OneToOne(() => Posts)
+  @JoinColumn()
   posts: Posts;
 
   @CreateDateColumn({ type: 'timestamp' })

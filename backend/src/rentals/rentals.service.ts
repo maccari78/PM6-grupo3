@@ -30,6 +30,7 @@ export class RentalsService {
     const payload: JwtPayload = await this.jwtService.verify(currentUser, {
       secret,
     });
+
     return await this.createWhithJWT(payload, rest, postId);
   }
 
@@ -39,8 +40,9 @@ export class RentalsService {
     postId: string,
   ) {
     const rental_user = await this.userRepository.findOne({
-      where: { id: payload.sub },
+      where: { email: payload.sub },
     });
+
     if (!rental_user) throw new NotFoundException('Usuario no encontrado');
 
     const newRental = this.rentalRepository.create(rest);
@@ -76,7 +78,9 @@ export class RentalsService {
   }
 
   async findAll() {
-    const contracts = await this.rentalRepository.find();
+    const contracts = await this.rentalRepository.find({
+      relations: ['users', 'posts'],
+    });
     if (!contracts)
       throw new NotFoundException('No hay contratos en la base de datos');
     return contracts;
