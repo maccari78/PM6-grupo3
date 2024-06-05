@@ -1,32 +1,36 @@
-'use client'
-import { useEffect } from 'react';
-import { useRouter } from 'next/router';
+'use client';
 
-const Login: React.FC = () => {
+import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+
+const Auth: React.FC = () => {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const { query } = router;
+        const params = new URLSearchParams(searchParams.toString());
         const sessionData: { [key: string]: string } = {};
 
-        Object.keys(query).forEach(key => {
-            const value = query[key];
-            if (typeof value === 'string') {
-                sessionData[key] = value;
-                console.log(`Parametro guardado: ${key} = ${value}`);
-            }
+        params.forEach((value, key) => {
+            sessionData[key] = value;
+            console.log(`Parametro guardado: ${key} = ${value}`);
         });
 
         localStorage.setItem('userSession', JSON.stringify(sessionData));
 
-        router.push('/'); 
-    }, [router]);
+        setTimeout(() => {
+            setLoading(false);
+            router.push('/user'); 
+        }, 1000); 
+
+    }, [router, searchParams]);
 
     return (
         <div>
-            <h1>Procesando login...</h1>
+            {loading ? <h1>Procesando login...</h1> : <h1>Redirigiendo...</h1>}
         </div>
     );
 };
 
-export default Login;
+export default Auth;

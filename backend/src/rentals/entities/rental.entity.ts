@@ -9,7 +9,8 @@ import {
   JoinTable,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
-import { Car } from '../../cars/entities/car.entity';
+
+import { Posts } from 'src/posts/entities/post.entity';
 
 @Entity('rentals')
 export class Rental {
@@ -30,8 +31,8 @@ export class Rental {
   })
   users: User[];
 
-  @OneToOne(() => Car)
-  car: Car;
+  @OneToOne(() => Posts)
+  posts: Posts;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;

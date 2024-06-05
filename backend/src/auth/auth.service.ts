@@ -9,6 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UserGoogle } from './types/userGoogle.type';
 import { NotificationsService } from 'src/notifications/notifications.service';
 import { PayloadGoogleType, ResponseGoogle } from './types/response.interfaces';
+import { JwtPayload } from 'src/rentals/interfaces/payload.interfaces';
 
 @Injectable()
 export class AuthService {
@@ -31,7 +32,7 @@ export class AuthService {
       );
     const pass = await bcrypt.compare(password, userDB.password);
     if (!pass) throw new BadRequestException('Credenciales incorrectas');
-    const payload = { sub: userDB.id, email: userDB.email };
+    const payload = { sub: userDB.email };
     const token = this.jwtService.sign(payload);
 
     if (!token) {
@@ -73,7 +74,7 @@ export class AuthService {
     return { message: 'Usuario registrado con exito!' };
   }
   async generateJwtToken(user: Omit<UserGoogle, 'token'>) {
-    const payload = { email: user.email, name: user.displayName };
+    const payload: JwtPayload = { sub: user.email };
 
     return this.jwtService.sign(payload);
   }
