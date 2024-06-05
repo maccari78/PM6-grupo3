@@ -24,8 +24,8 @@ export class UsersService {
     return users;
   }
 
-  findOne(id: string) {
-    const user = this.userRepository.findOne({
+  async findOne(id: string) {
+    const user = await this.userRepository.findOne({
       where: { id },
       relations: [
         'car',
@@ -37,7 +37,9 @@ export class UsersService {
       ],
     });
     if (!user) throw new NotFoundException('Usuario no encontrado');
-    return user;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...rest } = user;
+    return rest;
   }
 
   async getUserByToken(token: string) {
@@ -49,7 +51,7 @@ export class UsersService {
     });
 
     if (!payload) throw new NotFoundException('Error al decodificar token');
-    const user = this.userRepository.findOne({
+    const user = await this.userRepository.findOne({
       where: { email: payload.sub },
       relations: [
         'car',
@@ -61,7 +63,10 @@ export class UsersService {
       ],
     });
     if (!user) throw new NotFoundException('Usuario no encontrado');
-    return user;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...rest } = user;
+
+    return rest;
   }
 
   async update(

@@ -13,8 +13,6 @@ import {
   OneToMany,
   JoinColumn,
   ManyToMany,
-  OneToOne,
-  ManyToOne,
 } from 'typeorm';
 
 @Entity('users')

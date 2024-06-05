@@ -100,7 +100,7 @@ const DashboardComprador: React.FC = () => {
 
       {/* Sección de publicaciones recientes */}
       <div className="bg-[#333333] rounded-lg shadow-md p-6">
-        <h2 className="text-2xl font-semibold text-[#C4FF0D]">Reservas recientes</h2>
+        <h2 className="text-2xl font-semibold text-[#C4FF0D]">Hisotiral de reservas</h2>
         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <PublicationCard
             carModel="Ford Mustang"
