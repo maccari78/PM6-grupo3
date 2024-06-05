@@ -33,7 +33,7 @@ export class Rental {
   users: User[];
 
   @OneToOne(() => Posts)
-  @JoinColumn({ name: 'postId' })
+  @JoinColumn()
   posts: Posts;
 
   @CreateDateColumn({ type: 'timestamp' })
