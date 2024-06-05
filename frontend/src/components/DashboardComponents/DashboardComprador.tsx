@@ -4,7 +4,7 @@ import StatCard from './StatCard';
 import ReservationCard from './ReservationCard';
 import PublicationCard from './PublicationCard';
 import { redirect, useRouter } from 'next/navigation';
-import { IUserData } from '@/interfaces/IUser';
+import { IUserData, Rental } from '@/interfaces/IUser';
 
 const DashboardComprador: React.FC = () => {
   const [userToken, setUserToken] = useState<string | null>(null);
@@ -75,6 +75,17 @@ const DashboardComprador: React.FC = () => {
       <div className="bg-[#2d2d2d] rounded-lg shadow-md p-6 mb-2">
         <h2 className="text-2xl font-semibold text-[#C4FF0D]">Reservas activas</h2>
         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        
+        {/* {userData?.rentals.map((rent:Rental) => {
+          <ReservationCard
+          carModel={rent.posts.title}
+          reservationDate={rent.rentalEndDate}
+          price={rent.posts.price}
+          imageUrl={rent.posts.}
+          />
+        }} */}
+          
+          
           <ReservationCard
             carModel="Ford F-150 Raptor"
             reservationDate="01/06/2024"
