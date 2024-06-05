@@ -46,6 +46,7 @@ const Navbar = () => {
             placeholder="Buscar"
             className="h-8 rounded-md focus:outline-none text-black p-2 w-full"
           />
+
           <button type="button" className="b-none bg-transparent">
             <svg
               xmlns="http://www.w3.org/2000/svg"
