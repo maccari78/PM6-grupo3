@@ -1,9 +1,11 @@
+import { Car } from 'src/cars/entities/car.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
   Column,
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -48,9 +50,29 @@ export class Address {
   })
   zip_code: string;
 
+  @Column({
+    type: 'decimal',
+    precision: 9,
+    scale: 6,
+    nullable: true,
+  })
+  latitude: number;
+
+  @Column({
+    type: 'decimal',
+    precision: 9,
+    scale: 6,
+    nullable: true,
+  })
+  longitude: number;
+
   @ManyToOne(() => User, (user) => user.addresses, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'user_id' })
   user: User;
+
+  @OneToOne(() => Car, (car) => car.address)
+  @JoinColumn()
+  car: Car;
 }

@@ -1,30 +1,29 @@
-'use client'
+'use client';
 import validate from "@/helpers/validate";
 import { useEffect, useState } from "react";
-import IVehicleData from "../../interfaces/IVehicleData";
-import IErrorsVehicleForm from "../../interfaces/IErrorsVehicleForm";
+import IVehicleData from "../../../../interfaces/IVehicleData";
+import IErrorsVehicleForm from "../../../../interfaces/IErrorsVehicleForm";
 import axios from 'axios';
-import { redirect, useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 
-const VehicleForm = () => {
-
-    const apiUrl = process.env.NEXT_PUBLIC_API_POSTS;
+const UploadPost = () => {
+    const { id } = useParams(); // Obtener el ID del vehículo desde la URL
+    const apiUrl = `${process.env.NEXT_PUBLIC_API_POSTS}/${id}`; // URL de la API con el ID del vehículo
     if (!apiUrl) {
       throw new Error('Environment variable NEXT_PUBLIC_API_POSTS is not set');
     }
 
-    const [token, setToken] = useState();
+    const [token, setToken] = useState<string | null>(null);
     useEffect(() => {
         if (typeof window !== "undefined" && window.localStorage) {
             const userToken = localStorage.getItem('userSession');
-            setToken(JSON.parse(userToken!))
-            !userToken && redirect("/login")
+            setToken(userToken);
+            !userToken && router.push("/login");
         }
-    }, [])
+    }, []);
 
     const router = useRouter();
-
-    const [userSession, setUserSession] = useState()
+    const [userSession, setUserSession] = useState<string | null>(null);
     const [errors, setErrors] = useState<IErrorsVehicleForm>({});
     const [vehicleData, setVehicleData] = useState<IVehicleData>({
         title: '',
@@ -36,18 +35,29 @@ const VehicleForm = () => {
         brand: '',
         year: 0,
         mileage: '',
-    })
-    useEffect(() => {
-        if (typeof window !== "undefined" && window.localStorage) {
-            const token = localStorage.getItem("userSession");
-            if (token) {
-                const parsedSession = JSON.parse(token);
-                setUserSession(parsedSession.token);
-            }
-        }
-    }, [router]);
+    });
 
-    const handleChange = (e:  React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    // Cargar los datos del vehículo
+    useEffect(() => {
+        const fetchVehicleData = async () => {
+            try {
+                const response = await axios.get(apiUrl, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                setVehicleData(response.data);
+            } catch (error) {
+                console.error('Error al cargar los datos del vehículo:', error);
+            }
+        };
+
+        if (token) {
+            fetchVehicleData();
+        }
+    }, [apiUrl, token]);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value, files } = e.target as HTMLInputElement;
 
         if (name === "file") {
@@ -66,7 +76,7 @@ const VehicleForm = () => {
             ...prevErrors,
             [name]: value.trim() === '' ? 'Este campo es requerido' : ''
         }));
-    }
+    };
 
     const handleBlur = (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = event.target;
@@ -75,7 +85,7 @@ const VehicleForm = () => {
             ...prevErrors,
             [name]: value.trim() === '' ? 'Este campo es requerido' : ''
         }));
-    }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -105,7 +115,7 @@ const VehicleForm = () => {
     
             try {
                 // Enviar los datos al servidor
-                const response = await axios.post(apiUrl, formData, {
+                const response = await axios.put(apiUrl, formData, {
                     headers: {
                         Authorization: `Bearer ${userSession}`,
                         'Content-Type': 'multipart/form-data'
@@ -117,25 +127,26 @@ const VehicleForm = () => {
     
                 // Manejar la respuesta del servidor
                 if (response.data && response.data.success) {
-                    alert('El vehículo se ha publicado correctamente');
+                    alert('El vehículo se ha actualizado correctamente');
                     router.push("/");
                 } else {
                     const errorMessage = response.data?.message || 'Respuesta del servidor no válida.';
                     alert(errorMessage);
                 }
             } catch (error) {
-                console.error('Error al publicar el vehículo:', error);
-                alert('Hubo un error al intentar publicar el vehículo.');
+                console.error('Error al actualizar el vehículo:', error);
+                alert('Hubo un error al intentar actualizar el vehículo.');
             }
         }
     };
 
     return (
-        <div className="bg-gradient-to-bl from-[#222222] to-[#313139]  font-sans text-white">
+        <div className="bg-gradient-to-bl from-[#222222] to-[#313139] font-sans text-white">
             <div className="flex flex-col gap-2 p-4 items-center">
-                <h1 className=" text-4xl font-semibold mt-6">¡Publica tu vehículo ahora!</h1>
-                <span className="text-xl">Rápido, sencillo, y gratuito.</span>
+                <h1 className="text-4xl font-semibold mt-6">¡Edita tu vehículo!</h1>
+                <span className="text-xl">Ajusta los detalles necesarios.</span>
             </div>
+
             <form onSubmit={handleSubmit} className="max-w-xl mx-auto p-8 flex-wrap bg-[#222222] rounded">
                 <div className="block mb-4">
                     <label className=" text-slate-50">Título</label>
@@ -287,6 +298,4 @@ const VehicleForm = () => {
     );
 };
 
-export default VehicleForm;
-
-
+export default UploadPost;
