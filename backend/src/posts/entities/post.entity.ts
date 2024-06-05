@@ -24,7 +24,7 @@ export class Posts {
   @Column({ type: 'text', nullable: false })
   description: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: false })
+  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
   price: number;
 
   //..........relations start........//
