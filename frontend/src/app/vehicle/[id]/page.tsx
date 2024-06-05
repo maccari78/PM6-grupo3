@@ -2,6 +2,7 @@
 
 import DateRangePicker from "@/components/DateRangePicker/DateRangePicker";
 import { IPost } from "@/components/VehiclesComponent/interfaces/IPost";
+import Link from "next/link";
 
 import { useEffect, useState } from "react";
 
@@ -281,6 +282,8 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
       <h1 className="font-sans text-lg md:text-2xl font-semibold text-gray-100 pb-8">¡Reserva ahora!</h1>
     <DateRangePicker></DateRangePicker>
     </div>
+
+    <Link href={`/vehicle/${params.id}/upload_post`}> Editar </Link>
     </>
   );
 };
