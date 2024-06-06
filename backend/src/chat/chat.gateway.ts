@@ -9,10 +9,16 @@ import {
 } from '@nestjs/websockets';
 import { ChatService } from './chat.service';
 import { CreateChatDto } from './dto/create-chat.dto';
-import { UpdateChatDto } from './dto/update-chat.dto';
-import { Server, Socket } from 'socket.io';
 
-@WebSocketGateway(81, { namespace: 'chat', cors: true })
+import { Server, Socket } from 'socket.io';
+import { MessageChat } from './interfaces/usersChat.interfaces';
+
+const PORT = Number(process.env.PORT_WS) || 80;
+@WebSocketGateway(PORT, {
+  namespace: 'chat',
+  cors: '*',
+  transports: ['websocket'],
+})
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   public server: Server;
@@ -26,38 +32,17 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log('Client disconnected: ' + client.id);
   }
 
-  @SubscribeMessage('createChat')
-  create(@MessageBody() createChatDto: CreateChatDto) {
-    return this.chatService.create(createChatDto);
-  }
-
-  @SubscribeMessage('findAllChat')
-  findAll() {
-    return this.chatService.findAll();
-  }
-
-  @SubscribeMessage('findOneChat')
-  findOne(@MessageBody() id: number) {
-    return this.chatService.findOne(id);
-  }
-
-  @SubscribeMessage('updateChat')
-  update(@MessageBody() updateChatDto: UpdateChatDto) {
-    return this.chatService.update(updateChatDto.id, updateChatDto);
-  }
-
-  @SubscribeMessage('removeChat')
-  remove(@MessageBody() id: number) {
-    return this.chatService.remove(id);
-  }
-  @SubscribeMessage('mensaje')
-  handleMessage(@ConnectedSocket() client: Socket, @MessageBody() data: any) {
-    const { name } = client.handshake.auth;
-
-    const message = {
-      id: name,
-      message: data,
-    };
-    client.broadcast.emit('mensaje', message);
+  @SubscribeMessage('posts')
+  async handleMessage(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() payload: CreateChatDto,
+  ) {
+    const token: string = client.handshake.auth?.token;
+    if (!token) {
+      client.disconnect();
+      return;
+    }
+    const message: MessageChat = await this.chatService.create(payload, token);
+    client.broadcast.emit(`${payload.room_id}`, message);
   }
 }
