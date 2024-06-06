@@ -24,7 +24,7 @@ export class Rental {
   @Column()
   rentalEndDate: string;
 
-  @ManyToMany(() => User, (user) => user.rentals)
+  @ManyToMany(() => User, (user) => user.rentals, { eager: true })
   @JoinTable({
     name: 'user_rental',
     joinColumn: { name: 'rental_id', referencedColumnName: 'id' },
@@ -32,7 +32,7 @@ export class Rental {
   })
   users: User[];
 
-  @OneToOne(() => Posts)
+  @OneToOne(() => Posts, { eager: true })
   @JoinColumn()
   posts: Posts;
 
