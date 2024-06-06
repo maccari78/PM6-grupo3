@@ -1,4 +1,5 @@
 import { PickType } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import {
   IsEmail,
   IsNotEmpty,
@@ -10,20 +11,20 @@ import {
 
 export class CreateUserDto {
   @IsEmail()
-  @IsNotEmpty({ message: 'El email es requerido' })
+  @IsNotEmpty()
   email: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'El nombre es requerido' })
+  @IsNotEmpty()
   name: string;
 
   @IsString()
   @MinLength(1)
-  @IsNotEmpty({ message: 'La contraseña es requerida' })
+  @IsNotEmpty()
   password: string;
 
   @IsNumber()
-  @IsNotEmpty({ message: 'El dni es requerido' })
+  @IsNotEmpty()
   // @Transform((value) => Number(value))
   nDni: number;
 
@@ -31,16 +32,16 @@ export class CreateUserDto {
   // rExpiration: string;
 
   @IsNumber()
-  @IsNotEmpty({ message: 'El telefono es requerido' })
+  @IsNotEmpty()
   // @Transform((value) => Number(value))
   phone: number;
 
   // ABAJO ES ADRESS
-  @IsNotEmpty({ message: 'La dirección es requerida' })
+  @IsNotEmpty()
   @IsString()
   address: string;
 
-  @IsNotEmpty({ message: 'La ciudad es requerida' })
+  @IsNotEmpty()
   @IsString()
   @MaxLength(20)
   city: string;

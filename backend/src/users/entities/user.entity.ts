@@ -13,6 +13,8 @@ import {
   OneToMany,
   JoinColumn,
   ManyToMany,
+  // OneToOne,
+  // ManyToOne,
 } from 'typeorm';
 
 @Entity('users')
@@ -55,8 +57,8 @@ export class User {
   @Column({ type: 'text', nullable: true })
   aboutMe: string;
 
-  @Column({ type: 'varchar', default: 'user' })
-  roles: string;
+  @Column({ default: 'user', array: true })
+  roles: string[];
 
   @ManyToMany(() => Rental, (rental) => rental.users)
   rentals: Rental[];
