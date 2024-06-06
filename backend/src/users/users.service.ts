@@ -84,6 +84,7 @@ export class UsersService {
     if (!file) {
       return 'Usuario actualizado con exito';
     }
+
     const uploadedImage = await this.fileUploadService.uploadProfilePicture(
       file,
       user.id,

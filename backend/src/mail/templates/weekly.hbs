@@ -62,23 +62,16 @@
             
             <h2>Actividades Recientes</h2>
             <ul>
-                {{#if posts}}
                     {{#each posts}}
                     <li>{{this}}</li>
                     {{/each}}
-                {{else}}
-                    <li>{{posts}}</li>
-                {{/if}}
             </ul>
 
             <ul>
-                {{#if rentals}}
                     {{#each rentals}}
                     <li>{{this}}</li>
                     {{/each}}
-                {{else}}
-                    <li>{{rentals}}</li>
-                {{/if}}
+  
             </ul>
 
             <h2>Ofertas Destacadas</h2>
@@ -88,6 +81,7 @@
                 {{/each}}
             </ul>
 
+            <img src="cid:weeklyoffer" alt="Oferta de You Drive" style="max-width: 600px; border-radius: 1rem">
             <p>No te pierdas nuestras últimas novedades y ofertas exclusivas. ¡Aprovecha y saca el máximo provecho de nuestra plataforma!</p>
 
             <a href="Aqui iria la url" class="button">Ver Más</a>
