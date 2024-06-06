@@ -7,12 +7,12 @@ import ShowAndDeleteFilter from "../ShowAndDeleteFilter/ShowAndDeleteFilter";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_POSTS;
 if (!apiUrl) {
-  throw new Error('Environment variable NEXT_PUBLIC_API_POSTS is not set');
+  throw new Error("Environment variable NEXT_PUBLIC_API_POSTS is not set");
 }
 
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 if (!apiBaseUrl) {
-  throw new Error('Environment variable NEXT_PUBLIC_API_URL is not set');
+  throw new Error("Environment variable NEXT_PUBLIC_API_URL is not set");
 }
 
 const Products: React.FC = () => {
@@ -95,7 +95,9 @@ const Products: React.FC = () => {
               />
             </svg>
             <span className="sr-only">Loading...</span>
-            <h1 className="ml-5 md:text-xl">No se encontro nada...</h1>
+            <h1 className="ml-5 md:text-xl">
+              No se encontro ningun vehiculo...
+            </h1>
           </div>
         ) : (
           <VehiclesComponent posts={posts} />
