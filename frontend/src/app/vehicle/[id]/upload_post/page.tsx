@@ -14,15 +14,9 @@ const UploadPost = () => {
       throw new Error('Environment variable NEXT_PUBLIC_API_POSTS is not set');
     }
 
+    const [isOwner, setIsOwner] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(true);
     const [token, setToken] = useState<string | null>(null);
-    useEffect(() => {
-        if (typeof window !== "undefined" && window.localStorage) {
-            const userToken = localStorage.getItem('userSession');
-            setToken(userToken);
-            !userToken && router.push("/login");
-        }
-    }, []);
-
     const [userSession, setUserSession] = useState<string | null>(null);
     const [errors, setErrors] = useState<IErrorsVehicleForm>({});
     const [vehicleData, setVehicleData] = useState<IVehicleData>({
@@ -37,6 +31,14 @@ const UploadPost = () => {
         mileage: '',
     });
 
+    useEffect(() => {
+        if (typeof window !== "undefined" && window.localStorage) {
+            const userToken = localStorage.getItem('userSession');
+            setToken(userToken);
+            !userToken && router.push("/login");
+        }
+    }, []);
+
     // Cargar los datos del vehículo
     useEffect(() => {
         const fetchVehicleData = async () => {
@@ -47,15 +49,23 @@ const UploadPost = () => {
                     }
                 });
                 setVehicleData(response.data);
+
+                // Verificar si el usuario logueado es el propietario
+                if (response.data.ownerId === userSession) {
+                    setIsOwner(true);
+                }
+
+                setLoading(false);
             } catch (error) {
                 console.error('Error al cargar los datos del vehículo:', error);
+                setLoading(false);
             }
         };
 
-        if (token) {
+        if (token && userSession) {
             fetchVehicleData();
         }
-    }, [apiUrl, token]);
+    }, [apiUrl, token, userSession]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value, files } = e.target as HTMLInputElement;
@@ -136,6 +146,17 @@ const UploadPost = () => {
             }
         }
     };
+
+        // Mostrar un mensaje de carga mientras se verifica la propiedad
+        if (loading) {
+            return <div>Loading...</div>;
+        }
+    
+        // Si el usuario no es el propietario, mostrar un mensaje de error o redirigir
+        if (!isOwner) {
+            return <div>No tienes permiso para editar esta publicación.</div>;
+        }
+    
 
     return (
         <div className="bg-gradient-to-bl from-[#222222] to-[#313139] font-sans text-white">
