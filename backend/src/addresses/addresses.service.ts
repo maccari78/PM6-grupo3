@@ -5,6 +5,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Address } from './entities/address.entity';
 import { Repository } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
+import { Car } from 'src/cars/entities/car.entity';
+import { geolocationService } from './geolocation.service';
 
 @Injectable()
 export class AddressesService {
@@ -12,6 +14,8 @@ export class AddressesService {
     @InjectRepository(Address)
     private readonly addressRepository: Repository<Address>,
     @InjectRepository(User) private readonly usersRepository: Repository<User>,
+    @InjectRepository(Car) private readonly carsRepository: Repository<Car>,
+    private readonly geolocation: geolocationService,
   ) {}
 
   async getAddresses(page: number, limit: number) {
@@ -32,17 +36,6 @@ export class AddressesService {
     return address;
   }
 
-  async newAddress(id: string, createAddressDto: CreateAddressDto) {
-    const user = await this.usersRepository.findOneBy({ id });
-
-    if (!user) throw new NotFoundException('Usuario no encontrado');
-
-    const newAddress = this.addressRepository.create(createAddressDto);
-    newAddress.user = user;
-
-    return await this.addressRepository.save(newAddress);
-  }
-
   async updateAddress(id: string, updateAddressDto: UpdateAddressDto) {
     await this.addressRepository.update(id, updateAddressDto);
     const address = this.addressRepository.findOneBy({ id });
@@ -59,5 +52,35 @@ export class AddressesService {
     await this.addressRepository.delete({ id });
 
     return address;
+  }
+  async addressWithGeolocation(
+    userId: string,
+    createAddressDto: CreateAddressDto,
+  ) {
+    const user = await this.usersRepository.findOneBy({ id: userId });
+    if (!user) throw new NotFoundException('Usuario no encontrado');
+
+    const { address, city, state, country, zip_code } = createAddressDto;
+
+    const fullAddress = `${address}, ${city}, ${state}, ${country}, ${zip_code}`;
+
+    const { latitude, longitude } =
+      await this.geolocation.getCordinates(fullAddress);
+
+    console.log(latitude);
+    console.log(longitude);
+
+    await this.addressRepository.update(
+      { user: { id: userId } },
+      {
+        latitude,
+        longitude,
+      },
+    );
+
+    const updatedAddress = await this.addressRepository.findOneBy({
+      user: { id: userId },
+    });
+    return updatedAddress;
   }
 }

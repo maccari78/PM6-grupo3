@@ -10,6 +10,7 @@ import { UserGoogle } from './types/userGoogle.type';
 import { NotificationsService } from 'src/notifications/notifications.service';
 import { PayloadGoogleType, ResponseGoogle } from './types/response.interfaces';
 import { JwtPayload } from 'src/rentals/interfaces/payload.interfaces';
+import { AddressesService } from 'src/addresses/addresses.service';
 
 @Injectable()
 export class AuthService {
@@ -18,6 +19,7 @@ export class AuthService {
     @InjectRepository(Address) private addressRepository: Repository<Address>,
     private jwtService: JwtService,
     private notificationService: NotificationsService,
+    private addressesService: AddressesService,
   ) {}
   async signIn(user: signIn) {
     const { email, password } = user;
@@ -69,6 +71,14 @@ export class AuthService {
     });
     newUser.addresses = [newAdress];
     await this.userRepository.save(newUser);
+
+    const newAddress = await this.addressesService.addressWithGeolocation(
+      newUser.id,
+      { ...rest },
+    );
+
+    console.log(newAddress);
+
     // ENVIO DE EMAIL!
     await this.notificationService.newNotification(email, 'welcome');
     return { message: 'Usuario registrado con exito!' };

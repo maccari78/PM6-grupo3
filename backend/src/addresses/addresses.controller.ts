@@ -29,14 +29,6 @@ export class AddressesController {
     return this.addressesService.getAddressById(id);
   }
 
-  @Post(':id')
-  async newAddress(
-    @Body() createAddressDto: CreateAddressDto,
-    @Param('id') id: string,
-  ) {
-    return this.addressesService.newAddress(id, createAddressDto);
-  }
-
   @Put(':id')
   updateAddress(
     @Param('id') id: string,
@@ -48,5 +40,17 @@ export class AddressesController {
   @Delete(':id')
   deleteAddress(@Param('id') id: string) {
     return this.addressesService.deleteAddress(id);
+  }
+
+  @Post(':id')
+  async addressWithGeolocation(
+    @Param('id') userId: string,
+    @Body()
+    createAddressDto: CreateAddressDto,
+  ) {
+    return this.addressesService.addressWithGeolocation(
+      userId,
+      createAddressDto,
+    );
   }
 }

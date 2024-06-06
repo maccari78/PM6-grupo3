@@ -6,9 +6,14 @@ export interface StatCardProps {
   export interface ReservationCardProps {
     carModel: string;
     reservationDate: string;
-    price: string;
+    price: string | null | undefined;
+    imageUrl: string | undefined;
+  }
+  export interface ListedCarCardProps {
+    carModel: string;
+    price: string | null | undefined;
     imageUrl: string;
-}
+  }
 export interface PublicationCardProps {
     carModel: string;
     postDate: string;
@@ -17,6 +22,13 @@ export interface PublicationCardProps {
   }
 
  export interface ReviewCardProps {
-    rating: string;
-    text: string;
+    rating: number;
+    comment: string;
+    createdAt: string;
+  }
+  export interface SalePostCardProps {
+    productName: string;
+    productDescription: string;
+    price: string | null | undefined;
+    imageUrl: string;
   }

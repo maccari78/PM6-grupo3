@@ -1,6 +1,8 @@
 "use client"
 import Sidebar from '@/components/DashboardComponents/Sidebar';
+import SkeletonDashboard from '@/components/sketelons/SkeletonDashboard';
 import { IUserData } from '@/interfaces/IUser';
+import { ListedCarCardProps } from '@/interfaces/dashboard';
 import Link from 'next/link';
 import { redirect, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
@@ -13,7 +15,7 @@ if (!apiUrl) {
 const DashboardVendedor: React.FC = () => {
   const [userToken, setUserToken] = useState<string | null>(null);
   const [userData, setUserData] = useState<IUserData | null >(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -59,27 +61,30 @@ const DashboardVendedor: React.FC = () => {
     }
   }, [userToken]);
 
+if (loading) {
+  return <SkeletonDashboard />;
+}
   return (
     <>
     <div className='bg-[#313139]'>
     <Sidebar/>    
     <div className="p-4 max-w-6xl mx-auto rounded-xl bg-[#313139]">
       {/* Sección de bienvenida */}
-      <div className="bg-white rounded-lg shadow-md p-6 mb-6 flex justify-between items-center">
+      <div className="bg-[#333333] rounded-lg shadow-md p-6 mb-6 flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Bienvenido, {userData?.name}</h1>
-          <p className="text-gray-600 mt-2">Estamos encantados de verte de nuevo. Aquí tienes un resumen de tu actividad reciente y herramientas para gestionar tus ventas.</p>
+          <h1 className="text-2xl font-bold text-slate-100">Bienvenido, <span className='text-[#C4FF0D]'>{userData?.name}</span></h1>
+          <p className="text-slate-300 mt-2">Estamos encantados de verte de nuevo. Aquí tienes un resumen de tu actividad reciente y herramientas para gestionar tus ventas.</p>
         </div>
         <Link href='/vehicleForm'>
-        <button className="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-700">
+        <button className=" px-4 py-2  bg-[#232326] text-white rounded hover:bg-[#131212]">
           Crear Nueva Publicación
         </button>
         </Link>
       </div>
       
       {/* Sección de ventas recientes */}
-      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-        <h2 className="text-xl font-semibold text-gray-800">Tus alquileres Recientes</h2>
+      <div className="bg-[#333333] rounded-lg shadow-md p-6 mb-6">
+        <h2 className="text-xl font-semibold text-[#C4FF0D]">Tus alquileres Recientes</h2>
         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <SaleCard
             carModel="Toyota Corolla 2021"
@@ -98,26 +103,25 @@ const DashboardVendedor: React.FC = () => {
       </div>
 
       {/* Sección de vehículos listados */}
-      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-        <h2 className="text-xl font-semibold text-gray-800">Tus Vehículos Listados</h2>
+      <div className="bg-[#333333] rounded-lg shadow-md p-6 mb-6">
+        <h2 className="text-xl font-semibold text-[#C4FF0D]">Tus Vehículos Listados</h2>
         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {userData?.post.map((rent) => (
           <ListedCarCard
-            carModel="Ford Mustang 2022"
-            price="$30,000"
-            imageUrl="https://via.placeholder.com/150"
-          />
-          <ListedCarCard
-            carModel="Chevrolet Camaro 2021"
-            price="$28,000"
-            imageUrl="https://via.placeholder.com/150"
-          />
+          carModel={rent.title}
+          price={rent.price}
+          imageUrl={rent.car?.image_url[0]}
+        />
+              
+            ))}
+
           {/* Agrega más ListedCarCards según sea necesario */}
         </div>
       </div>
 
       {/* Sección de estadísticas de ventas */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-xl font-semibold text-gray-800">Estadísticas de Ventas</h2>
+      <div className="bg-[#333333] rounded-lg shadow-md p-6">
+        <h2 className="text-xl font-semibold text-[#C4FF0D]">Estadísticas de Ventas</h2>
         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <StatCard
             title="Alquileres Totales"
@@ -152,31 +156,26 @@ interface SaleCardProps {
 }
 
 const SaleCard: React.FC<SaleCardProps> = ({ carModel, saleDate, price, imageUrl }) => (
-  <div className="bg-gray-100 p-4 rounded-lg shadow">
+  <div className="bg-[#2d2d2d] p-4 rounded-lg shadow">
     <img className="w-full h-32 object-cover rounded-t-lg" src={imageUrl} alt={carModel} />
     <div className="mt-2">
-      <h4 className="font-bold text-lg">{carModel}</h4>
-      <p className="text-gray-600 text-sm mt-1">Fecha de venta: {saleDate}</p>
-      <p className="text-gray-800 font-semibold mt-2">{price}</p>
+      <h4 className="text-slate-100 font-bold text-lg">{carModel}</h4>
+      <p className="text-slate-400 text-sm mt-1">Fecha de venta: {saleDate}</p>
+      <p className="text-gray-100 font-semibold mt-2">{price}</p>
     </div>
   </div>
 );
 
 // Componente para mostrar un vehículo listado
-interface ListedCarCardProps {
-  carModel: string;
-  price: string;
-  imageUrl: string;
-}
 
 const ListedCarCard: React.FC<ListedCarCardProps> = ({ carModel, price, imageUrl }) => (
-  <div className="bg-gray-100 p-4 rounded-lg shadow">
+  <div className="bg-[#2d2d2d] p-4 rounded-lg shadow">
     <img className="w-full h-32 object-cover rounded-t-lg" src={imageUrl} alt={carModel} />
     <div className="mt-2">
-      <h4 className="font-bold text-lg">{carModel}</h4>
-      <p className="text-gray-800 font-semibold mt-2">{price}</p>
+      <h4 className=" text-slate-100 font-bold text-lg">{carModel}</h4>
+      <p className="text-slate-400 font-semibold mt-2">{price}</p>
       <div className="text-center mt-4">
-        <button className="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-700">
+        <button className="px-4 py-2 bg-[#232326] text-white rounded hover:bg-[#131212]">
           Ver más detalles
         </button>
       </div>
@@ -193,10 +192,10 @@ interface StatCardProps {
 }
 
 const StatCard: React.FC<StatCardProps> = ({ title, value, description }) => (
-  <div className="bg-gray-100 p-4 rounded-lg shadow">
-    <h4 className="font-bold text-lg">{title}</h4>
-    <p className="text-gray-800 font-semibold text-2xl mt-2">{value}</p>
-    <p className="text-gray-600 text-sm mt-1">{description}</p>
+  <div className="bg-[#2d2d2d] p-4 rounded-lg shadow">
+    <h4 className=" text-slate-100 font-bold text-lg">{title}</h4>
+    <p className="text-slate-200 font-semibold text-2xl mt-2">{value}</p>
+    <p className="text-slate-400 text-sm mt-1">{description}</p>
   </div>
 );
 

@@ -6,6 +6,7 @@ import session from 'express-session';
 import './notifications/CronJobs.service';
 
 async function bootstrap() {
+  const PORT = process.env.PORT_HTTP || 3001;
   const app = await NestFactory.create(AppModule);
   app.enableCors();
   app.useGlobalPipes(
@@ -28,6 +29,6 @@ async function bootstrap() {
   app.use(passport.initialize());
   app.use(passport.session());
   app.enableCors();
-  await app.listen(3001);
+  await app.listen(PORT);
 }
 bootstrap();
