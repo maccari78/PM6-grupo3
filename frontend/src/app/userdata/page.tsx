@@ -2,6 +2,7 @@
 import SalePostCard from '@/components/DashboardComponents/PostUser';
 import ReviewCard from '@/components/DashboardComponents/ReviewCard';
 import Sidebar from '@/components/DashboardComponents/Sidebar'
+import SkeletonDashboard from '@/components/sketelons/SkeletonDashboard';
 import { IUserData } from '@/interfaces/IUser';
 import { redirect, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
@@ -14,7 +15,7 @@ if (!apiUrl) {
 const UserProfile: React.FC = () => {
   const [userToken, setUserToken] = useState<string | null>(null);
   const [userData, setUserData] = useState<IUserData | null >(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -24,6 +25,7 @@ const UserProfile: React.FC = () => {
         const parsedSession = JSON.parse(userSession);
         setUserToken(parsedSession.token);  
       } else {
+        setLoading(true)
         alert("Necesitas estar logueado para ingresar");
         redirect("/login")
       }
@@ -59,7 +61,10 @@ const UserProfile: React.FC = () => {
       fetchData();
     }
   }, [userToken]);
-    return (
+  if (loading) {
+    return <SkeletonDashboard />;
+  } 
+  return (
         <>
         <div className='bg-[#313139] p-6'></div>
         <div className='bg-[#313139]'>
@@ -85,41 +90,31 @@ const UserProfile: React.FC = () => {
         <div className="px-6 py-4">
           <h3 className="text-lg font-medium text-gray-100">Reviews</h3>
           <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <ReviewCard
-              rating="★★★★☆"
-              text="Great work on the project!"
+          {userData?.reviews.map((review) => (
+              <ReviewCard
+              key={review.id}
+              rating={review.rating}
+              comment={review.comment}
+              createdAt={review.created_at}
               />
-            <ReviewCard
-              rating="★★★★★"
-              text="Excellent collaboration and communication."
-              />
-            <ReviewCard
-              rating="★★★☆☆"
-              text="Good effort, but room for improvement."
-              />
+             
+            ))}
           </div>
         </div>
         <div className="px-6 py-4">
         <h3 className="text-lg font-medium text-gray-100">Sale Posts</h3>
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <SalePostCard
-            productName="Product 1"
-            productDescription="This is a great product that you will love."
-            price="$100"
-            imageUrl="https://www.chevrolet.com.ar/content/dam/chevrolet/mercosur/argentina/espanol/index/pickups-and-trucks/pickups-and-trucks-subcontent/01-images/noviembre-20/cab-dupla.jpg?imwidth=960"
+        {userData?.post?.map((rent) => (
+              
+              <SalePostCard
+              key={rent.id}
+            productName={rent.title}
+            productDescription={rent.description}
+            price={rent.price}
+            imageUrl={rent.car?.image_url[0]}
             />
-          <SalePostCard
-            productName="Product 2"
-            productDescription="This product is a must-have for everyone."
-            price="$200"
-            imageUrl="https://www.chevrolet.com.ar/content/dam/chevrolet/mercosur/argentina/espanol/index/pickups-and-trucks/pickups-and-trucks-subcontent/01-images/noviembre-20/cab-dupla.jpg?imwidth=960"
-            />
-          <SalePostCard
-            productName="Product 3"
-            productDescription="An amazing product at a great price."
-            price="$150"
-            imageUrl="https://www.chevrolet.com.ar/content/dam/chevrolet/mercosur/argentina/espanol/index/pickups-and-trucks/pickups-and-trucks-subcontent/01-images/noviembre-20/cab-dupla.jpg?imwidth=960"
-            />
+            ))}
+          
         </div>
       </div>
       </div>

@@ -37,6 +37,7 @@ export interface IUser {
   }
   
   export interface Post {
+    car: Car
     created_at: string;
     description: string;
     id: string;
@@ -50,16 +51,17 @@ export interface IUser {
     createdAt: string;
     id: string;
     posts: {
+      car: Car
       id: string;
       title: string;
       description: string;
-      price: string | null;
+      price?: string | null;
       created_at: string;
     };
     rentalEndDate: string;
     rentalStartDate: string;
     updatedAt: string;
-    users: Array<{}>;
+    users: Array<IUser>;
   }
   
   export interface Review {
