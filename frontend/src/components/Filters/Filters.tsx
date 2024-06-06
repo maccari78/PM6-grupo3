@@ -173,16 +173,46 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
       <div className="mb-5 w-[152px] flex flex-col justify-start">
         <h1 className="text-lg text-[#C4FF0D]">Kilometraje</h1>
         <ul>
-          {["10000", "15000", "20000", "30000", "40000"].map((mileage) => (
-            <li key={mileage}>
-              <button
-                onClick={() => handleMileageChange(mileage)}
-                className="text-[#222222] text-sm md:text-base"
-              >
-                {mileage}
-              </button>
-            </li>
-          ))}
+          <li>
+            <button
+              onClick={() => handleMileageChange("10000")}
+              className="text-[#222222] text-sm md:text-base"
+            >
+              10.000 Km
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => handleMileageChange("15000")}
+              className="text-[#222222] text-sm md:text-base"
+            >
+              15.000 Km
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => handleMileageChange("20000")}
+              className="text-[#222222] text-sm md:text-base"
+            >
+              20.000 Km
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => handleMileageChange("30000")}
+              className="text-[#222222] text-sm md:text-base"
+            >
+              30.000 Km
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => handleMileageChange("40000")}
+              className="text-[#222222] text-sm md:text-base"
+            >
+              40.000 Km
+            </button>
+          </li>
         </ul>
       </div>
     </div>
