@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -16,8 +21,7 @@ export class ReviewsService {
     @InjectRepository(User) private userService: Repository<User>,
     @InjectRepository(Posts) private postsService: Repository<Posts>,
     private jwtService: JwtService,
-  ){}
-
+  ) {}
 
   //Services | Add Reviews
   async AddReviewsServices(
@@ -25,30 +29,31 @@ export class ReviewsService {
     currentUser: string,
     id: string,
   ) {
-    const {rating, comment}= reviews
+    const { rating, comment } = reviews;
     const secret = process.env.JWT_SECRET;
     const payload: JwtPayload = await this.jwtService.verify(currentUser, {
       secret,
     });
-  // `FIND WHERE ID = ${id}`; 
-    const searchposts = await this.postsService.findOneBy({  id  })
-    if(!searchposts) throw new UnauthorizedException('No se encontro publicación');
+    // `FIND WHERE ID = ${id}`;
+    const searchposts = await this.postsService.findOneBy({ id });
+    if (!searchposts)
+      throw new UnauthorizedException('No se encontro publicación');
 
     if (!payload) throw new UnauthorizedException('token invalido 3');
     const searchuser = await this.userService.findOne({
       where: { email: payload.sub },
     });
-    if(!searchuser) throw new UnauthorizedException('Usuario no encontrado');
+    if (!searchuser) throw new UnauthorizedException('Usuario no encontrado');
 
-    const newReview = this.reviewService.create({rating, comment});
+    const newReview = this.reviewService.create({ rating, comment });
     newReview.post = searchposts;
-    newReview.user = searchuser;    
-    await this.reviewService.save(newReview);
+    newReview.user = searchuser;
+    const review = await this.reviewService.save(newReview);
+    if (!review) throw new BadRequestException('No se pudo realizar la reseña');
+    searchuser.reviews = [review];
+    await this.userService.save(searchuser);
     return 'Reseña realizada';
   }
-
-
-
 
   //Services | Get All
   async findAll() {
@@ -61,22 +66,16 @@ export class ReviewsService {
 
   //Services | Get One
   async findOne(id: string) {
-    const findReview = await this.reviewService.findOne({ 
-      where:{id },
+    const findReview = await this.reviewService.findOne({
+      where: { id },
       relations: ['user', 'post'],
-  });
+    });
     if (!findReview) throw new NotFoundException('Reseña no encontrada');
     return findReview;
   }
 
-
-
   //Services | PUt one
-  async updateReview(
-    id: string, 
-    updateReview: UpdateReviewDto, 
-    token: string) {
-    
+  async updateReview(id: string, updateReview: UpdateReviewDto, token: string) {
     const secret = process.env.JWT_SECRET;
     const payload: JwtPayload = await this.jwtService.verify(token, {
       secret,
@@ -93,18 +92,14 @@ export class ReviewsService {
 
     const update = await this.reviewService.update(id, updateReview);
     console.log(update);
-    return "Reseña actualizada";
+    return 'Reseña actualizada';
   }
-
-
 
   //Services | Delete one
   async DeleteReviewsServices(id: string) {
     const ReviewFind = await this.reviewService.findOne({ where: { id } });
     if (!ReviewFind)
-      throw new NotFoundException(
-        `No se pudo obtener la reseña con ${id}`,
-      );
+      throw new NotFoundException(`No se pudo obtener la reseña con ${id}`);
 
     const review = await this.reviewService.delete(ReviewFind);
     if (review.affected === 0)
@@ -112,5 +107,4 @@ export class ReviewsService {
 
     return 'Publicación eliminada';
   }
-
 }

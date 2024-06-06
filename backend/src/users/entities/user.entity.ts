@@ -57,8 +57,8 @@ export class User {
   @Column({ type: 'text', nullable: true })
   aboutMe: string;
 
-  @Column({ default: 'user', array: true })
-  roles: string[];
+  @Column({ default: 'user' })
+  roles: string;
 
   @ManyToMany(() => Rental, (rental) => rental.users)
   rentals: Rental[];
