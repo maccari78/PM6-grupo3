@@ -56,7 +56,9 @@ export class UsersService {
       relations: [
         'car',
         'post',
+        'post.car',
         'rentals',
+        'rentals.posts.car',
         'notifications',
         'addresses',
         'reviews',
