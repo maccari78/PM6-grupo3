@@ -4,7 +4,6 @@ import { Notification } from 'src/notifications/entities/notification.entity';
 import { Posts } from 'src/posts/entities/post.entity';
 import { Rental } from 'src/rentals/entities/rental.entity';
 import { Review } from 'src/reviews/entities/review.entity';
-import { Role } from 'src/roles/entities/role.entity';
 import {
   Entity,
   Column,
@@ -16,7 +15,6 @@ import {
   ManyToMany,
   // OneToOne,
   // ManyToOne,
-  JoinTable,
 } from 'typeorm';
 
 @Entity('users')
@@ -59,9 +57,8 @@ export class User {
   @Column({ type: 'text', nullable: true })
   aboutMe: string;
 
-  @ManyToMany(() => Role, role => role.users)
-  @JoinTable()
-  roles: Role[];
+  @Column({ default: 'user', array: true })
+  roles: string[];
 
   @ManyToMany(() => Rental, (rental) => rental.users)
   rentals: Rental[];

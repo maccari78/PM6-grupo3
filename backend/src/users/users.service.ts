@@ -13,7 +13,7 @@ export class UsersService {
     @InjectRepository(User) private userRepository: Repository<User>,
     private fileUploadService: FileUploadService,
     private jwtService: JwtService,
-  ) {}
+  ) { }
 
   async findAll() {
     const users = await this.userRepository.find();
@@ -113,5 +113,12 @@ export class UsersService {
     if (updateUser.affected === 0)
       throw new NotFoundException('Error al eliminar usuario');
     return 'Usuario eliminado con exito';
+  }
+
+  async findByEmail(email: string) {
+    const user = await this.userRepository.findOne({ where: { email } })
+
+    if (!user) throw new NotFoundException('Usuario no encontrado')
+    return user
   }
 }
