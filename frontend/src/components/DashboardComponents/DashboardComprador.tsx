@@ -54,7 +54,7 @@ const DashboardComprador: React.FC = () => {
       fetchData();
     }
   }, [userToken]);
-
+console.log(userData)
   return (
     <>
     <div className='p-4 bg-[#313139]'>
