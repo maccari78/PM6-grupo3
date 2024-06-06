@@ -15,7 +15,6 @@ const UploadPost = () => {
     }
 
     const [isOwner, setIsOwner] = useState<boolean>(false);
-    const [loading, setLoading] = useState<boolean>(true);
     const [token, setToken] = useState<string | null>(null);
     const [userSession, setUserSession] = useState<string | null>(null);
     const [errors, setErrors] = useState<IErrorsVehicleForm>({});
@@ -55,10 +54,8 @@ const UploadPost = () => {
                     setIsOwner(true);
                 }
 
-                setLoading(false);
             } catch (error) {
                 console.error('Error al cargar los datos del vehículo:', error);
-                setLoading(false);
             }
         };
 
@@ -146,13 +143,7 @@ const UploadPost = () => {
             }
         }
     };
-
-        // Mostrar un mensaje de carga mientras se verifica la propiedad
-        if (loading) {
-            return <div>Loading...</div>;
-        }
-    
-        // Si el usuario no es el propietario, mostrar un mensaje de error o redirigir
+// Si el usuario no es el propietario, mostrar un mensaje de error o redirigir
         if (!isOwner) {
             return <div>No tienes permiso para editar esta publicación.</div>;
         }

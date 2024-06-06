@@ -3,15 +3,21 @@
 import DateRangePicker from "@/components/DateRangePicker/DateRangePicker";
 import { IPost } from "@/components/VehiclesComponent/interfaces/IPost";
 import Link from "next/link";
-
 import { useEffect, useState } from "react";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_POSTS;
 if (!apiUrl) {
   throw new Error('Environment variable NEXT_PUBLIC_API_POSTS is not set');
+  
 }
 
 const VehicleDetail = ({ params }: { params: { id: string } }) => {
+  const bookedDates = [
+    new Date('2024-06-10T00:00:00Z'),
+    new Date('2024-06-15T00:00:00Z'),
+    new Date('2024-06-20T00:00:00Z'),
+  ];
+
   
   const [postState, setPostState] = useState<IPost>();
 
@@ -279,11 +285,14 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
     </div>
 
     <div className="bg-[#444343] px-40 pb-10 ">
+    <Link href={`/vehicle/${params.id}/upload_post`}> Editar </Link>
       <h1 className="font-sans text-lg md:text-2xl font-semibold text-gray-100 pb-8">¡Reserva ahora!</h1>
-    <DateRangePicker></DateRangePicker>
+      <div>
+      <DateRangePicker bookedDates={bookedDates} />
+    </div>
     </div>
 
-    <Link href={`/vehicle/${params.id}/upload_post`}> Editar </Link>
+   
     </>
   );
 };
