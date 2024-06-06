@@ -8,6 +8,7 @@ import { useRouter, useParams } from "next/navigation";
 
 const UploadPost = () => {
     const { id } = useParams(); // Obtener el ID del vehículo desde la URL
+    const router = useRouter();
     const apiUrl = `${process.env.NEXT_PUBLIC_API_POSTS}/${id}`; // URL de la API con el ID del vehículo
     if (!apiUrl) {
       throw new Error('Environment variable NEXT_PUBLIC_API_POSTS is not set');
@@ -22,7 +23,6 @@ const UploadPost = () => {
         }
     }, []);
 
-    const router = useRouter();
     const [userSession, setUserSession] = useState<string | null>(null);
     const [errors, setErrors] = useState<IErrorsVehicleForm>({});
     const [vehicleData, setVehicleData] = useState<IVehicleData>({
@@ -122,10 +122,7 @@ const UploadPost = () => {
                     }
                 });
     
-                // Log de la respuesta completa para inspeccionar su estructura
                 console.log('Respuesta del servidor:', response);
-    
-                // Manejar la respuesta del servidor
                 if (response.data && response.data.success) {
                     alert('El vehículo se ha actualizado correctamente');
                     router.push("/");
@@ -290,7 +287,7 @@ const UploadPost = () => {
                 </div>
                 <div className="flex justify-center">
                     <button type="submit" className="mb-6 w-32 items-center bg-[#C4FF0D] text-[#222222] py-2 rounded">
-                        Publicar
+                        Actualizar
                     </button>
                 </div>
             </form>
