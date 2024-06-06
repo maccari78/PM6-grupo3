@@ -113,9 +113,9 @@ export class PostsService {
     console.log(newCar);
 
     newPosts.car = newCar;
-    console.log('ESTOY ACA');
+
     newPosts.user = user;
-    console.log('ERROR?');
+
     console.log(newPosts);
 
     await this.postRepository.save(newPosts);
@@ -128,7 +128,7 @@ export class PostsService {
     token: string,
     files?: Express.Multer.File[],
   ) {
-    const { title, description, price, ...rest } = posts;
+    const { title, description, price, image_url, ...rest } = posts;
 
     const secret = process.env.JWT_SECRET;
     const payload: JwtPayload = await this.jwtService.verify(token, {
@@ -139,20 +139,55 @@ export class PostsService {
       where: { email: payload.sub },
     });
     if (!user) throw new NotFoundException('Usuario no encontrado');
-    
-    const findPosts = await this.postRepository.findOne({ 
-      where: { id }, relations: ['car'] 
-       });
+
+    const findPosts = await this.postRepository.findOne({
+      where: { id },
+      relations: ['car'],
+    });
     if (!findPosts)
       throw new NotFoundException(`No se encontro publicación con ${id}`);
+    if (findPosts.user.id !== user.id)
+      throw new UnauthorizedException(
+        'No tiene permisos para actualizar esta publicación',
+      );
+    const car = await this.carRepository.findOneBy({
+      id: findPosts.car.id,
+    });
+    if (!car) throw new NotFoundException('Auto no encontrado');
+    if (files?.length === 0 || !files) {
+      const updateCar = await this.carRepository.update(car.id, rest);
+      if (!updateCar)
+        throw new BadRequestException('No se pudo actualizar el auto');
+      const updatePost = await this.postRepository.update(id, {
+        title,
+        description,
+        price,
+      });
+      if (!updatePost)
+        throw new BadRequestException('No se pudo actualizar la publicación');
+      if (image_url) {
+        await this.carService.removeImageUrl(car.id, image_url);
+      }
+      return 'Publicación actualizada';
+    }
 
-    const car =  await this.carRepository.findOneBy({
-      id: findPosts.car.id,})
-      if(!car) throw new NotFoundException('Auto no encontrado')
-    const updateCar = await this.carRepository.update(car.id, rest);
-    const updatePosts = await this.postRepository.update(id, {
-      title, description, price});
-    console.log(updatePosts, files);
+    const updateCar = await this.carService.update(car.id, rest, files);
+    if (!updateCar)
+      throw new BadRequestException('No se pudo actualizar el auto');
+    await this.postRepository.update(id, {
+      title,
+      description,
+      price,
+    });
+    if (image_url) {
+      const updateImage = await this.carService.removeImageUrl(
+        car.id,
+        image_url,
+      );
+      if (!updateImage)
+        throw new BadRequestException('No se pudo borrar la imagen');
+      return 'Publicación actualizada';
+    }
     return 'Publicación actualizada';
   }
 

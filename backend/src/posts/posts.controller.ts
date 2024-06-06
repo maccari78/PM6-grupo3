@@ -83,26 +83,29 @@ export class PostsController {
   }
 
   @Put(':id')
-  // @UseInterceptors(FilesInterceptor('file', 5))
-  putPostsByIdController(
+  @UseInterceptors(FilesInterceptor('file', 5))
+  putPostsById(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updatePostDto: UpdatePostDto,
     @Headers('Authorization') headers: string,
-    // @UploadedFiles(
-    //   new ParseFilePipe({
-    //     validators: [
-    //       new MaxFileSizeValidator({
-    //         maxSize: 5000000, // 5MB
-    //         message: 'Uno de los archivos es demasiado grande',
-    //       }),
-    //       new FileTypeValidator({
-    //         fileType: /(jpg|jpeg|png|webp|mp4|avi|mov)$/,
-    //       }),
-    //     ],
-    //   }),
-    // )
-    // files?: Express.Multer.File[],
+    @UploadedFiles(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({
+            maxSize: 5000000, // 5MB
+            message: 'Uno de los archivos es demasiado grande',
+          }),
+          new FileTypeValidator({
+            fileType: /(jpg|jpeg|png|webp|mp4|avi|mov)$/,
+          }),
+        ],
+        fileIsRequired: false,
+      }),
+    )
+    files?: Express.Multer.File[],
   ) {
+    console.log(updatePostDto.image_url);
+
     if (!headers) {
       throw new UnauthorizedException('token invalido 1');
     }
@@ -110,14 +113,14 @@ export class PostsController {
     if (!token) {
       throw new UnauthorizedException('token invalido 2');
     }
-    // if (files?.length !== 0 || files) {
-    //   return this.postsService.UpdatePostsServices(
-    //     id,
-    //     updatePostDto,
-    //     token,
-    //     files,
-    //   );
-    // }
+    if (files?.length !== 0 || files) {
+      return this.postsService.UpdatePostsServices(
+        id,
+        updatePostDto,
+        token,
+        files,
+      );
+    }
     console.log(updatePostDto);
     return this.postsService.UpdatePostsServices(id, updatePostDto, token);
   }

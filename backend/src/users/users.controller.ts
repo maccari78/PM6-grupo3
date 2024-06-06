@@ -36,11 +36,11 @@ export class UsersController {
     return this.usersService.findOne(id);
   }
 
-  @Put(':id')
+  @Put('update')
   @UseInterceptors(FileInterceptor('file'))
   update(
-    @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
+    @Headers('Authorization') token: string,
     @UploadedFile(
       new ParseFilePipe({
         validators: [
@@ -52,13 +52,13 @@ export class UsersController {
             fileType: /(jpg|jpeg|png|webp)$/,
           }),
         ],
+        fileIsRequired: false,
       }),
     )
     file?: Express.Multer.File,
   ) {
-    if (!file) return this.usersService.update(id, updateUserDto);
-
-    return this.usersService.update(id, updateUserDto, file);
+    if (!file) return this.usersService.update(token, updateUserDto);
+    return this.usersService.update(token, updateUserDto, file);
   }
 
   @Delete(':id')
