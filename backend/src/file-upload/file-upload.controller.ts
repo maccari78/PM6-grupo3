@@ -61,13 +61,35 @@ export class FileUploadController {
     return this.fileUploadService.uploadVehicleImages(vehicleId, files);
   }
 
-  @Delete('deleteImage/:publicId')
-  async deleteImage(@Param('publicId') publicId: string) {
+  @Delete('deleteImage/:id')
+  async deleteImage(@Param('id') publicId: string) {
     return this.fileUploadService.deleteImage(publicId);
   }
 
-  @Delete('deleteVehicleImage/:publicId')
-  async deleteVehicleImage(@Param('PublicId') publicId: string) {
+  @Delete('deleteVehicleImage/:id')
+  async deleteVehicleImage(@Param('id') publicId: string) {
     return this.fileUploadService.deleteVehicleImage(publicId);
+  }
+
+  @Post('updateProfilePicture/:id')
+  @UseInterceptors(FileInterceptor('file'))
+  async updateProfilePicture(
+    @Param('id') userId: string,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({
+            maxSize: 5000000, // 5MB
+            message: 'Uno de los archivos es demasiado grande',
+          }),
+          new FileTypeValidator({
+            fileType: /(jpg|jpeg|png|webp)$/,
+          }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+  ) {
+    return this.fileUploadService.updateProfilePicture(userId, file);
   }
 }

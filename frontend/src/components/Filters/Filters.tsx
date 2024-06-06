@@ -6,7 +6,6 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
   const [selectedModel, setSelectedModel] = useState<string | null>(null);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [selectedMileage, setSelectedMileage] = useState<string | null>(null);
-  const [selectedPrice, setSelectedPrice] = useState<string | null>(null);
 
   const handleBrandChange = (brand: string) => {
     setSelectedBrand(brand);
@@ -29,13 +28,6 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
     setSelectedMileage(mileage);
     onFilterChange({
       mileage,
-    });
-  };
-
-  const handlePriceChange = (price: string) => {
-    setSelectedPrice(price);
-    onFilterChange({
-      price,
     });
   };
 
@@ -188,28 +180,6 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
                 className="text-[#222222] text-sm md:text-base"
               >
                 {mileage}
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <div className="mb-5 w-[152px] flex flex-col justify-start">
-        <h1 className="text-lg text-[#C4FF0D]">Precio</h1>
-        <ul>
-          {[
-            "$1.000.000a$1.500.000",
-            " Menos de $ 1.000.000",
-            " Hasta $ 2.000.0000",
-            "Menos de $ 1.000.000",
-            " Mas de $ 1.300.000",
-          ].map((price) => (
-            <li key={price}>
-              <button
-                onClick={() => handlePriceChange(price)}
-                className="text-[#222222] text-sm "
-              >
-                {price}
               </button>
             </li>
           ))}

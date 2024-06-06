@@ -5,6 +5,11 @@ import Link from 'next/link';
 import { redirect, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
+const apiUrl = process.env.NEXT_PUBLIC_API_GET_USERS_TOKEN;
+if (!apiUrl) {
+  throw new Error('Environment variable NEXT_PUBLIC_API_GET_USERS_TOKEN is not set');
+}
+
 const DashboardVendedor: React.FC = () => {
   const [userToken, setUserToken] = useState<string | null>(null);
   const [userData, setUserData] = useState<IUserData | null >(null);
@@ -28,7 +33,7 @@ const DashboardVendedor: React.FC = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`http://localhost:3001/users/token`, {
+        const response = await fetch(apiUrl, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${userToken}`,

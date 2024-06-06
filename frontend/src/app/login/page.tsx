@@ -5,6 +5,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
+const apiUrl = process.env.NEXT_PUBLIC_API_SIGNIN_URL;
+if (!apiUrl) {
+  throw new Error('Environment variable NEXT_PUBLIC_API_POSTS is not set');
+}
+
 const Login = () => {
   interface ApiError {
     message: string;
@@ -39,7 +44,7 @@ const Login = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      const response = await fetch("http://localhost:3001/auth/signin", {
+      const response = await fetch(apiUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

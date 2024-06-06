@@ -1,3 +1,4 @@
+import { Address } from 'src/addresses/entities/address.entity';
 import { Rental } from 'src/rentals/entities/rental.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
@@ -5,6 +6,7 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
   Timestamp,
   UpdateDateColumn,
@@ -59,4 +61,7 @@ export class Car {
 
   @ManyToOne(() => User, (user) => user.car)
   user: User;
+
+  @OneToOne(() => Address, (address) => address.car)
+  address: Address;
 }
