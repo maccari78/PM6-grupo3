@@ -64,7 +64,7 @@ const Login = () => {
       const token = json;
       localStorage.setItem("userSession", JSON.stringify(token));
       setSession({ token });
-      alert("Login success");
+      alert("Loguado con exito");
       router.push("/");
     } catch (err) {
       if (typeof err === 'object' && err !== null && 'message' in err) {
