@@ -72,22 +72,33 @@ export class UsersService {
   }
 
   async update(
-    id: string,
+    token: string,
     updateUserDto: UpdateUserDto,
     file?: Express.Multer.File,
   ) {
-    const user = await this.userRepository.findOneBy({ id });
+    const currentUser = token?.split(' ')[1];
+    if (!currentUser)
+      throw new NotFoundException('No hay un usuario autenticado');
+    const payload: JwtPayload = await this.jwtService.verify(currentUser, {
+      secret: process.env.JWT_SECRET,
+    });
+
+    if (!payload) throw new NotFoundException('Error al decodificar token');
+    const user = await this.userRepository.findOne({
+      where: { email: payload.sub },
+    });
     if (!user) throw new NotFoundException('Usuario no encontrado');
-    const updateUser = await this.userRepository.update(id, updateUserDto);
+    const updateUser = await this.userRepository.update(user.id, updateUserDto);
     if (updateUser.affected === 0)
       throw new NotFoundException('Error al actualizar usuario');
     if (!file) {
       return 'Usuario actualizado con exito';
     }
+    console.log(file);
 
-    const uploadedImage = await this.fileUploadService.uploadProfilePicture(
-      file,
+    const uploadedImage = await this.fileUploadService.updateProfilePicture(
       user.id,
+      file,
     );
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
