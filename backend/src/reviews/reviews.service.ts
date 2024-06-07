@@ -51,6 +51,7 @@ export class ReviewsService {
     const review = await this.reviewService.save(newReview);
     if (!review) throw new BadRequestException('No se pudo realizar la reseña');
     searchuser.reviews = [review];
+    await this.postsService.save({ review: [review] });
     await this.userService.save(searchuser);
     return 'Reseña realizada';
   }
