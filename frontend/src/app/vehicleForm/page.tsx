@@ -10,7 +10,7 @@ const VehicleForm = () => {
 
     const apiUrl = process.env.NEXT_PUBLIC_API_POSTS;
     if (!apiUrl) {
-      throw new Error('Environment variable NEXT_PUBLIC_API_POSTS is not set');
+        throw new Error('Environment variable NEXT_PUBLIC_API_POSTS is not set');
     }
 
     const [token, setToken] = useState();
@@ -47,7 +47,7 @@ const VehicleForm = () => {
         }
     }, [router]);
 
-    const handleChange = (e:  React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value, files } = e.target as HTMLInputElement;
 
         if (name === "file") {
@@ -79,11 +79,11 @@ const VehicleForm = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-    
+
         // Validar los datos del vehículo
         const validationErrors = validate(vehicleData);
         setErrors(validationErrors);
-    
+
         // Si no hay errores de validación, proceder con el envío
         if (Object.keys(validationErrors).length === 0) {
             const formData = new FormData();
@@ -95,38 +95,45 @@ const VehicleForm = () => {
             formData.append("brand", vehicleData.brand);
             formData.append("year", vehicleData.year.toString());
             formData.append("mileage", vehicleData.mileage);
-    
+
             // Si hay archivos, adjuntarlos al formData
             if (vehicleData.file) {
                 Array.from(vehicleData.file).forEach(file => {
                     formData.append("file", file);
                 });
             }
-    
-            try {
-                // Enviar los datos al servidor
-                const response = await axios.post(apiUrl, formData, {
-                    headers: {
-                        Authorization: `Bearer ${userSession}`,
-                        'Content-Type': 'multipart/form-data'
-                    }
-                });
-    
-                // Log de la respuesta completa para inspeccionar su estructura
-                console.log('Respuesta del servidor:', response);
-    
-                // Manejar la respuesta del servidor
-                if (response.data && response.data.success) {
-                    alert('El vehículo se ha publicado correctamente');
-                    router.push("/");
-                } else {
-                    const errorMessage = response.data?.message || 'Respuesta del servidor no válida.';
-                    alert(errorMessage);
+
+
+            axios.post(apiUrl, formData, {
+                headers: {
+                    Authorization: `Bearer ${userSession}`,
+                    'Content-Type': 'multipart/form-data'
                 }
-            } catch (error) {
-                console.error('Error al publicar el vehículo:', error);
-                alert('Hubo un error al intentar publicar el vehículo.');
-            }
+            })
+                .then(response => {
+                    if (response.data) {
+                        alert(`Vehiculo publicado correctamente`);
+                        setVehicleData({
+                            title: '',
+                            description: '',
+                            price: 0,
+                            color: '',
+                            model: '',
+                            file: null,
+                            brand: '',
+                            year: 0,
+                            mileage: '',
+                        });
+                        router.push("/")
+                    } else {
+                        alert(response.data);
+                    }
+                })
+                .catch(error => {
+                    alert('Ha ocurrido un error en la conexión');
+                    console.error('Error:', error);
+                });
+
         }
     };
 

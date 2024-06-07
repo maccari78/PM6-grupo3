@@ -7,15 +7,15 @@ import {
   Put,
   ParseUUIDPipe,
   UseInterceptors,
-  UploadedFiles,
   ParseFilePipe,
   MaxFileSizeValidator,
   FileTypeValidator,
   Headers,
+  UploadedFile,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { FilesInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('users')
 export class UsersController {
@@ -36,12 +36,12 @@ export class UsersController {
     return this.usersService.findOne(id);
   }
 
-  @Put(':id')
-  @UseInterceptors(FilesInterceptor('file', 1))
+  @Put('update')
+  @UseInterceptors(FileInterceptor('file'))
   update(
-    @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
-    @UploadedFiles(
+    @Headers('Authorization') token: string,
+    @UploadedFile(
       new ParseFilePipe({
         validators: [
           new MaxFileSizeValidator({
@@ -52,12 +52,13 @@ export class UsersController {
             fileType: /(jpg|jpeg|png|webp)$/,
           }),
         ],
+        fileIsRequired: false,
       }),
     )
     file?: Express.Multer.File,
   ) {
-    if (!file) return this.usersService.update(id, updateUserDto);
-    return this.usersService.update(id, updateUserDto, file);
+    if (!file) return this.usersService.update(token, updateUserDto);
+    return this.usersService.update(token, updateUserDto, file);
   }
 
   @Delete(':id')
