@@ -8,21 +8,14 @@ import { useRouter, useParams } from "next/navigation";
 
 const UploadPost = () => {
     const { id } = useParams(); // Obtener el ID del vehículo desde la URL
+    const router = useRouter();
     const apiUrl = `${process.env.NEXT_PUBLIC_API_POSTS}/${id}`; // URL de la API con el ID del vehículo
     if (!apiUrl) {
       throw new Error('Environment variable NEXT_PUBLIC_API_POSTS is not set');
     }
 
+    const [isOwner, setIsOwner] = useState<boolean>(false);
     const [token, setToken] = useState<string | null>(null);
-    useEffect(() => {
-        if (typeof window !== "undefined" && window.localStorage) {
-            const userToken = localStorage.getItem('userSession');
-            setToken(userToken);
-            !userToken && router.push("/login");
-        }
-    }, []);
-
-    const router = useRouter();
     const [userSession, setUserSession] = useState<string | null>(null);
     const [errors, setErrors] = useState<IErrorsVehicleForm>({});
     const [vehicleData, setVehicleData] = useState<IVehicleData>({
@@ -37,6 +30,14 @@ const UploadPost = () => {
         mileage: '',
     });
 
+    useEffect(() => {
+        if (typeof window !== "undefined" && window.localStorage) {
+            const userToken = localStorage.getItem('userSession');
+            setToken(userToken);
+            !userToken && router.push("/login");
+        }
+    }, []);
+
     // Cargar los datos del vehículo
     useEffect(() => {
         const fetchVehicleData = async () => {
@@ -47,15 +48,21 @@ const UploadPost = () => {
                     }
                 });
                 setVehicleData(response.data);
+
+                // Verificar si el usuario logueado es el propietario
+                if (response.data.ownerId === userSession) {
+                    setIsOwner(true);
+                }
+
             } catch (error) {
                 console.error('Error al cargar los datos del vehículo:', error);
             }
         };
 
-        if (token) {
+        if (token && userSession) {
             fetchVehicleData();
         }
-    }, [apiUrl, token]);
+    }, [apiUrl, token, userSession]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value, files } = e.target as HTMLInputElement;
@@ -117,15 +124,12 @@ const UploadPost = () => {
                 // Enviar los datos al servidor
                 const response = await axios.put(apiUrl, formData, {
                     headers: {
-                        Authorization: `Bearer ${userSession}`,
+                        Authorization: `Bearer ${token}`,
                         'Content-Type': 'multipart/form-data'
                     }
                 });
     
-                // Log de la respuesta completa para inspeccionar su estructura
                 console.log('Respuesta del servidor:', response);
-    
-                // Manejar la respuesta del servidor
                 if (response.data && response.data.success) {
                     alert('El vehículo se ha actualizado correctamente');
                     router.push("/");
@@ -139,6 +143,11 @@ const UploadPost = () => {
             }
         }
     };
+// Si el usuario no es el propietario, mostrar un mensaje de error o redirigir
+        // if (!isOwner) {
+        //     return <div>No tienes permiso para editar esta publicación.</div>;
+        // }
+    
 
     return (
         <div className="bg-gradient-to-bl from-[#222222] to-[#313139] font-sans text-white">
@@ -290,7 +299,7 @@ const UploadPost = () => {
                 </div>
                 <div className="flex justify-center">
                     <button type="submit" className="mb-6 w-32 items-center bg-[#C4FF0D] text-[#222222] py-2 rounded">
-                        Publicar
+                        Actualizar
                     </button>
                 </div>
             </form>

@@ -3,20 +3,21 @@ import { IUser } from "@/interfaces/IUser";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Dropdown from "../DropdownNavbar/Dropdown";
 
-const Navbar = () => {
+const Navbar: React.FC = () => {
   const pathname = usePathname();
   const router = useRouter();
 
-  const [userSession, setUserSession] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [userSession, setUserSession] = useState<boolean>(false);
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
       const userToken = localStorage.getItem("userSession");
-      setUserSession(JSON.parse(userToken!));
+      setUserSession(!!userToken);
     }
   }, [pathname]);
 
@@ -28,6 +29,24 @@ const Navbar = () => {
     localStorage.removeItem("userSession");
     router.push("/login");
   };
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      setIsMenuOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.addEventListener("click", handleClickOutside);
+    } else {
+      document.removeEventListener("click", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [isMenuOpen]);
 
   return (
     <header className="flex flex-row justify-between items-center bg-[#222222] text-white p-6 font-sans">
@@ -46,7 +65,6 @@ const Navbar = () => {
             placeholder="Buscar"
             className="h-8 rounded-md focus:outline-none text-black p-2 w-full"
           />
-
           <button type="button" className="b-none bg-transparent">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -93,7 +111,7 @@ const Navbar = () => {
         </button>
       </div>
       {isMenuOpen && (
-        <>
+        <div ref={menuRef}>
           {userSession ? (
             <div className="absolute right-0 z-50 w-56 mt-2 origin-top-right top-16 bg-[#222222] divide-y divide-gray-100 rounded-md shadow-lg">
               <div className="py-1">
@@ -142,7 +160,7 @@ const Navbar = () => {
               </div>
             </div>
           )}
-        </>
+        </div>
       )}
     </header>
   );

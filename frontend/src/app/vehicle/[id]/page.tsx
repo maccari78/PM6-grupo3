@@ -4,17 +4,25 @@ import ButtonCheckout from "@/components/ButtonCheckout/ButtonCheckout";
 import DateRangePicker from "@/components/DateRangePicker/DateRangePicker";
 import { IPost } from "@/components/VehiclesComponent/interfaces/IPost";
 import Link from "next/link";
-
 import { useEffect, useState } from "react";
 import { IPriceStripe } from "./Interface/IPriceStripe";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_POSTS;
 if (!apiUrl) {
-  throw new Error("Environment variable NEXT_PUBLIC_API_POSTS is not set");
+
+  throw new Error('Environment variable NEXT_PUBLIC_API_POSTS is not set');
+  
 }
 
 const VehicleDetail = ({ params }: { params: { id: string } }) => {
-  const [pricesStripe, setPricesStripe] = useState<IPriceStripe[]>();
+  const bookedDates = [
+    new Date('2024-06-10T00:00:00Z'),
+    new Date('2024-06-15T00:00:00Z'),
+    new Date('2024-06-20T00:00:00Z'),
+  ];
+
+  
+
   const [postState, setPostState] = useState<IPost>();
 
   console.log(pricesStripe);
@@ -334,13 +342,18 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
         </div>
       </div>
 
-      <div className="bg-[#444343] px-40 pb-10 ">
-        <h1 className="font-sans text-lg md:text-2xl font-semibold text-gray-100 pb-8">
-          ¡Reserva ahora!
-        </h1>
-        <DateRangePicker></DateRangePicker>
-        <Link href={`/vehicle/${params.id}/upload_post`}> Editar </Link>
-      </div>
+    </div>
+
+    <div className="bg-[#444343] px-40 pb-10 ">
+    <Link href={`/vehicle/${params.id}/upload_post`} className="text-slate-50 font-sans"> Editar publicación</Link>
+      <h1 className="font-sans text-lg md:text-2xl font-semibold text-gray-100 pb-8">¡Reserva ahora!</h1>
+      <div>
+      <DateRangePicker bookedDates={bookedDates} />
+    </div>
+    </div>
+
+   
+
     </>
   );
 };

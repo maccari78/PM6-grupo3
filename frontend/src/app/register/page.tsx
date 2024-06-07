@@ -73,12 +73,12 @@ const Register = () => {
 
     axios.post(apiUrl, auth)
       .then(response => {
-        if (response.data.success) {
+        if (response.data) {
           setUserData(initialUserData);
           alert(`Usuario registrado correctamente`);
-          router.push("/")
+          router.push("/login");
         } else {
-          alert(response.data.message);
+          alert(response.data);
         }
       })
       .catch(error => {
