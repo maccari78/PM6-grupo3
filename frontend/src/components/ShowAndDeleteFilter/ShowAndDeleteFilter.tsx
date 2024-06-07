@@ -12,7 +12,6 @@ const ShowAndDeleteFilter: React.FC<notShowFilter> = ({
       <span className="bg-[#c9ff25]  flex flex-row justify-between text-gray-800 text-sm md:text-lg font-medium me-2 px-2 py-0.5 rounded-xl">
         <p>{filters.brand && filters.brand}</p>
         <p>{filters.model && filters.model}</p>
-        <p>{filters.color && filters.color}</p>
         <p>{filters.mileage && filters.mileage}</p>
         <p>{filters.price && filters.price}</p>
 
