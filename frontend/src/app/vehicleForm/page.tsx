@@ -124,6 +124,7 @@ const VehicleForm = () => {
                             year: 0,
                             mileage: '',
                         });
+                        router.push("/")
                     } else {
                         alert(response.data);
                     }

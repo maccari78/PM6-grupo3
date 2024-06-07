@@ -124,7 +124,7 @@ const UploadPost = () => {
                 // Enviar los datos al servidor
                 const response = await axios.put(apiUrl, formData, {
                     headers: {
-                        Authorization: `Bearer ${userSession}`,
+                        Authorization: `Bearer ${token}`,
                         'Content-Type': 'multipart/form-data'
                     }
                 });
@@ -144,9 +144,9 @@ const UploadPost = () => {
         }
     };
 // Si el usuario no es el propietario, mostrar un mensaje de error o redirigir
-        if (!isOwner) {
-            return <div>No tienes permiso para editar esta publicación.</div>;
-        }
+        // if (!isOwner) {
+        //     return <div>No tienes permiso para editar esta publicación.</div>;
+        // }
     
 
     return (
