@@ -54,15 +54,12 @@ export class MailService {
         );
       }
     } else {
-      let posts;
-      let rentals;
-
-      user.post[0]
-        ? (posts = user.post)
-        : (posts = 'Aún no has publicado nada');
-      user.rentals[0]
-        ? (rentals = user.rentals)
-        : (rentals = 'Aún no has alquilado nada');
+      const posts = user.posts.length
+        ? user.post
+        : ['Aún no has publicado nada'];
+      const rentals = user.rentals.length
+        ? user.rentals
+        : ['Aún no has alquilado nada'];
 
       try {
         await this.mailerservice.sendMail({
@@ -79,6 +76,11 @@ export class MailService {
               filename: 'logo.png',
               path: __dirname + '../../../../frontend/public/logo.png',
               cid: 'imagename',
+            },
+            {
+              filename: 'offer.png',
+              path: __dirname + '../../../../frontend/public/bestpriceform.png',
+              cid: 'weeklyoffer',
             },
           ],
         });

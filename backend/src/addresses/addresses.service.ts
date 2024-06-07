@@ -70,7 +70,7 @@ export class AddressesService {
     console.log(latitude);
     console.log(longitude);
 
-    const newAddress = await this.addressRepository.update(
+    await this.addressRepository.update(
       { user: { id: userId } },
       {
         latitude,
