@@ -104,7 +104,8 @@ export class PostsController {
     )
     files?: Express.Multer.File[],
   ) {
-    console.log(updatePostDto.image_url);
+    console.log(id);
+    console.log(headers);
 
     if (!headers) {
       throw new UnauthorizedException('token invalido 1');
@@ -113,6 +114,8 @@ export class PostsController {
     if (!token) {
       throw new UnauthorizedException('token invalido 2');
     }
+    console.log(token);
+
     if (files?.length !== 0 || files) {
       return this.postsService.UpdatePostsServices(
         id,
