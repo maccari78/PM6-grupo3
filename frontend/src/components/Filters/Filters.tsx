@@ -47,7 +47,7 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
             <li key={brand}>
               <button
                 onClick={() => handleBrandChange(brand)}
-                className="text-[#222222] text-sm md:text-base"
+                className="text-[#222222] text-sm md:text-base  w-full flex justify-start rounded-xl hover:px-2 hover:translate-x-1 hover:bg-[#c3ff0dad] duration-300"
               >
                 {brand}
               </button>
@@ -61,10 +61,10 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
         <ul>
           {["F-150", "Sorento", "Camaro", "Stradale", "Picanto"].map(
             (model) => (
-              <li key={model}>
+              <li key={model} className="flex justify-start">
                 <button
                   onClick={() => handleModelChange(model)}
-                  className="text-[#222222] text-sm md:text-base"
+                  className="text-[#222222] text-sm md:text-base w-full flex justify-start rounded-xl hover:px-2 hover:translate-x-1 hover:bg-[#c3ff0dad] duration-300"
                 >
                   {model}
                 </button>
@@ -176,7 +176,7 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
           <li>
             <button
               onClick={() => handleMileageChange("10000")}
-              className="text-[#222222] text-sm md:text-base"
+              className="text-[#222222] text-sm md:text-base  w-full flex justify-start rounded-xl hover:px-2 hover:translate-x-1 hover:bg-[#C4FF0D] duration-300"
             >
               10.000 Km
             </button>
@@ -184,7 +184,7 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
           <li>
             <button
               onClick={() => handleMileageChange("15000")}
-              className="text-[#222222] text-sm md:text-base"
+              className="text-[#222222] text-sm md:text-base  w-full flex justify-start rounded-xl hover:px-2 hover:translate-x-1 hover:bg-[#c3ff0dad] duration-300"
             >
               15.000 Km
             </button>
@@ -192,7 +192,7 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
           <li>
             <button
               onClick={() => handleMileageChange("20000")}
-              className="text-[#222222] text-sm md:text-base"
+              className="text-[#222222] text-sm md:text-base  w-full flex justify-start rounded-xl hover:px-2 hover:translate-x-1 hover:bg-[#c3ff0dad] duration-300"
             >
               20.000 Km
             </button>
@@ -200,7 +200,7 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
           <li>
             <button
               onClick={() => handleMileageChange("30000")}
-              className="text-[#222222] text-sm md:text-base"
+              className="text-[#222222] text-sm md:text-base  w-full flex justify-start rounded-xl hover:px-2 hover:translate-x-1 hover:bg-[#c3ff0dad] duration-300"
             >
               30.000 Km
             </button>
@@ -208,7 +208,7 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
           <li>
             <button
               onClick={() => handleMileageChange("40000")}
-              className="text-[#222222] text-sm md:text-base"
+              className="text-[#222222] text-sm md:text-base  w-full flex justify-start rounded-xl hover:px-2 hover:translate-x-1 hover:bg-[#c3ff0dad] duration-300"
             >
               40.000 Km
             </button>
