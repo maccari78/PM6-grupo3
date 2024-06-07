@@ -39,9 +39,9 @@ const DateRangePicker: React.FC<IDateRangePicker> = ({ bookedDates }) => {
       placeholderText="Selecciona la fecha de fin"
     />
     {startDate && endDate && (
-      <div className="mt-4 p-4 border border-gray-300 rounded-md">
-        <p>Fecha de inicio: {startDate.toDateString()}</p>
-        <p>Fecha de fin: {endDate.toDateString()}</p>
+      <div className="mt-4 p-4 border border-gray-900 bg-[#222222] rounded-md font-sans">
+        <p className='text-slate-50'>Fecha de inicio: {startDate.toDateString()}</p>
+        <p className='text-slate-50'>Fecha de fin: {endDate.toDateString()}</p>
       </div>
     )}
   </div>
