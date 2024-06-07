@@ -1,16 +1,18 @@
-const ButtonCheckout = ({ priceId }: { priceId: string }) => {
+import { IPost } from "../VehiclesComponent/interfaces/IPost";
+
+const ButtonCheckout = ({ postState }: { postState: IPost | undefined }) => {
   const fetchCheckout = async () => {
     try {
       const res = await fetch("http://localhost:3000/api/checkout", {
         method: "POST",
-        body: JSON.stringify({ priceId }),
+        body: JSON.stringify(postState),
         headers: {
           "Content-Type": "application/json",
         },
       });
 
-      const data = await res.json();
-      window.location.href = data.url;
+      const session = await res.json();
+      window.location.href = session.url;
     } catch (error: any) {
       console.log(error.message);
     }

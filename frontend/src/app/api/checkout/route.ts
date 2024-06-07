@@ -1,24 +1,36 @@
+import { IPost } from "@/components/VehiclesComponent/interfaces/IPost";
 import { NextRequest, NextResponse } from "next/server";
 import { Stripe } from "stripe";
 
 export async function POST(req: NextRequest) {
-  const data = await req.json();
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
+  const body: IPost = await req.json();
+  const nameProduct = `${body.car.brand} ${body.car.model} ${body.car.year}`;
+  const priceProduct = body.price as number;
+
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+    apiVersion: "2024-04-10",
+  });
 
   const session = await stripe.checkout.sessions.create({
-    mode: "payment",
-    payment_method_types: ["card"],
+    success_url: "http://localhost:3000/successcheckout",
+    cancel_url: "http://localhost:3000/",
     line_items: [
       {
-        price: data.priceId,
+        price_data: {
+          currency: "usd",
+          product_data: {
+            name: nameProduct,
+            images: [body.car.image_url[0]],
+          },
+          unit_amount: priceProduct * 100,
+        },
         quantity: 1,
       },
     ],
-    success_url: "http://localhost:3000/successcheckout",
-    cancel_url: "http://localhost:3000",
+    mode: "payment",
   });
 
   console.log(session);
 
-  return NextResponse.json({ url: session.url });
+  return NextResponse.json(session);
 }
