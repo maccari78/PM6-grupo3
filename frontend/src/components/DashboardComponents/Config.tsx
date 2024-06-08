@@ -79,7 +79,7 @@ const Config = () => {
 
     const formData = new FormData();
     if (newProfilePicture) {
-      formData.append('profilePicture', newProfilePicture);
+      formData.append('file', newProfilePicture);
     }
     if (userData) {
       // Convertir phone y nDni a números
@@ -95,8 +95,8 @@ const Config = () => {
       formData.append('name', userData.name);
       formData.append('phone', phone.toString());
       formData.append('nDni', nDni.toString());
-      formData.append('addresses[0].city', userData.addresses[0].city);
-      formData.append('addresses[0].zip_code', userData.addresses[0].zip_code);
+      formData.append('address', userData.addresses[0].city);
+      formData.append('zip_code', userData.addresses[0].zip_code);
       formData.append('rExpiration', userData.rExpiration);
     }
 
