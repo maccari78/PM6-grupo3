@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateRentalDto {
   @IsString()
@@ -11,5 +11,17 @@ export class CreateRentalDto {
 
   @IsString()
   @IsNotEmpty()
-  postId: string;
+  name: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  price: number;
+
+  @IsString()
+  @IsNotEmpty()
+  description: string;
+
+  @IsString()
+  @IsNotEmpty()
+  image_url: string;
 }
