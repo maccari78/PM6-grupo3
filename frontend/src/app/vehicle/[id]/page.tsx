@@ -20,9 +20,9 @@ if (!apiUserUrl) {
 
 const VehicleDetail = ({ params }: { params: { id: string } }) => {
   const bookedDates = [
-    new Date("2024-06-10T00:00:00Z"),
-    new Date("2024-06-15T00:00:00Z"),
-    new Date("2024-06-20T00:00:00Z"),
+    new Date("2024-06-10T00:00:00Z").toISOString().replace(".000Z", ""),
+    new Date("2024-06-15T00:00:00Z").toISOString().replace(".000Z", ""),
+    new Date("2024-06-20T00:00:00Z").toISOString().replace(".000Z", ""),
   ];
 
   const [pricesStripe, setPricesStripe] = useState<IPriceStripe[]>();
