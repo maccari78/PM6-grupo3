@@ -82,25 +82,26 @@ const Config = () => {
       formData.append('profilePicture', newProfilePicture);
     }
     if (userData) {
-      // // Asegúrate de que los valores numéricos se manejen correctamente
+      // Convertir phone y nDni a números
       const phone = Number(userData.phone);
-      // const nDni = Number(userData.nDni);
+      const nDni = Number(userData.nDni);
 
-      // if (isNaN(phone) || isNaN(nDni)) {
-      //   alert('El teléfono y el DNI deben ser números válidos');
-      //   return;
-      // }
+      if (isNaN(phone) || isNaN(nDni)) {
+        alert('El teléfono y el DNI deben ser números válidos');
+        return;
+      }
 
+      // Añadir los datos al FormData
       formData.append('name', userData.name);
-      // formData.append('phone', phone.toString());
-      // formData.append('nDni', nDni.toString());
+      formData.append('phone', phone.toString());
+      formData.append('nDni', nDni.toString());
       formData.append('addresses[0].city', userData.addresses[0].city);
       formData.append('addresses[0].zip_code', userData.addresses[0].zip_code);
       formData.append('rExpiration', userData.rExpiration);
     }
 
     try {
-      const response = await fetch(`http://localhost:3001/users/update`, {
+      const response = await fetch(`http://localhost:3001/users/${userData?.id}`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${userToken}`,
@@ -181,12 +182,11 @@ const Config = () => {
                   Celular
                 </label>
                 <input
-                  disabled
                   className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4 mb-3"
                   type="text"
                   name="phone"
-                  // value={userData?.phone || ''}
-                  // onChange={handleInputChange}
+                  value={userData?.phone || ''}
+                  onChange={handleInputChange}
                 />
               </div>
               <div className="md:w-1/2 px-3 mb-6 md:mb-0">
@@ -194,11 +194,11 @@ const Config = () => {
                   Documento
                 </label>
                 <input
-                   disabled
                   className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4 mb-3"
                   type="text"
                   name="nDni"
-                  placeholder={userData?.nDni.toString()}
+                  value={userData?.nDni.toString() || ''}
+                  onChange={handleInputChange}
                 />
               </div>
             </div>
