@@ -1,4 +1,5 @@
 import { Car } from 'src/cars/entities/car.entity';
+import { Chat } from 'src/chat/entities/chat.entity';
 import { Review } from 'src/reviews/entities/review.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
@@ -7,6 +8,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   Timestamp,
@@ -26,6 +28,9 @@ export class Posts {
 
   @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
   price: number;
+
+  @OneToMany(() => Chat, (chat) => chat.post, { cascade: true })
+  room_id: Chat[];
 
   //..........relations start........//
   @ManyToOne(() => User, (user) => user.post)
