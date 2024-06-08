@@ -101,7 +101,7 @@ const Config = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:3001/users/${userData?.id}`, {
+      const response = await fetch(`http://localhost:3001/users/update`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${userToken}`,
