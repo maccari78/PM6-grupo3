@@ -185,6 +185,7 @@ const Config = () => {
                   className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4 mb-3"
                   type="text"
                   name="phone"
+                  placeholder={userData?.phone}
                   value={userData?.phone || ''}
                   onChange={handleInputChange}
                 />
@@ -197,7 +198,7 @@ const Config = () => {
                   className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4 mb-3"
                   type="text"
                   name="nDni"
-                  value={userData?.nDni.toString() || ''}
+                  value={userData?.nDni || ''}
                   onChange={handleInputChange}
                 />
               </div>
