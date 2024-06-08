@@ -17,7 +17,7 @@
     "react-datepicker": "^6.9.0",
     "react-dom": "^18",
     "stripe": "^15.10.0",
-    "sweetalert2": "^11.11.1"
+    "sweetalert": "^2.1.2"
   },
   "devDependencies": {
     "@types/node": "20.12.12",
