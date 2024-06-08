@@ -10,7 +10,9 @@ import {
 import { NotificationsService } from './notifications.service';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { UpdateNotificationDto } from './dto/update-notification.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('NOTIFICATIONS')
 @Controller('notifications')
 export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) {}
@@ -49,4 +51,5 @@ export class NotificationsController {
   deleteNotification(@Param('id') id: string) {
     return this.notificationsService.deleteNotification(id);
   }
+  
 }

@@ -95,7 +95,7 @@ const Config = () => {
       formData.append('name', userData.name);
       formData.append('phone', phone.toString());
       formData.append('nDni', nDni.toString());
-      formData.append('address', userData.addresses[0].city);
+      formData.append('city', userData.addresses[0].city);
       formData.append('zip_code', userData.addresses[0].zip_code);
       formData.append('rExpiration', userData.rExpiration);
     }
@@ -213,7 +213,7 @@ const Config = () => {
                 className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4"
                 type="text"
                 name="addresses[0].city"
-                value={userData?.addresses[0].city || ''}
+                value={userData?.addresses[0]?.city || ''}
                 onChange={handleInputChange}
               />
             </div>

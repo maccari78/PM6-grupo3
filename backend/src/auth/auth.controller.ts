@@ -12,7 +12,9 @@ import { CreateUserDto, signIn } from 'src/users/dto/create-user.dto';
 import { GoogleAuthGuard } from './utils/auth.guard';
 import { Request, Response } from 'express';
 import { GoogleStrategy } from './utils/GoogleStrategy';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('AUTH')
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -35,6 +37,7 @@ export class AuthController {
     return { msg: 'Google Authentication' };
   }
 
+  @ApiBearerAuth()
   @Get('google/redirect')
   @UseGuards(GoogleAuthGuard)
   async handleRedirect(@Req() req: Request, @Res() res: Response) {
@@ -58,4 +61,5 @@ export class AuthController {
       return { msg: 'Not Authenticated' };
     }
   }
+
 }
