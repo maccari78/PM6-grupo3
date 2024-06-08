@@ -13,7 +13,7 @@ const ButtonCheckout = ({ postState }: { postState: IPost | undefined }) => {
       window.localStorage.getItem("userSession")
     ) {
       try {
-        const res = await fetch("http://localhost:3000/api/checkout", {
+        const res = await fetch("http://localhost:3001/rentals/id", {
           method: "POST",
           body: JSON.stringify(postState),
           headers: {
