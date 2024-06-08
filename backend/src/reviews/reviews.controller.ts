@@ -2,12 +2,15 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Headers, Unauthorize
 import { ReviewsService } from './reviews.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('REVIEWS')
 @Controller('reviews')
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
   //Controllers | Add reviews
+  @ApiBearerAuth()
   @Post(":id")
   create(
     @Body() createReviewDto: CreateReviewDto,
@@ -35,6 +38,7 @@ export class ReviewsController {
     return this.reviewsService.findOne(id);
   }
   
+  @ApiBearerAuth()
   @Put(':id')
   update(
     @Param('id', ParseUUIDPipe) id: string,

@@ -15,11 +15,15 @@ import { RentalsService } from './rentals.service';
 import { CreateRentalDto } from './dto/create-rental.dto';
 import { UpdateRentalDto } from './dto/update-rental.dto';
 import { Response } from 'express';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+// @ApiBearerAuth()
+@ApiTags('RENTALS')
 @Controller('rentals')
 export class RentalsController {
   constructor(private readonly rentalsService: RentalsService) {}
 
+  @ApiBearerAuth()
   @Post(':id')
   async create(
     @Body() createRentalDto: CreateRentalDto,
@@ -61,6 +65,7 @@ export class RentalsController {
     return this.rentalsService.findOne(id);
   }
 
+  @ApiBearerAuth()
   @Put(':id')
   update(
     @Param('id', ParseUUIDPipe) id: string,
