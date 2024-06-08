@@ -4,7 +4,17 @@ import { useRouter } from "next/navigation";
 import { IPost } from "../VehiclesComponent/interfaces/IPost";
 import Swal from "sweetalert2";
 
-const ButtonCheckout = ({ postState }: { postState: IPost | undefined }) => {
+const ButtonCheckout = ({
+  postState,
+  pricePost,
+  startDate,
+  endDate,
+}: {
+  postState: IPost | undefined;
+  pricePost: number | undefined;
+  startDate: string | undefined;
+  endDate: string | undefined;
+}) => {
   const router = useRouter();
 
   const fetchCheckout = async () => {
@@ -13,9 +23,20 @@ const ButtonCheckout = ({ postState }: { postState: IPost | undefined }) => {
       window.localStorage.getItem("userSession")
     ) {
       try {
+        if (postState) {
+          window.localStorage.setItem(
+            "checkoutPost",
+            JSON.stringify({
+              rentalStartDate: startDate,
+              rentalEndDate: endDate,
+              price: pricePost,
+            })
+          );
+        }
+
         const res = await fetch("http://localhost:3000/api/checkout", {
           method: "POST",
-          body: JSON.stringify(postState),
+          body: JSON.stringify({ postState, pricePost }),
           headers: {
             "Content-Type": "application/json",
           },
