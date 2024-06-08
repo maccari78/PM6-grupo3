@@ -27,10 +27,10 @@ export class geolocationService {
 
       const data = await response.json();
 
-      if (data.length === 0)
-        throw new NotFoundException(
-          'No se encontraron coordenadas con esa dirección',
-        );
+      if (data.length === 0) {
+        console.warn('No se encontraron coordenadas con esa dirección');
+        return { latitude: null, longitude: null };
+      }
 
       const { lat, lon } = data[0];
       return {
@@ -38,9 +38,7 @@ export class geolocationService {
         longitude: parseFloat(lon),
       };
     } catch (error) {
-      throw new NotFoundException(
-        'No se encontraron coordenadas con esa dirección',
-      );
+      console.error('No se encontraron coordenadas con esa dirección:', error);
     }
   }
 }
