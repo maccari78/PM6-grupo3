@@ -6,10 +6,16 @@ import { IPost } from "@/components/VehiclesComponent/interfaces/IPost";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { IPriceStripe } from "./Interface/IPriceStripe";
+import { IUserData } from "@/interfaces/IUser";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_POSTS;
 if (!apiUrl) {
   throw new Error("Environment variable NEXT_PUBLIC_API_POSTS is not set");
+}
+
+const apiUserUrl = process.env.NEXT_PUBLIC_API_GET_USERS_TOKEN;
+if (!apiUserUrl) {
+  throw new Error("Environment variable NEXT_PUBLIC_API_GET_USERS_TOKEN is not set")
 }
 
 const VehicleDetail = ({ params }: { params: { id: string } }) => {
@@ -21,8 +27,19 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
 
   const [pricesStripe, setPricesStripe] = useState<IPriceStripe[]>();
   const [postState, setPostState] = useState<IPost>();
+  const [userToken, setUserToken] = useState<string | null>(null);
+  const [userData, setUserData] = useState<IUserData | null>(null);
+  const [isOwner, setIsOwner] = useState(false);
 
   useEffect(() => {
+    if (typeof window !== "undefined" && window.localStorage) {
+      const userSession = localStorage.getItem("userSession");
+      if (userSession) {
+        const parsedSession = JSON.parse(userSession);
+        setUserToken(parsedSession.token);
+      }
+    }
+
     const fetchDta = async () => {
       try {
         const post = await fetch(`${apiUrl}/${params.id}`, {
@@ -35,8 +52,43 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
       }
     };
 
-    fetchDta();
-  }, []);
+      fetchDta();
+    }, []);
+
+
+
+    useEffect (() => {
+
+      const fetchUserData = async () => {
+        try {
+          const response = await fetch(apiUserUrl, {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${userToken}`,
+              "Content-Type": "application/json",
+            },
+          });
+  
+          if (!response.ok) {
+            throw new Error("Error fetching user data");
+          }
+  
+          const data = await response.json();
+          setUserData(data);
+
+          if(data.id === postState?.user.id) {
+            setIsOwner(true)
+          }
+        } catch (error: any) {
+          throw new Error(error);
+        }}
+  
+      if (userToken) {
+        fetchUserData()
+      }
+
+
+    }, [userToken, postState])
 
   return (
     <>
@@ -319,13 +371,14 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
       </div>
 
       <div className="bg-[#444343] px-40 pb-10 ">
+        {isOwner && 
         <Link
           href={`/vehicle/${params.id}/upload_post`}
           className="text-slate-50 font-sans"
         >
-          {" "}
           Editar publicación
         </Link>
+}
         <h1 className="font-sans text-lg md:text-2xl font-semibold text-gray-100 pb-8">
           ¡Reserva ahora!
         </h1>
