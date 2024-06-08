@@ -129,6 +129,7 @@ export class PostsService {
     files?: Express.Multer.File[],
   ) {
     const { title, description, price, image_url, ...rest } = posts;
+    console.log(id, 'ID EN SERVICE');
 
     const secret = process.env.JWT_SECRET;
     const payload: JwtPayload = await this.jwtService.verify(token, {
@@ -142,8 +143,10 @@ export class PostsService {
 
     const findPosts = await this.postRepository.findOne({
       where: { id },
-      relations: ['car'],
+      relations: ['car', 'user'],
     });
+    console.log(findPosts, 'FIND POSTS EN SERVICE');
+
     if (!findPosts)
       throw new NotFoundException(`No se encontro publicación con ${id}`);
     if (findPosts.user.id !== user.id)
@@ -198,7 +201,7 @@ export class PostsService {
         `No se pudo obtener la publicación con ${id}`,
       );
 
-    const posts = await this.postRepository.delete(postsFind);
+    const posts = await this.postRepository.delete(postsFind.id);
     if (posts.affected === 0)
       throw new BadRequestException('No se pudo borrar la publicación');
 

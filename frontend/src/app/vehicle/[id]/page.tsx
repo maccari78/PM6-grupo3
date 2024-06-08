@@ -22,8 +22,6 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
   const [pricesStripe, setPricesStripe] = useState<IPriceStripe[]>();
   const [postState, setPostState] = useState<IPost>();
 
-  console.log(pricesStripe);
-
   useEffect(() => {
     const fetchDta = async () => {
       try {
@@ -38,23 +36,6 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
     };
 
     fetchDta();
-  }, []);
-
-  useEffect(() => {
-    const fetchPricesStripe = async () => {
-      try {
-        const response = fetch("http://localhost:3000/api/prices", {
-          method: "GET",
-        });
-
-        const data = await (await response).json();
-        setPricesStripe(data);
-      } catch (error: any) {
-        console.log(error.message);
-      }
-    };
-
-    fetchPricesStripe();
   }, []);
 
   return (
@@ -74,7 +55,7 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
             </div>
           </div>
 
-          <div className="flex flex-col justify-around h-[350px] max-h-[100%]">
+          <div className="flex mt-3 flex-col justify-around h-[350px] max-h-[100%]">
             <div className="flex flex-col  pb-4 border-b-[1px] border-b-gray-200">
               <h1 className="text-lg md:text-2xl font-semibold text-gray-100">
                 Descripcion
@@ -326,9 +307,7 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
                 <p className="text-[#b0d63f]">Dia</p>
               </div>
               <div className="flex w-full justify-center">
-                {pricesStripe?.map((price) => {
-                  return <ButtonCheckout key={price.id} priceId={price.id} />;
-                })}
+                <ButtonCheckout postState={postState} />;
               </div>
             </div>
             <div className="flex flex-row justify-between items-center w-full">

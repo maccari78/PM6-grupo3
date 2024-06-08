@@ -117,25 +117,25 @@ const Navbar: React.FC = () => {
               <div className="py-1">
                 <Link
                   href="/user"
-                  className="block px-4 py-2 text-sm text-gray-300 hover:bg-[#494949] "
+                  className="block px-4 py-2 text-sm hover:text-[#C4FF0D] duration-300  text-gray-300 hover:bg-[#494949] "
                 >
                   Mi cuenta
                 </Link>
                 <Link
                   href="/publicar-vehiculo"
-                  className="block px-4 py-2 text-sm text-gray-300 hover:bg-[#494949]"
+                  className="block px-4 py-2 text-sm hover:text-[#C4FF0D] duration-300 text-gray-300 hover:bg-[#494949]"
                 >
                   Publicar mi vehículo
                 </Link>
                 <Link
                   href="/ayuda"
-                  className="block px-4 py-2 text-sm text-gray-300 hover:bg-[#494949]"
+                  className="block px-4 py-2 text-sm hover:text-[#C4FF0D] duration-300 text-gray-300 hover:bg-[#494949]"
                 >
                   Centro de ayuda
                 </Link>
                 <button
                   type="button"
-                  className="block px-4 mt-2 text-start py-2 text-sm w-full text-gray-300 hover:bg-[#494949]"
+                  className="block px-4 mt-2 text-start py-2 text-sm w-fullex hover:text-[#C4FF0D] duration-300 text-gray-300 hover:bg-[#494949]"
                   onClick={handleLogOut}
                 >
                   Cerrar sesión

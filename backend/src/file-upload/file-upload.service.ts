@@ -29,6 +29,10 @@ export class FileUploadService {
     const user = await this.usersRepository.findOneBy({ id: userId });
     if (!user) throw new NotFoundException('Usuario no encontrado');
 
+    if (user.public_id) {
+      await this.deleteImage(user.public_id);
+    }
+
     const uploadedImage = await this.uploadStream(file);
 
     await this.usersRepository.update(user.id, {
@@ -68,7 +72,8 @@ export class FileUploadService {
     const user = await this.usersRepository.findOneBy({ public_id: publicId });
 
     await this.usersRepository.update(user.id, {
-      image_url: null,
+      image_url:
+        'https://res.cloudinary.com/dkent00db/image/upload/v1717555619/image%20profile%20picture%20placeholder/vqnmnefzjwscrtkfpxtw.webp',
       public_id: null,
     });
 

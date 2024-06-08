@@ -54,10 +54,10 @@ export class MailService {
         );
       }
     } else {
-      const posts = user.posts.length
+      const posts = user.post?.length
         ? user.post
         : ['Aún no has publicado nada'];
-      const rentals = user.rentals.length
+      const rentals = user.rentals?.length
         ? user.rentals
         : ['Aún no has alquilado nada'];
 
