@@ -13,7 +13,7 @@ export class UsersService {
     @InjectRepository(User) private userRepository: Repository<User>,
     private fileUploadService: FileUploadService,
     private jwtService: JwtService,
-  ) { }
+  ) {}
 
   async findAll() {
     const users = await this.userRepository.find();
@@ -94,7 +94,6 @@ export class UsersService {
     if (!file) {
       return 'Usuario actualizado con exito';
     }
-    console.log(file);
 
     const uploadedImage = await this.fileUploadService.updateProfilePicture(
       user.id,
@@ -116,9 +115,9 @@ export class UsersService {
   }
 
   async findByEmail(email: string) {
-    const user = await this.userRepository.findOne({ where: { email } })
+    const user = await this.userRepository.findOne({ where: { email } });
 
-    if (!user) throw new NotFoundException('Usuario no encontrado')
-    return user
+    if (!user) throw new NotFoundException('Usuario no encontrado');
+    return user;
   }
 }

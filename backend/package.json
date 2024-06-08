@@ -78,6 +78,7 @@
     "node-cron": "^3.0.3",
     "prettier": "^3.0.0",
     "source-map-support": "^0.5.21",
+    "stripe": "^15.10.0",
     "supertest": "^6.3.3",
     "ts-jest": "^29.1.0",
     "ts-loader": "^9.4.3",

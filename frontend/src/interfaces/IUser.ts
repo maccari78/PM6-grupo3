@@ -87,7 +87,7 @@ export interface IUser {
     email: string;
     name: string;
     nDni: number;
-    rExpiration: string | null;
+    rExpiration: string;
     aboutMe: string | null;
     addresses: Address[];
     car: Car[];

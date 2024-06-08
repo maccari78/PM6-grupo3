@@ -67,16 +67,15 @@ export class AddressesService {
     const { latitude, longitude } =
       await this.geolocation.getCordinates(fullAddress);
 
-    console.log(latitude);
-    console.log(longitude);
-
-    await this.addressRepository.update(
-      { user: { id: userId } },
-      {
-        latitude,
-        longitude,
-      },
-    );
+    if (!latitude) {
+      await this.addressRepository.update(
+        { user: { id: userId } },
+        {
+          latitude,
+          longitude,
+        },
+      );
+    }
 
     const updatedAddress = await this.addressRepository.findOneBy({
       user: { id: userId },
