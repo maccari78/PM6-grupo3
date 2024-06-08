@@ -23,7 +23,10 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { FiltersPosts } from './interfaces/filter.interfaces';
 import { TokenGuard } from './guards/token.guard';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+
+@ApiTags('POSTS')
 @Controller('posts')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
@@ -43,6 +46,7 @@ export class PostsController {
     return this.postsService.getPostsServiceId(id);
   }
 
+  @ApiBearerAuth()
   @Post()
   @UseGuards(TokenGuard)
   @UseInterceptors(FilesInterceptor('file', 5))
@@ -82,6 +86,7 @@ export class PostsController {
     return this.postsService.AddPostsServices(createPostDto, token);
   }
 
+  @ApiBearerAuth()
   @Put(':id')
   @UseInterceptors(FilesInterceptor('file', 5))
   putPostsById(
