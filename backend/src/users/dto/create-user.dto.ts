@@ -1,4 +1,5 @@
 import { PickType } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import {
   IsEmail,
   IsNotEmpty,
@@ -24,7 +25,16 @@ export class CreateUserDto {
 
   @IsNumber()
   @IsNotEmpty({ message: 'El dni es requerido' })
-  // @Transform((value) => Number(value))
+  @Transform(({ value }) => {
+    if (typeof value === 'number') {
+      return value;
+    }
+    const transformedValue = Number(value);
+    if (isNaN(transformedValue)) {
+      throw new Error('El valor no es numero');
+    }
+    return transformedValue;
+  })
   nDni: number;
 
   // @IsString()
@@ -32,7 +42,16 @@ export class CreateUserDto {
 
   @IsNumber()
   @IsNotEmpty({ message: 'El telefono es requerido' })
-  // @Transform((value) => Number(value))
+  @Transform(({ value }) => {
+    if (typeof value === 'number') {
+      return value;
+    }
+    const transformedValue = Number(value);
+    if (isNaN(transformedValue)) {
+      throw new Error('El valor no es numero');
+    }
+    return transformedValue;
+  })
   phone: number;
 
   // ABAJO ES ADRESS
