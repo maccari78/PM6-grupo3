@@ -55,7 +55,7 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
             </div>
           </div>
 
-          <div className="flex flex-col justify-around h-[350px] max-h-[100%]">
+          <div className="flex mt-3 flex-col justify-around h-[350px] max-h-[100%]">
             <div className="flex flex-col  pb-4 border-b-[1px] border-b-gray-200">
               <h1 className="text-lg md:text-2xl font-semibold text-gray-100">
                 Descripcion

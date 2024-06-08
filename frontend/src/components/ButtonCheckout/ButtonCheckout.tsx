@@ -1,20 +1,52 @@
+"use client";
+
+import { useRouter } from "next/navigation";
 import { IPost } from "../VehiclesComponent/interfaces/IPost";
+import Swal from "sweetalert2";
 
 const ButtonCheckout = ({ postState }: { postState: IPost | undefined }) => {
+  const router = useRouter();
+
   const fetchCheckout = async () => {
-    try {
-      const res = await fetch("http://localhost:3000/api/checkout", {
-        method: "POST",
-        body: JSON.stringify(postState),
-        headers: {
-          "Content-Type": "application/json",
+    if (
+      typeof window !== undefined &&
+      window.localStorage.getItem("userSession")
+    ) {
+      try {
+        const res = await fetch("http://localhost:3000/api/checkout", {
+          method: "POST",
+          body: JSON.stringify(postState),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        const session = await res.json();
+        window.location.href = session.url;
+      } catch (error: any) {
+        console.log(error.message);
+      }
+    } else {
+      const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        background: "#cbcbcb",
+        color: "#aa1808",
+        showConfirmButton: false,
+        timer: 5000,
+        timerProgressBar: true,
+        backdrop: "swal2-backdrop-show",
+        didOpen: (toast) => {
+          toast.onmouseenter = Swal.stopTimer;
+          toast.onmouseleave = Swal.resumeTimer;
         },
       });
-
-      const session = await res.json();
-      window.location.href = session.url;
-    } catch (error: any) {
-      console.log(error.message);
+      Toast.fire({
+        icon: "error",
+        iconColor: "#aa1808",
+        title: "Debes iniciar sesion",
+      });
+      router.push("/login");
     }
   };
 

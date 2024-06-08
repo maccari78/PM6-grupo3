@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { ICar } from "./interfaces/ICar";
 import Link from "next/link";
 
@@ -12,6 +13,20 @@ const VehicleCard: React.FC<ICar> = ({
   carMileage,
   carPrice,
 }) => {
+  const [descriptionReduce, setDescriptionReduce] = useState<
+    string | undefined
+  >();
+
+  useEffect(() => {
+    const descriptionCharacters = () => {
+      const descriptionLenght = description;
+      const reduceDescription = `${descriptionLenght.slice(0, 80)}...`;
+      setDescriptionReduce(reduceDescription);
+    };
+
+    descriptionCharacters();
+  }, []);
+
   return (
     <div className="flex flex-col items-center h-[400px] min-h-[100px]  w-[350px]  mb-5 bg-[#222222] rounded-xl shadow-xl md:mr-4">
       <div className="h-[196px] w-full">
@@ -33,7 +48,9 @@ const VehicleCard: React.FC<ICar> = ({
         </div>
 
         <div className="flex w-full justify-start  mt-5">
-          <p className="text-gray-300 text-sm ">{description}</p>
+          <p className="text-gray-300 text-sm ">
+            {description.length > 80 ? descriptionReduce : description}
+          </p>
         </div>
 
         <div className="flex w-full justify-between items-center mt-5">

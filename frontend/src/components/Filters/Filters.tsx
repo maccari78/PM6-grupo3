@@ -39,8 +39,8 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
   };
 
   return (
-    <div className="flex flex-col mb-5 md:mb-0 md:w-[200px] justify-around items-center bg-[#A29E9E] px-5 py-5 rounded-lg border-solid border-2 border-[#d4e79c]">
-      <div className="mb-5 w-[152px] flex flex-col justify-start">
+    <div className="flex flex-col w-[230px] mb-5 md:mb-0 md:w-[235px] justify-around items-center bg-[#A29E9E] px-4 py-5 rounded-lg border-solid border-2 border-[#d4e79c]">
+      <div className="mb-5 w-full flex flex-col justify-start">
         <h1 className="text-lg text-[#C4FF0D]">Marca</h1>
         <ul>
           {["Kia", "Chevrolet", "Mazda", "Ford", "Ferrari"].map((brand) => (
@@ -56,7 +56,7 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
         </ul>
       </div>
 
-      <div className="mb-5 w-[152px] flex flex-col justify-start">
+      <div className="mb-5 w-full flex flex-col justify-start">
         <h1 className="text-lg text-[#C4FF0D]">Modelo</h1>
         <ul>
           {["F-150", "Sorento", "Camaro", "Stradale", "Picanto"].map(
@@ -74,7 +74,7 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
         </ul>
       </div>
 
-      <div className="mb-5 w-[152px] flex flex-col justify-start">
+      <div className="mb-5 w-full flex flex-col justify-start">
         <h1 className="text-[#C4FF0D]">Color</h1>
         <ul>
           <li>
@@ -82,9 +82,9 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
               <input
                 id="blue-checkbox"
                 type="checkbox"
-                value="azul"
-                checked={selectedColors.includes("azul")}
-                onChange={() => handleColorChange("azul")}
+                value="Azul"
+                checked={selectedColors.includes("Azul")}
+                onChange={() => handleColorChange("Azul")}
                 className=" relative w-4 h-4 rounded-sm appearance-none focus:cursor-pointer focus:outline-none bg-blue-900 checked:bg-blue-700 "
               />
               <label
@@ -100,9 +100,9 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
               <input
                 id="green-checkbox"
                 type="checkbox"
-                value="verde"
-                checked={selectedColors.includes("verde")}
-                onChange={() => handleColorChange("verde")}
+                value="Verde"
+                checked={selectedColors.includes("Verde")}
+                onChange={() => handleColorChange("Verde")}
                 className="relative w-4 h-4 rounded-sm appearance-none focus:cursor-pointer focus:outline-none bg-green-900 checked:bg-green-700 "
               />
               <label
@@ -118,9 +118,9 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
               <input
                 id="black-checkbox"
                 type="checkbox"
-                value="negro"
-                checked={selectedColors.includes("negro")}
-                onChange={() => handleColorChange("negro")}
+                value="Negro"
+                checked={selectedColors.includes("Negro")}
+                onChange={() => handleColorChange("Negro")}
                 className="relative w-4 h-4 rounded-sm appearance-none focus:cursor-pointer focus:outline-none bg-gray-800 checked:bg-gray-900 "
               />
               <label
@@ -136,9 +136,9 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
               <input
                 id="white-checkbox"
                 type="checkbox"
-                value="blanco"
-                checked={selectedColors.includes("blanco")}
-                onChange={() => handleColorChange("blanco")}
+                value="Blanco"
+                checked={selectedColors.includes("Blanco")}
+                onChange={() => handleColorChange("Blanco")}
                 className="relative w-4 h-4 rounded-sm appearance-none focus:cursor-pointer focus:outline-none bg-gray-200 checked:bg-gray-50 "
               />
               <label
@@ -154,9 +154,9 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
               <input
                 id="red-checkbox"
                 type="checkbox"
-                value="rojo"
-                checked={selectedColors.includes("rojo")}
-                onChange={() => handleColorChange("rojo")}
+                value="Rojo"
+                checked={selectedColors.includes("Rojo")}
+                onChange={() => handleColorChange("Rojo")}
                 className="relative w-4 h-4 rounded-sm appearance-none focus:cursor-pointer focus:outline-none bg-red-900 checked:bg-red-700 "
               />
               <label
@@ -170,47 +170,39 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
         </ul>
       </div>
 
-      <div className="mb-5 w-[152px] flex flex-col justify-start">
+      <div className="mb-5 w-full flex flex-col justify-start">
         <h1 className="text-lg text-[#C4FF0D]">Kilometraje</h1>
-        <ul>
-          <li>
+        <ul className="flex flex-col justify-start">
+          <li className="flex justify-start items-start">
             <button
-              onClick={() => handleMileageChange("10000")}
+              onClick={() => handleMileageChange("Menos de 50.000Km")}
               className="text-[#222222] text-sm md:text-base  w-full flex justify-start rounded-xl hover:px-2 hover:translate-x-1 hover:bg-[#C4FF0D] duration-300"
             >
-              10.000 Km
+              Menos de 50.000Km
             </button>
           </li>
-          <li>
+          <li className="flex justify-start items-start">
             <button
-              onClick={() => handleMileageChange("15000")}
+              onClick={() => handleMileageChange("50.000Km-100.000Km")}
               className="text-[#222222] text-sm md:text-base  w-full flex justify-start rounded-xl hover:px-2 hover:translate-x-1 hover:bg-[#c3ff0dad] duration-300"
             >
-              15.000 Km
+              50.000Km-100.000Km
             </button>
           </li>
-          <li>
+          <li className="flex justify-start items-start">
             <button
-              onClick={() => handleMileageChange("20000")}
+              onClick={() => handleMileageChange("100.000Km-150.000Km")}
               className="text-[#222222] text-sm md:text-base  w-full flex justify-start rounded-xl hover:px-2 hover:translate-x-1 hover:bg-[#c3ff0dad] duration-300"
             >
-              20.000 Km
+              100.000Km-150.000Km
             </button>
           </li>
-          <li>
+          <li className="flex justify-start items-start">
             <button
-              onClick={() => handleMileageChange("30000")}
+              onClick={() => handleMileageChange("Mas de 150.000Km")}
               className="text-[#222222] text-sm md:text-base  w-full flex justify-start rounded-xl hover:px-2 hover:translate-x-1 hover:bg-[#c3ff0dad] duration-300"
             >
-              30.000 Km
-            </button>
-          </li>
-          <li>
-            <button
-              onClick={() => handleMileageChange("40000")}
-              className="text-[#222222] text-sm md:text-base  w-full flex justify-start rounded-xl hover:px-2 hover:translate-x-1 hover:bg-[#c3ff0dad] duration-300"
-            >
-              40.000 Km
+              Mas de 150.000Km
             </button>
           </li>
         </ul>
