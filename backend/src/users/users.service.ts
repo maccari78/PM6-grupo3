@@ -6,12 +6,16 @@ import { User } from './entities/user.entity';
 import { FileUploadService } from 'src/file-upload/file-upload.service';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from 'src/rentals/interfaces/payload.interfaces';
+import { Address } from 'src/addresses/entities/address.entity';
+import { UpdateAddressDto } from 'src/addresses/dto/update-address.dto';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(Address) private addressRepository: Repository<Address>,
     private fileUploadService: FileUploadService,
+
     private jwtService: JwtService,
   ) {}
 
@@ -55,6 +59,7 @@ export class UsersService {
       where: { email: payload.sub },
       relations: [
         'car',
+        'car.post',
         'post',
         'post.car',
         'rentals',
@@ -74,6 +79,7 @@ export class UsersService {
   async update(
     token: string,
     updateUserDto: UpdateUserDto,
+    updateAdress?: UpdateAddressDto,
     file?: Express.Multer.File,
   ) {
     const currentUser = token?.split(' ')[1];
@@ -86,9 +92,17 @@ export class UsersService {
     if (!payload) throw new NotFoundException('Error al decodificar token');
     const user = await this.userRepository.findOne({
       where: { email: payload.sub },
+      relations: ['addresses'],
     });
     if (!user) throw new NotFoundException('Usuario no encontrado');
+
     const updateUser = await this.userRepository.update(user.id, updateUserDto);
+
+    const adress = user.addresses[0!];
+    if (adress) {
+      await this.addressRepository.update(adress.id, updateAdress);
+    }
+
     if (updateUser.affected === 0)
       throw new NotFoundException('Error al actualizar usuario');
     if (!file) {
