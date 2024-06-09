@@ -4,7 +4,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { addDays, isEqual, startOfDay } from 'date-fns';
 
 interface IDateRangePicker {
-  bookedDates: Date[];
+  bookedDates: String[];
 }
 
 const DateRangePicker: React.FC<IDateRangePicker> = ({ bookedDates }) => {
@@ -13,7 +13,7 @@ const DateRangePicker: React.FC<IDateRangePicker> = ({ bookedDates }) => {
 
   const isDateAvailable = (date: Date): boolean => {
     const normalizedDate = startOfDay(date);
-    return !bookedDates.some(bookedDate => isEqual(startOfDay(bookedDate), normalizedDate));
+    return !bookedDates.some(bookedDate => isEqual(startOfDay(bookedDate.toString()), normalizedDate));
   };
 
   return (    <div className="flex flex-col space-y-4">
@@ -23,6 +23,7 @@ const DateRangePicker: React.FC<IDateRangePicker> = ({ bookedDates }) => {
       selectsStart
       startDate={startDate}
       endDate={endDate}
+      minDate= {new Date()}
       filterDate={isDateAvailable}
       className="px-3 py-2 border border-gray-300 rounded-md"
       placeholderText="Selecciona la fecha de inicio"
