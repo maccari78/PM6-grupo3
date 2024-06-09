@@ -3,29 +3,49 @@
 import ButtonCheckout from "@/components/ButtonCheckout/ButtonCheckout";
 import DateRangePicker from "@/components/DateRangePicker/DateRangePicker";
 import { IPost } from "@/components/VehiclesComponent/interfaces/IPost";
+import { IUserData } from "@/interfaces/IUser";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { IPriceStripe } from "./Interface/IPriceStripe";
 
-const apiUrl = process.env.NEXT_PUBLIC_API_POSTS;
-if (!apiUrl) {
+const apiPostUrl = process.env.NEXT_PUBLIC_API_POSTS;
+if (!apiPostUrl) {
   throw new Error("Environment variable NEXT_PUBLIC_API_POSTS is not set");
+}
+
+const apiUserUrl = process.env.NEXT_PUBLIC_API_GET_USERS_TOKEN;
+if (!apiUserUrl) {
+  throw new Error(
+    "Environment variable NEXT_PUBLIC_API_GET_USERS_TOKEN is not set"
+  );
 }
 
 const VehicleDetail = ({ params }: { params: { id: string } }) => {
   const bookedDates = [
-    new Date("2024-06-10T00:00:00Z"),
-    new Date("2024-06-15T00:00:00Z"),
-    new Date("2024-06-20T00:00:00Z"),
+    new Date("2024-06-10T00:00:00Z").toISOString().replace(".000Z", ""),
+    new Date("2024-06-15T00:00:00Z").toISOString().replace(".000Z", ""),
+    new Date("2024-06-20T00:00:00Z").toISOString().replace(".000Z", ""),
   ];
 
-  const [pricesStripe, setPricesStripe] = useState<IPriceStripe[]>();
   const [postState, setPostState] = useState<IPost>();
+  const [pricePost, setPricePost] = useState<number>();
+  const [startDate, setStartDate] = useState<string>();
+  const [userToken, setUserToken] = useState<string>();
+  const [endDate, setEndDate] = useState<string>();
+  const [userData, setUserData] = useState<IUserData | null>(null);
+  const [isOwner, setIsOwner] = useState(false);
 
   useEffect(() => {
+    if (typeof window !== "undefined" && window.localStorage) {
+      const userSession = localStorage.getItem("userSession");
+      if (userSession) {
+        const parsedSession = JSON.parse(userSession);
+        setUserToken(parsedSession.token);
+      }
+    }
+
     const fetchDta = async () => {
       try {
-        const post = await fetch(`${apiUrl}/${params.id}`, {
+        const post = await fetch(`${apiPostUrl}/${params.id}`, {
           method: "GET",
         });
         const data = await post.json();
@@ -37,6 +57,49 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
 
     fetchDta();
   }, []);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch(apiUserUrl, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${userToken!}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Error fetching user data");
+        }
+
+        const data = await response.json();
+        setUserData(data);
+
+        if (data.id === postState?.user.id) {
+          setIsOwner(true);
+        }
+      } catch (error: any) {
+        throw new Error(error);
+      }
+    };
+
+    if (userToken) {
+      fetchUserData();
+    }
+  }, [userToken, postState]);
+
+  const handleSetPrice = (newPrice: number) => {
+    setPricePost(newPrice);
+  };
+
+  const handleStartDate = (date: string) => {
+    setStartDate(date);
+  };
+
+  const handleEndDate = (date: string) => {
+    setEndDate(date);
+  };
 
   return (
     <>
@@ -55,19 +118,19 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
             </div>
           </div>
 
-          <div className="flex mt-3 flex-col justify-around h-[350px] max-h-[100%]">
+          <div className="flex mt-3 flex-col justify-around h-[500px] md:h-[400px] max-h-[100%]">
             <div className="flex flex-col  pb-4 border-b-[1px] border-b-gray-200">
               <h1 className="text-lg md:text-2xl font-semibold text-gray-100">
                 Descripcion
               </h1>
               <ul className="text-base text-gray-300   mt-2">
                 <li className="text-sm md:text-base">
-                  {postState?.description}
+                  - {postState?.description}
                 </li>
               </ul>
             </div>
-            <div className="flex flex-col  py-4">
-              <h1 className="text-xl md:text-2xl text-gray-100 font-semibold ">
+            <div className="flex flex-col border-b-[1px] border-b-gray-200 py-4">
+              <h1 className="text-lg md:text-2xl text-gray-100 font-semibold ">
                 Datos del vehiculo
               </h1>
               <ul className="space-y-1 text-gray-300  list-inside">
@@ -203,6 +266,51 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
               </ul>
             </div>
           </div>
+
+          <div className="flex flex-col gap-5 pb-4">
+            <div>
+              <div className="flex flex-row items-center duration-200 ">
+                {isOwner && (
+                  <>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="w-6 h-6 fill-[] stroke-[#C4FF0D]  "
+                    >
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                      <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
+                      <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" />
+                      <path d="M16 5l3 3" />
+                    </svg>
+                    <Link
+                      href={`/vehicle/${params.id}/upload_post`}
+                      className="text-gray-300 text-sm md:text-base hover:text-[#C4FF0D] hover:underline"
+                    >
+                      {" "}
+                      Editar publicación
+                    </Link>
+                  </>
+                )}
+              </div>
+              <h1 className="font-sans text-lg md:text-2xl font-semibold text-gray-100 ">
+                ¡Reserva!
+              </h1>
+            </div>
+
+            <div className="w-full">
+              <DateRangePicker
+                handleStartDate={handleStartDate}
+                handleEndDate={handleEndDate}
+                price={postState?.price}
+                handleSetPrice={handleSetPrice}
+                bookedDates={bookedDates}
+              />
+            </div>
+          </div>
         </div>
 
         <div className="flex  flex-col w-[70%] md:w-[30%] justify-between items-center my-5">
@@ -304,33 +412,30 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
                 <h1 className="text-2xl text-gray-300">
                   ${postState?.price} US
                 </h1>
+
                 <p className="text-[#b0d63f]">Dia</p>
               </div>
               <div className="flex w-full justify-center">
-                <ButtonCheckout postState={postState} />;
+                <ButtonCheckout
+                  postState={postState}
+                  id={params.id}
+                  pricePost={pricePost}
+                  startDate={startDate}
+                  endDate={endDate}
+                  userToken={userToken}
+                />
+                ;
               </div>
             </div>
             <div className="flex flex-row justify-between items-center w-full">
               <h1 className="text-xl text-gray-300">Total: </h1>
-              <p className="text-base text-[#b0d63f]">${postState?.price} US</p>
+              {pricePost === undefined ? (
+                <p className="text-xl text-[#b0d63f]">${postState?.price} US</p>
+              ) : (
+                <p className="text-xl text-[#b0d63f]">${pricePost} US</p>
+              )}
             </div>
           </div>
-        </div>
-      </div>
-
-      <div className="bg-[#444343] px-40 pb-10 ">
-        <Link
-          href={`/vehicle/${params.id}/upload_post`}
-          className="text-slate-50 font-sans"
-        >
-          {" "}
-          Editar publicación
-        </Link>
-        <h1 className="font-sans text-lg md:text-2xl font-semibold text-gray-100 pb-8">
-          ¡Reserva ahora!
-        </h1>
-        <div>
-          <DateRangePicker bookedDates={bookedDates} />
         </div>
       </div>
     </>

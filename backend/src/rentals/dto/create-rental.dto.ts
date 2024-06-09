@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateRentalDto {
@@ -15,6 +16,16 @@ export class CreateRentalDto {
 
   @IsNumber()
   @IsNotEmpty()
+  @Transform(({ value }) => {
+    if (typeof value === 'number') {
+      return value;
+    }
+    const transformedValue = Number(value);
+    if (isNaN(transformedValue)) {
+      throw new Error('El valor no es numero');
+    }
+    return transformedValue;
+  })
   price: number;
 
   @IsString()
