@@ -39,6 +39,9 @@ const DateRangePicker: React.FC<{
       );
       const totalPrice = differenceInDays * price!;
       handleSetPrice(totalPrice);
+    } else if (startDate === null || endDate === null) {
+      const defaultPrice = price;
+      handleSetPrice(defaultPrice!);
     }
   };
 
