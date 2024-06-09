@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { addDays, isEqual, startOfDay } from "date-fns";
+import { addDays, isEqual, startOfDay, format } from "date-fns";
 
 interface ISetPrice {
   (newPrice: number): void;
@@ -46,17 +46,11 @@ const DateRangePicker: React.FC<{
   };
 
   const setStartAndEndDate = () => {
-    const monthStart = startDate?.getMonth();
-    const dayStart = startDate?.getDate();
-    const yearStart = startDate?.getFullYear();
-    const startDateFull = `${monthStart! + 1}/${dayStart}/${yearStart}`;
-    handleStartDate(startDateFull.toString());
+    const startDateFull = startDate ? format(startDate, "MM/dd/yyyy") : "";
+    handleStartDate(startDateFull);
 
-    const monthEnd = endDate?.getMonth();
-    const dayEnd = endDate?.getDate();
-    const yearEnd = endDate?.getFullYear();
-    const endDateFull = `${monthEnd! + 1}/${dayEnd}/${yearEnd}`;
-    handleEndDate(endDateFull.toString());
+    const endDateFull = endDate ? format(endDate, "MM/dd/yyyy") : "";
+    handleEndDate(endDateFull);
   };
 
   useEffect(() => {
