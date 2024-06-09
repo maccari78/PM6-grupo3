@@ -51,7 +51,7 @@ export class RentalsController {
   @Get('/sucess/:id')
   paymentSucess(@Param('id', ParseUUIDPipe) id: string, @Res() res: Response) {
     const payment = this.rentalsService.paymentSucess(id);
-    if (payment) res.redirect(`http://localhost:3000/`);
+    if (payment) res.redirect(`http://localhost:3000/successcheckout/${id}`);
   }
 
   @Get('/cancel/:id')
