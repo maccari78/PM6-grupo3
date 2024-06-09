@@ -3,29 +3,46 @@
 import ButtonCheckout from "@/components/ButtonCheckout/ButtonCheckout";
 import DateRangePicker from "@/components/DateRangePicker/DateRangePicker";
 import { IPost } from "@/components/VehiclesComponent/interfaces/IPost";
+import { IUserData } from "@/interfaces/IUser";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { IPriceStripe } from "./Interface/IPriceStripe";
 
 const apiPostUrl = process.env.NEXT_PUBLIC_API_POSTS;
 if (!apiPostUrl) {
   throw new Error("Environment variable NEXT_PUBLIC_API_POSTS is not set");
 }
 
+const apiUserUrl = process.env.NEXT_PUBLIC_API_GET_USERS_TOKEN;
+if (!apiUserUrl) {
+  throw new Error(
+    "Environment variable NEXT_PUBLIC_API_GET_USERS_TOKEN is not set"
+  );
+}
+
 const VehicleDetail = ({ params }: { params: { id: string } }) => {
   const bookedDates = [
-    new Date("2024-06-10T00:00:00Z"),
-    new Date("2024-06-15T00:00:00Z"),
-    new Date("2024-06-20T00:00:00Z"),
+    new Date("2024-06-10T00:00:00Z").toISOString().replace(".000Z", ""),
+    new Date("2024-06-15T00:00:00Z").toISOString().replace(".000Z", ""),
+    new Date("2024-06-20T00:00:00Z").toISOString().replace(".000Z", ""),
   ];
 
-  const [pricesStripe, setPricesStripe] = useState<IPriceStripe[]>();
   const [postState, setPostState] = useState<IPost>();
   const [pricePost, setPricePost] = useState<number>();
   const [startDate, setStartDate] = useState<string>();
+  const [userToken, setUserToken] = useState<string | null>(null);
   const [endDate, setEndDate] = useState<string>();
+  const [userData, setUserData] = useState<IUserData | null>(null);
+  const [isOwner, setIsOwner] = useState(false);
 
   useEffect(() => {
+    if (typeof window !== "undefined" && window.localStorage) {
+      const userSession = localStorage.getItem("userSession");
+      if (userSession) {
+        const parsedSession = JSON.parse(userSession);
+        setUserToken(parsedSession.token);
+      }
+    }
+
     const fetchDta = async () => {
       try {
         const post = await fetch(`${apiPostUrl}/${params.id}`, {
@@ -40,6 +57,37 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
 
     fetchDta();
   }, []);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch(apiUserUrl, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Error fetching user data");
+        }
+
+        const data = await response.json();
+        setUserData(data);
+
+        if (data.id === postState?.user.id) {
+          setIsOwner(true);
+        }
+      } catch (error: any) {
+        throw new Error(error);
+      }
+    };
+
+    if (userToken) {
+      fetchUserData();
+    }
+  }, [userToken, postState]);
 
   const handleSetPrice = (newPrice: number) => {
     setPricePost(newPrice);

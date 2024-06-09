@@ -16,7 +16,7 @@ interface IEndDate {
 }
 
 const DateRangePicker: React.FC<{
-  bookedDates: Date[];
+  bookedDates: String[];
   handleSetPrice: ISetPrice;
   price: number | undefined;
   handleStartDate: IStartDate;
@@ -66,8 +66,8 @@ const DateRangePicker: React.FC<{
 
   const isDateAvailable = (date: Date): boolean => {
     const normalizedDate = startOfDay(date);
-    return !bookedDates.some((bookedDate: Date) =>
-      isEqual(startOfDay(bookedDate), normalizedDate)
+    return !bookedDates.some((bookedDate) =>
+      isEqual(startOfDay(bookedDate.toString()), normalizedDate)
     );
   };
 
