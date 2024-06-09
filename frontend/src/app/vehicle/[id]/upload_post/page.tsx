@@ -11,7 +11,7 @@ const UploadPost = () => {
     const router = useRouter();
     const apiUrl = `${process.env.NEXT_PUBLIC_API_POSTS}/${id}`; // URL de la API con el ID del vehículo
     if (!apiUrl) {
-        throw new Error('Environment variable NEXT_PUBLIC_API_POSTS is not set');
+      throw new Error('Environment variable NEXT_PUBLIC_API_POSTS is not set');
     }
 
     const [isOwner, setIsOwner] = useState<boolean>(false);
@@ -32,18 +32,11 @@ const UploadPost = () => {
 
     useEffect(() => {
         if (typeof window !== "undefined" && window.localStorage) {
-            const storedUserToken = localStorage.getItem('userSession');
-
-            if (storedUserToken) {
-                const { token, userId } = JSON.parse(storedUserToken);
-                setToken(token);
-                setUserSession(userId);
-            } else {
-                router.push("/login");
-            }
+            const userToken = localStorage.getItem('userSession');
+            setToken(userToken);
+            !userToken && router.push("/login");
         }
     }, []);
-
 
     // Cargar los datos del vehículo
     useEffect(() => {
@@ -103,11 +96,11 @@ const UploadPost = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
+    
         // Validar los datos del vehículo
         const validationErrors = validate(vehicleData);
         setErrors(validationErrors);
-
+    
         // Si no hay errores de validación, proceder con el envío
         if (Object.keys(validationErrors).length === 0) {
             const formData = new FormData();
@@ -119,14 +112,14 @@ const UploadPost = () => {
             formData.append("brand", vehicleData.brand);
             formData.append("year", vehicleData.year.toString());
             formData.append("mileage", vehicleData.mileage);
-
+    
             // Si hay archivos, adjuntarlos al formData
             if (vehicleData.file) {
                 Array.from(vehicleData.file).forEach(file => {
                     formData.append("file", file);
                 });
             }
-
+    
             try {
                 // Enviar los datos al servidor
                 const response = await axios.put(apiUrl, formData, {
@@ -135,8 +128,9 @@ const UploadPost = () => {
                         'Content-Type': 'multipart/form-data'
                     }
                 });
-
-                if (response.data) {
+    
+                console.log('Respuesta del servidor:', response);
+                if (response.data && response.data.success) {
                     alert('El vehículo se ha actualizado correctamente');
                     router.push("/");
                 } else {
@@ -149,11 +143,11 @@ const UploadPost = () => {
             }
         }
     };
-    // Si el usuario no es el propietario, mostrar un mensaje de error o redirigir
-    // if (!isOwner) {
-    //     return <div>No tienes permiso para editar esta publicación.</div>;
-    // }
-
+// Si el usuario no es el propietario, mostrar un mensaje de error o redirigir
+        // if (!isOwner) {
+        //     return <div>No tienes permiso para editar esta publicación.</div>;
+        // }
+    
 
     return (
         <div className="bg-gradient-to-bl from-[#222222] to-[#313139] font-sans text-white">
