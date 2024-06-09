@@ -61,8 +61,29 @@ export class UsersController {
     )
     file?: Express.Multer.File,
   ) {
-    if (!file) return this.usersService.update(token, updateUserDto);
-    return this.usersService.update(token, updateUserDto, file);
+    console.log(updateUserDto);
+    const { city, address, country, state, zip_code, ...rest2 } = updateUserDto;
+
+    if (!file)
+      return this.usersService.update(token, rest2, {
+        city,
+        address,
+        country,
+        state,
+        zip_code,
+      });
+    return this.usersService.update(
+      token,
+      rest2,
+      {
+        city,
+        address,
+        country,
+        state,
+        zip_code,
+      },
+      file,
+    );
   }
 
   @Delete(':id')
