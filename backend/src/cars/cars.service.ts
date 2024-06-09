@@ -53,7 +53,7 @@ export class CarsService {
   }
 
   async findAll() {
-    const cars = await this.carsRepository.find();
+    const cars = await this.carsRepository.find({ relations: ['post'] });
     if (!cars) throw new NotFoundException('No se encontraron autos');
     return cars;
   }

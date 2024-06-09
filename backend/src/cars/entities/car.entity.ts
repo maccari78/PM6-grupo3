@@ -1,10 +1,11 @@
 import { Address } from 'src/addresses/entities/address.entity';
-import { Rental } from 'src/rentals/entities/rental.entity';
+import { Posts } from 'src/posts/entities/post.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -57,7 +58,9 @@ export class Car {
   @UpdateDateColumn({ type: 'timestamp' })
   updated_at: Timestamp;
 
-  // USER ID --->
+  @OneToOne(() => Posts)
+  @JoinColumn()
+  post: Posts;
 
   @ManyToOne(() => User, (user) => user.car)
   user: User;
