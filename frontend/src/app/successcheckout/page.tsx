@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-const Successcheckout = () => {
+const Success = () => {
   return (
     <div className="flex flex-col bg-[#444343] min-h-screen items-center">
       <div className="flex flex-col mt-10 gap-3 items-center">
@@ -28,4 +28,4 @@ const Successcheckout = () => {
   );
 };
 
-export default Successcheckout;
+export default Success;
