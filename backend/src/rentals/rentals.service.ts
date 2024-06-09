@@ -13,6 +13,8 @@ import { Car } from 'src/cars/entities/car.entity';
 import { Posts } from 'src/posts/entities/post.entity';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './interfaces/payload.interfaces';
+import Stripe from 'stripe';
+import { Payment } from './interfaces/payment.interfaces';
 
 @Injectable()
 export class RentalsService {
@@ -23,21 +25,27 @@ export class RentalsService {
     @InjectRepository(Car) private carRepository: Repository<Car>,
     private jwtService: JwtService,
   ) {}
-  async create(createRentalDto: CreateRentalDto, currentUser: string) {
-    const { postId, ...rest } = createRentalDto;
+  async create(createRentalDto: CreateRentalDto, currentUser: string, postId) {
+    const { name, price, description, image_url, ...rest } = createRentalDto;
 
     const secret = process.env.JWT_SECRET;
     const payload: JwtPayload = await this.jwtService.verify(currentUser, {
       secret,
     });
-
-    return await this.createWhithJWT(payload, rest, postId);
+    const payment: Payment = {
+      name,
+      price,
+      description,
+      image_url,
+    };
+    return await this.createWhithJWT(payload, rest, postId, payment);
   }
 
   async createWhithJWT(
     payload: JwtPayload,
-    rest: Omit<CreateRentalDto, 'postId'>,
+    rest: Partial<Rental>,
     postId: string,
+    payment: Payment,
   ) {
     const rental_user = await this.userRepository.findOne({
       where: { email: payload.sub },
@@ -62,7 +70,7 @@ export class RentalsService {
     });
     newRental.posts = findPost;
     if (!findCar) throw new NotFoundException('Vehiculo no encontrado');
-    // LOGICA DE PAGO!!!! SI ES TRUE PASO AL SIGUIENTE PASO!
+
     const carUpdate = await this.carRepository.update(findPost.car.id, {
       availability: false,
     });
@@ -74,7 +82,7 @@ export class RentalsService {
       throw new BadRequestException(
         'Error al crear el contrato, verifique las relaciones con otras entidades',
       );
-    return 'Contrato creado con exito';
+    return await this.payment(payment, rental.id);
   }
 
   async findAll() {
@@ -89,7 +97,7 @@ export class RentalsService {
   async findOne(id: string) {
     const contract = await this.rentalRepository.findOne({
       where: { id },
-      relations: ['car', 'users'],
+      relations: ['users'],
     });
     if (!contract) throw new NotFoundException('Contrato no encontrado');
     return contract;
@@ -115,5 +123,62 @@ export class RentalsService {
     if (deleted.affected === 0)
       throw new NotFoundException('Error al eliminar el contraro');
     return 'Contrato eliminado con exito';
+  }
+
+  async payment(dataPayment: Payment, id: string) {
+    const stripe = new Stripe(process.env.STRIPE_PRIVATE_KEY);
+    console.log(stripe);
+    const session = await stripe.checkout.sessions.create({
+      line_items: [
+        {
+          price_data: {
+            product_data: {
+              name: dataPayment.name,
+              description: dataPayment.description,
+              images: [dataPayment.image_url],
+            },
+            currency: 'usd',
+
+            unit_amount: dataPayment.price,
+          },
+          quantity: 1,
+        },
+      ],
+      mode: 'payment',
+      success_url: `http://localhost:3001/rentals/sucess/${id}`,
+      cancel_url: `http://localhost:3001/rentals/cancel/${id}`,
+    });
+    console.log(session.url);
+
+    return session.url;
+  }
+
+  async paymentSucess(id: string) {
+    const contract = await this.rentalRepository.findOne({
+      where: { id },
+      relations: ['users', 'posts', 'posts.user'],
+    });
+    if (!contract) throw new NotFoundException('Contrato no encontrado');
+    const userPosts = contract.posts.user.id;
+    const userPay = contract.users.filter((user) => user.id !== userPosts);
+
+    console.log(userPay[0]);
+
+    return 'Compra pagada con exito';
+  }
+
+  async paymentCancel(id: string) {
+    const contract = await this.rentalRepository.findOne({
+      where: { id },
+      relations: ['users', 'posts', 'posts.user'],
+    });
+    if (!contract) throw new NotFoundException('Contrato no encontrado');
+    await this.carRepository.update(contract.posts.car.id, {
+      availability: true,
+    });
+    const deleted = await this.rentalRepository.delete(contract.id);
+    if (deleted.affected === 0)
+      throw new NotFoundException('Error al eliminar el contrato');
+    return 'Contrato cancelado con exito';
   }
 }

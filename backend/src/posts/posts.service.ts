@@ -110,15 +110,15 @@ export class PostsService {
     const newCar = await this.carService.createdCar(files, rest, user.id);
     if (!newCar) throw new BadRequestException('No se pudo crear el auto');
     const newPosts = this.postRepository.create({ title, description, price });
-    console.log(newCar);
 
     newPosts.car = newCar;
 
     newPosts.user = user;
 
-    console.log(newPosts);
-
-    await this.postRepository.save(newPosts);
+    const postsSaved = await this.postRepository.save(newPosts);
+    if (!postsSaved)
+      throw new BadRequestException('No se pudo insertar la publicación');
+    await this.carRepository.update(newCar.id, { post: postsSaved });
     return 'Publicación insertada';
   }
 

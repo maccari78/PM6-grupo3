@@ -36,12 +36,25 @@ export class AddressesService {
     return address;
   }
 
-  async updateAddress(id: string, updateAddressDto: UpdateAddressDto) {
-    await this.addressRepository.update(id, updateAddressDto);
-    const address = this.addressRepository.findOneBy({ id });
+  async updateAddress(addressId: string, updateAddressDto: UpdateAddressDto) {
+    await this.addressRepository.update(addressId, updateAddressDto);
+    const foundAddressArr = await this.addressRepository.find({
+      where: { id: addressId },
+      relations: ['user'],
+    });
 
-    if (!address) throw new NotFoundException('Dirección no encontrada');
-    return address;
+    const foundAddress = foundAddressArr[0];
+
+    if (!foundAddress) throw new NotFoundException('Dirección no encontrada');
+
+    const { id, ...rest } = foundAddress;
+
+    const updatedAddress = this.addressWithGeolocation(
+      foundAddress.user.id,
+      rest,
+    );
+
+    return updatedAddress;
   }
 
   async deleteAddress(id: string) {
@@ -67,16 +80,15 @@ export class AddressesService {
     const { latitude, longitude } =
       await this.geolocation.getCordinates(fullAddress);
 
-    console.log(latitude);
-    console.log(longitude);
-
-    await this.addressRepository.update(
-      { user: { id: userId } },
-      {
-        latitude,
-        longitude,
-      },
-    );
+    if (latitude) {
+      await this.addressRepository.update(
+        { user: { id: userId } },
+        {
+          latitude,
+          longitude,
+        },
+      );
+    }
 
     const updatedAddress = await this.addressRepository.findOneBy({
       user: { id: userId },

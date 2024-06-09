@@ -23,6 +23,7 @@ const ButtonCheckout = ({
       window.localStorage.getItem("userSession")
     ) {
       try {
+
         if (postState) {
           window.localStorage.setItem(
             "checkoutPost",

@@ -16,7 +16,9 @@ import {
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('USERS')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -26,6 +28,7 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
+  @ApiBearerAuth()
   @Get('token')
   getUserByToken(@Headers('Authorization') token: string) {
     return this.usersService.getUserByToken(token);
@@ -36,6 +39,7 @@ export class UsersController {
     return this.usersService.findOne(id);
   }
 
+  @ApiBearerAuth()
   @Put('update')
   @UseInterceptors(FileInterceptor('file'))
   update(
@@ -57,8 +61,29 @@ export class UsersController {
     )
     file?: Express.Multer.File,
   ) {
-    if (!file) return this.usersService.update(token, updateUserDto);
-    return this.usersService.update(token, updateUserDto, file);
+    console.log(updateUserDto);
+    const { city, address, country, state, zip_code, ...rest2 } = updateUserDto;
+
+    if (!file)
+      return this.usersService.update(token, rest2, {
+        city,
+        address,
+        country,
+        state,
+        zip_code,
+      });
+    return this.usersService.update(
+      token,
+      rest2,
+      {
+        city,
+        address,
+        country,
+        state,
+        zip_code,
+      },
+      file,
+    );
   }
 
   @Delete(':id')

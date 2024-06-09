@@ -63,7 +63,9 @@ export class User {
   @ManyToMany(() => Rental, (rental) => rental.users)
   rentals: Rental[];
 
-  @OneToMany(() => Notification, (notification) => notification.user)
+  @OneToMany(() => Notification, (notification) => notification.user, {
+    cascade: true,
+  })
   @JoinColumn()
   notifications: Notification[];
 
