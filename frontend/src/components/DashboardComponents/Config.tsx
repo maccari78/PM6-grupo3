@@ -111,6 +111,7 @@ const Config = () => {
 
       if (!response.ok) {
         throw new Error("Error updating user data");
+     
       }
 
       const updatedData = await response.json();
@@ -225,7 +226,7 @@ const Config = () => {
                 className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4"
                 type="text"
                 name="addresses[0].zip_code"
-                value={userData?.addresses[0].zip_code || ''}
+                value={userData?.addresses[0]?.zip_code || ''}
                 onChange={handleInputChange}
               />
             </div>
