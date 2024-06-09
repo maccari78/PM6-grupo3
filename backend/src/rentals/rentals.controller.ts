@@ -53,7 +53,7 @@ export class RentalsController {
   paymentSucess(@Param('id', ParseUUIDPipe) id: string, @Res() res: Response) {
     const payment = this.rentalsService.paymentSucess(id);
     const SUCCES_CHECK_URL = process.env.SUCCES_CHECK_URL;
-    if (payment) res.redirect(`${SUCCES_CHECK_URL}/${id}`);
+    if (payment) res.redirect(`${SUCCES_CHECK_URL}`);
   }
 
   @Get('/cancel/:id')
