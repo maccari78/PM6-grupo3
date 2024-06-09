@@ -26,13 +26,13 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
     new Date("2024-06-20T00:00:00Z").toISOString().replace(".000Z", ""),
   ];
 
-  const [postState, setPostState] = useState<IPost>();
+  const [postState, setPostState] = useState<IPost | undefined>();
   const [pricePost, setPricePost] = useState<number>();
-  const [startDate, setStartDate] = useState<string>();
-  const [userToken, setUserToken] = useState<string>();
-  const [endDate, setEndDate] = useState<string>();
+  const [startDate, setStartDate] = useState<string | undefined>();
+  const [userToken, setUserToken] = useState<string | undefined>();
+  const [endDate, setEndDate] = useState<string | undefined>();
   const [userData, setUserData] = useState<IUserData | null>(null);
-  const [isOwner, setIsOwner] = useState(false);
+  const [isOwner, setIsOwner] = useState<boolean>(false);
 
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
