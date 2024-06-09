@@ -418,9 +418,11 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
               <div className="flex w-full justify-center">
                 <ButtonCheckout
                   postState={postState}
+                  id={params.id}
                   pricePost={pricePost}
                   startDate={startDate}
                   endDate={endDate}
+                  userToken={userToken}
                 />
                 ;
               </div>
