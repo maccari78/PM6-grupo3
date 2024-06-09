@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation";
 import { IPost } from "../VehiclesComponent/interfaces/IPost";
 import Swal from "sweetalert2";
-import { useState } from "react";
 
 interface IRental {
   rentalStartDate: string;
@@ -36,81 +35,102 @@ const ButtonCheckout = ({
   const router = useRouter();
 
   const fetchCheckout = async () => {
-    if (!id) {
-      console.error("Error: ID is undefined");
-      return;
-    }
-
-    if (
-      typeof window !== "undefined" &&
-      window.localStorage.getItem("userSession")
-    ) {
-      try {
-        if (postState) {
-          const rentalData: IRental = {
-            rentalStartDate: startDate!,
-            rentalEndDate: endDate!,
-            price: pricePost!,
-          };
-
-          window.localStorage.setItem(
-            "checkoutPost",
-            JSON.stringify(rentalData)
-          );
-          const storageRent = window.localStorage.getItem("checkoutPost");
-          const postToRental: IRental = JSON.parse(storageRent!);
-
-          const res = await fetch(`${apiBaseUrl}/rentals/${id}`, {
-            method: "POST",
-            body: JSON.stringify({
-              rentalStartDate: postToRental.rentalStartDate,
-              rentalEndDate: postToRental.rentalEndDate,
-              name: postState.title,
-              price: postToRental.price,
-              image_url: postState.car.image_url[0],
-              description: postState.description,
-            }),
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${userToken!}`,
-            },
-          });
-
-          if (!res.ok) {
-            throw new Error(`Error: ${res.statusText}`);
-          }
-
-          const session = await res.json();
-          window.location.href = session.url;
-        } else {
-          console.error(
-            "Error: Missing required postState, startDate, endDate, or pricePost"
-          );
-        }
-      } catch (error: any) {
-        console.log(error.message);
-      }
-    } else {
-      const Toast = Swal.mixin({
-        toast: true,
-        position: "top-end",
-        background: "#cbcbcb",
-        color: "#aa1808",
-        showConfirmButton: false,
-        timer: 5000,
-        timerProgressBar: true,
-        backdrop: "swal2-backdrop-show",
-        didOpen: (toast) => {
-          toast.onmouseenter = Swal.stopTimer;
-          toast.onmouseleave = Swal.resumeTimer;
-        },
-      });
-      Toast.fire({
+    if (!postState?.car.availability) {
+      Swal.fire({
         icon: "error",
-        iconColor: "#aa1808",
-        title: "Debes iniciar sesión",
+        title: "Lo sentimos...",
+        text: "No hay stock para este vehiculo",
       });
-      router.push("/login");
+      return;
+    } else if (
+      !startDate ||
+      !endDate ||
+      startDate.trim() === "" ||
+      endDate.trim() === ""
+    ) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Debes elegir de que fecha a que fecha deseas reservar el vehiculo",
+      });
+      return;
+    } else {
+      if (!id) {
+        console.error("Error: ID is undefined");
+        return;
+      }
+
+      if (
+        typeof window !== "undefined" &&
+        window.localStorage.getItem("userSession")
+      ) {
+        try {
+          if (postState) {
+            const rentalData: IRental = {
+              rentalStartDate: startDate!,
+              rentalEndDate: endDate!,
+              price: pricePost!,
+            };
+
+            window.localStorage.setItem(
+              "checkoutPost",
+              JSON.stringify(rentalData)
+            );
+            const storageRent = window.localStorage.getItem("checkoutPost");
+            const postToRental: IRental = JSON.parse(storageRent!);
+
+            const res = await fetch(`${apiBaseUrl}/rentals/${id}`, {
+              method: "POST",
+              body: JSON.stringify({
+                rentalStartDate: postToRental.rentalStartDate,
+                rentalEndDate: postToRental.rentalEndDate,
+                name: postState.title,
+                price: postToRental.price,
+                image_url: postState.car.image_url[0],
+                description: postState.description,
+              }),
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${userToken!}`,
+              },
+            });
+
+            if (!res.ok) {
+              throw new Error(`Error: ${res.statusText}`);
+            }
+
+            const session = await res.json();
+            window.location.href = session.url;
+          } else {
+            console.error(
+              "Error: Missing required postState, startDate, endDate, or pricePost"
+            );
+          }
+        } catch (error: any) {
+          console.log(error.message);
+        }
+      } else {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: "top-end",
+          background: "#cbcbcb",
+          color: "#aa1808",
+          showConfirmButton: false,
+          timer: 5000,
+          timerProgressBar: true,
+          backdrop: "swal2-backdrop-show",
+          didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+          },
+        });
+        Toast.fire({
+          icon: "error",
+          iconColor: "#aa1808",
+          title: "Debes iniciar sesión",
+        });
+        router.push("/login");
+      }
     }
   };
 
