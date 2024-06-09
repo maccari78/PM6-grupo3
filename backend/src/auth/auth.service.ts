@@ -89,13 +89,11 @@ export class AuthService {
   }
   async validateUser(user: PayloadGoogleType) {
     const { email, name, image_url } = user;
-    console.log('BUSCANDO AL USUARIO!!!!');
 
     const findUser = await this.userRepository
       .createQueryBuilder('user')
       .where('user.email = :email', { email })
       .getOne();
-    console.log('----BUSQUEDA----', findUser);
 
     if (findUser !== null) {
       return true;
