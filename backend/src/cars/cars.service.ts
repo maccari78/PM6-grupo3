@@ -60,7 +60,7 @@ export class CarsService {
 
   async findOne(id: string) {
     const findCar = await this.carsRepository.findOneBy({ id });
-    console.log(findCar);
+    await this.carsRepository.update(findCar.id, { availability: true });
 
     if (!findCar) throw new NotFoundException('Auto no encontrado');
     return findCar;
