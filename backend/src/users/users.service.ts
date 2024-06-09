@@ -21,7 +21,6 @@ export class UsersService {
 
   async findAll() {
     const users = await this.userRepository.find();
-    console.log(users);
 
     if (users.length === 0 || !users)
       throw new NotFoundException('No se encontraron usuarios');
@@ -99,10 +98,18 @@ export class UsersService {
     const updateUser = await this.userRepository.update(user.id, updateUserDto);
 
     const adress = user.addresses[0!];
+
     if (adress) {
       await this.addressRepository.update(adress.id, updateAdress);
     }
-
+    if (!adress && this.hasDefinedValue(updateAdress)) {
+      const addresses = this.hasDefinedValue(updateAdress);
+      if (addresses !== false) {
+        const newAddress = await this.addressRepository.save(addresses);
+        user.addresses = [newAddress];
+        await this.userRepository.save(user);
+      }
+    }
     if (updateUser.affected === 0)
       throw new NotFoundException('Error al actualizar usuario');
     if (!file) {
@@ -117,6 +124,19 @@ export class UsersService {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...rest } = uploadedImage;
     return { message: 'Usuario actualizado con exito', ...rest };
+  }
+  hasDefinedValue(obj: UpdateAddressDto) {
+    const result: UpdateAddressDto = {};
+    let hasDefinedValue = false;
+
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key) && obj[key] !== undefined) {
+        result[key] = obj[key];
+        hasDefinedValue = true;
+      }
+    }
+
+    return hasDefinedValue ? result : false;
   }
 
   async remove(id: string) {

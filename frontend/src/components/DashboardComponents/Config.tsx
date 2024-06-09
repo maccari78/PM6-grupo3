@@ -95,8 +95,8 @@ const Config = () => {
       formData.append('name', userData.name);
       formData.append('phone', phone.toString());
       formData.append('nDni', nDni.toString());
-      formData.append('city', userData.addresses[0!]?.city);
-      formData.append('zip_code', userData.addresses[0!]?.zip_code);
+      formData.append('city', userData.city);
+      formData.append('zip_code', userData.zip_code);
       formData.append('rExpiration', userData.rExpiration);
     }
 
@@ -212,8 +212,8 @@ const Config = () => {
               <input
                 className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4"
                 type="text"
-                name="addresses[0].city"
-                value={userData?.addresses[0!]?.city || ''}
+                name="city"
+                value={userData?.addresses[0!]?.city ? userData?.addresses[0!]?.city : userData!.city}
                 onChange={handleInputChange}
               />
             </div>
@@ -224,8 +224,8 @@ const Config = () => {
               <input
                 className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4"
                 type="text"
-                name="addresses[0].zip_code"
-                value={userData?.addresses[0!]?.zip_code || ''}
+                name="zip_code"
+                value={userData?.addresses[0!]?.zip_code ? userData?.addresses[0!]?.zip_code:userData!.zip_code}
                 onChange={handleInputChange}
               />
             </div>

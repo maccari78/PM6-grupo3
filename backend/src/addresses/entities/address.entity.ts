@@ -18,35 +18,35 @@ export class Address {
 
   @Column({
     type: 'text',
-    nullable: false,
+    nullable: true,
   })
   address: string;
 
   @Column({
     type: 'varchar',
     length: 30,
-    nullable: false,
+    nullable: true,
   })
   city: string;
 
   @Column({
     type: 'varchar',
     length: 30,
-    nullable: false,
+    nullable: true,
   })
   state: string;
 
   @Column({
     type: 'varchar',
     length: 30,
-    nullable: false,
+    nullable: true,
   })
   country: string;
 
   @Column({
     type: 'varchar',
     length: 10,
-    nullable: false,
+    nullable: true,
   })
   zip_code: string;
 
