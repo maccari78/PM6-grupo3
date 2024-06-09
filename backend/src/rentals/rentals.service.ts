@@ -64,20 +64,25 @@ export class RentalsService {
     });
     if (!findPost)
       throw new NotFoundException('Publicación no encontrada en la BD');
+    if (findPost.user.email === rental_user.email)
+      throw new BadRequestException('No puedes alquilar tu propio vehiculo');
     newRental.users = [rental_user, findPost.user];
-    const findCar = this.carRepository.findOne({
-      where: { id: findPost.id },
+    const findCar = await this.carRepository.findOne({
+      where: { id: findPost.car.id },
     });
-    newRental.posts = findPost;
-    if (!findCar) throw new NotFoundException('Vehiculo no encontrado');
+    console.log(findCar);
 
+    if (!findCar) throw new NotFoundException('Vehiculo no encontrado');
+    if (findCar.availability === false)
+      throw new BadRequestException('El vehiculo ya se encuentra alquilado');
+    newRental.posts = findPost;
+
+    const rental = await this.rentalRepository.save(newRental);
     const carUpdate = await this.carRepository.update(findPost.car.id, {
       availability: false,
     });
     if (carUpdate.affected === 0)
       throw new BadRequestException('Error al actualizar el vehiculo');
-
-    const rental = await this.rentalRepository.save(newRental);
     if (!rental)
       throw new BadRequestException(
         'Error al crear el contrato, verifique las relaciones con otras entidades',
@@ -128,6 +133,8 @@ export class RentalsService {
   async payment(dataPayment: Payment, id: string) {
     const stripe = new Stripe(process.env.STRIPE_PRIVATE_KEY);
     console.log(stripe);
+    const INTERNAL_API_SUCESS = process.env.INTERNAL_API_SUCESS;
+    const INTERNAL_API_CANCEL = process.env.INTERNAL_API_CANCEL;
     const session = await stripe.checkout.sessions.create({
       line_items: [
         {
@@ -145,8 +152,8 @@ export class RentalsService {
         },
       ],
       mode: 'payment',
-      success_url: `http://localhost:3001/rentals/sucess/${id}`,
-      cancel_url: `http://localhost:3001/rentals/cancel/${id}`,
+      success_url: `${INTERNAL_API_SUCESS}/${id}`,
+      cancel_url: `${INTERNAL_API_CANCEL}/${id}`,
     });
     console.log(session.url);
 

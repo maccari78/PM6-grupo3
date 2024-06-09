@@ -32,6 +32,7 @@ export class RentalsController {
     @Res() res: Response,
   ) {
     const currentUser = authorization?.split(' ')[1];
+    console.log(createRentalDto);
 
     if (!currentUser)
       throw new BadRequestException('No hay un usuario autenticado');
@@ -51,13 +52,15 @@ export class RentalsController {
   @Get('/sucess/:id')
   paymentSucess(@Param('id', ParseUUIDPipe) id: string, @Res() res: Response) {
     const payment = this.rentalsService.paymentSucess(id);
-    if (payment) res.redirect(`http://localhost:3000/successcheckout/${id}`);
+    const SUCCES_CHECK_URL = process.env.SUCCES_CHECK_URL;
+    if (payment) res.redirect(`${SUCCES_CHECK_URL}/${id}`);
   }
 
   @Get('/cancel/:id')
   paymentCancel(@Param('id', ParseUUIDPipe) id: string, @Res() res: Response) {
     const payment = this.rentalsService.paymentCancel(id);
-    if (payment) res.redirect(`http://localhost:3000/`);
+    const CANCEL_CHECK_URL = process.env.CANCEL_CHECK_URL;
+    if (payment) res.redirect(`${CANCEL_CHECK_URL}/${id}`);
   }
 
   @Get(':id')
