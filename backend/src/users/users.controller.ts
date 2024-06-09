@@ -1,18 +1,4 @@
-import {
-  Controller,
-  Get,
-  Body,
-  Param,
-  Delete,
-  Put,
-  ParseUUIDPipe,
-  UseInterceptors,
-  ParseFilePipe,
-  MaxFileSizeValidator,
-  FileTypeValidator,
-  Headers,
-  UploadedFile,
-} from '@nestjs/common';
+import { Controller, Get, Body, Param, Delete, Put, ParseUUIDPipe, UseInterceptors, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, Headers, UploadedFile } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -65,24 +51,9 @@ export class UsersController {
     const { city, address, country, state, zip_code, ...rest2 } = updateUserDto;
 
     if (!file)
-      return this.usersService.update(token, rest2, {
-        city,
-        address,
-        country,
-        state,
-        zip_code,
-      });
-    return this.usersService.update(
-      token,
-      rest2,
-      {
-        city,
-        address,
-        country,
-        state,
-        zip_code,
-      },
-      file,
+      return this.usersService.update(token, rest2, { city, address, country, state, zip_code });
+    return this.usersService.update( token, rest2,
+      { city, address, country, state, zip_code }, file,
     );
   }
 

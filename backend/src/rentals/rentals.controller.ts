@@ -1,16 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  Delete,
-  Headers,
-  BadRequestException,
-  ParseUUIDPipe,
-  Put,
-  Res,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Headers, BadRequestException, ParseUUIDPipe, Put, Res } from '@nestjs/common';
 import { RentalsService } from './rentals.service';
 import { CreateRentalDto } from './dto/create-rental.dto';
 import { UpdateRentalDto } from './dto/update-rental.dto';
