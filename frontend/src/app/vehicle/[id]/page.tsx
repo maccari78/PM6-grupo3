@@ -29,7 +29,7 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
   const [postState, setPostState] = useState<IPost>();
   const [pricePost, setPricePost] = useState<number>();
   const [startDate, setStartDate] = useState<string>();
-  const [userToken, setUserToken] = useState<string | null>(null);
+  const [userToken, setUserToken] = useState<string>();
   const [endDate, setEndDate] = useState<string>();
   const [userData, setUserData] = useState<IUserData | null>(null);
   const [isOwner, setIsOwner] = useState(false);
@@ -64,8 +64,8 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
         const response = await fetch(apiUserUrl, {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${userToken}`,
             "Content-Type": "application/json",
+            Authorization: `Bearer ${userToken!}`,
           },
         });
 
@@ -267,30 +267,34 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
             </div>
           </div>
 
-          <div className="flex flex-col gap-5 py-4">
+          <div className="flex flex-col gap-5 pb-4">
             <div>
               <div className="flex flex-row items-center duration-200 ">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="w-6 h-6 fill-[] stroke-[#C4FF0D]  "
-                >
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                  <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
-                  <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" />
-                  <path d="M16 5l3 3" />
-                </svg>
-                <Link
-                  href={`/vehicle/${params.id}/upload_post`}
-                  className="text-gray-300 text-sm md:text-base hover:text-[#C4FF0D] hover:underline"
-                >
-                  {" "}
-                  Editar publicación
-                </Link>
+                {isOwner && (
+                  <>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="w-6 h-6 fill-[] stroke-[#C4FF0D]  "
+                    >
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                      <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
+                      <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" />
+                      <path d="M16 5l3 3" />
+                    </svg>
+                    <Link
+                      href={`/vehicle/${params.id}/upload_post`}
+                      className="text-gray-300 text-sm md:text-base hover:text-[#C4FF0D] hover:underline"
+                    >
+                      {" "}
+                      Editar publicación
+                    </Link>
+                  </>
+                )}
               </div>
               <h1 className="font-sans text-lg md:text-2xl font-semibold text-gray-100 ">
                 ¡Reserva!
@@ -405,13 +409,9 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
             </div>
             <div className="flex flex-col w-full pb-5 justify-around border-b-gray-300 border-b-[1px]">
               <div className="flex flex-row w-full items-center gap-2 justify-start">
-                {pricePost === undefined ? (
-                  <h1 className="text-2xl text-gray-300">
-                    ${postState?.price} US
-                  </h1>
-                ) : (
-                  <h1 className="text-2xl text-gray-300">${pricePost} US</h1>
-                )}
+                <h1 className="text-2xl text-gray-300">
+                  ${postState?.price} US
+                </h1>
 
                 <p className="text-[#b0d63f]">Dia</p>
               </div>
@@ -428,11 +428,9 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
             <div className="flex flex-row justify-between items-center w-full">
               <h1 className="text-xl text-gray-300">Total: </h1>
               {pricePost === undefined ? (
-                <p className="text-base text-[#b0d63f]">
-                  ${postState?.price} US
-                </p>
+                <p className="text-xl text-[#b0d63f]">${postState?.price} US</p>
               ) : (
-                <p className="text-base text-[#b0d63f]">${pricePost} US</p>
+                <p className="text-xl text-[#b0d63f]">${pricePost} US</p>
               )}
             </div>
           </div>
