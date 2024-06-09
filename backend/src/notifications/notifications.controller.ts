@@ -1,11 +1,13 @@
-import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, /* UseGuards */ } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { UpdateNotificationDto } from './dto/update-notification.dto';
 import { ApiTags } from '@nestjs/swagger';
+// import { RolesGuard } from 'src/users/utils/roles.guard';
 
 @ApiTags('NOTIFICATIONS')
 @Controller('notifications')
+// @UseGuards(RolesGuard)
 export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) {}
 

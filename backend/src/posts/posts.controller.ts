@@ -6,10 +6,12 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { FiltersPosts } from './interfaces/filter.interfaces';
 import { TokenGuard } from './guards/token.guard';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+// import { RolesGuard } from 'src/users/utils/roles.guard';
 
 
 @ApiTags('POSTS')
 @Controller('posts')
+// @UseGuards(RolesGuard)
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 

@@ -1,9 +1,11 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, /* UseGuards */ } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { ApiTags } from '@nestjs/swagger';
+// import { RolesGuard } from 'src/users/utils/roles.guard';
 
 @ApiTags('CHAT')
 @Controller('chat')
+// @UseGuards(RolesGuard)
 export class ChatController {
   constructor(private chatService: ChatService) {}
 

@@ -1,11 +1,13 @@
-import { Controller, Get, Post, Body, /* Patch, */ Param, Delete, Headers, UnauthorizedException, ParseUUIDPipe, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, /* Patch, */ Param, Delete, Headers, UnauthorizedException, ParseUUIDPipe, Put, /* UseGuards */ } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+// import { RolesGuard } from 'src/users/utils/roles.guard';
 
 @ApiTags('REVIEWS')
 @Controller('reviews')
+// @UseGuards(RolesGuard)
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 

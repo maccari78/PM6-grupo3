@@ -1,10 +1,12 @@
-import { Controller, Get, Post, Body, Param, Delete, Query, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Query, ParseUUIDPipe, /* UseGuards */ } from '@nestjs/common';
 import { CarsService, FiltersCars } from './cars.service';
 import { CreateCarDto } from './dto/create-cars.dto';
 import { ApiTags } from '@nestjs/swagger';
+// import { RolesGuard } from 'src/users/utils/roles.guard';
 
 @ApiTags('CARS')
 @Controller('cars')
+// @UseGuards(RolesGuard)
 export class CarsController {
   constructor(private readonly carsService: CarsService) {}
 

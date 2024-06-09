@@ -1,11 +1,13 @@
-import { Controller, Get, Post, Body, Param, Delete, Query, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Query, Put, /* UseGuards */ } from '@nestjs/common';
 import { AddressesService } from './addresses.service';
 import { CreateAddressDto } from './dto/create-address.dto';
 import { UpdateAddressDto } from './dto/update-address.dto';
 import { ApiTags } from '@nestjs/swagger';
+// import { RolesGuard } from 'src/users/utils/roles.guard';
 
 @ApiTags('ADDRESSES')
 @Controller('addresses')
+// @UseGuards(RolesGuard)
 export class AddressesController {
   constructor(private readonly addressesService: AddressesService) {}
 
