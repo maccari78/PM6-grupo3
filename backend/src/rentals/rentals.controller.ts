@@ -9,14 +9,14 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 // import { Roles } from 'src/users/utils/roles.decorator';
 
 // @ApiBearerAuth()
-@ApiTags('RENTALS')
+// @ApiTags('RENTALS')
 @Controller('rentals')
 //@UseGuards(RolesGuard)
 //@Roles(Role.User, Role.Admin)
 export class RentalsController {
   constructor(private readonly rentalsService: RentalsService) {}
 
-  @ApiBearerAuth()
+  // @ApiBearerAuth()
   @Post(':id')
   async create(
     @Body() createRentalDto: CreateRentalDto,
@@ -33,6 +33,7 @@ export class RentalsController {
       createRentalDto,
       currentUser,
       postId,
+    
     );
     if (!url) throw new BadRequestException('Error al crear el contrato');
     return res.json({ url });

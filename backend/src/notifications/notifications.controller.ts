@@ -10,7 +10,7 @@ import { Roles } from 'src/users/utils/roles.decorator';
 @ApiTags('NOTIFICATIONS')
 @Controller('notifications')
 @UseGuards(RolesGuard)
-@Roles(Role.Admin)
+// @Roles(Role.Admin)
 export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) { }
 
