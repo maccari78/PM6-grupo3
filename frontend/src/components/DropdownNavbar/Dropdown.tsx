@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
+import Swal from "sweetalert2";
 
 const Dropdown: React.FC = () => {
   const router = useRouter();
@@ -12,8 +13,25 @@ const Dropdown: React.FC = () => {
   };
 
   const handleLogOut = () => {
-    localStorage.removeItem("userSession");
-    router.push("/login");
+    Swal.fire({
+      title: "Estas seguro?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Si, cierra sesion!",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: "Sesion cerrada!",
+          text: "Haz cerrado sesion con exito.",
+          icon: "success",
+        });
+        window.localStorage.removeItem("userSession");
+        router.push("/login");
+      }
+    });
   };
 
   const handleClickOutside = (event: MouseEvent) => {
