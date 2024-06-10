@@ -60,21 +60,34 @@
             <h1>Hola <span style="color: rgb(196, 255, 13);">{{username}}</span></h1>
             <p>Esperamos que hayas tenido una excelente semana. Aquí tienes un resumen de tus actividades y ofertas más relevantes:</p>
             
-            <h2>Actividades Recientes</h2>
+            <h2 style="color: rgb(196, 255, 13);">Actividades Recientes</h2>
             <ul>
                     {{#each posts}}
-                    <li>{{this}}</li>
+                        {{#if this.title}}
+                            <li>
+                                <h3>{{this.title}}</h3>
+                                <p>{{this.description}}</p>
+                            </li>
+                        {{else}}
+                            <li>{{this.description}}</li>
+                        {{/if}}
                     {{/each}}
             </ul>
-
             <ul>
                     {{#each rentals}}
-                    <li>{{this}}</li>
+                        {{#if this.rentalEndDate}}
+                            <li>
+                                <h3>Rentaste un vehículo desde el {{this.rentalStartDate}} hasta el {{this.rentalEndDate}}</h3>
+                            </li>
+                        {{else}}
+                            <li>{{this.rentalStartDate}}</li>
+                        {{/if}}
                     {{/each}}
-  
             </ul>
 
-            <h2>Ofertas Destacadas</h2>
+            <p style="color: rgb(196, 255, 13); text-align: center; font-weight: bold;">Para más información o realizar una transacción, consulta la página!</p>
+            <br><br>
+            <h2 style="color: rgb(196, 255, 13);">Ofertas Destacadas</h2>
             <ul>
                 {{#each offers}}
                 <li>{{this}}</li>

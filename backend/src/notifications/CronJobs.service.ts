@@ -9,9 +9,9 @@ export class CronService {
   }
 
   scheduleTasks() {
-    cron.schedule('0 9 * * 1', async () => {
+    cron.schedule('18 10 * * 1', async () => {
       console.log('Iniciando envio de notificaciones...');
-      await this.notificationsService.sendNotifications('offer');
+      await this.notificationsService.sendNotifications('weekly');
       console.log('Notificaciones enviadas!');
     });
   }
