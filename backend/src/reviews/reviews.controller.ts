@@ -1,23 +1,17 @@
-import { Controller, Get, Post, Body, Param, Delete, Headers, UnauthorizedException, ParseUUIDPipe, Put, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Headers, UnauthorizedException, ParseUUIDPipe, Put } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { RolesGuard } from 'src/users/utils/roles.guard';
-import { Roles } from 'src/users/utils/roles.decorator';
-import { Role } from 'src/users/utils/roles.enum';
 
 @ApiTags('REVIEWS')
 @Controller('reviews')
-
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
   //Controllers | Add reviews
   @ApiBearerAuth()
   @Post(":id")
-  @UseGuards(RolesGuard)
-  @Roles(Role.User, Role.Admin)
   create(
     @Body() createReviewDto: CreateReviewDto,
     @Headers('Authorization') headers: string,
@@ -45,10 +39,7 @@ export class ReviewsController {
   }
   
   @ApiBearerAuth()
-  @UseGuards(RolesGuard)
-  @Roles(Role.User, Role.Admin)
   @Put(':id')
-  
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateReviewDto: UpdateReviewDto,
@@ -65,8 +56,7 @@ export class ReviewsController {
     return this.reviewsService.updateReview(id, updateReviewDto, token);
   }
 
-  @UseGuards(RolesGuard)
-  @Roles(Role.User, Role.Admin)
+
   @Delete(':id')
   removeIdController(@Param('id', ParseUUIDPipe) id: string) {
     return this.reviewsService.DeleteReviewsServices(id);

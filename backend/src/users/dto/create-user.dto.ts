@@ -1,25 +1,28 @@
-import { ApiProperty, PickType } from '@nestjs/swagger';
+import { PickType } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsEmail, IsNotEmpty, IsNumber, IsString, MaxLength, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 
 export class CreateUserDto {
-  @ApiProperty()
   @IsEmail()
   @IsNotEmpty({ message: 'El email es requerido' })
   email: string;
 
-  @ApiProperty()
   @IsString()
   @IsNotEmpty({ message: 'El nombre es requerido' })
   name: string;
 
-  @ApiProperty()
   @IsString()
   @MinLength(1)
   @IsNotEmpty({ message: 'La contraseña es requerida' })
   password: string;
 
-  @ApiProperty()
   @IsNumber()
   @IsNotEmpty({ message: 'El dni es requerido' })
   @Transform(({ value }) => {
@@ -37,7 +40,6 @@ export class CreateUserDto {
   // @IsString()
   // rExpiration: string;
 
-  @ApiProperty()
   @IsNumber()
   @IsNotEmpty({ message: 'El telefono es requerido' })
   @Transform(({ value }) => {
@@ -52,29 +54,24 @@ export class CreateUserDto {
   })
   phone: number;
 
-  // ABAJO ES ADDRESS
-  @ApiProperty()
+  // ABAJO ES ADRESS
   @IsNotEmpty({ message: 'La dirección es requerida' })
   @IsString()
   address: string;
 
-  @ApiProperty()
   @IsNotEmpty({ message: 'La ciudad es requerida' })
   @IsString()
   @MaxLength(20)
   city: string;
 
-  @ApiProperty()
   @IsNotEmpty()
   @IsString()
   state: string;
 
-  @ApiProperty()
   @IsNotEmpty()
   @IsString()
   country: string;
 
-  @ApiProperty()
   @IsNotEmpty()
   @IsString()
   @MaxLength(15)

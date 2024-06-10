@@ -4,13 +4,13 @@
 
 ## Integrantes del equipo:
 
-- Front End: Geronimo Kramar - Github user: 'GeroKramar'
-- Front End: Camila Fabre - Github user: 'cfcamilafabre'
-- Front End: Camilo Sierra - Github user: 'CAndresSierra'
-- Back End: Victor Emanuel Elias Cuello - Github user: 'emacuello'
-- Back End: Juan Carlos Alvarez Martinez - Github user: 'AlvarezMar'
-- Back End: Darvin Ricardo Alania Inoecencio - Github user: 'DAlaniaInocecio'
-- Back End: Danilo Maccari - Github user: 'maccari78'
+- Geronimo Kramar - Front End: 'GeroKramar'
+- Camila Fabre - Front End: 'cfcamilafabre'
+- Camilo Sierra - Front End: 'CAndresSierra'
+- Victor Emanuel Elias Cuello - Back End: 'emacuello'
+- Juan Carlos Alvarez Martinez - Back End: 'AlvarezMar'
+- Darvin Ricardo Alania Inoecencio - Back End: 'DAlaniaInocecio'
+- Danilo Maccari - Back End: 'maccari78'
 
 ## Caso de negocio
 

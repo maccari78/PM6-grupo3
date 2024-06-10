@@ -12,10 +12,9 @@ import { MailService } from 'src/mail/mail.service';
 import { AddressesService } from 'src/addresses/addresses.service';
 import { Car } from 'src/cars/entities/car.entity';
 import { geolocationService } from 'src/addresses/geolocation.service';
-import { UsersModule } from 'src/users/users.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Address, Notification, Car]), UsersModule],
+  imports: [TypeOrmModule.forFeature([User, Address, Notification, Car])],
   providers: [
     AuthService,
     NotificationsService,

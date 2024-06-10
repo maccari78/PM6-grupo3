@@ -6,10 +6,9 @@ import { Car } from './entities/car.entity';
 import { FileUploadService } from 'src/file-upload/file-upload.service';
 import { User } from 'src/users/entities/user.entity';
 import { Posts } from 'src/posts/entities/post.entity';
-import { UsersModule } from 'src/users/users.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Car, User, Posts]), UsersModule],
+  imports: [TypeOrmModule.forFeature([Car, User, Posts])],
   controllers: [CarsController],
   providers: [CarsService, FileUploadService],
 })

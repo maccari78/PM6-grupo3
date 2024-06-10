@@ -10,10 +10,9 @@ import { CarsService } from 'src/cars/cars.service';
 import { FileUploadService } from 'src/file-upload/file-upload.service';
 import { CloudinaryConfig } from 'src/config/config.cloudinary';
 import { JwtService } from '@nestjs/jwt';
-import { UsersModule } from 'src/users/users.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Posts, Car, User]), UsersModule],
+  imports: [TypeOrmModule.forFeature([Posts, Car, User])],
   controllers: [PostsController],
   providers: [
     PostsService,

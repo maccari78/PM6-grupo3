@@ -6,10 +6,9 @@ import { Notification } from './entities/notification.entity';
 import { User } from 'src/users/entities/user.entity';
 import { MailService } from 'src/mail/mail.service';
 import { CronService } from './CronJobs.service';
-import { UsersModule } from 'src/users/users.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Notification, User]), UsersModule],
+  imports: [TypeOrmModule.forFeature([Notification, User])],
   controllers: [NotificationsController],
   providers: [NotificationsService, MailService, CronService],
 })
