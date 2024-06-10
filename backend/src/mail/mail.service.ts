@@ -8,7 +8,7 @@ export class MailService {
     if (template === 'welcome') {
       try {
         await this.mailerservice.sendMail({
-          to: user.email,
+          to: 'youdrive.notifications@gmail.com',
           subject: 'You Drive. Alquila Autos Facilmente',
           template: 'welcome',
           context: {
@@ -32,7 +32,7 @@ export class MailService {
     } else if (template === 'offer') {
       try {
         await this.mailerservice.sendMail({
-          to: user.email,
+          to: 'youdrive.notifications@gmail.com',
           subject: 'You Drive. Alquila Autos Facilmente',
           template: 'offer',
           context: {

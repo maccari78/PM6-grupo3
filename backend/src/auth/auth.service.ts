@@ -8,7 +8,7 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { UserGoogle } from './types/userGoogle.type';
 import { NotificationsService } from 'src/notifications/notifications.service';
-import { PayloadGoogleType, /* ResponseGoogle */ } from './types/response.interfaces';
+import { PayloadGoogleType /* ResponseGoogle */ } from './types/response.interfaces';
 import { JwtPayload } from 'src/rentals/interfaces/payload.interfaces';
 import { AddressesService } from 'src/addresses/addresses.service';
 
@@ -20,7 +20,7 @@ export class AuthService {
     private jwtService: JwtService,
     private notificationService: NotificationsService,
     private addressesService: AddressesService,
-  ) { }
+  ) {}
   async signIn(user: signIn) {
     const { email, password } = user;
     const userDB = await this.userRepository
@@ -44,12 +44,9 @@ export class AuthService {
   }
 
   async signUp(user: CreateUserDto) {
-    console.log(user);
-
     const duplicateUser = await this.userRepository.findOneBy({
       email: user.email,
     });
-    console.log(duplicateUser);
 
     if (duplicateUser)
       throw new BadRequestException('El ya se encuentra registrado');
@@ -90,13 +87,11 @@ export class AuthService {
   }
   async validateUser(user: PayloadGoogleType) {
     const { email, name, image_url } = user;
-    console.log('BUSCANDO AL USUARIO!!!!');
 
     const findUser = await this.userRepository
       .createQueryBuilder('user')
       .where('user.email = :email', { email })
       .getOne();
-    console.log('----BUSQUEDA----', findUser);
 
     if (findUser !== null) {
       return true;

@@ -1,13 +1,22 @@
 import Link from "next/link";
 
-const Successcheckout = () => {
+const Success = () => {
+  const handleRemoveRent = () => {
+    if (window !== undefined && window.localStorage) {
+      window.localStorage.removeItem("checkoutPost");
+    }
+  };
+
   return (
     <div className="flex flex-col bg-[#444343] min-h-screen items-center">
       <div className="flex flex-col mt-10 gap-3 items-center">
         <h1 className="text-3xl text-[#c3ff0da9]">¡Compra exitosa!</h1>
         <Link href="/">
           {" "}
-          <button className="text-lg flex flex-row text-gray-300 hover:text-[#c3ff0da9] justify-between items-center px-2 py-2 hover:bg-[#555454] rounded-xl duration-200">
+          <button
+            onClick={handleRemoveRent}
+            className="text-lg flex flex-row text-gray-300 hover:text-[#c3ff0da9] justify-between items-center px-2 py-2 hover:bg-[#555454] rounded-xl duration-200"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -28,4 +37,4 @@ const Successcheckout = () => {
   );
 };
 
-export default Successcheckout;
+export default Success;

@@ -3,13 +3,12 @@
 import ButtonCheckout from "@/components/ButtonCheckout/ButtonCheckout";
 import DateRangePicker from "@/components/DateRangePicker/DateRangePicker";
 import { IPost } from "@/components/VehiclesComponent/interfaces/IPost";
+import { IUserData } from "@/interfaces/IUser";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { IPriceStripe } from "./Interface/IPriceStripe";
-import { IUserData } from "@/interfaces/IUser";
 
-const apiUrl = process.env.NEXT_PUBLIC_API_POSTS;
-if (!apiUrl) {
+const apiPostUrl = process.env.NEXT_PUBLIC_API_POSTS;
+if (!apiPostUrl) {
   throw new Error("Environment variable NEXT_PUBLIC_API_POSTS is not set");
 }
 
@@ -27,11 +26,13 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
     new Date("2024-06-20T00:00:00Z").toISOString().replace(".000Z", ""),
   ];
 
-  const [pricesStripe, setPricesStripe] = useState<IPriceStripe[]>();
-  const [postState, setPostState] = useState<IPost>();
-  const [userToken, setUserToken] = useState<string | null>(null);
+  const [postState, setPostState] = useState<IPost | undefined>();
+  const [pricePost, setPricePost] = useState<number>();
+  const [startDate, setStartDate] = useState<string | undefined>();
+  const [userToken, setUserToken] = useState<string | undefined>();
+  const [endDate, setEndDate] = useState<string | undefined>();
   const [userData, setUserData] = useState<IUserData | null>(null);
-  const [isOwner, setIsOwner] = useState(false);
+  const [isOwner, setIsOwner] = useState<boolean>(false);
 
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
@@ -44,7 +45,7 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
 
     const fetchDta = async () => {
       try {
-        const post = await fetch(`${apiUrl}/${params.id}`, {
+        const post = await fetch(`${apiPostUrl}/${params.id}`, {
           method: "GET",
         });
         const data = await post.json();
@@ -63,8 +64,8 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
         const response = await fetch(apiUserUrl, {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${userToken}`,
             "Content-Type": "application/json",
+            Authorization: `Bearer ${userToken!}`,
           },
         });
 
@@ -88,6 +89,18 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
     }
   }, [userToken, postState]);
 
+  const handleSetPrice = (newPrice: number) => {
+    setPricePost(newPrice);
+  };
+
+  const handleStartDate = (date: string) => {
+    setStartDate(date);
+  };
+
+  const handleEndDate = (date: string) => {
+    setEndDate(date);
+  };
+
   return (
     <>
       <div className="bg-[#444343] flex flex-col items-center md:flex-row  md:items-start justify-evenly min-h-screen pt-10">
@@ -105,19 +118,19 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
             </div>
           </div>
 
-          <div className="flex mt-3 flex-col justify-around h-[350px] max-h-[100%]">
+          <div className="flex mt-3 flex-col justify-around h-[500px] md:h-[400px] max-h-[100%]">
             <div className="flex flex-col  pb-4 border-b-[1px] border-b-gray-200">
               <h1 className="text-lg md:text-2xl font-semibold text-gray-100">
                 Descripcion
               </h1>
               <ul className="text-base text-gray-300   mt-2">
                 <li className="text-sm md:text-base">
-                  {postState?.description}
+                  - {postState?.description}
                 </li>
               </ul>
             </div>
-            <div className="flex flex-col  py-4">
-              <h1 className="text-xl md:text-2xl text-gray-100 font-semibold ">
+            <div className="flex flex-col border-b-[1px] border-b-gray-200 py-4">
+              <h1 className="text-lg md:text-2xl text-gray-100 font-semibold ">
                 Datos del vehiculo
               </h1>
               <ul className="space-y-1 text-gray-300  list-inside">
@@ -253,6 +266,51 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
               </ul>
             </div>
           </div>
+
+          <div className="flex flex-col gap-5 pb-4">
+            <div>
+              <div className="flex flex-row items-center duration-200 ">
+                {isOwner && (
+                  <>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="w-6 h-6 fill-[] stroke-[#C4FF0D]  "
+                    >
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                      <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
+                      <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" />
+                      <path d="M16 5l3 3" />
+                    </svg>
+                    <Link
+                      href={`/vehicle/${params.id}/upload_post`}
+                      className="text-gray-300 text-sm md:text-base hover:text-[#C4FF0D] hover:underline"
+                    >
+                      {" "}
+                      Editar publicación
+                    </Link>
+                  </>
+                )}
+              </div>
+              <h1 className="font-sans text-lg md:text-2xl font-semibold text-gray-100 ">
+                ¡Reserva!
+              </h1>
+            </div>
+
+            <div className="w-full">
+              <DateRangePicker
+                handleStartDate={handleStartDate}
+                handleEndDate={handleEndDate}
+                price={postState?.price}
+                handleSetPrice={handleSetPrice}
+                bookedDates={bookedDates}
+              />
+            </div>
+          </div>
         </div>
 
         <div className="flex  flex-col w-[70%] md:w-[30%] justify-between items-center my-5">
@@ -354,15 +412,28 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
                 <h1 className="text-2xl text-gray-300">
                   ${postState?.price} US
                 </h1>
+
                 <p className="text-[#b0d63f]">Dia</p>
               </div>
               <div className="flex w-full justify-center">
-                <ButtonCheckout postState={postState} />;
+                <ButtonCheckout
+                  postState={postState}
+                  id={params.id}
+                  pricePost={pricePost}
+                  startDate={startDate}
+                  endDate={endDate}
+                  userToken={userToken}
+                />
+                ;
               </div>
             </div>
             <div className="flex flex-row justify-between items-center w-full">
               <h1 className="text-xl text-gray-300">Total: </h1>
-              <p className="text-base text-[#b0d63f]">${postState?.price} US</p>
+              {pricePost === undefined ? (
+                <p className="text-xl text-[#b0d63f]">${postState?.price} US</p>
+              ) : (
+                <p className="text-xl text-[#b0d63f]">${pricePost} US</p>
+              )}
             </div>
           </div>
         </div>

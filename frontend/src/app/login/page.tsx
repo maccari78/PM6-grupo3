@@ -4,10 +4,11 @@ import { IErrorlogin, Ilogin } from "@/interfaces/ILogin";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_SIGNIN_URL;
 if (!apiUrl) {
-  throw new Error('Environment variable NEXT_PUBLIC_API_POSTS is not set');
+  throw new Error("Environment variable NEXT_PUBLIC_API_POSTS is not set");
 }
 
 const Login = () => {
@@ -54,20 +55,34 @@ const Login = () => {
           password: userData.password,
         }),
       });
-  
+
       if (!response.ok) {
         const errorData: ApiError = await response.json();
         throw errorData;
       }
-  
+
       const json = await response.json();
       const token = json;
       localStorage.setItem("userSession", JSON.stringify(token));
       setSession({ token });
-      alert("Loguado con exito");
+      const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = Swal.stopTimer;
+          toast.onmouseleave = Swal.resumeTimer;
+        },
+      });
+      Toast.fire({
+        icon: "success",
+        title: "Haz iniciado sesion con exito",
+      });
       router.push("/");
     } catch (err) {
-      if (typeof err === 'object' && err !== null && 'message' in err) {
+      if (typeof err === "object" && err !== null && "message" in err) {
         // Si el error es un objeto y contiene la propiedad 'message'
         const apiError = err as ApiError;
         setErrorAPI(apiError);
@@ -96,7 +111,9 @@ const Login = () => {
     <>
       <div className="min-h-screen bg-gray-100 flex flex-col justify-center sm:py-12">
         <div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
-          <h1 className="font-bold text-center text-2xl mb-5">Bienvenido a YouDrive!</h1>
+          <h1 className="font-bold text-center text-2xl mb-5">
+            Bienvenido a YouDrive!
+          </h1>
           <div className="bg-white shadow w-full rounded-lg divide-y divide-gray-200">
             <div className="px-5 py-7">
               <form onSubmit={handleSubmit}>
@@ -174,7 +191,9 @@ const Login = () => {
                   <button
                     type="button"
                     className="transition duration-200 border border-gray-200 text-gray-500 w-full py-2.5 rounded-lg text-sm shadow-sm hover:shadow-md font-normal text-center inline-block"
-                  >Google</button>
+                  >
+                    Google
+                  </button>
                 </a>
 
                 {/* <button
@@ -203,7 +222,9 @@ const Login = () => {
                         d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"
                       />
                     </svg>
-                    <span className="inline-block ml-1">Olvide mi contraseña</span>
+                    <span className="inline-block ml-1">
+                      Olvide mi contraseña
+                    </span>
                   </button>
                 </div>
               </div>

@@ -4,38 +4,119 @@ import { useRouter } from "next/navigation";
 import { IPost } from "../VehiclesComponent/interfaces/IPost";
 import Swal from "sweetalert2";
 
-const ButtonCheckout = ({ postState }: { postState: IPost | undefined }) => {
+interface IRental {
+  rentalStartDate: string;
+  rentalEndDate: string;
+  price: number;
+}
+
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+if (!apiBaseUrl) {
+  throw new Error(
+    "Environment variable NEXT_PUBLIC_API_GET_USERS_TOKEN is not set"
+  );
+}
+
+const ButtonCheckout = ({
+  postState,
+  pricePost,
+  startDate,
+  endDate,
+  userToken,
+  id,
+}: {
+  postState: IPost | undefined;
+  pricePost: number | undefined;
+  startDate: string | undefined;
+  endDate: string | undefined;
+  userToken: string | undefined;
+  id: string;
+}) => {
   const router = useRouter();
 
   const fetchCheckout = async () => {
+    if (!id) {
+      console.error("Error: ID is undefined");
+      return;
+    }
+
     if (
-      typeof window !== undefined &&
+      typeof window !== "undefined" &&
       window.localStorage.getItem("userSession")
     ) {
-      try {
-        const res = await fetch("http://localhost:3001/rentals/id", {
-          method: "POST",
-          body: JSON.stringify(postState),
-          headers: {
-            "Content-Type": "application/json",
-          },
+      if (!postState?.car.availability) {
+        Swal.fire({
+          icon: "error",
+          title: "Lo sentimos...",
+          text: "No hay stock para este vehiculo",
         });
+        return;
+      } else if (
+        !startDate ||
+        !endDate ||
+        startDate.trim() === "" ||
+        endDate.trim() === ""
+      ) {
+        Swal.fire({
+          icon: "warning",
+          title: "Oops...",
+          text: "Debes elegir de que fecha a que fecha deseas reservar el vehiculo",
+        });
+        return;
+      } else {
+        try {
+          if (postState) {
+            const rentalData: IRental = {
+              rentalStartDate: startDate!,
+              rentalEndDate: endDate!,
+              price: pricePost!,
+            };
 
-        const session = await res.json();
-        window.location.href = session.url;
-      } catch (error: any) {
-        console.log(error.message);
+            window.localStorage.setItem(
+              "checkoutPost",
+              JSON.stringify(rentalData)
+            );
+            const storageRent = window.localStorage.getItem("checkoutPost");
+            const postToRental: IRental = JSON.parse(storageRent!);
+
+            const res = await fetch(`${apiBaseUrl}/rentals/${id}`, {
+              method: "POST",
+              body: JSON.stringify({
+                rentalStartDate: postToRental.rentalStartDate,
+                rentalEndDate: postToRental.rentalEndDate,
+                name: postState.title,
+                price: postToRental.price,
+                image_url: postState.car.image_url[0],
+                description: postState.description,
+              }),
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${userToken!}`,
+              },
+            });
+
+            if (!res.ok) {
+              throw new Error(`Error: ${res.statusText}`);
+            }
+
+            const session = await res.json();
+            window.location.href = session.url;
+          } else {
+            console.error(
+              "Error: Missing required postState, startDate, endDate, or pricePost"
+            );
+          }
+        } catch (error: any) {
+          console.log(error.message);
+        }
       }
     } else {
       const Toast = Swal.mixin({
         toast: true,
         position: "top-end",
-        background: "#cbcbcb",
-        color: "#aa1808",
         showConfirmButton: false,
-        timer: 5000,
+        timer: 3000,
         timerProgressBar: true,
-        backdrop: "swal2-backdrop-show",
         didOpen: (toast) => {
           toast.onmouseenter = Swal.stopTimer;
           toast.onmouseleave = Swal.resumeTimer;
@@ -43,8 +124,7 @@ const ButtonCheckout = ({ postState }: { postState: IPost | undefined }) => {
       });
       Toast.fire({
         icon: "error",
-        iconColor: "#aa1808",
-        title: "Debes iniciar sesion",
+        title: "Debes iniciar sesión",
       });
       router.push("/login");
     }
