@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@sweetalert2/theme-bootstrap-4": "^5.0.16",
     "axios": "^1.7.2",
     "cloudinary": "^2.2.0",
     "date-fns": "^3.6.0",

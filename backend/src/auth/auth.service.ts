@@ -8,9 +8,7 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { UserGoogle } from './types/userGoogle.type';
 import { NotificationsService } from 'src/notifications/notifications.service';
-import {
-  PayloadGoogleType /* ResponseGoogle */,
-} from './types/response.interfaces';
+import { PayloadGoogleType /* ResponseGoogle */ } from './types/response.interfaces';
 import { JwtPayload } from 'src/rentals/interfaces/payload.interfaces';
 import { AddressesService } from 'src/addresses/addresses.service';
 
