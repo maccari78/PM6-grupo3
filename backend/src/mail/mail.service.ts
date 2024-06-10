@@ -9,7 +9,7 @@ export class MailService {
     if (template === 'welcome') {
       try {
         await this.mailerservice.sendMail({
-          to: 'youdrive.notifications@gmail.com',
+          to: user.email,
           subject: 'You Drive. Alquila Autos Facilmente',
           template: 'welcome',
           context: {
@@ -33,7 +33,7 @@ export class MailService {
     } else if (template === 'offer') {
       try {
         await this.mailerservice.sendMail({
-          to: 'youdrive.notifications@gmail.com',
+          to: user.email,
           subject: 'You Drive. Alquila Autos Facilmente',
           template: 'offer',
           context: {
@@ -107,15 +107,22 @@ export class MailService {
       }
     } else {
       const posts = user.post?.length
-        ? user.post
-        : ['Aún no has publicado nada'];
+        ? user.post.map((post) => ({
+            title: post.title,
+            description: post.description,
+          }))
+        : [{ title: '', description: 'Aún no has publicado nada' }];
+
       const rentals = user.rentals?.length
-        ? user.rentals
-        : ['Aún no has alquilado nada'];
+        ? user.rentals.map((rentals) => ({
+            rentalStartDate: rentals.rentalStartDate,
+            rentalEndDate: rentals.rentalEndDate,
+          }))
+        : [{ rentalStartDate: 'Aún no has alquilado nada', rentalEndDate: '' }];
 
       try {
         await this.mailerservice.sendMail({
-          to: 'youdrive.notifications@gmail.com',
+          to: user.email,
           subject: 'You Drive. Alquila Autos Facilmente',
           template: 'weekly',
           context: {
