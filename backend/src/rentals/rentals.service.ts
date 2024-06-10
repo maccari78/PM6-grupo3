@@ -15,6 +15,7 @@ import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './interfaces/payload.interfaces';
 import Stripe from 'stripe';
 import { Payment } from './interfaces/payment.interfaces';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Injectable()
 export class RentalsService {
@@ -23,6 +24,7 @@ export class RentalsService {
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(Posts) private postRepository: Repository<Posts>,
     @InjectRepository(Car) private carRepository: Repository<Car>,
+    private notificationService: NotificationsService,
     private jwtService: JwtService,
   ) {}
   async create(createRentalDto: CreateRentalDto, currentUser: string, postId) {
@@ -38,6 +40,12 @@ export class RentalsService {
       description,
       image_url,
     };
+
+    // await this.rentalRepository.find({where: {id}, relations: ["user"]})
+
+    //aqui
+    // await this.notificationService.newNotification(email, 'welcome');
+    //aqui
     return await this.createWhithJWT(payload, rest, postId, payment);
   }
 
@@ -156,6 +164,14 @@ export class RentalsService {
       cancel_url: `${INTERNAL_API_CANCEL}/${id}`,
     });
     console.log(session.url);
+
+    const contract = await this.rentalRepository.findOne({
+      where: { id },
+      relations: ['users', 'posts', 'posts.user'],
+    });
+
+    await this.rentalRepository.find({where: {id}, relations: ["user"]})
+    await this.notificationService.newNotification(contract.users[0].email, 'payConstancy');
 
     return session.url;
   }

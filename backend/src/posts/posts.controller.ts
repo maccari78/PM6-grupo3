@@ -33,12 +33,15 @@ export class PostsController {
     return this.postsService.getPostsServiceId(id);
   }
 
-  @ApiBearerAuth()
+  // @ApiBearerAuth()
   @Post()
-  @UseGuards(TokenGuard)
+  // @UseGuards(TokenGuard)
   @UseInterceptors(FilesInterceptor('file', 5))
+
+
   //@UseGuards(RolesGuard)
   //@Roles(Role.User, Role.Admin)
+
   create(
     @Body() createPostDto: CreatePostDto,
     @Headers('Authorization') headers?: string,
