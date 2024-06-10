@@ -21,7 +21,7 @@ export class UsersController {
 
   @ApiBearerAuth()
   @Get('token')
-  @Roles(Role.Admin)
+  @Roles(Role.User, Role.Admin)
   getUserByToken(@Headers('Authorization') token: string) {
     return this.usersService.getUserByToken(token);
   }
