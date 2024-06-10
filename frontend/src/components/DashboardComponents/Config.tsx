@@ -111,6 +111,7 @@ const Config = () => {
 
       if (!response.ok) {
         throw new Error("Error updating user data");
+     
       }
 
       const updatedData = await response.json();
