@@ -438,23 +438,6 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
           </div>
         </div>
       </div>
-
-      <div className="bg-[#444343] px-40 pb-10 ">
-        {isOwner && (
-          <Link
-            href={`/vehicle/${params.id}/upload_post`}
-            className="text-slate-50 font-sans"
-          >
-            Editar publicación
-          </Link>
-        )}
-        <h1 className="font-sans text-lg md:text-2xl font-semibold text-gray-100 pb-8">
-          ¡Reserva ahora!
-        </h1>
-        <div>
-          <DateRangePicker bookedDates={bookedDates} />
-        </div>
-      </div>
     </>
   );
 };
