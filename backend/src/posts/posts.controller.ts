@@ -37,8 +37,8 @@ export class PostsController {
   @Post()
   @UseGuards(TokenGuard)
   @UseInterceptors(FilesInterceptor('file', 5))
-  @UseGuards(RolesGuard)
-  @Roles(Role.User, Role.Admin)
+  //@UseGuards(RolesGuard)
+  //@Roles(Role.User, Role.Admin)
   create(
     @Body() createPostDto: CreatePostDto,
     @Headers('Authorization') headers?: string,
