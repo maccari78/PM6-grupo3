@@ -3,14 +3,13 @@
 # Alquiler de Autos: YouDrive
 
 ## Integrantes del equipo:
-
-- Front End: Geronimo Kramar - Github user: 'GeroKramar'
-- Front End: Camila Fabre - Github user: 'cfcamilafabre'
-- Front End: Camilo Sierra - Github user: 'CAndresSierra'
-- Back End: Victor Emanuel Elias Cuello - Github user: 'emacuello'
-- Back End: Juan Carlos Alvarez Martinez - Github user: 'AlvarezMar'
-- Back End: Darvin Ricardo Alania Inoecencio - Github user: 'DAlaniaInocecio'
-- Back End: Danilo Maccari - Github user: 'maccari78'
+- Front End: Geronimo Kramar - email: gerokramar@gmail.com - Github: 'GeroKramar' - Argentina, AMBA
+- Front End: Camila Fabre - email: camilafabre98@gmail.com - Github: 'cfcamilafabre' - Argentina, Tandil
+- Front End: Camilo Sierra - email: camilofullstack@gmail.com - Github: 'CAndresSierra' - Colombia, Barranquilla
+- Back End: Victor Emanuel Elias Cuello - email: ema.cuello1010@gmail.com - Github: 'emacuello' - Argentina, AMBA
+- Back End: Juan Carlos Alvarez Martinez - email: alvarez.majuan@hotmail.com - Github: 'AlvarezMar' - Mexico, DF
+- Back End: Darvin Ricardo Alania Inoecencio - email: darvin.alania@gmail.com - Github: 'DAlaniaInocecio' - Peru, Lima
+- Back End: Danilo Maccari - email: maccari78@gmail.com - Github: 'maccari78' - Argentina, Bahia Blanca
 
 ## Caso de negocio
 

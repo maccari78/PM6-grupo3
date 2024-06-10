@@ -2,18 +2,7 @@ import { Car } from 'src/cars/entities/car.entity';
 import { Chat } from 'src/chat/entities/chat.entity';
 import { Review } from 'src/reviews/entities/review.entity';
 import { User } from 'src/users/entities/user.entity';
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  OneToOne,
-  PrimaryGeneratedColumn,
-  Timestamp,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, Timestamp, UpdateDateColumn } from 'typeorm';
 
 @Entity('posts')
 export class Posts {
