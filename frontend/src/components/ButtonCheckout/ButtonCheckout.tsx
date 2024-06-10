@@ -35,35 +35,35 @@ const ButtonCheckout = ({
   const router = useRouter();
 
   const fetchCheckout = async () => {
-    if (!postState?.car.availability) {
-      Swal.fire({
-        icon: "error",
-        title: "Lo sentimos...",
-        text: "No hay stock para este vehiculo",
-      });
+    if (!id) {
+      console.error("Error: ID is undefined");
       return;
-    } else if (
-      !startDate ||
-      !endDate ||
-      startDate.trim() === "" ||
-      endDate.trim() === ""
-    ) {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Debes elegir de que fecha a que fecha deseas reservar el vehiculo",
-      });
-      return;
-    } else {
-      if (!id) {
-        console.error("Error: ID is undefined");
-        return;
-      }
+    }
 
-      if (
-        typeof window !== "undefined" &&
-        window.localStorage.getItem("userSession")
+    if (
+      typeof window !== "undefined" &&
+      window.localStorage.getItem("userSession")
+    ) {
+      if (!postState?.car.availability) {
+        Swal.fire({
+          icon: "error",
+          title: "Lo sentimos...",
+          text: "No hay stock para este vehiculo",
+        });
+        return;
+      } else if (
+        !startDate ||
+        !endDate ||
+        startDate.trim() === "" ||
+        endDate.trim() === ""
       ) {
+        Swal.fire({
+          icon: "warning",
+          title: "Oops...",
+          text: "Debes elegir de que fecha a que fecha deseas reservar el vehiculo",
+        });
+        return;
+      } else {
         try {
           if (postState) {
             const rentalData: IRental = {
@@ -109,28 +109,24 @@ const ButtonCheckout = ({
         } catch (error: any) {
           console.log(error.message);
         }
-      } else {
-        const Toast = Swal.mixin({
-          toast: true,
-          position: "top-end",
-          background: "#cbcbcb",
-          color: "#aa1808",
-          showConfirmButton: false,
-          timer: 5000,
-          timerProgressBar: true,
-          backdrop: "swal2-backdrop-show",
-          didOpen: (toast) => {
-            toast.onmouseenter = Swal.stopTimer;
-            toast.onmouseleave = Swal.resumeTimer;
-          },
-        });
-        Toast.fire({
-          icon: "error",
-          iconColor: "#aa1808",
-          title: "Debes iniciar sesión",
-        });
-        router.push("/login");
       }
+    } else {
+      const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = Swal.stopTimer;
+          toast.onmouseleave = Swal.resumeTimer;
+        },
+      });
+      Toast.fire({
+        icon: "error",
+        title: "Debes iniciar sesión",
+      });
+      router.push("/login");
     }
   };
 
