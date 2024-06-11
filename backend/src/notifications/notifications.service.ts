@@ -57,9 +57,20 @@ export class NotificationsService {
 
   async sendNotifications(template: string) {
     const users = await this.userRepository.find();
+    const tamañoLote = 5;
+    const delay = 5 * 60 * 1000;
 
-    for (const user of users) {
-      await this.mailService.sendEmail(user.email, template);
+    for (let i = 0; i < users.length; i += tamañoLote) {
+      const lote = users.slice(i, i + tamañoLote);
+
+      for (const user of lote) {
+        if (user) await this.mailService.sendEmail(user, template);
+        console.log('Lote enviado');
+      }
+
+      if (i + tamañoLote < users.length) {
+        await new Promise((resolve) => setTimeout(resolve, delay));
+      }
     }
   }
 

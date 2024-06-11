@@ -1,6 +1,5 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { title } from 'process';
 
 @Injectable()
 export class MailService {
@@ -56,25 +55,31 @@ export class MailService {
       }
     } else if (template === 'payConstancy') {
       //Para price
-      const posts = user.post.filter((post) => ({price: post.price}))
-      console.log(posts)
-      let price = posts[0].price;
-      console.log(price)
+      const posts = user.post.filter((post) => ({ price: post.price }));
+      console.log(posts);
+      const price = posts[0].price;
+      console.log(price);
 
-      const datePay= user.rentals.filter((post) => ({createdAt: post.createdAt}))
-      let DatePay = datePay[0].createdAt;
-//       Alquiler desde :
-// Alquiler hasta :
-// Número de operación:
-      const rentalsStart = user.rentals.filter((post) => ({rentalStartDate: post.rentalStartDate}))
-      let RENTALStart = rentalsStart[0].rentalStartDate;
+      const datePay = user.rentals.filter((post) => ({
+        createdAt: post.createdAt,
+      }));
+      const DatePay = datePay[0].createdAt;
+      //       Alquiler desde :
+      // Alquiler hasta :
+      // Número de operación:
+      const rentalsStart = user.rentals.filter((post) => ({
+        rentalStartDate: post.rentalStartDate,
+      }));
+      const RENTALStart = rentalsStart[0].rentalStartDate;
 
-      const datePayEnd= user.rentals.filter((post) => ({rentalEndDate: post.rentalEndDate}))
-      let DatePayend = datePayEnd[0].rentalEndDate;
+      const datePayEnd = user.rentals.filter((post) => ({
+        rentalEndDate: post.rentalEndDate,
+      }));
+      const DatePayend = datePayEnd[0].rentalEndDate;
 
-      const numOperation= user.rentals.filter((post) => ({id: post.id}))
-      let NumOperation = numOperation[0].id;      
-      
+      const numOperation = user.rentals.filter((post) => ({ id: post.id }));
+      const NumOperation = numOperation[0].id;
+
       try {
         await this.mailerservice.sendMail({
           to: user.email,
@@ -83,12 +88,11 @@ export class MailService {
           context: {
             username: user.name,
             prueba: user.password,
-            price:price,
+            price: price,
             newDayPay: DatePay,
             newRentalsStart: RENTALStart,
             newRentalsEnd: DatePayend,
-            newNumOperation: NumOperation
-
+            newNumOperation: NumOperation,
           },
           attachments: [
             {
