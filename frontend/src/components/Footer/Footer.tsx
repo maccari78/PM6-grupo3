@@ -19,12 +19,12 @@ const Footer = () => {
             <div className="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
               <div>
                 <h2 className="mb-6 text-sm font-semibold uppercase text-white">
-                  Recursos
+                  Ayuda
                 </h2>
                 <ul className="text-gray-400 font-medium">
                   <li className="mb-4">
                     <Link href="#" className="hover:underline">
-                      Flowbite
+                      Como alquilar
                     </Link>
                   </li>
                   <li>
@@ -32,7 +32,7 @@ const Footer = () => {
                       href="#"
                       className="hover:underline"
                     >
-                      Tailwind CSS
+                      Preguntas frecuentes
                     </a>
                   </li>
                 </ul>
