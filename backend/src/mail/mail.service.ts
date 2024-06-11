@@ -1,10 +1,16 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Rental } from 'src/rentals/entities/rental.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class MailService {
-  constructor(private readonly mailerservice: MailerService) {}
-  async sendEmail(user, template: string) {
+  constructor(
+    private readonly mailerservice: MailerService,
+    @InjectRepository(Rental) private rentalsRepository: Repository<Rental>,
+  ) {}
+  async sendEmail(user, template: string, contractPost?: any) {
     if (template === 'welcome') {
       try {
         await this.mailerservice.sendMail({
@@ -93,6 +99,41 @@ export class MailService {
             newRentalsStart: RENTALStart,
             newRentalsEnd: DatePayend,
             newNumOperation: NumOperation,
+          },
+          attachments: [
+            {
+              filename: 'logo.png',
+              path: __dirname + '../../../../frontend/public/logo.png',
+              cid: 'imagename',
+            },
+          ],
+        });
+        return { message: 'Correo enviado exitosamente' };
+      } catch (error) {
+        console.error(error);
+        throw new BadRequestException(
+          'El correo no pudo ser enviado exitosamente',
+        );
+      }
+    } else if (template === 'rentedVehicle') {
+      const rental = await this.rentalsRepository.find({
+        where: { posts: { id: contractPost.id } },
+        relations: { users: true },
+      });
+
+      try {
+        await this.mailerservice.sendMail({
+          to: user.email,
+          subject: 'You Drive. Alquila Autos Facilmente',
+          template: 'rentedVehicle',
+          context: {
+            owner: user.name,
+            renter: rental[0]?.users[0].name,
+            post: contractPost.title,
+            description: contractPost.description,
+            price: contractPost.price,
+            rentalStart: rental[0]?.rentalStartDate,
+            rentalEnd: rental[0]?.rentalEndDate,
           },
           attachments: [
             {
