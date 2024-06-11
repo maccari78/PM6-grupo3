@@ -181,14 +181,29 @@ export class RentalsService {
       where: { id },
       relations: ['users', 'posts', 'posts.user'],
     });
+
+    console.log('Este es el contrato:', contract);
+
     if (!contract) throw new NotFoundException('Contrato no encontrado');
     const userPosts = contract.posts?.user?.id;
     const userPay = contract.users?.filter((user) => user.id !== userPosts);
+
+    const owner = contract.posts?.user;
+    const contractPost = contract.posts;
+
     if (!userPay) throw new NotFoundException('Error al realizar el pago');
+
+    await this.notificationService.newNotification(
+      owner.email,
+      'rentedVehicle',
+      contractPost,
+    );
+
     await this.notificationService.newNotification(
       userPay[0].email,
       'payConstancy',
     );
+
     return 'Compra pagada con exito';
   }
 
