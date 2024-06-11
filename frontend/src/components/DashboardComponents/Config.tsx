@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import SkeletonDashboard from "../sketelons/SkeletonDashboard";
 import { IUserData } from "@/interfaces/IUser";
 import { redirect, useRouter } from "next/navigation";
+import Swal from "sweetalert2";
 
 const Config = () => {
   const [userToken, setUserToken] = useState<string | null>(null);
@@ -19,7 +20,11 @@ const Config = () => {
         setUserToken(parsedSession.token);
       } else {
         setLoading(false);
-        alert("Necesitas estar logueado para ingresar");
+        Swal.fire({
+          title: "Error de acceso",
+          text: "Necesitas estar logueado para ingresar",
+          icon: "error"
+        });
         redirect("/login");
       }
     }
@@ -87,7 +92,11 @@ const Config = () => {
       const nDni = Number(userData.nDni);
 
       if (isNaN(phone) || isNaN(nDni)) {
-        alert('El teléfono y el DNI deben ser números válidos');
+        Swal.fire({
+          title: "Error al actualizar los datos",
+          text: 'El teléfono y el DNI deben ser números válidos',
+          icon: "error"
+          });
         return;
       }
 
@@ -110,14 +119,39 @@ const Config = () => {
       });
 
       if (!response.ok) {
+        Swal.fire({
+          title: "Error al actualizar los datos",
+          text: `Los daton no pudieron actualizarse, intentelo nuevamente`,
+          icon: "error"
+          });
         throw new Error("Error updating user data");
-     
       }
 
       const updatedData = await response.json();
       setUserData(updatedData);
-      alert("Datos actualizados correctamente");
+      const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = Swal.stopTimer;
+          toast.onmouseleave = Swal.resumeTimer;
+        },
+      });
+      Toast.fire({
+        icon: "success",
+        title: "Sus datos se actualizaron correctamente",
+      });
+      router.push("/user");
+      
     } catch (error: any) {   
+      Swal.fire({
+        title: "Error al actualizar los datos",
+        text: `Los daton no pudieron actualizarse, intentelo nuevamente`,
+        icon: "error"
+        });
       console.error('Error:', error);
     }
   };

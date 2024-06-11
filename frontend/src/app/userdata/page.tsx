@@ -6,6 +6,7 @@ import SkeletonDashboard from '@/components/sketelons/SkeletonDashboard';
 import { IUserData } from '@/interfaces/IUser';
 import { redirect, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
+import Swal from 'sweetalert2';
 
 const apiUrl = process.env.NEXT_PUBLIC_API_GET_USERS_TOKEN;
 if (!apiUrl) {
@@ -26,7 +27,11 @@ const UserProfile: React.FC = () => {
         setUserToken(parsedSession.token);  
       } else {
         setLoading(true)
-        alert("Necesitas estar logueado para ingresar");
+        Swal.fire({
+          title: "Error de acceso",
+          text: "Necesitas estar logueado para ingresar",
+          icon: "error"
+        });
         redirect("/login")
       }
     }

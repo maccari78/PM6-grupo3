@@ -86,7 +86,12 @@ const Login = () => {
         // Si el error es un objeto y contiene la propiedad 'message'
         const apiError = err as ApiError;
         setErrorAPI(apiError);
-        alert(`Error: ${apiError.message}`);
+        Swal.fire({
+          title: "Error al iniciar sesion",
+          text: `${apiError.message}`,
+          icon: "error"
+        });
+
       } else if (err instanceof Error) {
         // Si el error es una instancia de Error nativa
         setErrorAPI({
@@ -103,15 +108,19 @@ const Login = () => {
           statusCode: 500,
         };
         setErrorAPI(unknownError);
-        alert(`Error: ${unknownError.message}`);
+        Swal.fire({
+          title: "Porfavor intentelo mas tarde",
+          text: `${unknownError.message}`,
+          icon: "error"
+        });
       }
     }
   };
   return (
     <>
-      <div className="min-h-screen bg-gray-100 flex flex-col justify-center sm:py-12">
+      <div className="min-h-screen bg-[url('/background_register_2.svg')] flex flex-col justify-center sm:py-12">
         <div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
-          <h1 className="font-bold text-center text-2xl mb-5">
+          <h1 className="font-bold text-center text-white text-2xl mb-5">
             Bienvenido a YouDrive!
           </h1>
           <div className="bg-white shadow w-full rounded-lg divide-y divide-gray-200">
