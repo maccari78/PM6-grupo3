@@ -48,7 +48,7 @@ const ButtonCheckout = ({
         Swal.fire({
           icon: "error",
           title: "Lo sentimos...",
-          text: "No hay stock para este vehiculo",
+          text: "Esta publicacion esta inactiva",
         });
         return;
       } else if (

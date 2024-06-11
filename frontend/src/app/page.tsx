@@ -1,5 +1,12 @@
+"use client"
+import SearchComponent from "@/components/Navbar/SearchBar";
 import Products from "@/components/Products/Products";
 
+
+
+const handleSearch = (location: string, pickupDate: string, returnDate: string) => {
+  console.log('Searching for:', { location, pickupDate, returnDate });
+};
 export default function Home() {
   return (
     <div className="bg-[#444343] text-white flex flex-col min-h-screen">
@@ -16,7 +23,9 @@ export default function Home() {
           </div>
         </div>
       </section>
-
+      <div className="mt-3 bg-[#4443432f] flex items-center justify-center">
+      <SearchComponent onSearch={handleSearch} />
+    </div>
       <section
         id="vehiculos"
         className="w-full md:mt-4 flex flex-col justify-around"
