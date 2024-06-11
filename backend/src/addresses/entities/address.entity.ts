@@ -1,9 +1,11 @@
+import { Car } from 'src/cars/entities/car.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
   Column,
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -16,41 +18,61 @@ export class Address {
 
   @Column({
     type: 'text',
-    nullable: false,
+    nullable: true,
   })
   address: string;
 
   @Column({
     type: 'varchar',
     length: 30,
-    nullable: false,
+    nullable: true,
   })
   city: string;
 
   @Column({
     type: 'varchar',
     length: 30,
-    nullable: false,
+    nullable: true,
   })
   state: string;
 
   @Column({
     type: 'varchar',
     length: 30,
-    nullable: false,
+    nullable: true,
   })
   country: string;
 
   @Column({
     type: 'varchar',
     length: 10,
-    nullable: false,
+    nullable: true,
   })
   zip_code: string;
+
+  @Column({
+    type: 'decimal',
+    precision: 9,
+    scale: 6,
+    nullable: true,
+  })
+  latitude: number;
+
+  @Column({
+    type: 'decimal',
+    precision: 9,
+    scale: 6,
+    nullable: true,
+  })
+  longitude: number;
 
   @ManyToOne(() => User, (user) => user.addresses, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'user_id' })
   user: User;
+
+  @OneToOne(() => Car, (car) => car.address)
+  @JoinColumn()
+  car: Car;
 }

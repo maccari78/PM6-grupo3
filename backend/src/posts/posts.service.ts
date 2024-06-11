@@ -22,6 +22,7 @@ import { FiltersPosts } from './interfaces/filter.interfaces';
 export class PostsService {
   constructor(
     private readonly carService: CarsService,
+    @InjectRepository(Car) private carRepository: Repository<Car>,
     @InjectRepository(Posts) private postRepository: Repository<Posts>,
     @InjectRepository(User) private userRepository: Repository<User>,
     private jwtService: JwtService,
@@ -102,17 +103,22 @@ export class PostsService {
 
     if (!payload) throw new UnauthorizedException('token invalido 3');
     const user = await this.userRepository.findOne({
-      where: { id: payload.sub },
+      where: { email: payload.sub },
     });
     if (!user) throw new NotFoundException('Usuario no encontrado');
 
     const newCar = await this.carService.createdCar(files, rest, user.id);
     if (!newCar) throw new BadRequestException('No se pudo crear el auto');
     const newPosts = this.postRepository.create({ title, description, price });
+
     newPosts.car = newCar;
+
     newPosts.user = user;
 
-    await this.postRepository.save(newPosts);
+    const postsSaved = await this.postRepository.save(newPosts);
+    if (!postsSaved)
+      throw new BadRequestException('No se pudo insertar la publicación');
+    await this.carRepository.update(newCar.id, { post: postsSaved });
     return 'Publicación insertada';
   }
 
@@ -122,22 +128,70 @@ export class PostsService {
     token: string,
     files?: Express.Multer.File[],
   ) {
-    const secret = process.env.JWT_SECRET_KEY;
+    const { title, description, price, image_url, ...rest } = posts;
+    console.log(id, 'ID EN SERVICE');
+
+    const secret = process.env.JWT_SECRET;
     const payload: JwtPayload = await this.jwtService.verify(token, {
       secret,
     });
     if (!payload) throw new UnauthorizedException('token invalido 3');
     const user = await this.userRepository.findOne({
-      where: { id: payload.sub },
+      where: { email: payload.sub },
     });
     if (!user) throw new NotFoundException('Usuario no encontrado');
-    const findPosts = await this.postRepository.findOneBy({ id });
+
+    const findPosts = await this.postRepository.findOne({
+      where: { id },
+      relations: ['car', 'user'],
+    });
+    console.log(findPosts, 'FIND POSTS EN SERVICE');
 
     if (!findPosts)
       throw new NotFoundException(`No se encontro publicación con ${id}`);
+    if (findPosts.user.id !== user.id)
+      throw new UnauthorizedException(
+        'No tiene permisos para actualizar esta publicación',
+      );
+    const car = await this.carRepository.findOneBy({
+      id: findPosts.car.id,
+    });
+    if (!car) throw new NotFoundException('Auto no encontrado');
+    if (files?.length === 0 || !files) {
+      const updateCar = await this.carRepository.update(car.id, rest);
+      if (!updateCar)
+        throw new BadRequestException('No se pudo actualizar el auto');
+      const updatePost = await this.postRepository.update(id, {
+        title,
+        description,
+        price,
+      });
+      if (!updatePost)
+        throw new BadRequestException('No se pudo actualizar la publicación');
+      if (image_url) {
+        await this.carService.removeImageUrl(car.id, image_url);
+      }
+      return 'Publicación actualizada';
+    }
 
-    const updatePosts = await this.postRepository.update(id, posts);
-    console.log(updatePosts, files);
+    const updateCar = await this.carService.update(car.id, rest, files);
+    if (!updateCar)
+      throw new BadRequestException('No se pudo actualizar el auto');
+    await this.postRepository.update(id, {
+      title,
+      description,
+      price,
+    });
+    if (image_url) {
+      const updateImage = await this.carService.removeImageUrl(
+        car.id,
+        image_url,
+      );
+      if (!updateImage)
+        throw new BadRequestException('No se pudo borrar la imagen');
+      return 'Publicación actualizada';
+    }
+    return 'Publicación actualizada';
   }
 
   async DeletePostsServices(id: string) {
@@ -147,7 +201,7 @@ export class PostsService {
         `No se pudo obtener la publicación con ${id}`,
       );
 
-    const posts = await this.postRepository.delete(postsFind);
+    const posts = await this.postRepository.delete(postsFind.id);
     if (posts.affected === 0)
       throw new BadRequestException('No se pudo borrar la publicación');
 

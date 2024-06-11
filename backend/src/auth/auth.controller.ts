@@ -1,19 +1,18 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Req,
-  Res,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res, UseGuards} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto, signIn } from 'src/users/dto/create-user.dto';
 import { GoogleAuthGuard } from './utils/auth.guard';
 import { Request, Response } from 'express';
 import { GoogleStrategy } from './utils/GoogleStrategy';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+// import { RolesGuard } from 'src/users/utils/roles.guard';
+// import { Role } from 'src/users/utils/roles.enum';
+// import { Roles } from 'src/users/utils/roles.decorator';
 
+@ApiTags('AUTH')
 @Controller('auth')
+// @UseGuards(RolesGuard)
+// @Roles(Role.User, Role.Admin)
 export class AuthController {
   constructor(
     private authService: AuthService,
@@ -35,6 +34,7 @@ export class AuthController {
     return { msg: 'Google Authentication' };
   }
 
+  @ApiBearerAuth()
   @Get('google/redirect')
   @UseGuards(GoogleAuthGuard)
   async handleRedirect(@Req() req: Request, @Res() res: Response) {
@@ -58,4 +58,5 @@ export class AuthController {
       return { msg: 'Not Authenticated' };
     }
   }
+
 }

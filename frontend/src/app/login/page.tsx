@@ -1,11 +1,22 @@
-"use client"
+"use client";
 import { validateLogin } from "@/helpers/validateLogin";
 import { IErrorlogin, Ilogin } from "@/interfaces/ILogin";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import Swal from "sweetalert2";
+
+const apiUrl = process.env.NEXT_PUBLIC_API_SIGNIN_URL;
+if (!apiUrl) {
+  throw new Error("Environment variable NEXT_PUBLIC_API_POSTS is not set");
+}
 
 const Login = () => {
+  interface ApiError {
+    message: string;
+    error: string;
+    statusCode: number;
+  }
   const router = useRouter();
 
   const [userData, setUserData] = useState<Ilogin>({
@@ -16,8 +27,8 @@ const Login = () => {
     email: "",
     password: "",
   });
- 
-  const [session, setSession] = useState({ token: null});
+  const [errorAPI, setErrorAPI] = useState<ApiError | null>(null);
+  const [session, setSession] = useState({ token: null });
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserData({
@@ -34,7 +45,7 @@ const Login = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      const response = await fetch("http://localhost:3001/auth/signin", {
+      const response = await fetch(apiUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -46,24 +57,72 @@ const Login = () => {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorData: ApiError = await response.json();
+        throw errorData;
       }
+
       const json = await response.json();
       const token = json;
       localStorage.setItem("userSession", JSON.stringify(token));
-      setSession({ token});
-      alert("login success");
+      setSession({ token });
+      const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.onmouseenter = Swal.stopTimer;
+          toast.onmouseleave = Swal.resumeTimer;
+        },
+      });
+      Toast.fire({
+        icon: "success",
+        title: "Haz iniciado sesion con exito",
+      });
       router.push("/");
-    } catch (error) {
-      console.error('Login failed:', error);
-      alert("Login failed");
+    } catch (err) {
+      if (typeof err === "object" && err !== null && "message" in err) {
+        // Si el error es un objeto y contiene la propiedad 'message'
+        const apiError = err as ApiError;
+        setErrorAPI(apiError);
+        Swal.fire({
+          title: "Error al iniciar sesion",
+          text: `${apiError.message}`,
+          icon: "error"
+        });
+
+      } else if (err instanceof Error) {
+        // Si el error es una instancia de Error nativa
+        setErrorAPI({
+          message: err.message,
+          error: "Error",
+          statusCode: 500,
+        });
+        alert(`Error: ${err.message}`);
+      } else {
+        // Otro tipo de error
+        const unknownError: ApiError = {
+          message: "An unknown error occurred",
+          error: "Unknown Error",
+          statusCode: 500,
+        };
+        setErrorAPI(unknownError);
+        Swal.fire({
+          title: "Porfavor intentelo mas tarde",
+          text: `${unknownError.message}`,
+          icon: "error"
+        });
+      }
     }
   };
   return (
     <>
-      <div className="min-h-screen bg-gray-100 flex flex-col justify-center sm:py-12">
+      <div className="min-h-screen bg-[url('/background_register_2.svg')] flex flex-col justify-center sm:py-12">
         <div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
-          <h1 className="font-bold text-center text-2xl mb-5">Welcome Back!</h1>
+          <h1 className="font-bold text-center text-white text-2xl mb-5">
+            Bienvenido a YouDrive!
+          </h1>
           <div className="bg-white shadow w-full rounded-lg divide-y divide-gray-200">
             <div className="px-5 py-7">
               <form onSubmit={handleSubmit}>
@@ -87,7 +146,7 @@ const Login = () => {
                   <p className="text-sm text-red-500 lg:mt-0 ">{error.email}</p>
                 )}
                 <label className="font-semibold text-sm text-gray-600 pb-1 block">
-                  Password
+                  Contraseña
                 </label>
                 <input
                   id="password-login"
@@ -111,7 +170,7 @@ const Login = () => {
                   type="submit"
                   className="transition duration-200 bg-blue-500 hover:bg-blue-600 focus:bg-blue-700 focus:shadow-sm focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 text-white w-full py-2.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center inline-block"
                 >
-                  <span className="inline-block mr-2">Login</span>
+                  <span className="inline-block mr-2">Iniciar Sesion</span>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -120,8 +179,8 @@ const Login = () => {
                     className="w-4 h-4 inline-block"
                   >
                     <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                       strokeWidth="2"
                       d="M17 8l4 4m0 0l-4 4m4-4H3"
                     />
@@ -130,25 +189,28 @@ const Login = () => {
               </form>
             </div>
             <div className="p-5">
-              <div className="grid grid-cols-3 gap-1">
-                <button
+              <div className="grid grid-cols-1 gap-1">
+                {/* <button
                   type="button"
                   className="transition duration-200 border border-gray-200 text-gray-500 w-full py-2.5 rounded-lg text-sm shadow-sm hover:shadow-md font-normal text-center inline-block"
                 >
                   Twitter
-                </button>
-                <button
-                  type="button"
-                  className="transition duration-200 border border-gray-200 text-gray-500 w-full py-2.5 rounded-lg text-sm shadow-sm hover:shadow-md font-normal text-center inline-block"
-                >
-                  Google
-                </button>
-                <button
+                </button> */}
+                <a href="http://localhost:3001/auth/google/login">
+                  <button
+                    type="button"
+                    className="transition duration-200 border border-gray-200 text-gray-500 w-full py-2.5 rounded-lg text-sm shadow-sm hover:shadow-md font-normal text-center inline-block"
+                  >
+                    Google
+                  </button>
+                </a>
+
+                {/* <button
                   type="button"
                   className="transition duration-200 border border-gray-200 text-gray-500 w-full py-2.5 rounded-lg text-sm shadow-sm hover:shadow-md font-normal text-center inline-block"
                 >
                   Github
-                </button>
+                </button> */}
               </div>
             </div>
             <div className="py-5">
@@ -163,13 +225,15 @@ const Login = () => {
                       className="w-4 h-4 inline-block align-text-top"
                     >
                       <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                         strokeWidth="2"
                         d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"
                       />
                     </svg>
-                    <span className="inline-block ml-1">Forgot Password</span>
+                    <span className="inline-block ml-1">
+                      Olvide mi contraseña
+                    </span>
                   </button>
                 </div>
               </div>
@@ -188,13 +252,13 @@ const Login = () => {
                       className="w-4 h-4 inline-block align-text-top"
                     >
                       <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                         strokeWidth="2"
                         d="M10 19l-7-7m0 0l7-7m-7 7h18"
                       />
                     </svg>
-                    <span className="inline-block ml-1">Back to HomePage</span>
+                    <span className="inline-block ml-1">Volver al inicio</span>
                   </button>
                 </Link>
               </div>

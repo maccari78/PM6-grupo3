@@ -1,32 +1,22 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  Delete,
-  Put,
-  ParseUUIDPipe,
-  UploadedFiles,
-  ParseFilePipe,
-  MaxFileSizeValidator,
-  FileTypeValidator,
-  UseInterceptors,
-  Headers,
-  Query,
-  UnauthorizedException,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, ParseUUIDPipe, UploadedFiles, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, UseInterceptors, Headers, Query, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { FiltersPosts } from './interfaces/filter.interfaces';
 import { TokenGuard } from './guards/token.guard';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { RolesGuard } from 'src/users/utils/roles.guard';
+import { Role } from 'src/users/utils/roles.enum';
+import { Roles } from 'src/users/utils/roles.decorator';
+// import { RolesGuard } from 'src/users/utils/roles.guard';
 
+
+@ApiTags('POSTS')
 @Controller('posts')
+// @UseGuards(RolesGuard)
 export class PostsController {
-  constructor(private readonly postsService: PostsService) {}
+  constructor(private readonly postsService: PostsService) { }
 
   @Get()
   getPostsAllController() {
@@ -43,9 +33,15 @@ export class PostsController {
     return this.postsService.getPostsServiceId(id);
   }
 
+  // @ApiBearerAuth()
   @Post()
-  @UseGuards(TokenGuard)
+  // @UseGuards(TokenGuard)
   @UseInterceptors(FilesInterceptor('file', 5))
+
+
+  //@UseGuards(RolesGuard)
+  //@Roles(Role.User, Role.Admin)
+
   create(
     @Body() createPostDto: CreatePostDto,
     @Headers('Authorization') headers?: string,
@@ -82,9 +78,12 @@ export class PostsController {
     return this.postsService.AddPostsServices(createPostDto, token);
   }
 
+  @ApiBearerAuth()
   @Put(':id')
   @UseInterceptors(FilesInterceptor('file', 5))
-  putPostsByIdController(
+  // @UseGuards(RolesGuard)
+  // @Roles(Role.User, Role.Admin)
+  putPostsById(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updatePostDto: UpdatePostDto,
     @Headers('Authorization') headers: string,
@@ -99,10 +98,14 @@ export class PostsController {
             fileType: /(jpg|jpeg|png|webp|mp4|avi|mov)$/,
           }),
         ],
+        fileIsRequired: false,
       }),
     )
     files?: Express.Multer.File[],
   ) {
+    console.log(id);
+    console.log(headers);
+
     if (!headers) {
       throw new UnauthorizedException('token invalido 1');
     }
@@ -110,6 +113,8 @@ export class PostsController {
     if (!token) {
       throw new UnauthorizedException('token invalido 2');
     }
+    console.log(token);
+
     if (files?.length !== 0 || files) {
       return this.postsService.UpdatePostsServices(
         id,
@@ -118,11 +123,13 @@ export class PostsController {
         files,
       );
     }
-
+    console.log(updatePostDto);
     return this.postsService.UpdatePostsServices(id, updatePostDto, token);
   }
 
   @Delete(':id')
+  @UseGuards(RolesGuard)
+  @Roles(Role.User, Role.Admin)
   deletePostsByIdController(@Param('id', ParseUUIDPipe) id: string) {
     return this.postsService.DeletePostsServices(id);
   }

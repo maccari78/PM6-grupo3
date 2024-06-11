@@ -1,37 +1,60 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  Delete,
-  Headers,
-  BadRequestException,
-  ParseUUIDPipe,
-  Put,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Headers, BadRequestException, ParseUUIDPipe, Put, Res, /* UseGuards */ } from '@nestjs/common';
 import { RentalsService } from './rentals.service';
 import { CreateRentalDto } from './dto/create-rental.dto';
 import { UpdateRentalDto } from './dto/update-rental.dto';
+import { Response } from 'express';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+// import { RolesGuard } from 'src/users/utils/roles.guard';
+// import { Role } from 'src/users/utils/roles.enum';
+// import { Roles } from 'src/users/utils/roles.decorator';
 
+// @ApiBearerAuth()
+// @ApiTags('RENTALS')
 @Controller('rentals')
+//@UseGuards(RolesGuard)
+//@Roles(Role.User, Role.Admin)
 export class RentalsController {
   constructor(private readonly rentalsService: RentalsService) {}
 
-  @Post()
-  create(
+  // @ApiBearerAuth()
+  @Post(':id')
+  async create(
     @Body() createRentalDto: CreateRentalDto,
+    @Param('id', ParseUUIDPipe) postId: string,
     @Headers('Authorization') authorization: string,
+    @Res() res: Response,
   ) {
     const currentUser = authorization?.split(' ')[1];
+    console.log(createRentalDto);
+
     if (!currentUser)
       throw new BadRequestException('No hay un usuario autenticado');
-    return this.rentalsService.create(createRentalDto, currentUser);
+    const url = await this.rentalsService.create(
+      createRentalDto,
+      currentUser,
+      postId,
+    
+    );
+    if (!url) throw new BadRequestException('Error al crear el contrato');
+    return res.json({ url });
   }
 
   @Get()
   findAll() {
     return this.rentalsService.findAll();
+  }
+  @Get('/sucess/:id')
+  paymentSucess(@Param('id', ParseUUIDPipe) id: string, @Res() res: Response) {
+    const payment = this.rentalsService.paymentSucess(id);
+    const SUCCES_CHECK_URL = process.env.SUCCES_CHECK_URL;
+    if (payment) res.redirect(`${SUCCES_CHECK_URL}`);
+  }
+
+  @Get('/cancel/:id')
+  paymentCancel(@Param('id', ParseUUIDPipe) id: string, @Res() res: Response) {
+    const payment = this.rentalsService.paymentCancel(id);
+    const CANCEL_CHECK_URL = process.env.CANCEL_CHECK_URL;
+    if (payment) res.redirect(`${CANCEL_CHECK_URL}/${id}`);
   }
 
   @Get(':id')
@@ -39,6 +62,7 @@ export class RentalsController {
     return this.rentalsService.findOne(id);
   }
 
+  @ApiBearerAuth()
   @Put(':id')
   update(
     @Param('id', ParseUUIDPipe) id: string,

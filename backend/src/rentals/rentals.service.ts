@@ -12,11 +12,10 @@ import { User } from 'src/users/entities/user.entity';
 import { Car } from 'src/cars/entities/car.entity';
 import { Posts } from 'src/posts/entities/post.entity';
 import { JwtService } from '@nestjs/jwt';
-import {
-  GoogleTokenPayload,
-  JwtPayload,
-} from './interfaces/payload.interfaces';
-import { OAuth2Client } from 'google-auth-library';
+import { JwtPayload } from './interfaces/payload.interfaces';
+import Stripe from 'stripe';
+import { Payment } from './interfaces/payment.interfaces';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Injectable()
 export class RentalsService {
@@ -25,33 +24,41 @@ export class RentalsService {
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(Posts) private postRepository: Repository<Posts>,
     @InjectRepository(Car) private carRepository: Repository<Car>,
+    private notificationService: NotificationsService,
     private jwtService: JwtService,
   ) {}
-  async create(createRentalDto: CreateRentalDto, currentUser: string) {
-    const { postId, ...rest } = createRentalDto;
-    const decode = this.jwtService.decode(currentUser, {
-      complete: true,
-    });
-    console.log(decode);
+  async create(createRentalDto: CreateRentalDto, currentUser: string, postId) {
+    const { name, price, description, image_url, ...rest } = createRentalDto;
 
-    if (!decode) {
-      return await this.createWhithGoogle(currentUser, rest, postId);
-    }
-    const secret = process.env.JWT_SECRET_KEY;
-    const payload: JwtPayload = this.jwtService.verify(currentUser, {
+    const secret = process.env.JWT_SECRET;
+    const payload: JwtPayload = await this.jwtService.verify(currentUser, {
       secret,
     });
-    return await this.createWhithJWT(payload, rest, postId);
+    const payment: Payment = {
+      name,
+      price,
+      description,
+      image_url,
+    };
+
+    // await this.rentalRepository.find({where: {id}, relations: ["user"]})
+
+    //aqui
+    // await this.notificationService.newNotification(email, 'welcome');
+    //aqui
+    return await this.createWhithJWT(payload, rest, postId, payment);
   }
 
   async createWhithJWT(
     payload: JwtPayload,
-    rest: Omit<CreateRentalDto, 'postId'>,
+    rest: Partial<Rental>,
     postId: string,
+    payment: Payment,
   ) {
     const rental_user = await this.userRepository.findOne({
-      where: { id: payload.sub },
+      where: { email: payload.sub },
     });
+
     if (!rental_user) throw new NotFoundException('Usuario no encontrado');
 
     const newRental = this.rentalRepository.create(rest);
@@ -65,82 +72,40 @@ export class RentalsService {
     });
     if (!findPost)
       throw new NotFoundException('Publicación no encontrada en la BD');
+    if (findPost.user.email === rental_user.email)
+      throw new BadRequestException('No puedes alquilar tu propio vehiculo');
     newRental.users = [rental_user, findPost.user];
-    const findCar = this.carRepository.findOne({
+    const findCar = await this.carRepository.findOne({
       where: { id: findPost.car.id },
     });
     if (!findCar) throw new NotFoundException('Vehiculo no encontrado');
-    // LOGICA DE PAGO!!!! SI ES TRUE PASO AL SIGUIENTE PASO!
-    const carUpdate = await this.carRepository.update(findPost.car.id, {
-      availability: false,
-    });
-    if (carUpdate.affected === 0)
-      throw new BadRequestException('Error al actualizar el vehiculo');
-
-    newRental.car = findPost.car;
+    if (findCar.availability === false)
+      throw new BadRequestException('El vehiculo ya se encuentra alquilado');
+    newRental.posts = findPost;
 
     const rental = await this.rentalRepository.save(newRental);
     if (!rental)
       throw new BadRequestException(
         'Error al crear el contrato, verifique las relaciones con otras entidades',
       );
-    return 'Contrato creado con exito';
-  }
-  async createWhithGoogle(
-    currentUser: string,
-    rest: Omit<CreateRentalDto, 'postId'>,
-    postId: string,
-  ) {
-    const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
-    const client = new OAuth2Client(CLIENT_ID);
-
-    const ticket = await client.verifyIdToken({
-      idToken: currentUser,
-      audience: CLIENT_ID,
-    });
-    if (!ticket) throw new NotFoundException('Token no valido');
-    const payload: GoogleTokenPayload = ticket.getPayload();
-    console.log(payload);
-    const rental_user = await this.userRepository.findOne({
-      where: { email: payload.email },
-    });
-    if (!rental_user) throw new NotFoundException('Usuario no encontrado');
-
-    const newRental = this.rentalRepository.create(rest);
-    if (!newRental)
-      throw new BadRequestException(
-        'Error al crear el contrato, verifique los datos',
-      );
-    const findPost = await this.postRepository.findOne({
-      where: { id: postId },
-      relations: ['car', 'user'],
-    });
-    if (!findPost)
-      throw new NotFoundException('Publicación no encontrada en la BD');
-    newRental.users = [rental_user, findPost.user];
-    const findCar = this.carRepository.findOne({
-      where: { id: findPost.car.id },
-    });
-    if (!findCar) throw new NotFoundException('Vehiculo no encontrado');
-    // LOGICA DE PAGO!!!! SI ES TRUE PASO AL SIGUIENTE PASO!
-    const carUpdate = await this.carRepository.update(findPost.car.id, {
-      availability: false,
-    });
-    if (carUpdate.affected === 0)
-      throw new BadRequestException('Error al actualizar el vehiculo');
-
-    newRental.car = findPost.car;
-
-    const rental = await this.rentalRepository.save(newRental);
-    if (!rental)
-      throw new BadRequestException(
-        'Error al crear el contrato, verifique las relaciones con otras entidades',
-      );
-    return 'Contrato creado con exito';
+    const url = await this.payment(payment, rental.id);
+    if (url) {
+      const carUpdate = await this.carRepository.update(findPost.car.id, {
+        availability: false,
+      });
+      if (carUpdate.affected === 0)
+        throw new BadRequestException('Error al actualizar el vehiculo');
+      return url;
+    } else {
+      await this.rentalRepository.delete(rental.id);
+      throw new BadRequestException('Error al realizar el pago');
+    }
   }
 
   async findAll() {
-    const contracts = await this.rentalRepository.find();
+    const contracts = await this.rentalRepository.find({
+      relations: ['users', 'posts'],
+    });
     if (!contracts)
       throw new NotFoundException('No hay contratos en la base de datos');
     return contracts;
@@ -149,7 +114,7 @@ export class RentalsService {
   async findOne(id: string) {
     const contract = await this.rentalRepository.findOne({
       where: { id },
-      relations: ['car', 'users'],
+      relations: ['users'],
     });
     if (!contract) throw new NotFoundException('Contrato no encontrado');
     return contract;
@@ -175,5 +140,70 @@ export class RentalsService {
     if (deleted.affected === 0)
       throw new NotFoundException('Error al eliminar el contraro');
     return 'Contrato eliminado con exito';
+  }
+
+  async payment(dataPayment: Payment, id: string) {
+    const stripe = new Stripe(process.env.STRIPE_PRIVATE_KEY);
+    console.log(stripe);
+    const INTERNAL_API_SUCESS = process.env.INTERNAL_API_SUCESS;
+    const INTERNAL_API_CANCEL = process.env.INTERNAL_API_CANCEL;
+    const session = await stripe.checkout.sessions.create({
+      line_items: [
+        {
+          price_data: {
+            product_data: {
+              name: dataPayment.name,
+              description: dataPayment.description,
+              images: [dataPayment.image_url],
+            },
+            currency: 'usd',
+
+            unit_amount: dataPayment.price * 1000,
+          },
+          quantity: 1,
+        },
+      ],
+      mode: 'payment',
+      success_url: `${INTERNAL_API_SUCESS}/${id}`,
+      cancel_url: `${INTERNAL_API_CANCEL}/${id}`,
+    });
+
+    if (session.url === null) {
+      await this.rentalRepository.delete(id);
+      throw new BadRequestException('Error al realizar el pago');
+    }
+
+    return session.url;
+  }
+
+  async paymentSucess(id: string) {
+    const contract = await this.rentalRepository.findOne({
+      where: { id },
+      relations: ['users', 'posts', 'posts.user'],
+    });
+    if (!contract) throw new NotFoundException('Contrato no encontrado');
+    const userPosts = contract.posts?.user?.id;
+    const userPay = contract.users?.filter((user) => user.id !== userPosts);
+    if (!userPay) throw new NotFoundException('Error al realizar el pago');
+    await this.notificationService.newNotification(
+      userPay[0].email,
+      'payConstancy',
+    );
+    return 'Compra pagada con exito';
+  }
+
+  async paymentCancel(id: string) {
+    const contract = await this.rentalRepository.findOne({
+      where: { id },
+      relations: ['users', 'posts', 'posts.user'],
+    });
+    if (!contract) throw new NotFoundException('Contrato no encontrado');
+    await this.carRepository.update(contract.posts.car.id, {
+      availability: true,
+    });
+    const deleted = await this.rentalRepository.delete(contract.id);
+    if (deleted.affected === 0)
+      throw new NotFoundException('Error al eliminar el contrato');
+    return 'Contrato cancelado con exito';
   }
 }

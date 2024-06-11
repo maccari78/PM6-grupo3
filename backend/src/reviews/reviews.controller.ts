@@ -1,15 +1,37 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Headers, UnauthorizedException, ParseUUIDPipe, Put, UseGuards } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { RolesGuard } from 'src/users/utils/roles.guard';
+import { Roles } from 'src/users/utils/roles.decorator';
+import { Role } from 'src/users/utils/roles.enum';
 
+@ApiTags('REVIEWS')
 @Controller('reviews')
+
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
-  @Post()
-  create(@Body() createReviewDto: CreateReviewDto) {
-    return this.reviewsService.create(createReviewDto);
+  //Controllers | Add reviews
+  @ApiBearerAuth()
+  @Post(":id")
+  @UseGuards(RolesGuard)
+  @Roles(Role.User, Role.Admin)
+  create(
+    @Body() createReviewDto: CreateReviewDto,
+    @Headers('Authorization') headers: string,
+    @Param('id') id: string
+  ) {
+
+    if (!headers) { 
+      throw new UnauthorizedException('token invalido 1'); 
+    }
+    const token = headers.split(' ')[1]; 
+    if (!token) { 
+      throw new UnauthorizedException('token invalido 2'); 
+    }
+    return this.reviewsService.AddReviewsServices(createReviewDto, token, id);
   }
 
   @Get()
@@ -17,18 +39,37 @@ export class ReviewsController {
     return this.reviewsService.findAll();
   }
 
-  @Get(':id')
+  @Get(':id') 
   findOne(@Param('id') id: string) {
-    return this.reviewsService.findOne(+id);
+    return this.reviewsService.findOne(id);
+  }
+  
+  @ApiBearerAuth()
+  @UseGuards(RolesGuard)
+  @Roles(Role.User, Role.Admin)
+  @Put(':id')
+  
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateReviewDto: UpdateReviewDto,
+    @Headers('Authorization') headers: string
+  ) {
+    if (!headers) {
+      throw new UnauthorizedException('token invalido 1');
+    }
+    const token = headers.split(' ')[1];
+    if (!token) {
+      throw new UnauthorizedException('token invalido 2');
+    }
+
+    return this.reviewsService.updateReview(id, updateReviewDto, token);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateReviewDto: UpdateReviewDto) {
-    return this.reviewsService.update(+id, updateReviewDto);
-  }
-
+  @UseGuards(RolesGuard)
+  @Roles(Role.User, Role.Admin)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.reviewsService.remove(+id);
+  removeIdController(@Param('id', ParseUUIDPipe) id: string) {
+    return this.reviewsService.DeleteReviewsServices(id);
   }
+
 }

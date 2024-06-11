@@ -1,17 +1,17 @@
-import { IsNotEmpty, IsString, Length, Max, Min } from "class-validator";
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsNumber, IsString, Length, Max, Min } from 'class-validator';
 
 export class CreateReviewDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  @Min(1)
+  @Max(5)
+  rating: number;
 
-    @IsNotEmpty()
-    @IsString()
-    @Min(1)
-    @Max(5)
-    rating: number;
-
-    @IsString()
-    @IsNotEmpty()
-    @Length(1, 20)
-    comment: string;
- 
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  @Length(1, 20)
+  comment: string;
 }
-

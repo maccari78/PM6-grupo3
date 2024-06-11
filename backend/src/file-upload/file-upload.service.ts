@@ -29,6 +29,10 @@ export class FileUploadService {
     const user = await this.usersRepository.findOneBy({ id: userId });
     if (!user) throw new NotFoundException('Usuario no encontrado');
 
+    if (user.public_id) {
+      await this.deleteImage(user.public_id);
+    }
+
     const uploadedImage = await this.uploadStream(file);
 
     await this.usersRepository.update(user.id, {
@@ -64,12 +68,55 @@ export class FileUploadService {
     return updatedCar;
   }
 
-  deleteImage(publicId: string) {
+  async deleteImage(publicId: string) {
+    const user = await this.usersRepository.findOneBy({ public_id: publicId });
+
+    await this.usersRepository.update(user.id, {
+      image_url:
+        'https://res.cloudinary.com/dkent00db/image/upload/v1717555619/image%20profile%20picture%20placeholder/vqnmnefzjwscrtkfpxtw.webp',
+      public_id: null,
+    });
+
     return new Promise((resolve, reject) => {
       v2.uploader.destroy(publicId, (error, result) => {
         if (error) reject(error);
         else resolve(result);
       });
     });
+  }
+
+  async deleteVehicleImage(publicId: string) {
+    const car = await this.carsRepository
+      .createQueryBuilder('car')
+      .where(':publicId = ANY(car.public_id)', { publicId })
+      .getOne();
+
+    if (!car) throw new NotFoundException('Vehiculo no encontrado');
+
+    car.image_url = car.image_url.filter((url) => !url.includes(publicId));
+    car.public_id = car.public_id.filter((id) => id !== publicId);
+
+    await this.carsRepository.save(car);
+
+    return new Promise((resolve, reject) => {
+      v2.uploader.destroy(publicId, (error, result) => {
+        if (error) reject(error);
+        else resolve(result);
+      });
+    });
+  }
+
+  async updateProfilePicture(userid: string, file: Express.Multer.File) {
+    const user = await this.usersRepository.findOneBy({ id: userid });
+
+    if (!user) throw new NotFoundException('Usuario no encontrado');
+
+    if (user.public_id) {
+      await this.deleteImage(user.public_id);
+    }
+
+    const uploadImage = await this.uploadProfilePicture(file, userid);
+
+    return uploadImage;
   }
 }

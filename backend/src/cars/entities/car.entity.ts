@@ -1,10 +1,13 @@
-import { Rental } from 'src/rentals/entities/rental.entity';
+import { Address } from 'src/addresses/entities/address.entity';
+import { Posts } from 'src/posts/entities/post.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
   Timestamp,
   UpdateDateColumn,
@@ -44,7 +47,7 @@ export class Car {
 
   @Column({
     type: 'varchar',
-    default: null,
+    nullable: true,
     array: true,
   })
   public_id: string[];
@@ -55,8 +58,13 @@ export class Car {
   @UpdateDateColumn({ type: 'timestamp' })
   updated_at: Timestamp;
 
-  // USER ID --->
+  @OneToOne(() => Posts)
+  @JoinColumn()
+  post: Posts;
 
   @ManyToOne(() => User, (user) => user.car)
   user: User;
+
+  @OneToOne(() => Address, (address) => address.car)
+  address: Address;
 }

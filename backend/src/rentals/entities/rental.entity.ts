@@ -7,9 +7,11 @@ import {
   OneToOne,
   ManyToMany,
   JoinTable,
+  JoinColumn,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
-import { Car } from '../../cars/entities/car.entity';
+
+import { Posts } from 'src/posts/entities/post.entity';
 
 @Entity('rentals')
 export class Rental {
@@ -22,7 +24,7 @@ export class Rental {
   @Column()
   rentalEndDate: string;
 
-  @ManyToMany(() => User, (user) => user.rentals)
+  @ManyToMany(() => User, (user) => user.rentals, { eager: true })
   @JoinTable({
     name: 'user_rental',
     joinColumn: { name: 'rental_id', referencedColumnName: 'id' },
@@ -30,8 +32,9 @@ export class Rental {
   })
   users: User[];
 
-  @OneToOne(() => Car)
-  car: Car;
+  @OneToOne(() => Posts, { eager: true })
+  @JoinColumn()
+  posts: Posts;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;

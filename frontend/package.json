@@ -9,13 +9,17 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@sweetalert2/theme-bootstrap-4": "^5.0.16",
     "axios": "^1.7.2",
     "cloudinary": "^2.2.0",
     "date-fns": "^3.6.0",
     "next": "14.2.3",
     "react": "^18",
     "react-datepicker": "^6.9.0",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "stripe": "^15.10.0",
+    "sweetalert": "^2.1.2",
+    "sweetalert2": "^11.11.1"
   },
   "devDependencies": {
     "@types/node": "20.12.12",

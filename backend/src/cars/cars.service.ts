@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -26,108 +25,7 @@ export class CarsService {
     @InjectRepository(User) private usersRepository: Repository<User>,
     private fileUploadService: FileUploadService,
   ) {}
-  public cars = [
-    {
-      brand: 'BMW',
-      model: 'X5',
-      year: 2022,
-      mileage: '10.000 km',
-      color: 'blue',
 
-      availability: true,
-      image_url: ['image.jpg'],
-    },
-    {
-      brand: 'Audi',
-      model: 'A4',
-      year: 2023,
-      mileage: '5,000 km',
-      color: 'black',
-
-      availability: true,
-      image_url: ['audi.jpg'],
-    },
-    {
-      brand: 'Mercedes-Benz',
-      model: 'C-Class',
-      year: 2021,
-      mileage: '20,000 km',
-      color: 'white',
-
-      availability: false,
-      image_url: ['mercedes.jpg'],
-    },
-    {
-      brand: 'Toyota',
-      model: 'Corolla',
-      year: 2020,
-      mileage: '15,000 km',
-      color: 'silver',
-
-      availability: true,
-      image_url: ['corolla.jpg'],
-    },
-    {
-      brand: 'Honda',
-      model: 'Civic',
-      year: 2022,
-      mileage: '8,000 km',
-      color: 'red',
-
-      availability: false,
-      image_url: ['civic.jpg'],
-    },
-    {
-      brand: 'Ford',
-      model: 'Mustang',
-      year: 2023,
-      mileage: '3,000 km',
-      color: 'yellow',
-
-      availability: true,
-      image_url: ['mustang.jpg'],
-    },
-    {
-      brand: 'Chevrolet',
-      model: 'Camaro',
-      year: 2021,
-      mileage: '12,000 km',
-      color: 'orange',
-
-      availability: true,
-      image_url: ['camaro.jpg'],
-    },
-    {
-      brand: 'Tesla',
-      model: 'Model S',
-      year: 2024,
-      mileage: '2,000 km',
-      color: 'gray',
-
-      availability: true,
-      image_url: ['tesla.jpg'],
-    },
-    {
-      brand: 'Volkswagen',
-      model: 'Golf',
-      year: 2022,
-      mileage: '7,000 km',
-      color: 'blue',
-
-      availability: false,
-      image_url: ['golf.jpg'],
-    },
-    {
-      brand: 'Subaru',
-      model: 'Outback',
-      year: 2023,
-      mileage: '4,000 km',
-      color: 'blue',
-
-      availability: true,
-      image_url: ['outback.jpg'],
-    },
-  ];
   async create(createCarDto: CreateCarDto) {
     const newCar = await this.carsRepository.save(createCarDto);
     if (!newCar) {
@@ -141,7 +39,6 @@ export class CarsService {
     car: Omit<CreateCarDto, 'image_url'>,
     id: string,
   ) {
-    `FIND WHERE ID = ${id}`;
     const user = await this.usersRepository.findOneBy({ id });
     if (!user) throw new NotFoundException('Usuario no encontrado');
     const newCar = await this.carsRepository.save({ user, ...car });
@@ -156,31 +53,19 @@ export class CarsService {
   }
 
   async findAll() {
-    const cars = await this.carsRepository.find();
+    const cars = await this.carsRepository.find({ relations: ['post'] });
     if (!cars) throw new NotFoundException('No se encontraron autos');
     return cars;
   }
 
   async findOne(id: string) {
     const findCar = await this.carsRepository.findOneBy({ id });
-    console.log(findCar);
+    await this.carsRepository.update(findCar.id, { availability: true });
 
     if (!findCar) throw new NotFoundException('Auto no encontrado');
     return findCar;
   }
 
-  async seeder() {
-    return Promise.all(
-      this.cars.map(async (car) => {
-        const newCar = this.carsRepository.create(car);
-        if (!newCar) {
-          throw new BadRequestException('Los autos no fueron creados');
-        }
-        await this.carsRepository.save(newCar);
-        return 'Autos creados exitosamente';
-      }),
-    );
-  }
   async findByFilter(filters: Partial<FiltersCars>) {
     if (filters.year && typeof filters.year !== 'number') {
       filters.year = Number(filters.year);
@@ -214,15 +99,24 @@ export class CarsService {
       return result;
     }
   }
-  async update(id: string, updateCarDto: UpdateCarDto) {
+  async update(
+    id: string,
+    updateCarDto: Omit<UpdateCarDto, 'image_url' | 'availability'>,
+    files: Express.Multer.File[],
+  ) {
     const car = await this.carsRepository.findOneBy({ id });
-
     if (!car) throw new NotFoundException('Auto no encontrado');
     const updateCar = await this.carsRepository.update(id, updateCarDto);
-
     if (updateCar.affected === 0) {
       throw new BadRequestException('El auto no fue actualizado');
     }
+    const createdPicture = await this.fileUploadService.uploadVehicleImages(
+      car.id,
+      files,
+    );
+    if (createdPicture.image_url.length === 0)
+      throw new BadRequestException('Error al subir la imagen');
+
     return 'Auto actualizado exitosamente';
   }
 
@@ -234,5 +128,21 @@ export class CarsService {
       throw new BadRequestException('El auto no fue eliminado');
     }
     return 'Auto eliminado exitosamente';
+  }
+
+  async removeImageUrl(id: string, image_url: string[]) {
+    const car = await this.carsRepository.findOneBy({ id });
+    if (!car) throw new NotFoundException('Auto no encontrado');
+    console.log('ESTOS SON LAS IMAGENES ACTUALES', car.image_url);
+    if (car.image_url.length === 0)
+      throw new BadRequestException('No hay imagenes para eliminar');
+    const updateImages = await car.image_url.filter(
+      (url) => !image_url.includes(url),
+    );
+    console.log('IMAGENES LUEGO DE LA FUNCION', updateImages);
+    if (updateImages.length === 0)
+      throw new BadRequestException('STOP ANTES QUE ELIMINE TODAS LAS FOTOS');
+    await this.carsRepository.update(id, { image_url: updateImages });
+    return 'Imagenes eliminadas exitosamente';
   }
 }

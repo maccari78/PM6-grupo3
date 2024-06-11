@@ -1,32 +1,43 @@
-'use client'
-import { useEffect } from 'react';
-import { useRouter } from 'next/router';
+"use client";
 
-const Login: React.FC = () => {
-    const router = useRouter();
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import Loader from "@/components/Loaders/loaderAuth";
 
-    useEffect(() => {
-        const { query } = router;
-        const sessionData: { [key: string]: string } = {};
+const Auth: React.FC = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [loading, setLoading] = useState(true);
 
-        Object.keys(query).forEach(key => {
-            const value = query[key];
-            if (typeof value === 'string') {
-                sessionData[key] = value;
-                console.log(`Parametro guardado: ${key} = ${value}`);
-            }
-        });
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    const sessionData: { [key: string]: string } = {};
 
-        localStorage.setItem('userSession', JSON.stringify(sessionData));
+    params.forEach((value, key) => {
+      sessionData[key] = value;
+      console.log(`Parametro guardado: ${key} = ${value}`);
+    });
 
-        router.push('/'); 
-    }, [router]);
+    localStorage.setItem("userSession", JSON.stringify(sessionData));
 
-    return (
-        <div>
-            <h1>Procesando login...</h1>
+    setTimeout(() => {
+      setLoading(false);
+      router.push("/user");
+    }, 2000);
+  }, [router, searchParams]);
+
+  return (
+    <div>
+      <h1 className="mt-4 text-center font-bold font-sans text-4xl">
+        AUTENTICANDO TUS CREDENCIALES...
+      </h1>
+      <div className="flex items-center justify-center h-screen">
+        <div className='flex justify-center items-center"'>
+          {loading ? <Loader /> : <Loader />}
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
-export default Login;
+export default Auth;

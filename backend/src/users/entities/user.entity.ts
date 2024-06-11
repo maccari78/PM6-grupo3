@@ -13,6 +13,8 @@ import {
   OneToMany,
   JoinColumn,
   ManyToMany,
+  // OneToOne,
+  // ManyToOne,
 } from 'typeorm';
 
 @Entity('users')
@@ -40,12 +42,12 @@ export class User {
 
   @Column({
     default:
-      'https://res-console.cloudinary.com/dkent00db/thumbnails/v1/image/upload/v1717035367/aWNvbi03Nzk3NzA0XzY0MF9mb2ZjOGk=/drilldown',
+      'https://res.cloudinary.com/dkent00db/image/upload/v1717555619/image%20profile%20picture%20placeholder/vqnmnefzjwscrtkfpxtw.webp',
   })
   image_url: string;
 
   @Column({
-    default: null,
+    nullable: true,
   })
   public_id: string;
 
@@ -55,10 +57,15 @@ export class User {
   @Column({ type: 'text', nullable: true })
   aboutMe: string;
 
+  @Column({ default: 'user' })
+  roles: string;
+
   @ManyToMany(() => Rental, (rental) => rental.users)
   rentals: Rental[];
 
-  @OneToMany(() => Notification, (notification) => notification.user)
+  @OneToMany(() => Notification, (notification) => notification.user, {
+    cascade: true,
+  })
   @JoinColumn()
   notifications: Notification[];
 
