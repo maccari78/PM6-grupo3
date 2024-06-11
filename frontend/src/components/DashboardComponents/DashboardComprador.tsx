@@ -6,6 +6,7 @@ import PublicationCard from "./PublicationCard";
 import { redirect, useRouter } from "next/navigation";
 import { IUserData, Rental } from "@/interfaces/IUser";
 import SkeletonDashboard from "../sketelons/SkeletonDashboard";
+import Swal from "sweetalert2";
 
 const DashboardComprador: React.FC = () => {
   const [userToken, setUserToken] = useState<string | null>(null);
@@ -21,7 +22,11 @@ const DashboardComprador: React.FC = () => {
         setUserToken(parsedSession.token);
       } else {
         setLoading(false)
-        alert("Necesitas estar logueado para ingresar");
+        Swal.fire({
+          title: "Error al iniciar sesion",
+          text: "Necesitas estar logueado para ingresar",
+          icon: "error"
+        });
         redirect("/login");
       }
     }

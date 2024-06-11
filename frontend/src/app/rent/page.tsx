@@ -6,6 +6,7 @@ import { ListedCarCardProps } from '@/interfaces/dashboard';
 import Link from 'next/link';
 import { redirect, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import Swal from 'sweetalert2';
 
 const apiUrl = process.env.NEXT_PUBLIC_API_GET_USERS_TOKEN;
 if (!apiUrl) {
@@ -25,7 +26,11 @@ const DashboardVendedor: React.FC = () => {
         const parsedSession = JSON.parse(userSession);
         setUserToken(parsedSession.token);  
       } else {
-        alert("Necesitas estar logueado para ingresar");
+        Swal.fire({
+          title: "Error al iniciar sesion",
+          text: "Necesitas estar logueado para ingresar",
+          icon: "error"
+        });
         redirect("/login")
       }
     }

@@ -6,6 +6,7 @@ import axios from "axios";
 import IRegisterErrorProps from "../../interfaces/IRegisterErrorProps";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Swal from "sweetalert2";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_SIGNUP_URL;
 if (!apiUrl) {
@@ -85,14 +86,27 @@ const Register = () => {
       .then((response) => {
         if (response.data) {
           setUserData(initialUserData);
-          alert(`Usuario registrado correctamente`);
+          Swal.fire({
+            title: "Usuario registrado correctamente",
+            text: "El usuario pudo registrarse correctamente en la aplicacion",
+            icon: "success"
+          });
           router.push("/login");
         } else {
-          alert(response.data);
+          Swal.fire({
+            title: "Error al Registrarse",
+            text: `${response.data}`,
+            icon: "error"
+          });
         }
       })
       .catch((error) => {
-        alert("Ha ocurrido un error en la conexión");
+        Swal.fire({
+          title: "Error al Registrarse",
+          text: "Ha ocurrido un error en la conexión",
+          icon: "error"
+        });
+       
         console.error("Error:", error);
       });
   };
