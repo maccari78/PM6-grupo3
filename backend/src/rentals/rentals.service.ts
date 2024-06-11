@@ -40,12 +40,6 @@ export class RentalsService {
       description,
       image_url,
     };
-
-    // await this.rentalRepository.find({where: {id}, relations: ["user"]})
-
-    //aqui
-    // await this.notificationService.newNotification(email, 'welcome');
-    //aqui
     return await this.createWhithJWT(payload, rest, postId, payment);
   }
 
@@ -158,7 +152,7 @@ export class RentalsService {
             },
             currency: 'usd',
 
-            unit_amount: dataPayment.price * 1000,
+            unit_amount: dataPayment.price * 100,
           },
           quantity: 1,
         },
