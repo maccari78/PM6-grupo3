@@ -86,7 +86,12 @@ const Login = () => {
         // Si el error es un objeto y contiene la propiedad 'message'
         const apiError = err as ApiError;
         setErrorAPI(apiError);
-        alert(`Error: ${apiError.message}`);
+        Swal.fire({
+          title: "Error al iniciar sesion",
+          text: `${apiError.message}`,
+          icon: "error"
+        });
+
       } else if (err instanceof Error) {
         // Si el error es una instancia de Error nativa
         setErrorAPI({
@@ -103,7 +108,11 @@ const Login = () => {
           statusCode: 500,
         };
         setErrorAPI(unknownError);
-        alert(`Error: ${unknownError.message}`);
+        Swal.fire({
+          title: "Porfavor intentelo mas tarde",
+          text: `${unknownError.message}`,
+          icon: "error"
+        });
       }
     }
   };
