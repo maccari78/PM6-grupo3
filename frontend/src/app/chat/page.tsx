@@ -1,13 +1,34 @@
 "use client"
-import React, { useState } from 'react';
+import { IUserData } from '@/interfaces/IUser';
+import { redirect, useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
+import Swal from 'sweetalert2';
 
 const ChatWeb: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-
+  const [userToken, setUserToken] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const router = useRouter();
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
-
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.localStorage) {
+      const userSession = localStorage.getItem("userSession");
+      if (userSession) {
+        const parsedSession = JSON.parse(userSession);
+        setUserToken(parsedSession.token);  
+      } else {
+        setLoading(true)
+        Swal.fire({
+          title: "Error de acceso",
+          text: "Necesitas estar logueado para ingresar",
+          icon: "error"
+        });
+        redirect("/login")
+      }
+    }
+  }, [router]);
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
