@@ -27,7 +27,7 @@ const DashboardVendedor: React.FC = () => {
         setUserToken(parsedSession.token);  
       } else {
         Swal.fire({
-          title: "Error al iniciar sesion",
+          title: "Error de acceso",
           text: "Necesitas estar logueado para ingresar",
           icon: "error"
         });

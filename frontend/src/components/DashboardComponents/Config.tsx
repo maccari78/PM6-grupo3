@@ -21,7 +21,7 @@ const Config = () => {
       } else {
         setLoading(false);
         Swal.fire({
-          title: "Error al iniciar sesion",
+          title: "Error de acceso",
           text: "Necesitas estar logueado para ingresar",
           icon: "error"
         });
