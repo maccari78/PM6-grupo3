@@ -24,7 +24,7 @@ export class CarsService {
     @InjectRepository(Car) private carsRepository: Repository<Car>,
     @InjectRepository(User) private usersRepository: Repository<User>,
     private fileUploadService: FileUploadService,
-  ) {}
+  ) { }
 
   async create(createCarDto: CreateCarDto) {
     const newCar = await this.carsRepository.save(createCarDto);
@@ -53,13 +53,13 @@ export class CarsService {
   }
 
   async findAll() {
-    const cars = await this.carsRepository.find({ relations: ['post'] });
+    const cars = await this.carsRepository.find({ where: { isDeleted: false }, relations: ['post'] });
     if (!cars) throw new NotFoundException('No se encontraron autos');
     return cars;
   }
 
   async findOne(id: string) {
-    const findCar = await this.carsRepository.findOneBy({ id });
+    const findCar = await this.carsRepository.findOne({ where: { id, isDeleted: false }, relations: ['post'], });
     await this.carsRepository.update(findCar.id, { availability: true });
 
     if (!findCar) throw new NotFoundException('Auto no encontrado');
@@ -128,6 +128,16 @@ export class CarsService {
       throw new BadRequestException('El auto no fue eliminado');
     }
     return 'Auto eliminado exitosamente';
+  }
+
+  async softDelete(id: string): Promise<{ message: string }> {
+    const car = await this.carsRepository.findOneBy({ id });
+    
+    if (!car) {
+      throw new NotFoundException(`El automovil con ID ${id} no se a encontrado`);
+    }
+    await this.carsRepository.update(id, { isDeleted: true });
+    return { message: 'El automovil a sido borrado logicamente con exito' };
   }
 
   async removeImageUrl(id: string, image_url: string[]) {

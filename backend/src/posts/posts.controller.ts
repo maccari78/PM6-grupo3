@@ -4,7 +4,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { FiltersPosts } from './interfaces/filter.interfaces';
-import { TokenGuard } from './guards/token.guard';
+// import { TokenGuard } from './guards/token.guard';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { RolesGuard } from 'src/users/utils/roles.guard';
 import { Role } from 'src/users/utils/roles.enum';

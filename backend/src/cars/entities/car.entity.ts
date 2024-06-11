@@ -58,6 +58,9 @@ export class Car {
   @UpdateDateColumn({ type: 'timestamp' })
   updated_at: Timestamp;
 
+  @Column({ default: false })
+  isDeleted: boolean;
+
   @OneToOne(() => Posts)
   @JoinColumn()
   post: Posts;

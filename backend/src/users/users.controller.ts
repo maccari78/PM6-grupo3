@@ -69,4 +69,10 @@ export class UsersController {
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.usersService.remove(id);
   }
+
+  @Delete(':id')
+  @Roles(Role.SuperAdmin)
+  softDelete(@Param('id', ParseUUIDPipe) id: string) {
+    return this.usersService.softDelete(id);
+  }
 }

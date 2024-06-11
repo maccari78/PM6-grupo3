@@ -13,8 +13,6 @@ import {
   OneToMany,
   JoinColumn,
   ManyToMany,
-  // OneToOne,
-  // ManyToOne,
 } from 'typeorm';
 
 @Entity('users')
@@ -59,6 +57,9 @@ export class User {
 
   @Column({ default: 'user' })
   roles: string;
+
+  @Column({ default: false })
+  isDeleted: boolean;
 
   @ManyToMany(() => Rental, (rental) => rental.users)
   rentals: Rental[];

@@ -9,7 +9,7 @@ import { Roles } from 'src/users/utils/roles.decorator';
 @ApiTags('CARS')
 @Controller('cars')
 @UseGuards(RolesGuard)
-@Roles(Role.User, Role.Admin)
+@Roles(Role.User, Role.Admin, Role.SuperAdmin)
 export class CarsController {
   constructor(private readonly carsService: CarsService) {}
 
@@ -36,5 +36,11 @@ export class CarsController {
   @Delete(':id')
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.carsService.remove(id);
+  }
+
+  @Delete(':id')
+  @Roles(Role.SuperAdmin)
+  async softDelete(@Param('id') id: string) {
+    return this.carsService.softDelete(id);
   }
 }
