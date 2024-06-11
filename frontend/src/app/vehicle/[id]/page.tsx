@@ -383,11 +383,11 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
               </div>
               {postState?.car.availability ? (
                 <span className="bg-[#b0d63f]  text-[#222222] font-semibold  text-[11px] md:text-sm me-2  md:px-2.5 md:py-0.5 rounded ">
-                  En Stock
+                  Activa
                 </span>
               ) : (
                 <span className="bg-red-800  text-gray-300 font-semibold  text-[11px] md:text-sm me-2  md:px-2.5 md:py-0.5 rounded ">
-                  Sin Stock
+                  Inactiva
                 </span>
               )}
             </div>
