@@ -78,24 +78,28 @@ export class RentalsService {
     const findCar = await this.carRepository.findOne({
       where: { id: findPost.car.id },
     });
-    console.log(findCar);
-
     if (!findCar) throw new NotFoundException('Vehiculo no encontrado');
     if (findCar.availability === false)
       throw new BadRequestException('El vehiculo ya se encuentra alquilado');
     newRental.posts = findPost;
 
     const rental = await this.rentalRepository.save(newRental);
-    const carUpdate = await this.carRepository.update(findPost.car.id, {
-      availability: false,
-    });
-    if (carUpdate.affected === 0)
-      throw new BadRequestException('Error al actualizar el vehiculo');
     if (!rental)
       throw new BadRequestException(
         'Error al crear el contrato, verifique las relaciones con otras entidades',
       );
-    return await this.payment(payment, rental.id);
+    const url = await this.payment(payment, rental.id);
+    if (url) {
+      const carUpdate = await this.carRepository.update(findPost.car.id, {
+        availability: false,
+      });
+      if (carUpdate.affected === 0)
+        throw new BadRequestException('Error al actualizar el vehiculo');
+      return url;
+    } else {
+      await this.rentalRepository.delete(rental.id);
+      throw new BadRequestException('Error al realizar el pago');
+    }
   }
 
   async findAll() {
@@ -154,7 +158,7 @@ export class RentalsService {
             },
             currency: 'usd',
 
-            unit_amount: dataPayment.price,
+            unit_amount: dataPayment.price * 1000,
           },
           quantity: 1,
         },
@@ -163,15 +167,11 @@ export class RentalsService {
       success_url: `${INTERNAL_API_SUCESS}/${id}`,
       cancel_url: `${INTERNAL_API_CANCEL}/${id}`,
     });
-    console.log(session.url);
 
-    const contract = await this.rentalRepository.findOne({
-      where: { id },
-      relations: ['users', 'posts', 'posts.user'],
-    });
-
-    await this.rentalRepository.find({where: {id}, relations: ["user"]})
-    await this.notificationService.newNotification(contract.users[0].email, 'payConstancy');
+    if (session.url === null) {
+      await this.rentalRepository.delete(id);
+      throw new BadRequestException('Error al realizar el pago');
+    }
 
     return session.url;
   }
@@ -182,11 +182,13 @@ export class RentalsService {
       relations: ['users', 'posts', 'posts.user'],
     });
     if (!contract) throw new NotFoundException('Contrato no encontrado');
-    const userPosts = contract.posts.user.id;
-    const userPay = contract.users.filter((user) => user.id !== userPosts);
-
-    console.log(userPay[0]);
-
+    const userPosts = contract.posts?.user?.id;
+    const userPay = contract.users?.filter((user) => user.id !== userPosts);
+    if (!userPay) throw new NotFoundException('Error al realizar el pago');
+    await this.notificationService.newNotification(
+      userPay[0].email,
+      'payConstancy',
+    );
     return 'Compra pagada con exito';
   }
 
