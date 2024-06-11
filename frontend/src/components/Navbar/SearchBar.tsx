@@ -14,19 +14,19 @@ const SearchComponent: React.FC<SearchComponentProps> = ({ onSearch }) => {
   };
 
   return (
-    <div className="flex bg-gray-900 text-white rounded-lg p-4">
+    <div className="flex flex-col md:flex-row bg-gray-900 text-white rounded-lg p-4 space-y-4 md:space-y-0 md:space-x-4">
       <div className="flex-1">
-        <label className="block mb-1">Escribe una direccion</label>
+        <label className="block mb-1">Selecciona una Direccion</label>
         <input 
           type="text" 
           value={location} 
           onChange={(e) => setLocation(e.target.value)} 
           className="w-full p-2 rounded bg-gray-800 border border-gray-700 focus:outline-none" 
-          placeholder="Buenos Aires, Zona oeste.."
+          placeholder="Buenos Aires, CABA"
         />
       </div>
-      <div className="flex-1 mx-4">
-        <label className="block mb-1">Dia del Retiro</label>
+      <div className="flex-1">
+        <label className="block mb-1">Dia de Retiro</label>
         <input 
           type="datetime-local" 
           value={pickupDate} 
@@ -45,7 +45,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({ onSearch }) => {
       </div>
       <button 
         onClick={handleSearch} 
-        className="ml-4 p-4 bg-lime-500 text-gray-900 rounded-lg hover:bg-lime-600 transition">
+        className="w-full md:w-auto p-4 bg-lime-500 text-gray-900 rounded-lg hover:bg-lime-600 transition">
         Buscar
       </button>
     </div>
