@@ -1,4 +1,4 @@
-import { Controller, Get, Body, Param, Delete, Put, ParseUUIDPipe, UseInterceptors, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, Headers, UploadedFile, UseGuards } from '@nestjs/common';
+import { Controller, Get, Body, Param, Delete, Put, ParseUUIDPipe, UseInterceptors, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, Headers, UploadedFile, UseGuards, Patch } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -68,5 +68,11 @@ export class UsersController {
   @Roles(Role.Admin)
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.usersService.remove(id);
+  }
+
+  @Patch('soft-delete/:id')
+  @Roles(Role.SuperAdmin)
+  async softDelete(@Param('id') id: string): Promise<{ message: string }> {
+    return this.usersService.softDelete(id);
   }
 }

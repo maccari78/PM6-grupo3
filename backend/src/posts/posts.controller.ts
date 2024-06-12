@@ -1,10 +1,10 @@
-import { Controller, Get, Post, Body, Param, Delete, Put, ParseUUIDPipe, UploadedFiles, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, UseInterceptors, Headers, Query, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, ParseUUIDPipe, UploadedFiles, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, UseInterceptors, Headers, Query, UnauthorizedException, UseGuards, Patch } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { FiltersPosts } from './interfaces/filter.interfaces';
-import { TokenGuard } from './guards/token.guard';
+// import { TokenGuard } from './guards/token.guard';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { RolesGuard } from 'src/users/utils/roles.guard';
 import { Role } from 'src/users/utils/roles.enum';
@@ -150,5 +150,11 @@ export class PostsController {
   @Roles(Role.User, Role.Admin)
   deletePostsByIdController(@Param('id', ParseUUIDPipe) id: string) {
     return this.postsService.DeletePostsServices(id);
+  }
+
+  @Patch('soft-delete/:id')
+  @Roles(Role.SuperAdmin)
+  async softDelete(@Param('id') id: string): Promise<{ message: string }> {
+    return this.postsService.softDelete(id);
   }
 }

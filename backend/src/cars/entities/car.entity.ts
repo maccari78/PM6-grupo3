@@ -5,8 +5,9 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
+  // JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   Timestamp,
@@ -58,9 +59,15 @@ export class Car {
   @UpdateDateColumn({ type: 'timestamp' })
   updated_at: Timestamp;
 
-  @OneToOne(() => Posts)
-  @JoinColumn()
-  post: Posts;
+  @Column({ default: false })
+  isDeleted: boolean;
+
+  @OneToMany(() => Posts, post => post.car)
+  post: Posts[];
+
+  // @OneToOne(() => Posts)
+  // @JoinColumn()
+  // post: Posts;
 
   @ManyToOne(() => User, (user) => user.car)
   user: User;
