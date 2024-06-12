@@ -18,10 +18,28 @@ import { Roles } from 'src/users/utils/roles.decorator';
 export class PostsController {
   constructor(private readonly postsService: PostsService) { }
 
+  //Con paginación
+  // @Get()
+  // getPostsAllController(
+   
+  //   @Query('page') page:number = 1,
+  //   @Query('limit') limit:number = 5
+  //   ) {
+  //   return this.postsService.getPostsAllServices(page,limit);
+
+  // }
+
+  //sin paginacion
   @Get()
-  getPostsAllController() {
+  getPostsAllController(
+    ) {
     return this.postsService.getPostsAllServices();
+
   }
+
+
+
+
 
   @Get('filter')
   getPostsByFilter(@Query() filter: FiltersPosts) {
