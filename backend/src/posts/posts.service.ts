@@ -67,13 +67,39 @@ export class PostsService {
     }
   }
 
+    //Con paginacion
+  // async getPostsAllServices(page: number, limit: number) {
+  //   let posts = await this.postRepository.find({
+  //     relations: {
+  //       user: true,
+  //       car: true,
+  //       review: true},
+  //   });
+  //   if (!posts) throw new NotFoundException('No se encontraron publicaciones');
+
+  //   const start = (page - 1) * limit;
+  //   const end = page * limit;
+  //   posts = posts.slice(start, end);
+    
+  //   return posts;
+  // }
+
+  //Sin paginacion
   async getPostsAllServices() {
-    const posts = await this.postRepository.find({
-      relations: ['user', 'car'],
+
+    let posts = await this.postRepository.find({
+      relations: {
+        user: true,
+        car: true,
+        review: true},
     });
     if (!posts) throw new NotFoundException('No se encontraron publicaciones');
+    
     return posts;
   }
+
+
+
 
   async getPostsServiceId(id: string) {
     const postsId = await this.postRepository.findOne({

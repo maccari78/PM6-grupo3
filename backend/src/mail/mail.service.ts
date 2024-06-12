@@ -60,31 +60,27 @@ export class MailService {
         );
       }
     } else if (template === 'payConstancy') {
-      //Para price
-      const posts = user.post.filter((post) => ({ price: post.price }));
-      console.log(posts);
+      //Para price buscar
+      const posts = user.post.filter((post) => ({ price: post.price }));      
       const price = posts[0].price;
-      console.log(price);
 
       const datePay = user.rentals.filter((post) => ({
         createdAt: post.createdAt,
       }));
-      const DatePay = datePay[0].createdAt;
-      //       Alquiler desde :
-      // Alquiler hasta :
-      // Número de operación:
+      const DatePay = datePay[datePay.length - 1].createdAt;
+
       const rentalsStart = user.rentals.filter((post) => ({
         rentalStartDate: post.rentalStartDate,
       }));
-      const RENTALStart = rentalsStart[0].rentalStartDate;
+      const RENTALStart = rentalsStart[rentalsStart.length - 1].rentalStartDate;
 
       const datePayEnd = user.rentals.filter((post) => ({
         rentalEndDate: post.rentalEndDate,
       }));
-      const DatePayend = datePayEnd[0].rentalEndDate;
+      const DatePayend = datePayEnd[datePayEnd.length - 1].rentalEndDate;
 
       const numOperation = user.rentals.filter((post) => ({ id: post.id }));
-      const NumOperation = numOperation[0].id;
+      const NumOperation = numOperation[numOperation.length - 1].id;
 
       try {
         await this.mailerservice.sendMail({
