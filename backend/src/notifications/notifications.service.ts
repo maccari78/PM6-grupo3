@@ -36,7 +36,7 @@ export class NotificationsService {
     return notification;
   }
 
-  async newNotification(email: string, template: string) {
+  async newNotification(email: string, template: string, contractPost?: any) {
     const user = await this.userRepository.findOne({
       where: { email },
       relations: ['post', 'rentals'],
@@ -44,7 +44,7 @@ export class NotificationsService {
 
     if (!user) throw new NotFoundException('Usuario no encontrado');
 
-    await this.mailService.sendEmail(user, template);
+    await this.mailService.sendEmail(user, template, contractPost);
 
     const notification = this.notificationsRepository.create({
       template_message: template,

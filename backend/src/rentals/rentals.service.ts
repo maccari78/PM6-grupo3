@@ -40,12 +40,6 @@ export class RentalsService {
       description,
       image_url,
     };
-
-    // await this.rentalRepository.find({where: {id}, relations: ["user"]})
-
-    //aqui
-    // await this.notificationService.newNotification(email, 'welcome');
-    //aqui
     return await this.createWhithJWT(payload, rest, postId, payment);
   }
 
@@ -158,7 +152,7 @@ export class RentalsService {
             },
             currency: 'usd',
 
-            unit_amount: dataPayment.price * 1000,
+            unit_amount: dataPayment.price * 100,
           },
           quantity: 1,
         },
@@ -181,14 +175,29 @@ export class RentalsService {
       where: { id },
       relations: ['users', 'posts', 'posts.user'],
     });
+
+    console.log('Este es el contrato:', contract);
+
     if (!contract) throw new NotFoundException('Contrato no encontrado');
     const userPosts = contract.posts?.user?.id;
     const userPay = contract.users?.filter((user) => user.id !== userPosts);
+
+    const owner = contract.posts?.user;
+    const contractPost = contract.posts;
+
     if (!userPay) throw new NotFoundException('Error al realizar el pago');
+
+    await this.notificationService.newNotification(
+      owner.email,
+      'rentedVehicle',
+      contractPost,
+    );
+
     await this.notificationService.newNotification(
       userPay[0].email,
       'payConstancy',
     );
+
     return 'Compra pagada con exito';
   }
 
