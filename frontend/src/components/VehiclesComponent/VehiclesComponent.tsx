@@ -1,10 +1,10 @@
 import VehicleCard from "../VehicleCard/VehicleCard";
 import { IPost } from "./interfaces/IPost";
 
-const VehiclesComponent: React.FC<{ posts: IPost[] }> = ({ posts }) => {
+const VehiclesComponent: React.FC<{ nPosts: IPost[] }> = ({ nPosts }) => {
   return (
     <div className="flex justify-evenly  flex-wrap">
-      {posts.map((post: IPost) => {
+      {nPosts?.map((post: IPost) => {
         return (
           <VehicleCard
             key={post.id}
