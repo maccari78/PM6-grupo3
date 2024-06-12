@@ -5,8 +5,9 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
+  // JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   Timestamp,
@@ -61,9 +62,12 @@ export class Car {
   @Column({ default: false })
   isDeleted: boolean;
 
-  @OneToOne(() => Posts)
-  @JoinColumn()
-  post: Posts;
+  @OneToMany(() => Posts, post => post.car)
+  post: Posts[];
+
+  // @OneToOne(() => Posts)
+  // @JoinColumn()
+  // post: Posts;
 
   @ManyToOne(() => User, (user) => user.car)
   user: User;

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, Put, ParseUUIDPipe, UploadedFiles, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, UseInterceptors, Headers, Query, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, ParseUUIDPipe, UploadedFiles, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, UseInterceptors, Headers, Query, UnauthorizedException, UseGuards, Patch } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -150,5 +150,11 @@ export class PostsController {
   @Roles(Role.User, Role.Admin)
   deletePostsByIdController(@Param('id', ParseUUIDPipe) id: string) {
     return this.postsService.DeletePostsServices(id);
+  }
+
+  @Patch('soft-delete/:id')
+  @Roles(Role.SuperAdmin)
+  async softDelete(@Param('id') id: string): Promise<{ message: string }> {
+    return this.postsService.softDelete(id);
   }
 }

@@ -18,6 +18,9 @@ export class Posts {
   @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
   price: number;
 
+  @Column({ default: false })
+  isDeleted: boolean;
+
   @OneToMany(() => Chat, (chat) => chat.post, { cascade: true })
   room_id: Chat[];
 
