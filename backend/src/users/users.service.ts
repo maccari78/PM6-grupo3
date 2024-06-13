@@ -20,7 +20,7 @@ export class UsersService {
   ) {}
 
   async findAll() {
-    const users = await this.userRepository.find();
+    const users = await this.userRepository.find({ where: { isDeleted: false } });
 
     if (users.length === 0 || !users)
       throw new NotFoundException('No se encontraron usuarios');
@@ -29,7 +29,7 @@ export class UsersService {
 
   async findOne(id: string) {
     const user = await this.userRepository.findOne({
-      where: { id },
+      where: { id, isDeleted: false },
       relations: [
         'car',
         'post',
@@ -55,7 +55,7 @@ export class UsersService {
 
     if (!payload) throw new NotFoundException('Error al decodificar token');
     const user = await this.userRepository.findOne({
-      where: { email: payload.sub },
+      where: { email: payload.sub, isDeleted: false },
       relations: [
         'car',
         'car.post',
@@ -90,7 +90,7 @@ export class UsersService {
 
     if (!payload) throw new NotFoundException('Error al decodificar token');
     const user = await this.userRepository.findOne({
-      where: { email: payload.sub },
+      where: { email: payload.sub, isDeleted: false },
       relations: ['addresses'],
     });
     if (!user) throw new NotFoundException('Usuario no encontrado');
@@ -125,6 +125,7 @@ export class UsersService {
     const { password, ...rest } = uploadedImage;
     return { message: 'Usuario actualizado con exito', ...rest };
   }
+
   hasDefinedValue(obj: UpdateAddressDto) {
     const result: UpdateAddressDto = {};
     let hasDefinedValue = false;
@@ -148,8 +149,18 @@ export class UsersService {
     return 'Usuario eliminado con exito';
   }
 
+  async softDelete(id: string): Promise<{ message: string }> {
+    const car = await this.userRepository.findOneBy({ id });
+    
+    if (!car) {
+      throw new NotFoundException(`El usuario con ID ${id} no se ha encontrado`);
+    }
+    await this.userRepository.update(id, { isDeleted: true });
+    return { message: 'El usuario a sido borrado logicamente con exito' };
+  }
+
   async findByEmail(email: string) {
-    const user = await this.userRepository.findOne({ where: { email } });
+    const user = await this.userRepository.findOne({ where: { email, isDeleted: false } });
 
     if (!user) throw new NotFoundException('Usuario no encontrado');
     return user;
