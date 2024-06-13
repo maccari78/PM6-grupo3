@@ -62,7 +62,7 @@ export class Car {
   @Column({ default: false })
   isDeleted: boolean;
 
-  @OneToMany(() => Posts, post => post.car)
+  @OneToMany(() => Posts, (post) => post.car)
   post: Posts[];
 
   // @OneToOne(() => Posts)
