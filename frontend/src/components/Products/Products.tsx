@@ -4,6 +4,7 @@ import VehiclesComponent from "../VehiclesComponent/VehiclesComponent";
 import { useEffect, useState } from "react";
 import { IPost } from "../VehiclesComponent/interfaces/IPost";
 import ShowAndDeleteFilter from "../ShowAndDeleteFilter/ShowAndDeleteFilter";
+import Pagination from "../Pagination/Pagination";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_POSTS;
 if (!apiUrl) {
@@ -17,6 +18,8 @@ if (!apiBaseUrl) {
 
 const Products: React.FC = () => {
   const [posts, setPosts] = useState<IPost[]>([]);
+  const [postsQT, setPostQT] = useState<number>(9);
+  const [currentPage, setCurrentPage] = useState<number>(1);
   const [filters, setFilters] = useState<any>(null);
   const [notShowFilter, setNotShowFilter] = useState(true);
 
@@ -27,7 +30,12 @@ const Products: React.FC = () => {
           method: "GET",
         });
         const data: IPost[] = await response.json();
-        setPosts(data);
+        if (Array.isArray(data)) {
+          setPosts(data);
+        } else {
+          console.error("Expected an array but received:", data);
+          setPosts([]);
+        }
       } catch (error: any) {
         console.log(error.message);
       }
@@ -49,8 +57,14 @@ const Products: React.FC = () => {
             },
           }
         );
+
         const data: IPost[] = await response.json();
-        setPosts(data);
+        if (Array.isArray(data)) {
+          setPosts(data);
+        } else {
+          console.log(`Se espera un array pero se recibio, ${data}`);
+          setPosts([]);
+        }
       } catch (error: any) {
         console.log(error.message);
       }
@@ -68,6 +82,14 @@ const Products: React.FC = () => {
     setNotShowFilter(false);
   };
 
+  const endIndex = currentPage * postsQT;
+  const intIndex = endIndex - postsQT;
+
+  const nPosts: IPost[] = Array.isArray(posts)
+    ? posts.slice(intIndex, endIndex)
+    : [];
+  const nPages: number = Math.ceil(posts.length / postsQT);
+
   return (
     <div className="flex flex-col items-center mt-5 justify-around md:items-start  md:flex-row md:justify-evenly md:my-10 md:mx-10 ">
       <Filters onFilterChange={handleFilterChange} />
@@ -76,7 +98,7 @@ const Products: React.FC = () => {
           <ShowAndDeleteFilter deleteFilter={deleteFilter} filters={filters} />
         )}
 
-        {posts.hasOwnProperty("error") ? (
+        {posts.length === 0 ? (
           <div className="flex flex-row items-center">
             <svg
               aria-hidden="true"
@@ -100,7 +122,14 @@ const Products: React.FC = () => {
             </h1>
           </div>
         ) : (
-          <VehiclesComponent posts={posts} />
+          <>
+            <VehiclesComponent nPosts={nPosts} />
+            <Pagination
+              setCurrentPage={setCurrentPage}
+              currentPage={currentPage}
+              nPages={nPages}
+            />
+          </>
         )}
       </div>
     </div>
