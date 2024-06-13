@@ -23,56 +23,53 @@ const Chatbottt = () => {
     return text;
   }
 
-  const helpOptions = ["¿Debo iniciar sesion para alquilar?", "Quiero poner en alquiler mi auto", "Terminos y condiciones", "Desactivar cuenta"]; 
+  const helpOptions = ["Preguntas frecuentes", "Quiero alquilar mi vehiculo", "Quiero crearme una cuenta", "Como desactivar mi cuenta"]; 
 	const flow = {
 		start: {
-			message: "Hello, I am Tan Jin 👋! Welcome to React ChatBotify, I'm excited that you are using our " +
+			message: "Hola, Soy Pepito 👋! Bienvenido a YouDrive, estoy emocionado de que uses nuestro " +
 				"chatbot 😊!",
 			transition: {duration: 1000},
 			path: "show_options"
 		},
 		show_options: {
-			message: "It looks like you have not set up a conversation flow yet. No worries! Here are a few helpful " +
-				"things you can check out to get started:",
+			message: "Puedes preguntarme lo que quieras!",
 			options: helpOptions,
 			path: "process_options"
 		},
 		prompt_again: {
-			message: "Do you need any other help?",
+			message: "Necesitas alguna otra ayuda?",
 			options: helpOptions,
 			path: "process_options"
 		},
 		unknown_input: {
-			message: "Sorry, I do not understand your message 😢! If you require further assistance, you may click on " +
-				"the Github option and open an issue there or visit our discord.",
+			message: "Disculpame, no comprendo tu mensaje 😢! Si necesitas ayuda personalizada, puedes clickear en " +
+				"contacto",
 			options: helpOptions,
 			path: "process_options"
 		},
 		process_options: {
 			transition: {duration: 0},
-			chatDisabled: true,
+			chatDisabled: false,
 			path: async (params:any) => {
 				let link = "";
+				let message = "";
 				switch (params.userInput) {
-				case "Quickstart":
-					link = "https://react-chatbotify.tjtanjin.com/docs/introduction/quickstart/";
+				case "Preguntas frecuentes":
+					link = "/answers";
 					break;
-				case "API Docs":
-					link = "https://react-chatbotify.tjtanjin.com/docs/api/bot_options";
+				case "Quiero alquilar mi vehiculo":
+				 	link = "/vehicleForm";
 					break;
-				case "Examples":
-					link = "https://react-chatbotify.tjtanjin.com/docs/examples/basic_form";
+				case "Quiero crearme una cuenta":
+					link = "/register";
 					break;
-				case "Github":
-					link = "https://github.com/tjtanjin/react-chatbotify/";
-					break;
-				case "Discord":
-					link = "https://discord.gg/6R4DK4G5Zh";
+				case "Como desactivar mi cuenta":
+					link = "#";
 					break;
 				default:
 					return "unknown_input";
 				}
-				await params.injectMessage("Sit tight! I'll send you right there!");
+				await params.injectMessage("Ya mismo te redirijo hacia alli!");
 				setTimeout(() => {
 					window.open(link);
 				}, 1000)
@@ -105,11 +102,6 @@ const Chatbottt = () => {
   tooltip: {
     mode: "CLOSE",
     text: "Habla conmigo!",
-  },
-  advance: {
-    useCustomMessages: false,
-    useCustomBotOptions: false,
-    useCustomPaths: false,
   },
   };
 
