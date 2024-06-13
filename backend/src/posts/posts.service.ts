@@ -111,12 +111,8 @@ export class PostsService {
     files?: Express.Multer.File[],
   ) {
     const { title, description, price, ...rest } = posts;
-
     const secret = process.env.JWT_SECRET;
-
-    const payload: JwtPayload = await this.jwtService.verify(currentUser, {
-      secret,
-    });
+    const payload: JwtPayload = await this.jwtService.verify(currentUser, { secret });
     console.log(payload);
 
     if (!payload) throw new UnauthorizedException('token invalido 3');
@@ -130,7 +126,6 @@ export class PostsService {
     const newPosts = this.postRepository.create({ title, description, price });
 
     newPosts.car = newCar;
-
     newPosts.user = user;
 
     const postsSaved = await this.postRepository.save(newPosts);
@@ -138,15 +133,11 @@ export class PostsService {
       throw new BadRequestException('No se pudo insertar la publicación');
     }
 
-    // Asegúrate de que postsSaved es un array
-    if (!Array.isArray(postsSaved)) {
+    if (Array.isArray(postsSaved)) {
       throw new BadRequestException('postsSaved no es un array');
     }
 
-    // Actualiza cada post con la referencia al nuevo auto
-    for (const post of postsSaved) {
-      await this.postRepository.update(post.id, { car: newCar });
-    }
+    await this.postRepository.update(postsSaved.id, { car: newCar });
 
     return 'Publicación insertada';
   }
