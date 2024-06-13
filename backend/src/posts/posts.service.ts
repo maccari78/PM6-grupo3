@@ -1,12 +1,6 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-
 import { Posts } from './entities/post.entity';
 import { Repository } from 'typeorm';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -26,7 +20,7 @@ export class PostsService {
     @InjectRepository(Posts) private postRepository: Repository<Posts>,
     @InjectRepository(User) private userRepository: Repository<User>,
     private jwtService: JwtService,
-  ) {}
+  ) { }
 
   async getPostsByFilterServices(filters: FiltersPosts) {
     if (filters.year && typeof filters.year !== 'number') {
@@ -67,11 +61,35 @@ export class PostsService {
     }
   }
 
+  //Con paginacion
+  // async getPostsAllServices(page: number, limit: number) {
+  //   let posts = await this.postRepository.find({
+  //     relations: {
+  //       user: true,
+  //       car: true,
+  //       review: true},
+  //   });
+  //   if (!posts) throw new NotFoundException('No se encontraron publicaciones');
+
+  //   const start = (page - 1) * limit;
+  //   const end = page * limit;
+  //   posts = posts.slice(start, end);
+
+  //   return posts;
+  // }
+
+  //Sin paginacion
   async getPostsAllServices() {
+
     const posts = await this.postRepository.find({
-      relations: ['user', 'car'],
+      relations: {
+        user: true,
+        car: true,
+        review: true
+      },
     });
     if (!posts) throw new NotFoundException('No se encontraron publicaciones');
+
     return posts;
   }
 
@@ -116,9 +134,20 @@ export class PostsService {
     newPosts.user = user;
 
     const postsSaved = await this.postRepository.save(newPosts);
-    if (!postsSaved)
+    if (!postsSaved) {
       throw new BadRequestException('No se pudo insertar la publicación');
-    await this.carRepository.update(newCar.id, { post: postsSaved });
+    }
+
+    // Asegúrate de que postsSaved es un array
+    if (!Array.isArray(postsSaved)) {
+      throw new BadRequestException('postsSaved no es un array');
+    }
+
+    // Actualiza cada post con la referencia al nuevo auto
+    for (const post of postsSaved) {
+      await this.postRepository.update(post.id, { car: newCar });
+    }
+
     return 'Publicación insertada';
   }
 
@@ -206,5 +235,34 @@ export class PostsService {
       throw new BadRequestException('No se pudo borrar la publicación');
 
     return 'Publicación eliminada';
+  }
+
+  async softDelete(id: string): Promise<{ message: string }> {
+    const car = await this.carRepository.findOne({ where: { id }, relations: ['post'] });
+
+    if (!car) {
+      throw new NotFoundException(`El automóvil con ID ${id} no se ha encontrado`);
+    }
+
+    car.isDeleted = true;
+    await this.carRepository.save(car);
+
+    const postsToUpdate = car.post.map(post => ({ id: post.id, isDeleted: true }));
+    await this.postRepository.save(postsToUpdate);
+
+    return { message: 'El automóvil ha sido borrado lógicamente con éxito' };
+  }
+
+  async restoreCar(id: string): Promise<void> {
+    const car = await this.carRepository.findOne({ where: { id }, withDeleted: true, relations: ['post'] });
+    if (!car) {
+      throw new NotFoundException(`El automóvil con ID ${id} no se ha encontrado`);
+    }
+
+    car.isDeleted = false;
+    await this.carRepository.save(car);
+
+    const postsToUpdate = car.post.map(post => ({ id: post.id, isDeleted: false }));
+    await this.postRepository.save(postsToUpdate);
   }
 }

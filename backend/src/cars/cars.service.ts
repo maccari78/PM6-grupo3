@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCarDto } from './dto/create-cars.dto';
 import { UpdateCarDto } from './dto/update-cars.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,6 +6,7 @@ import { Car } from './entities/car.entity';
 import { Repository } from 'typeorm';
 import { FileUploadService } from 'src/file-upload/file-upload.service';
 import { User } from 'src/users/entities/user.entity';
+import { Posts } from 'src/posts/entities/post.entity';
 export interface FiltersCars {
   brand: string;
   model: string;
@@ -23,8 +20,9 @@ export class CarsService {
   constructor(
     @InjectRepository(Car) private carsRepository: Repository<Car>,
     @InjectRepository(User) private usersRepository: Repository<User>,
+    @InjectRepository(Posts) private readonly postsRepository: Repository<Posts>,
     private fileUploadService: FileUploadService,
-  ) {}
+  ) { }
 
   async create(createCarDto: CreateCarDto) {
     const newCar = await this.carsRepository.save(createCarDto);
@@ -53,13 +51,13 @@ export class CarsService {
   }
 
   async findAll() {
-    const cars = await this.carsRepository.find({ relations: ['post'] });
+    const cars = await this.carsRepository.find({ where: { isDeleted: false }, relations: ['post'] });
     if (!cars) throw new NotFoundException('No se encontraron autos');
     return cars;
   }
 
   async findOne(id: string) {
-    const findCar = await this.carsRepository.findOneBy({ id });
+    const findCar = await this.carsRepository.findOne({ where: { id, isDeleted: false }, relations: ['post'], });
     await this.carsRepository.update(findCar.id, { availability: true });
 
     if (!findCar) throw new NotFoundException('Auto no encontrado');
@@ -99,6 +97,7 @@ export class CarsService {
       return result;
     }
   }
+
   async update(
     id: string,
     updateCarDto: Omit<UpdateCarDto, 'image_url' | 'availability'>,
@@ -129,6 +128,47 @@ export class CarsService {
     }
     return 'Auto eliminado exitosamente';
   }
+
+  async softDelete(id: string): Promise<{ message: string }> {
+    const car = await this.carsRepository.findOne({ where: { id }, relations: ['post'] });
+    
+    if (!car) {
+      throw new NotFoundException(`El automovil con ID ${id} no se ha encontrado`);
+    }
+
+    car.isDeleted = true;
+    await this.carsRepository.save(car);
+
+    for (const post of car.post) {
+      post.isDeleted = true;
+      await this.postsRepository.save(post);
+    }
+
+    return { message: 'El automovil ha sido borrado lógicamente con éxito' };
+  }
+
+  async findAllWithDeleted(): Promise<Car[]> {
+    return this.carsRepository.find({ withDeleted: true, relations: ['post'] });
+  }
+  
+  async findOneWithDeleted(id: string): Promise<Car> {
+    return this.carsRepository.findOne({ where: { id }, withDeleted: true, relations: ['post'] });
+  }
+
+  async restoreCar(id: string): Promise<void> {
+    const car = await this.carsRepository.findOne({ where: { id }, withDeleted: true, relations: ['post'] });
+    if (!car) {
+      throw new NotFoundException(`El automóvil con ID ${id} no se ha encontrado`);
+    }
+
+    car.isDeleted = false;
+    for (const post of car.post) {
+      post.isDeleted = false;
+      await this.postsRepository.save(post);
+    }
+    await this.carsRepository.save(car);
+  }
+
 
   async removeImageUrl(id: string, image_url: string[]) {
     const car = await this.carsRepository.findOneBy({ id });

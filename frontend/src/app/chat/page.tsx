@@ -7,6 +7,7 @@ import Swal from 'sweetalert2';
 const ChatWeb: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [userToken, setUserToken] = useState<string | null>(null);
+  
   const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
   const toggleMenu = () => {

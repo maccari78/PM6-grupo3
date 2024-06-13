@@ -38,6 +38,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() payload: CreateChatDto,
   ) {
     const token: string = client.handshake.auth?.token;
+    console.log(payload)
     if (!token) {
       client.disconnect();
       return;

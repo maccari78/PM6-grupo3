@@ -11,8 +11,8 @@ export class ChatController {
   constructor(private chatService: ChatService) { }
 
   @Get(':id/messages')
-  @UseGuards(RolesGuard)
-  @Roles(Role.User, Role.Admin)
+  // @UseGuards(RolesGuard)
+  // @Roles(Role.User, Role.Admin)
   async getChatByRoom_ID(@Param('id') room_id: string) {
     return await this.chatService.findAllByRoom_ID(room_id);
   }

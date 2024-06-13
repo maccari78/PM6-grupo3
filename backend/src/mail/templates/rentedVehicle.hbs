@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehículo Rentado</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            color: white;
+        }: p{
+            font-size: 14px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: rgb(34, 34, 34);
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            padding: 10px 0;
+            background-color: rgb(196, 255, 13);
+            color: rgb(34, 34, 34);
+            border-radius: .2rem;
+        }
+        .content {
+            padding: 20px;
+        }
+        .footer {
+            text-align: center;
+            padding: 10px 0;
+            background-color: #f4f4f4;
+            color: #777777;
+            font-size: 10px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 20px 0;
+            background-color: rgb(196, 255, 13);
+            color: rgb(34, 34, 34);
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>¡Renta en proceso!</h2>
+        </div>
+        <div class="content">
+            <h1>Hola <span style="color: rgb(196, 255, 13) ;">{{owner}}.</span></h1>
+
+            <h2>Tu vehículo ha sido rentado!</h2>
+
+            <p>Tu publicación: 
+                <ul>
+                    <li>
+                        <span style="font-weight: bold; color: rgb(196, 255, 13)">{{post}}</span><br>
+                        <span>{{description}}</span>
+                    </li>
+                </ul>
+                Ha sido rentada por el usuario <span style="font-weight: bold; color: rgb(196, 255, 13)">{{renter}}</span>!
+            </p>
+
+            <p>El vehiculo fue rentado del día {{rentalStart}} hasta el {{rentalEnd}} por un precio de <span style="font-weight: bold; color: rgb(196, 255, 13)">${{prices}}</span>.</p>
+
+            <p>Ingresa a la aplicación para ponerte en contacto con <span style="font-weight: bold; color: rgb(196, 255, 13)">{{renter}}</span> y cuadrar los ultimos detalles.</p>
+
+            <p style="font-weight: bold; font-style: italic">Atentamente, <br> El equipo de YouDrive</p>
+
+            <a href="Aqui iria la url" class="button">You Drive</a>
+        </div>
+        <div class="footer">
+             <img src="cid:imagename" alt="Logo de You Drive" style="max-width: 600px">
+            <p>&copy; 2024 You Drive. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</body>
+</html>

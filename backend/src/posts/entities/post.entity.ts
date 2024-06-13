@@ -2,18 +2,7 @@ import { Car } from 'src/cars/entities/car.entity';
 import { Chat } from 'src/chat/entities/chat.entity';
 import { Review } from 'src/reviews/entities/review.entity';
 import { User } from 'src/users/entities/user.entity';
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  OneToOne,
-  PrimaryGeneratedColumn,
-  Timestamp,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, Timestamp, UpdateDateColumn } from 'typeorm';
 
 @Entity('posts')
 export class Posts {
@@ -28,6 +17,9 @@ export class Posts {
 
   @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
   price: number;
+
+  @Column({ default: false })
+  isDeleted: boolean;
 
   @OneToMany(() => Chat, (chat) => chat.post, { cascade: true })
   room_id: Chat[];
