@@ -1,12 +1,43 @@
-'use client'
+"use client";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import Swal from "sweetalert2";
 
 const Success = () => {
+  const router = useRouter();
+
   const handleRemoveRent = () => {
     if (window !== undefined && window.localStorage) {
       window.localStorage.removeItem("checkoutPost");
     }
   };
+
+  useEffect(() => {
+    if (
+      typeof window !== undefined &&
+      !window.localStorage.getItem("checkoutPost")
+    ) {
+      Swal.fire({
+        title: "Ha ocurrido un error!",
+        text: "No haz realizado ninguna compra!",
+        icon: "error",
+      });
+
+      router.push("/");
+    } else if (
+      typeof window !== undefined &&
+      !window.localStorage.getItem("userSession")
+    ) {
+      Swal.fire({
+        title: "Ha ocurrido un error!",
+        text: "Debes iniciar sesion!",
+        icon: "error",
+      });
+
+      router.push("/login");
+    }
+  });
 
   return (
     <div className="flex flex-col bg-[#444343] min-h-screen items-center">

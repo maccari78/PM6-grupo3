@@ -2,6 +2,7 @@
 
 import ButtonCheckout from "@/components/ButtonCheckout/ButtonCheckout";
 import DateRangePicker from "@/components/DateRangePicker/DateRangePicker";
+import Reviews from "@/components/Reviews/Reviews";
 import { IPost } from "@/components/VehiclesComponent/interfaces/IPost";
 import { IUserData } from "@/interfaces/IUser";
 import Link from "next/link";
@@ -33,6 +34,8 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
   const [endDate, setEndDate] = useState<string | undefined>();
   const [userData, setUserData] = useState<IUserData | null>(null);
   const [isOwner, setIsOwner] = useState<boolean>(false);
+
+  console.log(postState);
 
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
@@ -382,12 +385,12 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
                 </h1>
               </div>
               {postState?.car.availability ? (
-                <span className="bg-[#b0d63f]  text-[#222222] font-semibold  text-[11px] md:text-sm me-2  md:px-2.5 md:py-0.5 rounded ">
-                  Activa
+                <span className="bg-[#b0d63f]  text-[#222222] font-semibold  text-[11px] me-2  md:px-2.5 md:py-0.5 rounded ">
+                  Disponible
                 </span>
               ) : (
-                <span className="bg-red-800  text-gray-300 font-semibold  text-[11px] md:text-sm me-2  md:px-2.5 md:py-0.5 rounded ">
-                  Inactiva
+                <span className="bg-red-800  text-gray-300 font-semibold  text-[11px]  me-2  md:px-2.5 md:py-0.5 rounded ">
+                  No disponible
                 </span>
               )}
             </div>
@@ -438,6 +441,8 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
           </div>
         </div>
       </div>
+
+      <Reviews />
     </>
   );
 };
