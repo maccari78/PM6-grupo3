@@ -66,6 +66,7 @@ const DashboardVendedor: React.FC = () => {
     }
   }, [userToken]);
 
+  console.log(userData)
 if (loading) {
   return <SkeletonDashboard />;
 }
