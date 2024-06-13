@@ -39,6 +39,7 @@ export class Posts {
 
   @UpdateDateColumn()
   updated_at: Timestamp;
+  
   @ManyToOne(() => Review, (review) => review.post)
   review: Review[];
 }
