@@ -1,16 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateChatDto {
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
-  sender: string;
+  @IsOptional()
+  sender?: string;
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
-  receiver: string;
+  @IsOptional()
+  receiver?: string;
 
   @ApiProperty()
   @IsString()
@@ -21,4 +21,9 @@ export class CreateChatDto {
   @IsString()
   @IsNotEmpty()
   room_id: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  image?: string;
 }
