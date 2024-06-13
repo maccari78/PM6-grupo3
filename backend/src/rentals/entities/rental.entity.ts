@@ -36,6 +36,9 @@ export class Rental {
   @JoinColumn()
   posts: Posts;
 
+  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true }) // Nueva columna para el costo total
+  totalCost: number ;
+
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 

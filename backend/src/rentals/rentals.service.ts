@@ -28,19 +28,83 @@ export class RentalsService {
     private jwtService: JwtService,
   ) {}
   async create(createRentalDto: CreateRentalDto, currentUser: string, postId) {
-    const { name, price, description, image_url, ...rest } = createRentalDto;
+    const { name, price, description, image_url,rentalStartDate, rentalEndDate, ...rest } = createRentalDto;
 
     const secret = process.env.JWT_SECRET;
     const payload: JwtPayload = await this.jwtService.verify(currentUser, {
       secret,
     });
+
+    const rental_user = await this.userRepository.findOne({
+      where: { email: payload.sub },
+    });
+
+    if (!rental_user) throw new NotFoundException('Usuario no encontrado');
+
+    const findPost = await this.postRepository.findOne({
+      where: { id: postId },
+      relations: ['car', 'user'],
+    });
+    if (!findPost)
+      throw new NotFoundException('Publicación no encontrada en la BD');
+    if (findPost.user.email === rental_user.email)
+      throw new BadRequestException('No puedes alquilar tu propio vehiculo');
+
+    const findCar = await this.carRepository.findOne({
+      where: { id: findPost.car.id },
+    });
+    if (!findCar) throw new NotFoundException('Vehiculo no encontrado');
+    if (findCar.availability === false)
+      throw new BadRequestException('El vehiculo ya se encuentra alquilado');
+
+    // Calcular la duración del alquiler en días
+    const startDate = new Date(rentalStartDate);
+    const endDate = new Date(rentalEndDate);
+    const timeDiff = endDate.getTime() - startDate.getTime();
+    const dayDiff = timeDiff / (1000 * 3600 * 24);
+
+    // Calcular el costo total
+    const totalCost = dayDiff * findPost.price;
+
+    const newRental = this.rentalRepository.create({
+      rentalStartDate,
+      rentalEndDate,
+      totalCost,
+      users: [rental_user, findPost.user],
+      posts: findPost,
+      ...rest,
+    });    
+
+    const rental = await this.rentalRepository.save(newRental);
+    if (!rental)
+      throw new BadRequestException(
+        'Error al crear el contrato, verifique las relaciones con otras entidades',
+      );
+
+
     const payment: Payment = {
-      name,
-      price,
-      description,
+      name: rental_user.name,
+      price: totalCost,
+      description: findPost.description,
       image_url,
     };
-    return await this.createWhithJWT(payload, rest, postId, payment);
+
+    const url = await this.payment(payment, rental.id);
+
+    if (url) {
+      const carUpdate = await this.carRepository.update(findPost.car.id, {
+        availability: false,
+      });
+      if (carUpdate.affected === 0)
+        throw new BadRequestException('Error al actualizar el vehiculo');
+      return url;
+    } else {
+      await this.rentalRepository.delete(rental.id);
+      throw new BadRequestException('Error al realizar el pago');
+    }
+
+
+   // return await this.createWhithJWT(payload, rest, postId, payment);
   }
 
   async createWhithJWT(

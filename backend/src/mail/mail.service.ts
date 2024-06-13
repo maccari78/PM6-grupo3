@@ -60,25 +60,31 @@ export class MailService {
         );
       }
     } else if (template === 'payConstancy') {
-      //Para price buscar
-      const posts = user.post.filter((post) => ({ price: post.price }));      
-      const price = posts[0].price;
+      //To search totalCost      
+      const PRICE = user.rentals.filter((post)=>({
+        priceTotal: post.totalCost
+      }) )
+      const price = PRICE[PRICE.length - 1].totalCost;
 
+      //To search payDay
       const datePay = user.rentals.filter((post) => ({
         createdAt: post.createdAt,
       }));
       const DatePay = datePay[datePay.length - 1].createdAt;
 
+      //To search for first day of rent
       const rentalsStart = user.rentals.filter((post) => ({
         rentalStartDate: post.rentalStartDate,
       }));
       const RENTALStart = rentalsStart[rentalsStart.length - 1].rentalStartDate;
 
+      //To search for last day of rent
       const datePayEnd = user.rentals.filter((post) => ({
         rentalEndDate: post.rentalEndDate,
       }));
       const DatePayend = datePayEnd[datePayEnd.length - 1].rentalEndDate;
 
+      //To search for number of operation
       const numOperation = user.rentals.filter((post) => ({ id: post.id }));
       const NumOperation = numOperation[numOperation.length - 1].id;
 
@@ -117,6 +123,12 @@ export class MailService {
         relations: { users: true },
       });
 
+      //To search totalCost      
+      const PRICE = user.rentals.filter((post)=>({
+        priceTotal: post.totalCost
+      }) )
+      const price = PRICE[PRICE.length - 1].totalCost;
+
       try {
         await this.mailerservice.sendMail({
           to: user.email,
@@ -127,7 +139,7 @@ export class MailService {
             renter: rental[0]?.users[0].name,
             post: contractPost.title,
             description: contractPost.description,
-            price: contractPost.price,
+            prices: price,
             rentalStart: rental[0]?.rentalStartDate,
             rentalEnd: rental[0]?.rentalEndDate,
           },
