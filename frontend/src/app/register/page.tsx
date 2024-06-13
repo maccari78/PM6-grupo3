@@ -51,12 +51,13 @@ const Register = () => {
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = event.target;
+    
 
     setErrors((prevState) => ({
       ...prevState,
       [name]:
         value.trim() === ""
-          ? "Este campo es requerido"
+          ? "Debes completar este campo"
           : (prevState as any)[name],
     }));
   };
@@ -111,19 +112,6 @@ const Register = () => {
       });
   };
 
-  // const handleGoogleAuth = async () => {
-  //   try {
-  //     const { data } = await axios.get('http://localhost:3001/auth/google/login')
-  //     // const { data } = await axios.get('http://localhost:3001/auth/google/redirect')
-  //     return data;
-  //   } catch (error: any) {
-  //     return {
-  //       message: error.message,
-  //       status: error.response?.status
-  //     }
-  //   }
-  // }
-
   return (
     <div className="font-sans text-white m-0 bg-[url('/background_register_2.svg')] bg-no-repeat bg-cover relative z-3 w-full pt-[70px] px-[30px] pb-[44px] flex justify-center items-center min-h-screen bg-gray-900 h-min ">
       <div className="px-20 py-6 rounded-[12px] bg-black/10 ">
@@ -133,7 +121,7 @@ const Register = () => {
         <div className="max-w-sm mx-auto">
           <form onSubmit={handleOnSubmit}>
             <div className="flex gap-8">
-              <div className="mb-4">
+              <div className="mb-4 w-1/2">
                 <label className="block text-white" htmlFor="name">
                   Nombre completo
                 </label>
@@ -151,7 +139,7 @@ const Register = () => {
                   <p className="text-red-500 text-sm">{errors.name}</p>
                 )}
               </div>
-              <div className="mb-4">
+              <div className="mb-4 w-1/2">
                 <label className="block text-white mb-2" htmlFor="email">
                   Correo Electrónico
                 </label>
@@ -171,7 +159,7 @@ const Register = () => {
               </div>
             </div>
             <div className="flex gap-8">
-              <div className="mb-4">
+              <div className="mb-4 w-1/2">
                 <label className="block text-white mb-2" htmlFor="nDni">
                   DNI
                 </label>
@@ -189,7 +177,7 @@ const Register = () => {
                   <p className="text-red-500 text-sm">{errors.nDni}</p>
                 )}
               </div>
-              <div className="mb-4">
+              <div className="mb-4 w-1/2">
                 <label className="block text-white mb-2" htmlFor="phone">
                   Número de telefono
                 </label>
@@ -204,7 +192,7 @@ const Register = () => {
                   value={userData.phone}
                 />
                 {errors.phone && (
-                  <p className="text-red-500 text-sm">{errors.phone}</p>
+                  <p className="text-red-500 w-fit text-sm">{errors.phone}</p>
                 )}
               </div>
             </div>
@@ -227,7 +215,7 @@ const Register = () => {
               )}
             </div>
             <div className="flex gap-8">
-              <div className="mb-4">
+              <div className="mb-4 w-1/2">
                 <label className="block text-white mb-2" htmlFor="city">
                   Ciudad
                 </label>
@@ -245,7 +233,7 @@ const Register = () => {
                   <p className="text-red-500 text-sm">{errors.city}</p>
                 )}
               </div>
-              <div className="mb-4">
+              <div className="mb-4 w-1/2">
                 <label className="block text-white mb-2" htmlFor="state">
                   Estado
                 </label>
@@ -265,7 +253,7 @@ const Register = () => {
               </div>
             </div>
             <div className="flex gap-8">
-              <div className="mb-4">
+              <div className="mb-4 w-1/2">
                 <label className="block text-white mb-2" htmlFor="country">
                   País
                 </label>
@@ -283,7 +271,7 @@ const Register = () => {
                   <p className="text-red-500 text-sm">{errors.country}</p>
                 )}
               </div>
-              <div className="mb-4">
+              <div className="mb-4 w-1/2">
                 <label className="block text-white mb-2" htmlFor="zip_code">
                   Código postal
                 </label>
@@ -303,12 +291,12 @@ const Register = () => {
               </div>
             </div>
             <div className="flex gap-8">
-              <div className="mb-4">
+              <div className="mb-4 w-1/2">
                 <label className="block text-white mb-2" htmlFor="password">
                   Contraseña
                 </label>
                 <input
-                  type="password"
+                  type= "text"
                   id="password"
                   name="password"
                   className="w-full px-3 py-2 border rounded-lg focus:outline-none text-black focus:border-blue-500"
@@ -321,7 +309,7 @@ const Register = () => {
                   <p className="text-red-500 text-sm">{errors.password}</p>
                 )}
               </div>
-              <div className="mb-6">
+              <div className="mb-4 w-1/2">
                 <label
                   className="block text-white mb-2"
                   htmlFor="confirmPassword"
@@ -329,7 +317,7 @@ const Register = () => {
                   Confirmar Contraseña
                 </label>
                 <input
-                  type="password"
+                  type="text"
                   id="confirmPassword"
                   name="confirmPassword"
                   className="w-full px-3 py-2 border rounded-lg focus:outline-none text-black focus:border-blue-500"
