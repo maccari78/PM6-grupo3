@@ -9,6 +9,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Button, Tooltip } from "flowbite-react";
 import SkeletonDashboard from "@/components/sketelons/SkeletonDashboard";
+import MapLocation from "@/components/MapLocation/MapLocation";
 
 const apiPostUrl = process.env.NEXT_PUBLIC_API_POSTS;
 if (!apiPostUrl) {
@@ -37,8 +38,6 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
   const [userData, setUserData] = useState<IUserData | null>(null);
   const [isOwner, setIsOwner] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
-
-  console.log(postState);
 
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
@@ -321,6 +320,16 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
                 price={postState?.price}
                 handleSetPrice={handleSetPrice}
                 bookedDates={bookedDates}
+              />
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <h1 className="text-2xl text-gray-100 font-semibold">
+                Localizacion
+              </h1>
+              <MapLocation
+                lat={postState?.user.addresses.lat}
+                lon={postState?.user.addresses.lon}
               />
             </div>
           </div>

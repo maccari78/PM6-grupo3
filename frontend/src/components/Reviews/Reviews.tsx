@@ -217,7 +217,7 @@ const Reviews: React.FC<{ reviews: IReview[] | undefined; idPost: string }> = ({
           </div>
         )}
 
-        <div className="flex flex-col w-full md:w-[50%]">
+        <div className="flex flex-col gap-9 w-full md:w-[50%]">
           {reviews?.length! > 0 ? (
             reviews?.map((review) => {
               const dateUserStr = review.user.createdAt;
