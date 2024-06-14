@@ -8,6 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from 'src/rentals/interfaces/payload.interfaces';
 import { Address } from 'src/addresses/entities/address.entity';
 import { UpdateAddressDto } from 'src/addresses/dto/update-address.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -20,11 +21,18 @@ export class UsersService {
   ) {}
 
   async findAll() {
-    const users = await this.userRepository.find({ where: { isDeleted: false } });
+    const users = await this.userRepository.find({
+      where: { isDeleted: false },
+    });
 
     if (users.length === 0 || !users)
       throw new NotFoundException('No se encontraron usuarios');
-    return users;
+    const usersWithoutPassword = users.map((user) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password, ...rest } = user;
+      return rest;
+    });
+    return usersWithoutPassword;
   }
 
   async findOne(id: string) {
@@ -95,6 +103,13 @@ export class UsersService {
     });
     if (!user) throw new NotFoundException('Usuario no encontrado');
 
+    if (updateUserDto.password) {
+      const hashPass = await bcrypt.hash(updateUserDto.password, 10);
+      await this.userRepository.update(user.id, { password: hashPass });
+
+      delete updateUserDto.password;
+    }
+
     const updateUser = await this.userRepository.update(user.id, updateUserDto);
 
     const adress = user.addresses[0!];
@@ -113,7 +128,7 @@ export class UsersService {
     if (updateUser.affected === 0)
       throw new NotFoundException('Error al actualizar usuario');
     if (!file) {
-      return 'Usuario actualizado con exito';
+      return { message: 'Usuario actualizado con exito' };
     }
 
     const uploadedImage = await this.fileUploadService.updateProfilePicture(
@@ -151,16 +166,20 @@ export class UsersService {
 
   async softDelete(id: string): Promise<{ message: string }> {
     const car = await this.userRepository.findOneBy({ id });
-    
+
     if (!car) {
-      throw new NotFoundException(`El usuario con ID ${id} no se ha encontrado`);
+      throw new NotFoundException(
+        `El usuario con ID ${id} no se ha encontrado`,
+      );
     }
     await this.userRepository.update(id, { isDeleted: true });
     return { message: 'El usuario a sido borrado logicamente con exito' };
   }
 
   async findByEmail(email: string) {
-    const user = await this.userRepository.findOne({ where: { email, isDeleted: false } });
+    const user = await this.userRepository.findOne({
+      where: { email, isDeleted: false },
+    });
 
     if (!user) throw new NotFoundException('Usuario no encontrado');
     return user;
