@@ -27,3 +27,48 @@ export interface IRentalChat {
     updatedAt: string;
     users: IUserChat[];
 }
+
+export interface MessageChat {
+    sender?: string;
+    receiver?:string;
+    message?: string;
+    room_id?: string;
+    image?: string;
+    date_created?: Date;
+}
+
+export interface Ireceiver{
+    aboutMe: string
+    createdAt: string
+    email:string
+    id:string
+    image_url:string
+    isDeleted:boolean
+    nDni:number
+    name:string
+    password:string
+    phone:string
+    public_id:string
+    rExpiration:string
+    roles:string
+    updatedAt:Date
+    userGoogle:boolean
+}
+export interface Isender{
+    aboutMe: string
+    createdAt: string
+    email:string
+    id:string
+    image_url:string
+    isDeleted:boolean
+    nDni:number
+    name:string
+    password:string
+    phone:string
+    public_id:string
+    rExpiration:string
+    roles:string
+    updatedAt:Date
+    userGoogle:boolean
+}
+  
