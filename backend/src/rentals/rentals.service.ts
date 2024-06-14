@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateRentalDto } from './dto/create-rental.dto';
 import { UpdateRentalDto } from './dto/update-rental.dto';
@@ -28,7 +29,15 @@ export class RentalsService {
     private jwtService: JwtService,
   ) {}
   async create(createRentalDto: CreateRentalDto, currentUser: string, postId) {
-    const { name, price, description, image_url,rentalStartDate, rentalEndDate, ...rest } = createRentalDto;
+    const {
+      name,
+      price,
+      description,
+      image_url,
+      rentalStartDate,
+      rentalEndDate,
+      ...rest
+    } = createRentalDto;
 
     const secret = process.env.JWT_SECRET;
     const payload: JwtPayload = await this.jwtService.verify(currentUser, {
@@ -65,15 +74,16 @@ export class RentalsService {
 
     // Calcular el costo total
     const totalCost = dayDiff * findPost.price;
-
+    const room_id = findPost.id + rental_user.id;
     const newRental = this.rentalRepository.create({
       rentalStartDate,
       rentalEndDate,
       totalCost,
+      room_id,
       users: [rental_user, findPost.user],
       posts: findPost,
       ...rest,
-    });    
+    });
 
     const rental = await this.rentalRepository.save(newRental);
     if (!rental)
@@ -81,11 +91,10 @@ export class RentalsService {
         'Error al crear el contrato, verifique las relaciones con otras entidades',
       );
 
-
     const payment: Payment = {
-      name: rental_user.name,
+      name: name,
       price: totalCost,
-      description: findPost.description,
+      description: description,
       image_url,
     };
 
@@ -103,8 +112,7 @@ export class RentalsService {
       throw new BadRequestException('Error al realizar el pago');
     }
 
-
-   // return await this.createWhithJWT(payload, rest, postId, payment);
+    // return await this.createWhithJWT(payload, rest, postId, payment);
   }
 
   async createWhithJWT(
@@ -278,5 +286,22 @@ export class RentalsService {
     if (deleted.affected === 0)
       throw new NotFoundException('Error al eliminar el contrato');
     return 'Contrato cancelado con exito';
+  }
+  async getChat(token: string) {
+    const secret = process.env.JWT_SECRET;
+    const payload: JwtPayload = await this.jwtService.verify(token, {
+      secret,
+    });
+    if (!payload) throw new UnauthorizedException('token invalido');
+    const rentals = await this.rentalRepository
+      .createQueryBuilder('rental')
+      .leftJoinAndSelect('rental.users', 'user')
+      .where('user.email = :email', { email: payload.sub })
+      .getMany();
+    if (rentals?.length === 0)
+      throw new NotFoundException(
+        'No hay registros de chats en la base de datos',
+      );
+    return rentals;
   }
 }

@@ -12,6 +12,7 @@ const Reviews = () => {
         <h1 className="text-2xl font-semibold text-[#222222]">Reseñas</h1>
       </div>
       <div className="flex flex-row w-[80%]  justify-between my-10">
+
         <div className="flex flex-col w-[40%] gap-5">
           <div className="w-full flex flex-row gap-2">
             <svg
@@ -80,6 +81,7 @@ const Reviews = () => {
           </form>
         </div>
 
+
         <div className="flex flex-col w-[50%]">
           <article>
             <div className="flex items-center mb-4">
@@ -144,7 +146,9 @@ const Reviews = () => {
                 <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
               </svg>
             </div>
+
             <footer className="mb-5 text-sm text-gray-400">
+
               <p>Subido en Colombia en marzo 3, 2017</p>
             </footer>
             <p className="mb-2 text-gray-200">

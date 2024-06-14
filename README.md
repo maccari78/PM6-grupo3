@@ -163,3 +163,23 @@ Si hay conflictos durante el merge, resuélvelos en tu máquina local y realiza 
 ## Revisar y testear:
 
 - Siempre revisa y prueba tu código antes de abrir un PR.
+
+## On Windows terminal
+- cd ~/Onedrive/Work/2024-01-10\ HENRY/modulo6/PM6-grupo3
+- cd ~/Onedrive/Work/2024-01-10\ HENRY/modulo6/PM6-grupo3/backend
+- cd ~/Onedrive/Work/2024-01-10\ HENRY/modulo6/PM6-grupo3/frontend
+
+## Estructura de tablas en Base de datos
+- addresses(id, address, city, state, country, zip_code, latitude, longitude, userId, carId)
+- cars(id, brand, model, year, mileage, color, availavility, image_url, public_id, created_at, updated_at, userId, isDeleted)
+- chat(id, message, image, room_id, date_created, senderId, receiverId, postId)
+- notifications(id, template_message, createdAt, user_id, )
+- posts(id, title, description, price, created_at, updated_at, userId, carId, reviewId, isDeleted)
+- rentals(id, rentalStartDate, rentalEndDate, createdAt, updatedAt, postsId, totalCost)
+- reviews(id, rating, comment, created_at, updated_at, userId, postId)
+- user_rental(rental_id, user_id)
+- users(id, email, name, password, nDni, rExpiration, phone, image_url, public_id, userGoogle, aboutMe, roles, createdAt, updatedAt, isDeleted)
+
+
+ramon@mail.com
+passTest

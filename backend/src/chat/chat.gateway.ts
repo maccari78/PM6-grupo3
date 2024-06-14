@@ -13,7 +13,7 @@ import { CreateChatDto } from './dto/create-chat.dto';
 import { Server, Socket } from 'socket.io';
 import { MessageChat } from './interfaces/usersChat.interfaces';
 
-const PORT = Number(process.env.PORT_WS) || 80;
+const PORT = Number(process.env.PORT_WS) || 3002;
 @WebSocketGateway(PORT, {
   namespace: 'chat',
   cors: '*',
@@ -31,19 +31,22 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   handleDisconnect(client: Socket) {
     console.log('Client disconnected: ' + client.id);
   }
-
+  // cambiar a mensaje de ser necesario
   @SubscribeMessage('posts')
   async handleMessage(
     @ConnectedSocket() client: Socket,
     @MessageBody() payload: CreateChatDto,
   ) {
     const token: string = client.handshake.auth?.token;
-    console.log(payload)
     if (!token) {
       client.disconnect();
       return;
     }
     const message: MessageChat = await this.chatService.create(payload, token);
+    if (!message) {
+      client.disconnect();
+      return;
+    }
     client.broadcast.emit(`${payload.room_id}`, message);
   }
 }

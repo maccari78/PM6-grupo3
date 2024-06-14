@@ -24,6 +24,9 @@ export class Rental {
   @Column()
   rentalEndDate: string;
 
+  @Column({ nullable: true })
+  room_id: string;
+
   @ManyToMany(() => User, (user) => user.rentals, { eager: true })
   @JoinTable({
     name: 'user_rental',
@@ -37,7 +40,7 @@ export class Rental {
   posts: Posts;
 
   @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true }) // Nueva columna para el costo total
-  totalCost: number ;
+  totalCost: number;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
