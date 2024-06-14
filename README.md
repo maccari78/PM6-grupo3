@@ -180,6 +180,10 @@ Si hay conflictos durante el merge, resuélvelos en tu máquina local y realiza 
 - user_rental(rental_id, user_id)
 - users(id, email, name, password, nDni, rExpiration, phone, image_url, public_id, userGoogle, aboutMe, roles, createdAt, updatedAt, isDeleted)
 
+# Gmail for Railway
+- User: pmgrupoyoudrive@gmail.com
+- Pass: pm6grup03y0udr1v3
 
-ramon@mail.com
-passTest
+# Test account YouDrive
+- User: test@mail.com
+- Pass: Test123

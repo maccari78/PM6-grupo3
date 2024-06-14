@@ -17,6 +17,7 @@ import { JwtPayload } from './interfaces/payload.interfaces';
 import Stripe from 'stripe';
 import { Payment } from './interfaces/payment.interfaces';
 import { NotificationsService } from 'src/notifications/notifications.service';
+import { RentalPrev } from './entities/rentalPrev.entity';
 
 @Injectable()
 export class RentalsService {
@@ -25,19 +26,18 @@ export class RentalsService {
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(Posts) private postRepository: Repository<Posts>,
     @InjectRepository(Car) private carRepository: Repository<Car>,
+    @InjectRepository(RentalPrev)
+    private rentalPrevRepository: Repository<RentalPrev>,
     private notificationService: NotificationsService,
     private jwtService: JwtService,
   ) {}
-  async create(createRentalDto: CreateRentalDto, currentUser: string, postId) {
-    const {
-      name,
-      price,
-      description,
-      image_url,
-      rentalStartDate,
-      rentalEndDate,
-      ...rest
-    } = createRentalDto;
+  async create(
+    createRentalDto: CreateRentalDto,
+    currentUser: string,
+    postId: string,
+  ) {
+    const { name, description, image_url, rentalStartDate, rentalEndDate } =
+      createRentalDto;
 
     const secret = process.env.JWT_SECRET;
     const payload: JwtPayload = await this.jwtService.verify(currentUser, {
@@ -74,21 +74,19 @@ export class RentalsService {
 
     // Calcular el costo total
     const totalCost = dayDiff * findPost.price;
-    const room_id = findPost.id + rental_user.id;
-    const newRental = this.rentalRepository.create({
-      rentalStartDate,
-      rentalEndDate,
+    const newPrevContract = this.rentalPrevRepository.create({
+      startDate: rentalStartDate,
+      endDate: rentalEndDate,
       totalCost,
-      room_id,
-      users: [rental_user, findPost.user],
-      posts: findPost,
-      ...rest,
+      userEmail: rental_user.email,
+      postId: findPost.id,
+      daysRemaining: dayDiff,
     });
 
-    const rental = await this.rentalRepository.save(newRental);
-    if (!rental)
+    const prevRental = await this.rentalPrevRepository.save(newPrevContract);
+    if (!prevRental)
       throw new BadRequestException(
-        'Error al crear el contrato, verifique las relaciones con otras entidades',
+        'Error al crear el pre-contrato, verifique los datos enviados',
       );
 
     const payment: Payment = {
@@ -98,74 +96,60 @@ export class RentalsService {
       image_url,
     };
 
-    const url = await this.payment(payment, rental.id);
+    const url = await this.payment(payment, prevRental.id);
 
     if (url) {
-      const carUpdate = await this.carRepository.update(findPost.car.id, {
-        availability: false,
-      });
-      if (carUpdate.affected === 0)
-        throw new BadRequestException('Error al actualizar el vehiculo');
       return url;
     } else {
-      await this.rentalRepository.delete(rental.id);
+      await this.rentalPrevRepository.delete(prevRental.id);
       throw new BadRequestException('Error al realizar el pago');
     }
-
-    // return await this.createWhithJWT(payload, rest, postId, payment);
   }
 
-  async createWhithJWT(
-    payload: JwtPayload,
-    rest: Partial<Rental>,
-    postId: string,
-    payment: Payment,
-  ) {
+  async createRental(rentalPrev: string) {
+    const findRentalPrev = await this.rentalPrevRepository.findOne({
+      where: { id: rentalPrev },
+    });
+    if (!findRentalPrev)
+      throw new NotFoundException('Pre-contrato no encontrado');
     const rental_user = await this.userRepository.findOne({
-      where: { email: payload.sub },
+      where: { email: findRentalPrev.userEmail },
     });
 
     if (!rental_user) throw new NotFoundException('Usuario no encontrado');
 
-    const newRental = this.rentalRepository.create(rest);
-    if (!newRental)
-      throw new BadRequestException(
-        'Error al crear el contrato, verifique los datos',
-      );
     const findPost = await this.postRepository.findOne({
-      where: { id: postId },
+      where: { id: findRentalPrev.postId },
       relations: ['car', 'user'],
     });
     if (!findPost)
       throw new NotFoundException('Publicación no encontrada en la BD');
-    if (findPost.user.email === rental_user.email)
-      throw new BadRequestException('No puedes alquilar tu propio vehiculo');
-    newRental.users = [rental_user, findPost.user];
-    const findCar = await this.carRepository.findOne({
-      where: { id: findPost.car.id },
+    const room_id = findPost.id + rental_user.id;
+    const newRental = this.rentalRepository.create({
+      rentalEndDate: findRentalPrev.endDate,
+      rentalStartDate: findRentalPrev.startDate,
+      totalCost: findRentalPrev.totalCost,
+      daysRemaining: findRentalPrev.daysRemaining,
+      room_id,
     });
-    if (!findCar) throw new NotFoundException('Vehiculo no encontrado');
-    if (findCar.availability === false)
-      throw new BadRequestException('El vehiculo ya se encuentra alquilado');
+    if (!newRental)
+      throw new BadRequestException(
+        'Error al crear el contrato, verifique los datos',
+      );
+    newRental.users = [rental_user, findPost.user];
     newRental.posts = findPost;
-
     const rental = await this.rentalRepository.save(newRental);
     if (!rental)
       throw new BadRequestException(
         'Error al crear el contrato, verifique las relaciones con otras entidades',
       );
-    const url = await this.payment(payment, rental.id);
-    if (url) {
-      const carUpdate = await this.carRepository.update(findPost.car.id, {
-        availability: false,
-      });
-      if (carUpdate.affected === 0)
-        throw new BadRequestException('Error al actualizar el vehiculo');
-      return url;
-    } else {
-      await this.rentalRepository.delete(rental.id);
-      throw new BadRequestException('Error al realizar el pago');
-    }
+    const carUpdate = await this.carRepository.update(findPost.car.id, {
+      availability: false,
+    });
+    if (carUpdate.affected === 0)
+      throw new BadRequestException('Error al actualizar el vehiculo');
+    await this.rentalPrevRepository.delete(findRentalPrev.id);
+    return rental.id;
   }
 
   async findAll() {
@@ -243,8 +227,11 @@ export class RentalsService {
   }
 
   async paymentSucess(id: string) {
+    const contractID = await this.createRental(id);
+    console.log(contractID);
+    if (!contractID) throw new NotFoundException('El contrato no fue creado');
     const contract = await this.rentalRepository.findOne({
-      where: { id },
+      where: { id: contractID },
       relations: ['users', 'posts', 'posts.user'],
     });
 
@@ -274,17 +261,10 @@ export class RentalsService {
   }
 
   async paymentCancel(id: string) {
-    const contract = await this.rentalRepository.findOne({
-      where: { id },
-      relations: ['users', 'posts', 'posts.user'],
-    });
-    if (!contract) throw new NotFoundException('Contrato no encontrado');
-    await this.carRepository.update(contract.posts.car.id, {
-      availability: true,
-    });
-    const deleted = await this.rentalRepository.delete(contract.id);
-    if (deleted.affected === 0)
-      throw new NotFoundException('Error al eliminar el contrato');
+    const preContract = await this.rentalPrevRepository.delete(id);
+
+    if (!preContract) throw new NotFoundException('Contrato no encontrado');
+
     return 'Contrato cancelado con exito';
   }
   async getChat(token: string) {

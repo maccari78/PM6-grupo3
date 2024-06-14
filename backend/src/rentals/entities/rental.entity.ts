@@ -1,16 +1,5 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  OneToOne,
-  ManyToMany,
-  JoinTable,
-  JoinColumn,
-} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToOne, ManyToMany, JoinTable, JoinColumn } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
-
 import { Posts } from 'src/posts/entities/post.entity';
 
 @Entity('rentals')
@@ -23,6 +12,9 @@ export class Rental {
 
   @Column()
   rentalEndDate: string;
+
+  @Column()
+  daysRemaining: number;
 
   @Column({ nullable: true })
   room_id: string;
@@ -47,4 +39,5 @@ export class Rental {
 
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
+    car: any;
 }
