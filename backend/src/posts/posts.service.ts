@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { Posts } from './entities/post.entity';
@@ -20,7 +25,7 @@ export class PostsService {
     @InjectRepository(Posts) private postRepository: Repository<Posts>,
     @InjectRepository(User) private userRepository: Repository<User>,
     private jwtService: JwtService,
-  ) { }
+  ) {}
 
   async getPostsByFilterServices(filters: FiltersPosts) {
     if (filters.year && typeof filters.year !== 'number') {
@@ -80,12 +85,11 @@ export class PostsService {
 
   //Sin paginacion
   async getPostsAllServices() {
-
     const posts = await this.postRepository.find({
       relations: {
         user: true,
         car: true,
-        review: true
+        review: true,
       },
     });
     if (!posts) throw new NotFoundException('No se encontraron publicaciones');
@@ -96,7 +100,7 @@ export class PostsService {
   async getPostsServiceId(id: string) {
     const postsId = await this.postRepository.findOne({
       where: { id },
-      relations: ['user', 'car', 'review'],
+      relations: ['user', 'car', 'review', 'user.addresses'],
     });
     if (!postsId) {
       return `publicación con ${id} no encontrado`;
@@ -112,7 +116,9 @@ export class PostsService {
   ) {
     const { title, description, price, ...rest } = posts;
     const secret = process.env.JWT_SECRET;
-    const payload: JwtPayload = await this.jwtService.verify(currentUser, { secret });
+    const payload: JwtPayload = await this.jwtService.verify(currentUser, {
+      secret,
+    });
     console.log(payload);
 
     if (!payload) throw new UnauthorizedException('token invalido 3');
@@ -229,31 +235,48 @@ export class PostsService {
   }
 
   async softDelete(id: string): Promise<{ message: string }> {
-    const car = await this.carRepository.findOne({ where: { id }, relations: ['post'] });
+    const car = await this.carRepository.findOne({
+      where: { id },
+      relations: ['post'],
+    });
 
     if (!car) {
-      throw new NotFoundException(`El automóvil con ID ${id} no se ha encontrado`);
+      throw new NotFoundException(
+        `El automóvil con ID ${id} no se ha encontrado`,
+      );
     }
 
     car.isDeleted = true;
     await this.carRepository.save(car);
 
-    const postsToUpdate = car.post.map(post => ({ id: post.id, isDeleted: true }));
+    const postsToUpdate = car.post.map((post) => ({
+      id: post.id,
+      isDeleted: true,
+    }));
     await this.postRepository.save(postsToUpdate);
 
     return { message: 'El automóvil ha sido borrado lógicamente con éxito' };
   }
 
   async restoreCar(id: string): Promise<void> {
-    const car = await this.carRepository.findOne({ where: { id }, withDeleted: true, relations: ['post'] });
+    const car = await this.carRepository.findOne({
+      where: { id },
+      withDeleted: true,
+      relations: ['post'],
+    });
     if (!car) {
-      throw new NotFoundException(`El automóvil con ID ${id} no se ha encontrado`);
+      throw new NotFoundException(
+        `El automóvil con ID ${id} no se ha encontrado`,
+      );
     }
 
     car.isDeleted = false;
     await this.carRepository.save(car);
 
-    const postsToUpdate = car.post.map(post => ({ id: post.id, isDeleted: false }));
+    const postsToUpdate = car.post.map((post) => ({
+      id: post.id,
+      isDeleted: false,
+    }));
     await this.postRepository.save(postsToUpdate);
   }
 }

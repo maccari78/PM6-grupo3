@@ -1,9 +1,9 @@
 "use client";
-import { IUser, IUserData } from "@/interfaces/IUser";
 import { redirect, useRouter } from "next/navigation";
 import React, { useEffect, useState, ChangeEvent, FormEvent } from "react";
 import Swal from "sweetalert2";
 import { io, Socket } from "socket.io-client";
+import { IRentalChat } from "@/interfaces/Ichat";
 
 interface MessageChat {
   sender?: string;
@@ -24,6 +24,17 @@ const ChatWeb: React.FC = () => {
   const [userStatus, setUserStatus] = useState<string>("");
   const router = useRouter();
   const [socket, setSocket] = useState<Socket | null>(null);
+  const [rentalsChats, setRentalsChat] = useState<IRentalChat[]>([]);
+  const [error, setError] = useState<string | null>(null);
+
+  const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+  if (!apiUrl) {
+    throw new Error('Environment variable NEXT_PUBLIC_API_GET_USERS_TOKEN is not set');
+  }
+
+  const recibeMensaje = (data: MessageChat) =>
+    setMessages((state) => [...state, data]);
 
   useEffect(() => {
     if (userToken) {
@@ -54,26 +65,28 @@ const ChatWeb: React.FC = () => {
   }, [userToken, room_id]);
 
   useEffect(() => {
-    const messageInDb = async () => {
-    setRoom_id(
-            "478ba94b-13a0-4829-9eca-f16dd473fc56feb2d389-8b26-4b6f-88fe-87ad9daa8e7a"
-          );
+    const fetchMessages = async () => {
       if (room_id) {
         try {
-          const response = await fetch(
-            `http://localhost:3001/chat/${room_id}/messages`
-          );
-          const data = await response.json();
-          setMessages(data);
-          console.log(data);
+          const response = await fetch(`${apiUrl}/chat/${room_id}/messages`);
+          if (!response.ok) {
+            throw new Error("Error fetching messages");
+          }
+          const data: MessageChat[] = await response.json();
+          // Ordenar mensajes por fecha de creación
+          const sortedMessages = data.sort((a, b) => new Date(a.date_created || "").getTime() - new Date(b.date_created || "").getTime());
+          setMessages(sortedMessages);
         } catch (error) {
           console.error("Error al obtener los mensajes:", error);
+          setError("Error al obtener los mensajes.");
         }
       }
     };
 
-    messageInDb();
-  }, [room_id, message]);
+    if (room_id) {
+      fetchMessages();
+    }
+  }, [room_id, apiUrl]);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -97,6 +110,40 @@ const ChatWeb: React.FC = () => {
     }
   }, [router]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`${apiUrl}/rentals/token`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Error fetching user data");
+        }
+
+        const data: IRentalChat[] = await response.json();
+        setRentalsChat(data);
+        if (data.length > 0) {
+          setRoom_id(data[0].room_id);
+        }
+      } catch (error: any) {
+        console.error(error);
+        setError("Error al obtener los datos de alquileres.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (userToken) {
+      fetchData();
+    }
+  }, [userToken, apiUrl]);
+
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setMessage(e.target.value);
   };
@@ -108,8 +155,9 @@ const ChatWeb: React.FC = () => {
       receiver: "userReceiverState(?)",
       message,
       room_id,
+      date_created: new Date(),
     };
-    setMessages([...messages, meMessage]);
+    setMessages((prevMessages) => [...prevMessages, meMessage]);
 
     if (socket) {
       socket.emit("posts", meMessage);
@@ -117,9 +165,6 @@ const ChatWeb: React.FC = () => {
 
     setMessage("");
   };
-
-  const recibeMensaje = (data: MessageChat) =>
-    setMessages((state) => [...state, data]);
 
   return (
     <div className="bg-gray-400">
@@ -131,18 +176,20 @@ const ChatWeb: React.FC = () => {
         <button type="submit">Enviar</button>
       </form>
       <div>
-  {Array.isArray(messages) && messages.length > 0 ? (
-    messages.map((msg, index) => (
-      <div key={index}>
-        <p>
-          {typeof msg.sender === 'string' ? msg.sender : 'Usuario'}: {typeof msg.message === 'string' ? msg.message : 'Mensaje no disponible'}
-        </p>
+        {loading && <p>Cargando...</p>}
+        {error && <p>{error}</p>}
+        {Array.isArray(messages) && messages.length > 0 ? (
+          messages.map((msg, index) => (
+            <div key={index}>
+              <p>
+                {typeof msg.sender === 'string' ? msg.sender : 'Usuario'}: {typeof msg.message === 'string' ? msg.message : 'Mensaje no disponible'}
+              </p>
+            </div>
+          ))
+        ) : (
+          <p>No hay mensajes</p>
+        )}
       </div>
-    ))
-  ) : (
-    <p>No hay mensajes</p>
-  )}
-</div>
     </div>
   );
 };
