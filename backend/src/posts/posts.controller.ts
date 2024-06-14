@@ -1,4 +1,23 @@
-import { Controller, Get, Post, Body, Param, Delete, Put, ParseUUIDPipe, UploadedFiles, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, UseInterceptors, Headers, Query, UnauthorizedException, UseGuards, Patch } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Put,
+  ParseUUIDPipe,
+  UploadedFiles,
+  ParseFilePipe,
+  MaxFileSizeValidator,
+  FileTypeValidator,
+  UseInterceptors,
+  Headers,
+  Query,
+  UnauthorizedException,
+  UseGuards,
+  Patch,
+} from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -11,17 +30,16 @@ import { Role } from 'src/users/utils/roles.enum';
 import { Roles } from 'src/users/utils/roles.decorator';
 // import { RolesGuard } from 'src/users/utils/roles.guard';
 
-
 @ApiTags('POSTS')
 @Controller('posts')
 // @UseGuards(RolesGuard)
 export class PostsController {
-  constructor(private readonly postsService: PostsService) { }
+  constructor(private readonly postsService: PostsService) {}
 
   //Con paginación
   // @Get()
   // getPostsAllController(
-   
+
   //   @Query('page') page:number = 1,
   //   @Query('limit') limit:number = 5
   //   ) {
@@ -31,15 +49,9 @@ export class PostsController {
 
   //sin paginacion
   @Get()
-  getPostsAllController(
-    ) {
+  getPostsAllController() {
     return this.postsService.getPostsAllServices();
-
   }
-
-
-
-
 
   @Get('filter')
   getPostsByFilter(@Query() filter: FiltersPosts) {
@@ -56,10 +68,8 @@ export class PostsController {
   // @UseGuards(TokenGuard)
   @UseInterceptors(FilesInterceptor('file', 5))
 
-
   //@UseGuards(RolesGuard)
   //@Roles(Role.User, Role.Admin)
-
   create(
     @Body() createPostDto: CreatePostDto,
     @Headers('Authorization') headers?: string,
