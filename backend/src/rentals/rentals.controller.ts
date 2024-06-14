@@ -16,7 +16,7 @@ import { RentalsService } from './rentals.service';
 import { CreateRentalDto } from './dto/create-rental.dto';
 import { UpdateRentalDto } from './dto/update-rental.dto';
 import { Response } from 'express';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth } from '@nestjs/swagger';
 // import { RolesGuard } from 'src/users/utils/roles.guard';
 // import { Role } from 'src/users/utils/roles.enum';
 // import { Roles } from 'src/users/utils/roles.decorator';
