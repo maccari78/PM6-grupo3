@@ -8,6 +8,7 @@ import { IUserData } from "@/interfaces/IUser";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Button, Tooltip } from "flowbite-react";
+import SkeletonDashboard from "@/components/sketelons/SkeletonDashboard";
 
 const apiPostUrl = process.env.NEXT_PUBLIC_API_POSTS;
 if (!apiPostUrl) {
@@ -35,6 +36,9 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
   const [endDate, setEndDate] = useState<string | undefined>();
   const [userData, setUserData] = useState<IUserData | null>(null);
   const [isOwner, setIsOwner] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  console.log(postState);
 
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
@@ -46,6 +50,7 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
     }
 
     const fetchDta = async () => {
+      setLoading(true);
       try {
         const post = await fetch(`${apiPostUrl}/${params.id}`, {
           method: "GET",
@@ -54,6 +59,8 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
         setPostState(data);
       } catch (error: any) {
         console.log(error.message);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -102,6 +109,10 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
   const handleEndDate = (date: string) => {
     setEndDate(date);
   };
+
+  if (loading) {
+    return <SkeletonDashboard />;
+  }
 
   return (
     <>
