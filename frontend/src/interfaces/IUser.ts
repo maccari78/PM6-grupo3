@@ -93,7 +93,7 @@ export interface IUserData {
 	car: Car[];
 	createdAt: string;
 	image_url: string;
-	phone: string;
+	phone: string | null;
 	notifications: Notification[];
 	post: Post[];
 	rentals: Rental[];
