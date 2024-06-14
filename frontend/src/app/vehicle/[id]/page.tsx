@@ -7,6 +7,7 @@ import { IPost } from "@/components/VehiclesComponent/interfaces/IPost";
 import { IUserData } from "@/interfaces/IUser";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { Button, Tooltip } from "flowbite-react";
 
 const apiPostUrl = process.env.NEXT_PUBLIC_API_POSTS;
 if (!apiPostUrl) {
@@ -106,7 +107,7 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
 
   return (
     <>
-      <div className="bg-[#444343] flex flex-col items-center md:flex-row  md:items-start justify-evenly min-h-screen pt-10">
+      <div className="bg-[#444343] flex flex-col items-center md:flex-row  md:items-start justify-evenly min-h-screen pt-10 ">
         <div className="flex flex-col w-[70%] md:w-[40%] justify-between my-5">
           <div className="flex flex-col md:justify-start ">
             <h1 className=" text-lg md:text-3xl font-semibold text-gray-100">
@@ -332,15 +333,45 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
                 Propietario
               </h1>
             </div>
-            <div className="my-5">
-              <ol>
-                <li className="text-gray-300 text-sm md:text-base mb-5">
-                  Nombre: {postState?.user.name}
-                </li>
-                <li className="text-gray-300 text-sm md:text-base mb-5">
-                  Email: {postState?.user.email}
-                </li>
-              </ol>
+            <div className="mt-5 flex flex-col">
+              <div className="flex flex-row w-full h-[50%]  gap-3 justify-start">
+                <div className="w-[50px] ">
+                  <img
+                    src={postState?.user.image_url}
+                    alt="Foto de perfil usuario"
+                    className="rounded-full"
+                  />
+                </div>
+                <div className="flex flex-col items-start">
+                  <h1 className="text-gray-100 text-sm md:text-lg ">
+                    {postState?.user.name}
+                  </h1>
+                  <p className="text-gray-300 text-sm md:text-[12px] mb-5">
+                    {postState?.user.email}
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-row justify-center">
+                <Tooltip
+                  content={`+${postState?.user.phone}`}
+                  className="bg-[#b0d63f] text-[#22222]"
+                  arrow={false}
+                  placement="right"
+                  animation="duration-500"
+                >
+                  <Button className="border-[2px] border-[#C4FF0D] rounded-3xl  bg-transparent transition-none  enabled:hover:bg-transparent">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      className="fill-[#C4FF0D] w-4 h-4"
+                    >
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                      <path d="M9 3a1 1 0 0 1 .877 .519l.051 .11l2 5a1 1 0 0 1 -.313 1.16l-.1 .068l-1.674 1.004l.063 .103a10 10 0 0 0 3.132 3.132l.102 .062l1.005 -1.672a1 1 0 0 1 1.113 -.453l.115 .039l5 2a1 1 0 0 1 .622 .807l.007 .121v4c0 1.657 -1.343 3 -3.06 2.998c-8.579 -.521 -15.418 -7.36 -15.94 -15.998a3 3 0 0 1 2.824 -2.995l.176 -.005h4z" />
+                    </svg>
+                  </Button>
+                </Tooltip>
+              </div>
             </div>
           </div>
 

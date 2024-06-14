@@ -17,6 +17,7 @@ const VehiclesComponent: React.FC<{ nPosts: IPost[] }> = ({ nPosts }) => {
             carYear={post.car.year}
             carMileage={post.car.mileage}
             carPrice={post.price}
+            carAvailability={post.car.availability}
           />
         );
       })}

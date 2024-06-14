@@ -42,7 +42,7 @@ const Products: React.FC = () => {
     };
 
     fetchData();
-  }, []);
+  }, [filters === null]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -69,8 +69,9 @@ const Products: React.FC = () => {
         console.log(error.message);
       }
     };
-
-    fetchData();
+    if (filters) {
+      fetchData();
+    }
   }, [filters]);
 
   const handleFilterChange = (newFilters: any) => {
@@ -91,7 +92,7 @@ const Products: React.FC = () => {
   const nPages: number = Math.ceil(posts.length / postsQT);
 
   return (
-    <div className="flex flex-col items-center mt-5 justify-around md:items-start  md:flex-row md:justify-evenly md:my-10 md:mx-10 ">
+    <div className="flex flex-col   items-center mt-5 justify-around md:items-start  md:flex-row md:justify-evenly md:my-10 md:mx-10 ">
       <Filters onFilterChange={handleFilterChange} />
       <div className="flex flex-col justify-center md:w-[70%]">
         {filters && (

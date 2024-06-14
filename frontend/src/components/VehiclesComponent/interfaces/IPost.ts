@@ -7,6 +7,8 @@ export interface IPost {
     id: string;
     name: string;
     email: string;
+    image_url: string;
+    phone: string;
   };
   car: {
     id: string;

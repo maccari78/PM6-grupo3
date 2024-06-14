@@ -25,7 +25,7 @@ const Dropdown: React.FC = () => {
       if (result.isConfirmed) {
         Swal.fire({
           title: "Sesion cerrada!",
-          text: "Haz cerrado sesion con exito.",
+          text: "Has cerrado sesion con exito.",
           icon: "success",
         });
         window.localStorage.removeItem("userSession");
