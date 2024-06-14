@@ -16,8 +16,8 @@ export class ReviewsController {
   //Controllers | Add reviews
   @ApiBearerAuth()
   @Post(":id")
-  @UseGuards(RolesGuard)
-  @Roles(Role.User, Role.Admin)
+  // @UseGuards(RolesGuard)
+  // @Roles(Role.User, Role.Admin)
   create(
     @Body() createReviewDto: CreateReviewDto,
     @Headers('Authorization') headers: string,

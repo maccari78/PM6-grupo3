@@ -96,7 +96,7 @@ export class PostsService {
   async getPostsServiceId(id: string) {
     const postsId = await this.postRepository.findOne({
       where: { id },
-      relations: ['user', 'car'],
+      relations: ['user', 'car', 'review'],
     });
     if (!postsId) {
       return `publicación con ${id} no encontrado`;
