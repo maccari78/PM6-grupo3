@@ -144,16 +144,16 @@ const VehicleForm = () => {
   };
 
   return (
-    <div className="bg-gradient-to-bl from-[#222222] to-[#313139]  font-sans text-white">
+    <div className="font-sans text-white m-0 bg-[url('/background_register_2.svg')] bg-no-repeat bg-cover relative z-3 w-full pt-[70px] px-[30px] pb-[44px] justify-center items-center min-h-screen bg-gray-900 h-min flex flex-col ">
       <div className="flex flex-col gap-2 p-4 items-center">
-        <h1 className=" text-4xl font-semibold mt-6">
+        <h1 className=" text-4xl font-semibold">
           ¡Publica tu vehículo ahora!
         </h1>
         <span className="text-xl">Rápido, sencillo, y gratuito.</span>
       </div>
       <form
         onSubmit={handleSubmit}
-        className="max-w-xl mx-auto p-8 flex-wrap bg-[#222222] rounded"
+        className="max-w-xl mx-auto p-10 flex-wrap bg-black/10 rounded"
       >
         <div className="block mb-4">
           <label className=" text-slate-50">Título</label>
@@ -183,7 +183,7 @@ const VehicleForm = () => {
           )}
         </div>
         <div className="flex gap-8">
-          <div className="mb-4">
+          <div className="mb-4 w-1/2">
             <label className="text-slate-50">Valor</label>
             <input
               name="price"
@@ -247,7 +247,7 @@ const VehicleForm = () => {
             )}
           </div>
 
-          <div className="mb-4">
+          <div className="mb-4 w-1/2">
             <label className="text-slate-50">Modelo</label>
             <input
               name="model"
