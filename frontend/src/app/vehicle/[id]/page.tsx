@@ -36,8 +36,6 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
   const [userData, setUserData] = useState<IUserData | null>(null);
   const [isOwner, setIsOwner] = useState<boolean>(false);
 
-  console.log(postState);
-
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
       const userSession = localStorage.getItem("userSession");
@@ -473,7 +471,7 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
         </div>
       </div>
 
-      <Reviews />
+      <Reviews reviews={postState?.review} idPost={params.id} />
     </>
   );
 };
