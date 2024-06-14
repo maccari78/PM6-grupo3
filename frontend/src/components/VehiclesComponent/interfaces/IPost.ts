@@ -1,3 +1,5 @@
+import { IReview } from "@/components/Reviews/interfaces/IReview";
+
 export interface IPost {
   id: string;
   title: string;
@@ -20,4 +22,5 @@ export interface IPost {
     availability: boolean;
     image_url: string[];
   };
+  review: IReview[];
 }
