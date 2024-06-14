@@ -38,8 +38,6 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
   const [isOwner, setIsOwner] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
 
-  console.log(postState);
-
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
       const userSession = localStorage.getItem("userSession");
