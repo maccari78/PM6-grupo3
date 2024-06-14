@@ -8,4 +8,5 @@ export interface ICar {
   carYear: number;
   carMileage: string;
   carPrice: number;
+  carAvailability: boolean;
 }

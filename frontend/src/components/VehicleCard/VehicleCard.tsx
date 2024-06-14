@@ -12,6 +12,7 @@ const VehicleCard: React.FC<ICar> = ({
   carYear,
   carMileage,
   carPrice,
+  carAvailability,
 }) => {
   const [descriptionReduce, setDescriptionReduce] = useState<
     string | undefined
@@ -78,6 +79,43 @@ const VehicleCard: React.FC<ICar> = ({
               </button>
             </Link>
           </div>
+        </div>
+        <div className="mt-2">
+          {carAvailability ? (
+            <span className="flex flex-row gap-2 items-center  border-[#454645] border-[1px] w-[110px] me-2  md:px-2.5 md:py-0.5 rounded ">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="h-3 w-3 fill-[#C4FF0D]"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M7 3.34a10 10 0 1 1 -4.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 4.995 -8.336z" />
+              </svg>
+              <p className="text-gray-300 font-semibold  text-[11px] ">
+                Disponible
+              </p>
+            </span>
+          ) : (
+            <span className="flex flex-row justify-evenly items-center  border-[#454645] border-[1px] w-[100px] me-2  md:px-2.5 md:py-0.5 rounded ">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="h-3 w-3 fill-red-800"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M7 3.34a10 10 0 1 1 -4.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 4.995 -8.336z" />
+              </svg>
+              <p className="text-gray-300 font-semibold  text-[11px] ">
+                No disponible
+              </p>
+            </span>
+          )}
         </div>
       </div>
     </div>

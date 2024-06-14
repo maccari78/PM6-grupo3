@@ -78,7 +78,7 @@ const Login = () => {
       });
       Toast.fire({
         icon: "success",
-        title: "Haz iniciado sesion con exito",
+        title: "Has iniciado sesion con exito",
       });
       router.push("/");
     } catch (err) {
@@ -89,9 +89,8 @@ const Login = () => {
         Swal.fire({
           title: "Error al iniciar sesion",
           text: `${apiError.message}`,
-          icon: "error"
+          icon: "error",
         });
-
       } else if (err instanceof Error) {
         // Si el error es una instancia de Error nativa
         setErrorAPI({
@@ -111,7 +110,7 @@ const Login = () => {
         Swal.fire({
           title: "Porfavor intentelo mas tarde",
           text: `${unknownError.message}`,
-          icon: "error"
+          icon: "error",
         });
       }
     }
