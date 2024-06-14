@@ -11,9 +11,21 @@ import { NotificationsService } from 'src/notifications/notifications.service';
 import { Notification } from 'src/notifications/entities/notification.entity';
 import { MailService } from 'src/mail/mail.service';
 import { ScheduleModule } from '@nestjs/schedule';
+import { RentalPrev } from './entities/rentalPrev.entity';
 @Module({
-  imports: [TypeOrmModule.forFeature([Rental, User, Car, Posts, Notification]), ScheduleModule.forRoot(), UsersModule], 
-  providers: [RentalsService,NotificationsService,MailService],
+  imports: [
+    TypeOrmModule.forFeature([
+      Rental,
+      User,
+      Car,
+      Posts,
+      Notification,
+      RentalPrev,
+    ]),
+    ScheduleModule.forRoot(),
+    UsersModule,
+  ],
+  providers: [RentalsService, NotificationsService, MailService],
   controllers: [RentalsController],
 })
 export class RentalsModule {}
