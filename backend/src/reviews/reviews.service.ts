@@ -54,7 +54,7 @@ export class ReviewsService {
     searchposts.review = [review];
     await this.postsService.save(searchposts);
     await this.userService.save(searchuser);
-    return 'Reseña realizada';
+    return 'reseña realizada';
   }
 
   //Services | Get All
