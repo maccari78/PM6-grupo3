@@ -99,12 +99,116 @@ export class MailService {
             template: 'payConstancy',
             context: {
               username: user.name,
-              prueba: user.password,
               price: price,
               newDayPay: DatePay,
               newRentalsStart: RENTALStart,
               newRentalsEnd: DatePayend,
               newNumOperation: NumOperation,
+            },
+            attachments: [
+              {
+                filename: 'logo.png',
+                path: __dirname + '../../../../frontend/public/logo.png',
+                cid: 'imagename',
+              },
+            ],
+          });
+          return { message: 'Correo enviado exitosamente' };
+        } catch (error) {
+          console.error(error);
+          throw new BadRequestException(
+            'El correo no pudo ser enviado exitosamente',
+          );
+        }
+      }
+
+
+      case 'cancelOwnerReservation': {
+        // arrendatario : $ {{owner}} <br>
+        // Monto pagado : $ {{price}} <br>
+        // Alquiler desde :  {{newRentalsStart}}  <br>
+        // Alquiler hasta :  {{newRentalsEnd}}    <br>
+
+        //To search totalCost
+        const PRICE = user.rentals.filter((post) => ({
+          priceTotal: post.totalCost,
+        }));
+        const price = PRICE[PRICE.length - 1].totalCost;
+        
+        //To search for first day of rent
+        const rentalsStart = user.rentals.filter((post) => ({
+          rentalStartDate: post.rentalStartDate,
+        }));
+        const RENTALStart =
+          rentalsStart[rentalsStart.length - 1].rentalStartDate;
+
+        //To search for last day of rent
+        const datePayEnd = user.rentals.filter((post) => ({
+          rentalEndDate: post.rentalEndDate,
+        }));
+        const DatePayend = datePayEnd[datePayEnd.length - 1].rentalEndDate;
+
+        try {
+          await this.mailerservice.sendMail({
+            to: user.email,
+            subject: 'You Drive. Alquila Autos Facilmente',
+            template: 'cancelOwnerReservation',
+            context: {
+              owner: user.name,
+              prices: price, 
+              newRentalsStart: RENTALStart,
+              newRentalsEnd: DatePayend,
+
+            },
+            attachments: [
+              {
+                filename: 'logo.png',
+                path: __dirname + '../../../../frontend/public/logo.png',
+                cid: 'imagename',
+              },
+            ],
+          });
+          return { message: 'Correo enviado exitosamente' };
+        } catch (error) {
+          console.error(error);
+          throw new BadRequestException(
+            'El correo no pudo ser enviado exitosamente',
+          );
+        }
+      }
+
+      case 'cancelTenantReservation': {
+
+        //To search totalCost
+        const PRICE = user.rentals.filter((post) => ({
+          priceTotal: post.totalCost,
+        }));
+        const price = PRICE[PRICE.length - 1].totalCost;
+        
+        //To search for first day of rent
+        const rentalsStart = user.rentals.filter((post) => ({
+          rentalStartDate: post.rentalStartDate,
+        }));
+        const RENTALStart =
+          rentalsStart[rentalsStart.length - 1].rentalStartDate;
+
+        //To search for last day of rent
+        const datePayEnd = user.rentals.filter((post) => ({
+          rentalEndDate: post.rentalEndDate,
+        }));
+        const DatePayend = datePayEnd[datePayEnd.length - 1].rentalEndDate;
+
+        try {
+          await this.mailerservice.sendMail({
+            to: user.email,
+            subject: 'You Drive. Alquila Autos Facilmente',
+            template: 'cancelTenantReservation',
+            context: {
+              tenant: user.name,
+              prices: price, 
+              newRentalsStart: RENTALStart,
+              newRentalsEnd: DatePayend,
+
             },
             attachments: [
               {
