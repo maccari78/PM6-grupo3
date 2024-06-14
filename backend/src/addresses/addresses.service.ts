@@ -47,7 +47,13 @@ export class AddressesService {
 
     if (!foundAddress) throw new NotFoundException('Dirección no encontrada');
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { id, ...rest } = foundAddress;
+
+    rest.latitude = Number(rest.latitude);
+    rest.longitude = Number(rest.latitude);
+
+    console.log(rest);
 
     const updatedAddress = this.addressWithGeolocation(
       foundAddress.user.id,
@@ -81,6 +87,8 @@ export class AddressesService {
       await this.geolocation.getCordinates(fullAddress);
 
     if (latitude) {
+      console.log(typeof latitude);
+
       await this.addressRepository.update(
         { user: { id: userId } },
         {

@@ -55,6 +55,10 @@ export class Address {
     precision: 9,
     scale: 6,
     nullable: true,
+    transformer: {
+      to: (value: number) => value,
+      from: (value: string) => parseFloat(value),
+    },
   })
   latitude: number;
 
@@ -63,6 +67,10 @@ export class Address {
     precision: 9,
     scale: 6,
     nullable: true,
+    transformer: {
+      to: (value: number) => value,
+      from: (value: string) => parseFloat(value),
+    },
   })
   longitude: number;
 
