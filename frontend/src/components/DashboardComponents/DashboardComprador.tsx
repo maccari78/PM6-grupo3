@@ -12,6 +12,7 @@ const DashboardComprador: React.FC = () => {
   const [userToken, setUserToken] = useState<string | null>(null);
   const [userData, setUserData] = useState<IUserData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [totalPrice, SetTotalPrice ] = useState<number>(0)
   const router = useRouter();
 
   useEffect(() => {
@@ -50,6 +51,7 @@ const DashboardComprador: React.FC = () => {
 
         const data = await response.json();
         setUserData(data);
+        
       } catch (error: any) {
         console.log(error);
         
@@ -63,7 +65,13 @@ const DashboardComprador: React.FC = () => {
       fetchData();
     }
   }, [userToken]);
-  console.log(userData);
+  
+  useEffect(() => {
+    if (userData?.rentals) {
+      const total = userData.rentals.reduce((acc, element) => acc + Number(element.totalCost), 0);
+      SetTotalPrice(total);
+    }
+  }, [userData]);
   if (loading) {
     return <SkeletonDashboard />;
   }
@@ -108,16 +116,16 @@ const DashboardComprador: React.FC = () => {
           </h2>
           <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             
-          {userData?.rentals?.map((rent) => (
-            
+          {userData?.rentals?.map((rent) => 
+           (      
               <PublicationCard
               key={rent?.id}
-                              carModel={rent?.posts?.car?.model}
-
+              carModel={rent?.posts?.car?.model}
               postDate={rent?.rentalStartDate}
-              author={rent?.posts?.user?.name}
+              author={rent?.posts?.title}
               imageUrl={rent?.posts?.car?.image_url[0]}
             />
+            
             ))}            
           </div>
         </div>
@@ -136,7 +144,7 @@ const DashboardComprador: React.FC = () => {
             />
             <StatCard
               title="Gastos Totales"
-              value="$1500"
+              value={totalPrice}
               description="Cantidad total gastada en reservas."
             />
             <StatCard
