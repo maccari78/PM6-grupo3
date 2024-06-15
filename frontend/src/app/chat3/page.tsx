@@ -4,7 +4,7 @@ import React, { useEffect, useState, ChangeEvent, FormEvent } from "react";
 import Swal from "sweetalert2";
 import { io, Socket } from "socket.io-client";
 import { IRentalChat, IUserChat, TMessageChat } from "@/interfaces/Ichat";
-import { IUser, IUserData } from "@/interfaces/IUser";
+
 
 const ChatWeb: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -14,7 +14,6 @@ const ChatWeb: React.FC = () => {
   const [messages, setMessages] = useState<TMessageChat[]>([]);
   const [room_id, setRoom_id] = useState<string>("");
   const [userStatus, setUserStatus] = useState<string>("");
-  
   const router = useRouter();
   const [socket, setSocket] = useState<Socket | null>(null);
   const [rentalsChats, setRentalsChat] = useState<IRentalChat[]>([]);
@@ -25,6 +24,8 @@ const ChatWeb: React.FC = () => {
 
   const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
   const apiToken = process.env.NEXT_PUBLIC_API_GET_USERS_TOKEN;
+  const apiChat = process.env.NEXT_PUBLIC_API_CHAT;
+
   if (!apiUrl) {
     throw new Error('Environment variable NEXT_PUBLIC_API_GET_USERS_TOKEN is not set');
   }
@@ -34,19 +35,17 @@ const ChatWeb: React.FC = () => {
 
   useEffect(() => {
     if (userToken) {
-      const newSocket = io("http://localhost:80/chat", {
+      const newSocket = io(`${apiChat}`, {
         transports: ["websocket"],
         auth: { token: userToken },
       });
 
       newSocket.on("connect", () => {
         setUserStatus("Conectado");
-        console.log("Conectado");
       });
 
       newSocket.on("disconnect", () => {
         setUserStatus("Desconectado");
-        console.log("Desconectado");
       });
 
       newSocket.on(room_id, recibeMensaje);
@@ -80,10 +79,8 @@ const ChatWeb: React.FC = () => {
             setSender(data[0].sender as IUserChat);  
             setReceiver(data[0].receiver as IUserChat);  
           }
-          // Ordenar mensajes por fecha de creación
           const sortedMessages = data.sort((a, b) => new Date(a.date_created || "").getTime() - new Date(b.date_created || "").getTime());
           setMessages(sortedMessages);
-          console.log(sortedMessages);
           if (response2.ok) { 
             const data2 = await response2.json();
             setUser(data2);
@@ -110,10 +107,6 @@ const ChatWeb: React.FC = () => {
       if (userSession) {
         const parsedSession = JSON.parse(userSession);
         setUserToken(parsedSession.token);
-        // Aquí puedes realizar una llamada a la API para obtener los detalles del usuario actual
-        // y establecer el estado `currentUser`
-        // Ejemplo:
-        
       } else {
         setLoading(true);
         Swal.fire({
@@ -144,9 +137,7 @@ const ChatWeb: React.FC = () => {
 
         const data: IRentalChat[] = await response.json();
         setRentalsChat(data);
-        if (data.length > 0) {
-          console.log(data);
-          
+        if (data.length > 0) { 
           setRoom_id(data[0].room_id);
         }
       } catch (error: any) {
@@ -175,7 +166,7 @@ const ChatWeb: React.FC = () => {
     if(!user) {console.error("No se han establecido el remitente o el receptor.");
       return;
     }
-    console.log(user);
+
     
     const meMessage: TMessageChat = {
       sender: sender.id === user.id ? sender : user,  
