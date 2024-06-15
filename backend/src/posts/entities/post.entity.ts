@@ -1,5 +1,6 @@
 import { Car } from 'src/cars/entities/car.entity';
 import { Chat } from 'src/chat/entities/chat.entity';
+import { Rental } from 'src/rentals/entities/rental.entity';
 import { Review } from 'src/reviews/entities/review.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
@@ -32,7 +33,7 @@ export class Posts {
   @Column({ default: false })
   isDeleted: boolean;
 
-  @OneToMany(() => Chat, (chat) => chat.post, { cascade: true })
+  @OneToMany(() => Chat, (chat) => chat.post)
   room_id: Chat[];
 
   //..........relations start........//
@@ -41,7 +42,7 @@ export class Posts {
   user: User;
 
   //..........relations start........//
-  @OneToOne(() => Car)
+  @OneToOne(() => Car,{ cascade: true })
   @JoinColumn({ name: 'carId' })
   car: Car;
 
@@ -51,6 +52,10 @@ export class Posts {
   @UpdateDateColumn()
   updated_at: Timestamp;
   
-  @OneToMany(() => Review, (review) => review.post)
+  //..........relations start........//
+  @OneToMany(() => Review, (review) => review.post,{ cascade: true })
   review: Review[];
+
+  @OneToOne(() => Rental, (rentalss) => rentalss.posts,{ cascade: true })
+   rental: Rental;
 }

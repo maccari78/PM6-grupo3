@@ -65,8 +65,8 @@ export class ReviewsController {
     return this.reviewsService.updateReview(id, updateReviewDto, token);
   }
 
-  @UseGuards(RolesGuard)
-  @Roles(Role.User, Role.Admin)
+  // @UseGuards(RolesGuard)
+  // @Roles(Role.User, Role.Admin)
   @Delete(':id')
   removeIdController(@Param('id', ParseUUIDPipe) id: string) {
     return this.reviewsService.DeleteReviewsServices(id);

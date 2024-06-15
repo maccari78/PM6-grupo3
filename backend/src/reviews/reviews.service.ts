@@ -59,8 +59,8 @@ export class ReviewsService {
     // searchposts.review = [review];
 
     // Añade la nueva reseña a la lista de reseñas del usuario y del post
-    searchuser.reviews.push(review);
-    searchposts.review.push(review);
+    searchuser.reviews.unshift(review);
+    searchposts.review.unshift(review);
 
     //Guarda los cambios en las entidades usuario y post
     await this.postsService.save(searchposts);
@@ -121,10 +121,10 @@ export class ReviewsService {
     if (!ReviewFind)
       throw new NotFoundException(`No se pudo obtener la reseña con ${id}`);
 
-    const review = await this.reviewService.delete(ReviewFind);
-    if (review.affected === 0)
-      throw new BadRequestException('No se pudo borrar la reseña');
+    const review = await this.reviewService.remove(ReviewFind);
+    // if (review.affected === 0)
+    //   throw new BadRequestException('No se pudo borrar la reseña');
 
-    return 'Publicación eliminada';
+    return review;
   }
 }
