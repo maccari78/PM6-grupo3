@@ -5,24 +5,16 @@ import IVehicleData from "../../interfaces/IVehicleData";
 import IErrorsVehicleForm from "../../interfaces/IErrorsVehicleForm";
 import axios from "axios";
 import { redirect, useRouter } from "next/navigation";
+import Loader from "@/components/Loaders/loaderAuth";
 
 const VehicleForm = () => {
   const apiUrl = process.env.NEXT_PUBLIC_API_POSTS;
   if (!apiUrl) {
     throw new Error("Environment variable NEXT_PUBLIC_API_POSTS is not set");
   }
-
-  const [token, setToken] = useState();
-  useEffect(() => {
-    if (typeof window !== "undefined" && window.localStorage) {
-      const userToken = localStorage.getItem("userSession");
-      setToken(JSON.parse(userToken!));
-      !userToken && redirect("/login");
-    }
-  }, []);
-
   const router = useRouter();
-
+  const [token, setToken] = useState();
+  const [isLoading, setIsLoading] = useState(false);
   const [userSession, setUserSession] = useState();
   const [errors, setErrors] = useState<IErrorsVehicleForm>({});
   const [vehicleData, setVehicleData] = useState<IVehicleData>({
@@ -36,6 +28,16 @@ const VehicleForm = () => {
     year: 0,
     mileage: "",
   });
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.localStorage) {
+      const userToken = localStorage.getItem("userSession");
+      setToken(JSON.parse(userToken!));
+      !userToken && redirect("/login");
+    }
+  }, []);
+
+
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
       const token = localStorage.getItem("userSession");
@@ -87,6 +89,7 @@ const VehicleForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+
     // Validar los datos del vehículo
     const validationErrors = validate(vehicleData);
     setErrors(validationErrors);
@@ -109,7 +112,7 @@ const VehicleForm = () => {
           formData.append("file", file);
         });
       }
-
+      setIsLoading(true)
       axios
         .post(apiUrl, formData, {
           headers: {
@@ -120,6 +123,7 @@ const VehicleForm = () => {
         .then((response) => {
           if (response.data) {
             alert(`Vehiculo publicado correctamente`);
+            setIsLoading(false)
             setVehicleData({
               title: "",
               description: "",
@@ -138,12 +142,14 @@ const VehicleForm = () => {
         })
         .catch((error) => {
           alert("Ha ocurrido un error en la conexión");
+          setIsLoading(false)
           console.error("Error:", error);
         });
     }
   };
 
   return (
+    isLoading ? <Loader></Loader> :
     <div className="font-sans text-white m-0 bg-[url('/background_register_2.svg')] bg-no-repeat bg-cover relative z-3 w-full pt-[70px] px-[30px] pb-[44px] justify-center items-center min-h-screen bg-gray-900 h-min flex flex-col ">
       <div className="flex flex-col gap-2 p-4 items-center">
         <h1 className=" text-4xl font-semibold">
@@ -184,7 +190,7 @@ const VehicleForm = () => {
         </div>
         <div className="flex gap-8">
           <div className="mb-4 w-1/2">
-            <label className="text-slate-50">Valor</label>
+            <label className="text-slate-50">Valor USD por día</label>
             <input
               name="price"
               type="number"

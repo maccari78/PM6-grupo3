@@ -22,7 +22,7 @@ const FAQ = () => {
       answer: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae, temporibus repudiandae? Perspiciatis qui quas totam dignissimos ab sequi labore ipsum laudantium at? Tempora nostrum ea odit distinctio, ex explicabo ipsum?",
     },
     {
-      question: "¿Como funcionan las reservas?",
+      question: "¿Cómo funcionan las reservas?",
       answer: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae, temporibus repudiandae? Perspiciatis qui quas totam dignissimos ab sequi labore ipsum laudantium at? Tempora nostrum ea odit distinctio, ex explicabo ipsum?",
     },
   ];
