@@ -52,6 +52,8 @@ export class PostsService {
       query.andWhere('car.year = :year', { year: filters.year });
     }
     if (filters.mileage) {
+      console.log('Entra al if?', filters);
+
       query.andWhere('car.mileage = :mileage', { mileage: filters.mileage });
     }
     if (filters.color) {
@@ -62,6 +64,7 @@ export class PostsService {
     }
 
     const posts = await query.getMany();
+    console.log(posts);
 
     if (posts.length === 0) {
       throw new NotFoundException('No se encontraron resultados');
@@ -221,40 +224,6 @@ export class PostsService {
       return 'Publicación actualizada';
     }
     return 'Publicación actualizada';
-  }
-
-  async DeletePostsServices(id: string) {
-    const post  = await this.postRepository.findOne({ where: { id }, 
-       relations: ['review', 'car',"rental"]
-    });
-    if (!post ) throw new NotFoundException(
-        `No se pudo obtener la publicación con ${id}`,
-      );
-
-
-    //  const posts = await this.postRepository.delete(postsFind.id);
-     try {
-      // Eliminar las relaciones de la publicación
-      if (post.review) {
-        await this.reviewRepository.remove(post.review);
-      }
-      if (post.car) {
-        await this.carRepository.remove(post.car);
-      }
-      if (post.rental) {
-        await this.rentalRepository.remove(post.rental);
-      }
-
-      // Finalmente, eliminar la publicación
-      const deleteResult = await this.postRepository.remove(post);
-
-      return deleteResult;
-    } catch (error) {
-      throw new BadRequestException(`Error al intentar eliminar la publicación: ${error.message}`);
-    }
-
-    //  return 'Publicación eliminada';
-
   }
 
   async softDelete(id: string): Promise<{ message: string }> {

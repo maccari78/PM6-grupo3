@@ -37,7 +37,7 @@ export class Rental {
   })
   users: User[];
 
-  @OneToOne(() => Posts,(post) => post.rental, { eager: true, })
+  @OneToOne(() => Posts)
   @JoinColumn()
   posts: Posts;
 
