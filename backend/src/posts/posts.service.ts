@@ -302,4 +302,21 @@ export class PostsService {
     }));
     await this.postRepository.save(postsToUpdate);
   }
+
+  async getPostsByDate() {
+    // const allPosts = await this.postRepository.find({
+    //   relations: ['rental'],
+    // });
+    // return allPosts;
+
+    const posts = await this.postRepository.find({
+      relations: ['car'],
+    });
+
+    const availablePosts = posts.filter((post) => {
+      return post.car.availability === true;
+    });
+
+    return availablePosts;
+  }
 }
