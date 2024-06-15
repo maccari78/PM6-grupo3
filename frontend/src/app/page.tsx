@@ -9,6 +9,7 @@ const handleSearch = (
   returnDate: string
 ) => {
   console.log("Searching for:", { location, pickupDate, returnDate });
+
 };
 export default function Home() {
   return (
