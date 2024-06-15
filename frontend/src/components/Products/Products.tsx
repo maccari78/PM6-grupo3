@@ -48,8 +48,9 @@ const Products: React.FC = () => {
     const fetchData = async () => {
       try {
         const queryParams = new URLSearchParams(filters);
+        const queryString = queryParams.toString().replace(/\+/g, "%20");
         const response = await fetch(
-          `${apiBaseUrl}/posts/filter?${queryParams}`,
+          `${apiBaseUrl}/posts/filter?${queryString}`,
           {
             method: "GET",
             headers: {
