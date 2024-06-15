@@ -288,6 +288,7 @@ export class RentalsService {
     const completeRentals = await this.rentalRepository
       .createQueryBuilder('rental')
       .leftJoinAndSelect('rental.users', 'user')
+      .leftJoinAndSelect('rental.posts', 'post')
       .whereInIds(rentalIds)
       .getMany();
 

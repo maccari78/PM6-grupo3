@@ -1,3 +1,5 @@
+import { IPost } from "@/components/VehiclesComponent/interfaces/IPost";
+
 export interface IUserChat {
     id: string;
     email: string;
@@ -26,6 +28,7 @@ export interface IRentalChat {
     createdAt: string;
     updatedAt: string;
     users: IUserChat[];
+    posts: IPost;
 }
 
 export interface MessageChat {

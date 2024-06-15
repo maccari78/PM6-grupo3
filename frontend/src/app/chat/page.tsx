@@ -213,7 +213,7 @@ const ChatWeb: React.FC = () => {
             {rental.users.filter((userdata)=> userdata.id !== user?.id).map((userdata, userIndex) => (
               <Contact
                 key={userIndex}
-                name={userdata.name ?? "Usuario"}
+                name={`${userdata.name} in ${rental.posts?.title}`}
                 avatarUrl={userdata.image_url}
                 onClick={() => handleRoom(rental.room_id)}
               />
