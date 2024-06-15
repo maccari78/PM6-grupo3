@@ -144,7 +144,7 @@ const DashboardComprador: React.FC = () => {
             />
             <StatCard
               title="Gastos Totales"
-              value={totalPrice}
+              value={`$ ${totalPrice}`}
               description="Cantidad total gastada en reservas."
             />
             <StatCard
