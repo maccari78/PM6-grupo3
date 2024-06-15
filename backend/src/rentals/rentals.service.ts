@@ -284,4 +284,28 @@ export class RentalsService {
       );
     return rentals;
   }
+  //  ! POR SI ALGUNA VEZ SUCEDE LO MISMO, CON ESTO SE PUEDEN RECUPERAR RELACIONES DE POST CON RENTALS
+  // async putRelation() {
+  //   const rentals = await this.rentalRepository
+  //     .createQueryBuilder('rental')
+  //     .leftJoinAndSelect('rental.posts', 'post')
+  //     .getMany();
+
+  //   return Promise.all(
+  //     rentals.map(async (rental) => {
+  //       if (!rental.posts && rental.room_id) {
+  //         const postId = rental.room_id.substring(0, 36);
+  //         console.log(postId);
+
+  //         const post = await this.postRepository
+  //           .createQueryBuilder('rental')
+  //           .where('id = :id', { id: postId })
+  //           .getOne();
+  //         if (!post) throw new NotFoundException('Publicacion no encontrada');
+  //         rental.posts = post;
+  //         await this.rentalRepository.save(rental);
+  //       }
+  //     }),
+  //   );
+  // }
 }

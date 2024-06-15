@@ -72,6 +72,7 @@ export class UsersService {
         'post.car',
         'rentals',
         'rentals.posts.car',
+        'rentals.posts.user',
         'rentals.posts',
         'rentals.users',
         'notifications',
