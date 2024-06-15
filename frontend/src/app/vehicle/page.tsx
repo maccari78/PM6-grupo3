@@ -1,7 +1,10 @@
+import CallToAction from "@/components/Home/CallToAction";
+
 const Vehicle: React.FC = () => {
   return (
     <>
-      <h1>vehicle</h1>
+      <CallToAction/>
+
     </>
   );
 };

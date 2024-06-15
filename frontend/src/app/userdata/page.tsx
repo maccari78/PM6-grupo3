@@ -69,6 +69,9 @@ const UserProfile: React.FC = () => {
   if (loading) {
     return <SkeletonDashboard />;
   } 
+
+  console.log(userData);
+  
   return (
         <>
         <div className='bg-[#313139] p-6'></div>
@@ -85,7 +88,7 @@ const UserProfile: React.FC = () => {
         </div>
         <div className="text-center mt-2">
           <h2 className="text-lg font-medium text-gray-100">{userData?.name}</h2>
-          <p className="text-sm text-gray-300">Buenos Aires, Argentina</p>
+          <p className="text-sm text-gray-300">{userData?.addresses.length !== 0 ? `${userData?.addresses[0]?.city}, ${userData?.addresses[0]?.country}` : ''}</p>
         </div>
         <div className="px-6 py-4">
           <p className="text-gray-100 text-base">

@@ -20,23 +20,14 @@ export class Review {
   @UpdateDateColumn()
   updated_at: Timestamp;
 
-  //..........relations start........//
   @ManyToOne(() => User, (user) => user.reviews, { eager: true })
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  //Para la tablar user desde Review:
-  // @OneToMany(() => Review, review => review.user)
-  // reviews: Review[];
-  //..........relations end........//
 
-  //..........relations start ........//
-  @ManyToOne(() => Posts, (posts) => posts.review, { eager: true })
+  @ManyToOne(() => Posts, (posts) => posts.review, { eager: true})
   @JoinColumn({ name: 'postId' })
   post: Posts;
 
-  //Para la tablar Posts desde Review:
-  // @OneToOne(() => Review, review => review.car)
-  // reviews: Review[];
-  //..........relations end........//
+
 }

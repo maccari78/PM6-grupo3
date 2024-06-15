@@ -17,19 +17,11 @@ import { CreateRentalDto } from './dto/create-rental.dto';
 import { UpdateRentalDto } from './dto/update-rental.dto';
 import { Response } from 'express';
 import { ApiBearerAuth } from '@nestjs/swagger';
-// import { RolesGuard } from 'src/users/utils/roles.guard';
-// import { Role } from 'src/users/utils/roles.enum';
-// import { Roles } from 'src/users/utils/roles.decorator';
 
-// @ApiBearerAuth()
-// @ApiTags('RENTALS')
 @Controller('rentals')
-//@UseGuards(RolesGuard)
-//@Roles(Role.User, Role.Admin)
 export class RentalsController {
   constructor(private readonly rentalsService: RentalsService) {}
 
-  // @ApiBearerAuth()
   @Post(':id')
   async create(
     @Body() createRentalDto: CreateRentalDto,
@@ -63,6 +55,11 @@ export class RentalsController {
       throw new UnauthorizedException('No hay un usuario autenticado');
     return this.rentalsService.getChat(currentUser);
   }
+
+  // @Get('relations')
+  // putRelation() {
+  //   return this.rentalsService.putRelation();
+  // }
   @Get('/sucess/:id')
   paymentSucess(@Param('id', ParseUUIDPipe) id: string, @Res() res: Response) {
     const payment = this.rentalsService.paymentSucess(id);

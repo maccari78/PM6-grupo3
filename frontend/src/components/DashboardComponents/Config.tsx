@@ -11,7 +11,12 @@ const Config = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [newProfilePicture, setNewProfilePicture] = useState<File | null>(null);
   const router = useRouter();
-
+  const [isPasswordEnabled, setIsPasswordEnabled] = useState(false)
+  
+    const handlePasswordChangeClick = () => {
+      setIsPasswordEnabled(prevState => !prevState)
+    }
+   
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
       const userSession = localStorage.getItem("userSession");
@@ -47,6 +52,8 @@ const Config = () => {
         }
 
         const data = await response.json();
+        console.log(data);
+        
         setUserData(data);
       } catch (error: any) {
         console.error('Error:', error);
@@ -62,11 +69,17 @@ const Config = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+
+    
     setUserData((prevData) => {
+  
+      
       if (prevData) {
         return {
           ...prevData,
           [name]: value,
+          addresses: [{ ...prevData.addresses[0], [name]: value }],
+
         };
       }
       return prevData;
@@ -102,14 +115,18 @@ const Config = () => {
 
       // Añadir los datos al FormData
       formData.append('name', userData.name);
+      formData.append('password', userData.password)
       formData.append('phone', phone.toString());
       formData.append('nDni', nDni.toString());
-      formData.append('city', userData.city);
-      formData.append('zip_code', userData.zip_code);
+      formData.append('address', userData.addresses[0]?.address);
+      formData.append('city', userData.addresses[0]?.city);
+      formData.append('state', userData.addresses[0]?.state);
+      formData.append('country', userData.addresses[0]?.country);
+      formData.append('zip_code', userData.addresses[0]?.zip_code);
       formData.append('rExpiration', userData.rExpiration);
     }
 
-    try {
+    try {;
       const response = await fetch(`http://localhost:3001/users/update`, {
         method: "PUT",
         headers: {
@@ -128,7 +145,7 @@ const Config = () => {
       }
 
       const updatedData = await response.json();
-      setUserData(updatedData);
+      // setUserData(updatedData);
       const Toast = Swal.mixin({
         toast: true,
         position: "top-end",
@@ -144,9 +161,9 @@ const Config = () => {
         icon: "success",
         title: "Sus datos se actualizaron correctamente",
       });
-      router.push("/user");
+      router.push("/settings");
       
-    } catch (error: any) {   
+    } catch (error: any) {
       Swal.fire({
         title: "Error al actualizar los datos",
         text: `Los daton no pudieron actualizarse, intentelo nuevamente`,
@@ -171,7 +188,9 @@ const Config = () => {
           />
           <input type="file" onChange={handlePictureChange} />
         </div>
-        <form onSubmit={handleSubmit} className="bg-[#A29E9E] shadow-md rounded px-8 ml-32 mr-32 pt-6 pb-8 flex flex-col">
+        <div className="flex flex-col items-center">
+
+        <form onSubmit={handleSubmit} className="bg-[#A29E9E] shadow-md px-8 mx-32 pt-6 pb-8 flex flex-col max-w-6xl mx-auto rounded-xl">
           <div className="-mx-3 md:flex mb-6">
             <div className="md:w-1/2 px-3 mb-6 md:mb-0">
               <label className="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2">
@@ -204,12 +223,14 @@ const Config = () => {
                 Contraseña
               </label>
               <input
-                disabled
+                disabled = {!isPasswordEnabled}
                 className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4 mb-3"
                 type="password"
+                name="password"
                 placeholder="******************"
+                onChange={handleInputChange}
               />
-              <button className="text-grey-dark text-xs italic text-blue-800">Cambiar Contraseña</button>
+              <button type="button" onClick={handlePasswordChangeClick} className="text-grey-dark text-xs italic text-blue-800">Cambiar Contraseña</button>
             </div>
             <div className="md:w-1/2 px-3 flex mb-6 md:mb-0">
               <div className="md:w-1/3 px-3 mb-6 md:mb-0">
@@ -220,7 +241,7 @@ const Config = () => {
                   className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4 mb-3"
                   type="text"
                   name="phone"
-                  placeholder={userData?.phone}
+                  placeholder={userData?.phone || ''}
                   value={userData?.phone || ''}
                   onChange={handleInputChange}
                 />
@@ -237,34 +258,7 @@ const Config = () => {
                   onChange={handleInputChange}
                 />
               </div>
-            </div>
-          </div>
-          <div className="-mx-3 md:flex mb-2">
-            <div className="md:w-1/2 px-3 mb-6 md:mb-0">
-              <label className="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2">
-                Provincia
-              </label>
-              <input
-                className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4"
-                type="text"
-                name="city"
-                value={userData?.addresses[0!]?.city ? userData?.addresses[0!]?.city : userData!.city}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="md:w-1/2 px-3">
-              <label className="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2">
-                Código Postal
-              </label>
-              <input
-                className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4"
-                type="text"
-                name="zip_code"
-                value={userData?.addresses[0!]?.zip_code ? userData?.addresses[0!]?.zip_code:userData!.zip_code}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="md:w-1/2 px-3">
+              <div className="md:w-1/3 px-3">
               <label className="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2">
                 Vencimiento del registro
               </label>
@@ -276,11 +270,77 @@ const Config = () => {
                 onChange={handleInputChange}
               />
             </div>
+            </div>
+          </div>
+          <div className="-mx-3 md:flex md:flex-wrap mb-2">
+            <div className="md:w-full px-3 mb-6">
+              <label className="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2">
+                Dirección
+              </label>
+              <input
+                className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4"
+                type="text"
+                name="address"
+                value={userData?.addresses[0]?.address || ''}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="md:w-1/2 px-3 mb-6">
+              <label className="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2">
+                Ciudad
+              </label>
+              <input
+                className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4"
+                type="text"
+                name="city"
+                value={userData?.addresses[0]?.city || ''}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="md:w-1/2 px-3 mb-6">
+              <label className="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2">
+                Provincia
+              </label>
+              <input
+                className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4"
+                type="text"
+                name="state"
+                value={userData?.addresses[0]?.state || ''}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="md:w-1/2 px-3">
+              <label className="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2">
+                País
+              </label>
+              <input
+                className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4"
+                type="text"
+                name="country"
+                value={userData?.addresses[0]?.country || ''}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="md:w-1/2 px-3">
+              <label className="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2">
+                Código Postal
+              </label>
+              <input
+                className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4"
+                type="text"
+                name="zip_code"
+                value={userData?.addresses[0]?.zip_code || ''}
+                onChange={handleInputChange}
+              />
+            </div>
+
+            
           </div>
           <button type="submit" className="mt-4 px-4 py-2 bg-[#232326] text-white rounded hover:bg-[#333335]">
             Guardar cambios
           </button>
         </form>
+        </div>
       </div>
       <div className="p-6 bg-[#313139]"></div>
     </>

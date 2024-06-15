@@ -37,9 +37,16 @@ export class UsersController {
 
   @ApiBearerAuth()
   @Get('token')
-  @Roles(Role.User, Role.Admin)
-  getUserByToken(@Headers('Authorization') token: string) {
-    return this.usersService.getUserByToken(token);
+  // @Roles(Role.User, Role.Admin)
+  getUserForRent(@Headers('Authorization') token: string) {
+    return this.usersService.getUserByRent(token);
+  }
+  @ApiBearerAuth()
+  @Get('dashboard')
+  getUserForDashboard(@Headers('Authorization') token: string) {
+    console.log(token);
+
+    return this.usersService.getUserForDashboard(token);
   }
 
   @Get(':id')
@@ -49,7 +56,7 @@ export class UsersController {
 
   @ApiBearerAuth()
   @Put('update')
-  @Roles(Role.User, Role.Admin)
+  // @Roles(Role.User, Role.Admin)
   @UseInterceptors(FileInterceptor('file'))
   update(
     @Body() updateUserDto: UpdateUserDto,
@@ -70,7 +77,6 @@ export class UsersController {
     )
     file?: Express.Multer.File,
   ) {
-    console.log(updateUserDto);
     const { city, address, country, state, zip_code, ...rest2 } = updateUserDto;
 
     if (!file)

@@ -16,6 +16,8 @@ import { User } from 'src/users/entities/user.entity';
 import { JwtPayload } from 'src/rentals/interfaces/payload.interfaces';
 import { JwtService } from '@nestjs/jwt';
 import { FiltersPosts } from './interfaces/filter.interfaces';
+import { Review } from 'src/reviews/entities/review.entity';
+import { Rental } from 'src/rentals/entities/rental.entity';
 
 @Injectable()
 export class PostsService {
@@ -24,6 +26,8 @@ export class PostsService {
     @InjectRepository(Car) private carRepository: Repository<Car>,
     @InjectRepository(Posts) private postRepository: Repository<Posts>,
     @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(Review) private reviewRepository: Repository<Review>,
+    @InjectRepository(Rental) private rentalRepository: Repository<Rental>,
     private jwtService: JwtService,
   ) {}
 
@@ -48,6 +52,8 @@ export class PostsService {
       query.andWhere('car.year = :year', { year: filters.year });
     }
     if (filters.mileage) {
+      console.log('Entra al if?', filters);
+
       query.andWhere('car.mileage = :mileage', { mileage: filters.mileage });
     }
     if (filters.color) {
@@ -58,6 +64,7 @@ export class PostsService {
     }
 
     const posts = await query.getMany();
+    console.log(posts);
 
     if (posts.length === 0) {
       throw new NotFoundException('No se encontraron resultados');
@@ -219,20 +226,6 @@ export class PostsService {
     return 'Publicación actualizada';
   }
 
-  async DeletePostsServices(id: string) {
-    const postsFind = await this.postRepository.findOne({ where: { id } });
-    if (!postsFind)
-      throw new NotFoundException(
-        `No se pudo obtener la publicación con ${id}`,
-      );
-
-    const posts = await this.postRepository.delete(postsFind.id);
-    if (posts.affected === 0)
-      throw new BadRequestException('No se pudo borrar la publicación');
-
-    return 'Publicación eliminada';
-  }
-
   async softDelete(id: string): Promise<{ message: string }> {
     const car = await this.carRepository.findOne({
       where: { id },
@@ -278,4 +271,22 @@ export class PostsService {
     }));
     await this.postRepository.save(postsToUpdate);
   }
+
+  async getPostsByDate() {
+    // const allPosts = await this.postRepository.find({
+    //   relations: ['rental'],
+    // });
+    // return allPosts;
+
+    const posts = await this.postRepository.find({
+      relations: ['car'],
+    });
+
+    const availablePosts = posts.filter((post) => {
+      return post.car.availability === true;
+    });
+
+    return availablePosts;
+  }
+  //Prueba xd
 }
