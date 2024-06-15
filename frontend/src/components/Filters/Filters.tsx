@@ -175,7 +175,7 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
         <ul className="flex flex-col justify-start">
           <li className="flex justify-start items-start">
             <button
-              onClick={() => handleMileageChange("Menos de 50.000Km")}
+              onClick={() => handleMileageChange("Menos de 50.000km")}
               className="text-[#222222] text-sm md:text-base  w-full flex justify-start rounded-xl hover:px-2 hover:translate-x-1 hover:bg-[#C4FF0D] duration-300"
             >
               Menos de 50.000Km
@@ -183,7 +183,7 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
           </li>
           <li className="flex justify-start items-start">
             <button
-              onClick={() => handleMileageChange("50.000Km-100.000Km")}
+              onClick={() => handleMileageChange("50.000km - 100.000km")}
               className="text-[#222222] text-sm md:text-base  w-full flex justify-start rounded-xl hover:px-2 hover:translate-x-1 hover:bg-[#c3ff0dad] duration-300"
             >
               50.000Km-100.000Km
@@ -191,7 +191,7 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
           </li>
           <li className="flex justify-start items-start">
             <button
-              onClick={() => handleMileageChange("100.000Km-150.000Km")}
+              onClick={() => handleMileageChange("100.000km - 150.000km")}
               className="text-[#222222] text-sm md:text-base  w-full flex justify-start rounded-xl hover:px-2 hover:translate-x-1 hover:bg-[#c3ff0dad] duration-300"
             >
               100.000Km-150.000Km
@@ -199,7 +199,7 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
           </li>
           <li className="flex justify-start items-start">
             <button
-              onClick={() => handleMileageChange("Mas de 150.000Km")}
+              onClick={() => handleMileageChange("Mas de 150.000km")}
               className="text-[#222222] text-sm md:text-base  w-full flex justify-start rounded-xl hover:px-2 hover:translate-x-1 hover:bg-[#c3ff0dad] duration-300"
             >
               Mas de 150.000Km

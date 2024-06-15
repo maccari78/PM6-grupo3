@@ -9,6 +9,7 @@ import {
   ManyToOne,
   OneToMany,
   OneToOne,
+  // OneToOne,
   PrimaryGeneratedColumn,
   Timestamp,
   UpdateDateColumn,
@@ -74,4 +75,5 @@ export class Car {
 
   @OneToOne(() => Address, (address) => address.car)
   address: Address;
+  rentals: any;
 }
