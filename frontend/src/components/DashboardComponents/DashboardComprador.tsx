@@ -97,7 +97,7 @@ const DashboardComprador: React.FC = () => {
             Reservas activas
           </h2>
           <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {userData?.rentals?.map((rent) => (
+            {userData?.rentals?.length !== 0 ? (userData?.rentals?.map((rent) => (
               <ReservationCard
                 key={rent?.id}
                 carModel={rent?.posts?.car?.model}
@@ -105,18 +105,20 @@ const DashboardComprador: React.FC = () => {
                 price={rent?.totalCost}
                 imageUrl={rent?.posts?.car?.image_url[0]}
               />
-            ))}
+            ))) : (
+              <p className='text-gray-300 text-m'>No hay reservas activas</p>
+            )}
           </div>
         </div>
 
         {/* Sección de publicaciones recientes */}
         <div className="bg-[#2d2d2d] rounded-lg shadow-md p-6">
           <h2 className="text-2xl font-semibold text-[#C4FF0D]">
-            Hisotiral de reservas
+            Historial de reservas
           </h2>
           <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             
-          {userData?.rentals?.map((rent) => 
+          {userData?.rentals?.length !== 0 ? (userData?.rentals?.map((rent) => 
            (      
               <PublicationCard
               key={rent?.id}
@@ -126,7 +128,9 @@ const DashboardComprador: React.FC = () => {
               imageUrl={rent?.posts?.car?.image_url[0]}
             />
             
-            ))}            
+          ))) : (
+              <p className='text-gray-300 text-m'>No hay reservas disponibles</p>
+            )}            
           </div>
         </div>
       </div>
@@ -144,7 +148,7 @@ const DashboardComprador: React.FC = () => {
             />
             <StatCard
               title="Gastos Totales"
-              value={totalPrice}
+              value={`$ ${totalPrice}`}
               description="Cantidad total gastada en reservas."
             />
             <StatCard

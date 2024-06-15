@@ -24,7 +24,23 @@ const ChatWeb: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [sender, setSender] = useState<IUserChat | null>(null);
   const [receiver, setReceiver] = useState<IUserChat | null>(null);
-  const [user, setUser] = useState<IUserChat | null>(null);
+  const [user, setUser] = useState<IUserChat | null>({
+     id: 'HOLA',
+    email: 'HOLA',
+    name: 'OLA',
+    password: 'ASDDA',
+    nDni: 123,
+    nExpiration: 'string | null',
+    phone: 'string',
+    image_url: 'string',
+    public_id: 'string | null',
+    userGoogle: true,
+    aboutMe: 'string | null',
+    roles: 'string',
+    isDeleted: false,
+    createdAt: 'string',
+    updatedAt: 'string'
+  });
   const [msgLoader, setMsgLoader] = useState<boolean>(true)
   const [userLoader, setUserLoader] = useState<boolean>(true)
 
@@ -81,7 +97,19 @@ const ChatWeb: React.FC = () => {
             throw new Error("Error fetching messages");
           }
           const data: TMessageChat[] = await response.json();
-          if(data.length === 0) {
+          console.log(data);
+          if (response2.ok) { 
+            console.log(response2);
+            
+            const data2 = await response2.json();
+            console.log(data2);
+            
+            setUser(data2 as IUserChat);
+          }
+          if (data.length === 0) {
+            console.log('ENTRAR');
+            console.log(user);
+            
             setSender(user);
             setReceiver(user);
           }
@@ -91,10 +119,7 @@ const ChatWeb: React.FC = () => {
           }
           const sortedMessages = data.sort((a, b) => new Date(a.date_created || "").getTime() - new Date(b.date_created || "").getTime());
           setMessages(sortedMessages);
-          if (response2.ok) { 
-            const data2 = await response2.json();
-            setUser(data2);
-          }
+          
         } catch (error) {
           console.error("Error al obtener los mensajes:", error);
           setError("Error al obtener los mensajes.");
