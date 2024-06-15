@@ -4,6 +4,7 @@ import React, { useEffect, useState, ChangeEvent, FormEvent } from "react";
 import Swal from "sweetalert2";
 import { io, Socket } from "socket.io-client";
 import { IRentalChat, IUserChat, TMessageChat } from "@/interfaces/Ichat";
+import { IUser, IUserData } from "@/interfaces/IUser";
 
 const ChatWeb: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -20,9 +21,10 @@ const ChatWeb: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [sender, setSender] = useState<IUserChat | null>(null);
   const [receiver, setReceiver] = useState<IUserChat | null>(null);
+  const [user, setUser] = useState<IUserChat | null>(null);
 
   const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-
+  const apiToken = process.env.NEXT_PUBLIC_API_GET_USERS_TOKEN;
   if (!apiUrl) {
     throw new Error('Environment variable NEXT_PUBLIC_API_GET_USERS_TOKEN is not set');
   }
@@ -63,6 +65,13 @@ const ChatWeb: React.FC = () => {
       if (room_id) {
         try {
           const response = await fetch(`${apiUrl}/chat/${room_id}/messages`);
+          const response2 = await fetch(`${apiToken}`, {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${userToken}`,
+              "Content-Type": "application/json",
+            },
+          });
           if (!response.ok) {
             throw new Error("Error fetching messages");
           }
@@ -75,6 +84,10 @@ const ChatWeb: React.FC = () => {
           const sortedMessages = data.sort((a, b) => new Date(a.date_created || "").getTime() - new Date(b.date_created || "").getTime());
           setMessages(sortedMessages);
           console.log(sortedMessages);
+          if (response2.ok) { 
+            const data2 = await response2.json();
+            setUser(data2);
+          }
         } catch (error) {
           console.error("Error al obtener los mensajes:", error);
           setError("Error al obtener los mensajes.");
@@ -132,6 +145,8 @@ const ChatWeb: React.FC = () => {
         const data: IRentalChat[] = await response.json();
         setRentalsChat(data);
         if (data.length > 0) {
+          console.log(data);
+          
           setRoom_id(data[0].room_id);
         }
       } catch (error: any) {
@@ -157,10 +172,14 @@ const ChatWeb: React.FC = () => {
       console.error("No se han establecido el remitente o el receptor.");
       return;
     }
-
+    if(!user) {console.error("No se han establecido el remitente o el receptor.");
+      return;
+    }
+    console.log(user);
+    
     const meMessage: TMessageChat = {
-      sender: sender,  
-      receiver: receiver,
+      sender: sender.id === user.id ? sender : user,  
+      receiver: receiver.id === user.id ? user : receiver,
       message,
       room_id,
       date_created: new Date(),
@@ -173,7 +192,7 @@ const ChatWeb: React.FC = () => {
 
     setMessage("");
   };
-
+  
   return (
     <div className="bg-gray-400">
       <button onClick={toggleMenu}>
@@ -190,7 +209,7 @@ const ChatWeb: React.FC = () => {
           messages.map((msg, index) => (
             <div key={index}>
               <p>
-                {msg.sender?.name ?? 'Usuario'}: {msg.message ?? 'Mensaje no disponible'}
+                {msg.sender?.id !== user?.id ? msg.sender?.name : 'Me' }: {msg.message ?? 'Mensaje no disponible'}
               </p>
             </div>
           ))
