@@ -62,6 +62,7 @@ export interface Rental {
 	rentalStartDate: string;
 	updatedAt: string;
 	users: Array<IUser>;
+	totalCost: number;
 }
 
 export interface Review {
