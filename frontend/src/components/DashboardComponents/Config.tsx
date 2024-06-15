@@ -47,6 +47,8 @@ const Config = () => {
         }
 
         const data = await response.json();
+        console.log(data);
+        
         setUserData(data);
       } catch (error: any) {
         console.error('Error:', error);
@@ -62,16 +64,23 @@ const Config = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    
     setUserData((prevData) => {
+  
+      
       if (prevData) {
         return {
           ...prevData,
           [name]: value,
+          addresses: [{ ...prevData.addresses[0], [name]: value }],
+
         };
       }
       return prevData;
     });
   };
+
+ 
 
   const handlePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -104,8 +113,8 @@ const Config = () => {
       formData.append('name', userData.name);
       formData.append('phone', phone.toString());
       formData.append('nDni', nDni.toString());
-      formData.append('city', userData.city);
-      formData.append('zip_code', userData.zip_code);
+      formData.append('city', userData.addresses[0]?.city);
+      formData.append('zip_code', userData.addresses[0]?.zip_code);
       formData.append('rExpiration', userData.rExpiration);
     }
 
@@ -128,7 +137,7 @@ const Config = () => {
       }
 
       const updatedData = await response.json();
-      setUserData(updatedData);
+      // setUserData(updatedData);
       const Toast = Swal.mixin({
         toast: true,
         position: "top-end",
@@ -144,9 +153,9 @@ const Config = () => {
         icon: "success",
         title: "Sus datos se actualizaron correctamente",
       });
-      router.push("/user");
+      router.push("/settings");
       
-    } catch (error: any) {   
+    } catch (error: any) {
       Swal.fire({
         title: "Error al actualizar los datos",
         text: `Los daton no pudieron actualizarse, intentelo nuevamente`,
@@ -220,7 +229,7 @@ const Config = () => {
                   className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4 mb-3"
                   type="text"
                   name="phone"
-                  placeholder={userData?.phone}
+                  placeholder={userData?.phone || ''}
                   value={userData?.phone || ''}
                   onChange={handleInputChange}
                 />
@@ -248,7 +257,7 @@ const Config = () => {
                 className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4"
                 type="text"
                 name="city"
-                value={userData?.addresses[0!]?.city ? userData?.addresses[0!]?.city : userData!.city}
+                value={userData?.addresses[0]?.city || ''}
                 onChange={handleInputChange}
               />
             </div>
@@ -260,7 +269,7 @@ const Config = () => {
                 className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4"
                 type="text"
                 name="zip_code"
-                value={userData?.addresses[0!]?.zip_code ? userData?.addresses[0!]?.zip_code:userData!.zip_code}
+                value={userData?.addresses[0]?.zip_code || ''}
                 onChange={handleInputChange}
               />
             </div>
