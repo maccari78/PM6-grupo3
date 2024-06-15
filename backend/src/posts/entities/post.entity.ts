@@ -1,5 +1,6 @@
 import { Car } from 'src/cars/entities/car.entity';
 import { Chat } from 'src/chat/entities/chat.entity';
+import { Rental } from 'src/rentals/entities/rental.entity';
 import { Review } from 'src/reviews/entities/review.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
@@ -45,12 +46,15 @@ export class Posts {
   @JoinColumn({ name: 'carId' })
   car: Car;
 
+  @OneToMany(() => Rental, rental => rental.posts)
+  rentals: Rental[];
+  
+  @OneToMany(() => Review, (review) => review.post)
+  review: Review[];
+
   @CreateDateColumn()
   created_at: Timestamp;
 
   @UpdateDateColumn()
-  updated_at: Timestamp;
-
-  @OneToMany(() => Review, (review) => review.post)
-  review: Review[];
+  updated_at: Timestamp;  
 }
