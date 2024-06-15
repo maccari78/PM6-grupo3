@@ -16,6 +16,7 @@ import { User } from 'src/users/entities/user.entity';
 import { JwtPayload } from 'src/rentals/interfaces/payload.interfaces';
 import { JwtService } from '@nestjs/jwt';
 import { FiltersPosts } from './interfaces/filter.interfaces';
+import { Rental } from 'src/rentals/entities/rental.entity';
 
 @Injectable()
 export class PostsService {
@@ -24,6 +25,7 @@ export class PostsService {
     @InjectRepository(Car) private carRepository: Repository<Car>,
     @InjectRepository(Posts) private postRepository: Repository<Posts>,
     @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(Rental) private rentalRepository: Repository<Rental>,
     private jwtService: JwtService,
   ) {}
 
@@ -277,5 +279,22 @@ export class PostsService {
       isDeleted: false,
     }));
     await this.postRepository.save(postsToUpdate);
+  }
+
+  async getPostsByDate() {
+    // const allPosts = await this.postRepository.find({
+    //   relations: ['rental'],
+    // });
+    // return allPosts;
+
+    const posts = await this.postRepository.find({
+      relations: ['car'],
+    });
+
+    const availablePosts = posts.filter((post) => {
+      return post.car.availability === true;
+    });
+
+    return availablePosts;
   }
 }

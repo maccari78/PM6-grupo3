@@ -50,7 +50,7 @@ export class Posts {
 
   @UpdateDateColumn()
   updated_at: Timestamp;
-  
+
   @OneToMany(() => Review, (review) => review.post)
   review: Review[];
 }

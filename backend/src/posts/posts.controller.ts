@@ -57,6 +57,10 @@ export class PostsController {
   getPostsByFilter(@Query() filter: FiltersPosts) {
     return this.postsService.getPostsByFilterServices(filter);
   }
+  @Get('available')
+  getPostsByDate() {
+    return this.postsService.getPostsByDate();
+  }
 
   @Get(':id')
   getPostsByIdController(@Param('id') id: string) {

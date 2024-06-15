@@ -11,9 +11,10 @@ import { FileUploadService } from 'src/file-upload/file-upload.service';
 import { CloudinaryConfig } from 'src/config/config.cloudinary';
 import { JwtService } from '@nestjs/jwt';
 import { UsersModule } from 'src/users/users.module';
+import { Rental } from 'src/rentals/entities/rental.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Posts, Car, User]), UsersModule],
+  imports: [TypeOrmModule.forFeature([Posts, Car, User, Rental]), UsersModule],
   controllers: [PostsController],
   providers: [
     PostsService,
