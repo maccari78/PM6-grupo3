@@ -150,6 +150,7 @@ const Reviews: React.FC<{ reviews: IReview[] | undefined; idPost: string }> = ({
                   onChange={handleOnChange}
                   name="comment"
                 ></textarea>
+
                 {loadingButton ? (
                   <button
                     type="submit"
@@ -227,6 +228,7 @@ const Reviews: React.FC<{ reviews: IReview[] | undefined; idPost: string }> = ({
               const dateReviewStr = review.created_at;
               const dateReviewed = new Date(dateReviewStr);
               const reviewedDate = format(dateReviewed, "MM/dd/yyyy");
+
               return (
                 <article
                   key={review.id}
