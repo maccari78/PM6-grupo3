@@ -155,7 +155,7 @@ if (loading) {
 interface SaleCardProps {
   carModel: string;
   saleDate: string;
-  price: string;
+  price: number;
   imageUrl: string;
 }
 

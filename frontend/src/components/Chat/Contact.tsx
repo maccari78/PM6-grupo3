@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Contact: React.FC<{ name: string; message: string; avatarUrl: string }> = ({ name, message, avatarUrl }) => {
+const Contact: React.FC<{ name: string; message?: string; avatarUrl: string; onClick: () => void }> = ({ name, message, avatarUrl, onClick }) => {
   return (
     <>
        <div className="flex items-center mb-4 cursor-pointer hover:bg-gray-100 p-2 rounded-md">
@@ -9,7 +9,7 @@ const Contact: React.FC<{ name: string; message: string; avatarUrl: string }> = 
     </div>
     <div className="flex-1">
       <h2 className="text-lg font-semibold">{name}</h2>
-      <p className="text-gray-600">{message}</p>
+      
     </div>
   </div>
     </>
