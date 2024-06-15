@@ -6,11 +6,18 @@ import { User } from './entities/user.entity';
 import { FileUploadService } from 'src/file-upload/file-upload.service';
 import { Car } from 'src/cars/entities/car.entity';
 import { Address } from 'src/addresses/entities/address.entity';
+import { AddressesService } from 'src/addresses/addresses.service';
+import { geolocationService } from 'src/addresses/geolocation.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User, Car, Address])],
   controllers: [UsersController],
-  providers: [UsersService, FileUploadService],
+  providers: [
+    UsersService,
+    FileUploadService,
+    AddressesService,
+    geolocationService,
+  ],
   exports: [UsersService],
 })
 export class UsersModule {}
