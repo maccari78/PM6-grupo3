@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
 import "@sweetalert2/theme-bootstrap-4";
+import NoShow from "@/components/NoShow/NoShow";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,7 +21,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Navbar></Navbar>
+        <NoShow>
+          <Navbar></Navbar>
+        </NoShow>
+
         {children}
         <Footer></Footer>
       </body>

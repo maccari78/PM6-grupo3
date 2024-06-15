@@ -51,6 +51,8 @@ const DashboardComprador: React.FC = () => {
         const data = await response.json();
         setUserData(data);
       } catch (error: any) {
+        console.log(error);
+        
         throw new Error(error);
       } finally {
         setLoading(false);

@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import ButtonCheckout from "@/components/ButtonCheckout/ButtonCheckout";
 import DateRangePicker from "@/components/DateRangePicker/DateRangePicker";
 import Reviews from "@/components/Reviews/Reviews";
@@ -8,6 +9,11 @@ import { IUserData } from "@/interfaces/IUser";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Button, Tooltip } from "flowbite-react";
+import SkeletonDashboard from "@/components/sketelons/SkeletonDashboard";
+const DynamicMapLocation = dynamic(
+  () => import("../../../components/MapLocation/MapLocation"),
+  { ssr: false }
+);
 
 const apiPostUrl = process.env.NEXT_PUBLIC_API_POSTS;
 if (!apiPostUrl) {
@@ -35,6 +41,7 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
   const [endDate, setEndDate] = useState<string | undefined>();
   const [userData, setUserData] = useState<IUserData | null>(null);
   const [isOwner, setIsOwner] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
@@ -46,6 +53,7 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
     }
 
     const fetchDta = async () => {
+      setLoading(true);
       try {
         const post = await fetch(`${apiPostUrl}/${params.id}`, {
           method: "GET",
@@ -54,6 +62,8 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
         setPostState(data);
       } catch (error: any) {
         console.log(error.message);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -103,6 +113,10 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
     setEndDate(date);
   };
 
+  if (loading) {
+    return <SkeletonDashboard />;
+  }
+
   return (
     <>
       <div className="bg-[#444343] flex flex-col items-center md:flex-row  md:items-start justify-evenly min-h-screen pt-10 ">
@@ -121,7 +135,7 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
           </div>
 
           <div className="flex mt-3 flex-col justify-around h-[500px] md:h-[400px] max-h-[100%]">
-            <div className="flex flex-col  pb-4 border-b-[1px] border-b-gray-200">
+            <div className="flex flex-col  pb-4 border-b-[1px] border-[#c2e94e]">
               <h1 className="text-lg md:text-2xl font-semibold text-gray-100">
                 Descripcion
               </h1>
@@ -131,7 +145,7 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
                 </li>
               </ul>
             </div>
-            <div className="flex flex-col border-b-[1px] border-b-gray-200 py-4">
+            <div className="flex flex-col border-b-[1px] border-b-[#c2e94e] py-4">
               <h1 className="text-lg md:text-2xl text-gray-100 font-semibold ">
                 Datos del vehiculo
               </h1>
@@ -312,10 +326,63 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
                 bookedDates={bookedDates}
               />
             </div>
+
+            <div className="flex flex-col py-4 border-t-[2px] border-t-[#c2e94e] gap-3">
+              <div className="flex flex-row items-center gap-1">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="w-6 h-6 fill-[#c2e94e]"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path d="M18.364 4.636a9 9 0 0 1 .203 12.519l-.203 .21l-4.243 4.242a3 3 0 0 1 -4.097 .135l-.144 -.135l-4.244 -4.243a9 9 0 0 1 12.728 -12.728zm-6.364 3.364a3 3 0 1 0 0 6a3 3 0 0 0 0 -6z" />
+                </svg>
+                <h1 className="text-2xl text-gray-100 font-semibold">
+                  Localizacion
+                </h1>
+              </div>
+              <div className="flex flex-col items-center md:items-start gap-9 md:flex-row">
+                <DynamicMapLocation
+                  lat={postState?.user.addresses[0]?.latitude!}
+                  lon={postState?.user.addresses[0]?.longitude!}
+                />
+                <div className="flex flex-col items-center  gap-3">
+                  <div className="flex flex-row h-[70px] items-center gap-3">
+                    <span className="flex w-3 h-3  bg-blue-500 rounded-full"></span>
+                    <p className="text-gray-100 md:text-xl">
+                      Ubicacion del vehiculo
+                    </p>
+                  </div>
+                  <div className="flex flex-col w-[80%] gap-5 bg-gray-200 rounded-xl px-3 py-3 items-center">
+                    <p className="font-bold text-2xl text-center text-[#222222]">
+                      Deja tu reseña aca abajo
+                    </p>
+                    <div className="flex justify-center items-center rounded-3xl px-1 py-1 animate-bounce bg-[#222222]">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="w-8 h-8e stroke-[#C4FF0D]"
+                      >
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M12 5l0 14" />
+                        <path d="M18 13l-6 6" />
+                        <path d="M6 13l6 6" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="flex  flex-col w-[70%] md:w-[30%] justify-between items-center my-5">
+        <div className="flex  flex-col h-full  w-[70%] md:w-[30%] justify-center items-center my-5">
           <div className="flex flex-col shadow-2xl rounded-t-xl md:w-[295px] w-full h-[200px] items-center justify-center bg-[#222222] px-5 py-5 md:h-[230px]  border-t-[2px] boder-gray-300">
             <div className="flex flex-row items-center ">
               <svg
@@ -373,32 +440,8 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
             </div>
           </div>
 
-          <div className="flex flex-col shadow-2xl w-full md:w-[295px] h-[290px] bg-[#222222] px-5 py-5  items-center ">
-            <div className="flex flex-col items-center">
-              <div className="flex flex-row items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="#C4FF0D"
-                  className="w-4 h-4 md:w-6 md:h-6"
-                >
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                  <path d="M18.364 4.636a9 9 0 0 1 .203 12.519l-.203 .21l-4.243 4.242a3 3 0 0 1 -4.097 .135l-.144 -.135l-4.244 -4.243a9 9 0 0 1 12.728 -12.728zm-6.364 3.364a3 3 0 1 0 0 6a3 3 0 0 0 0 -6z" />
-                </svg>
-                <h1 className="text-gray-100 text-base md:text-2xl ml-1 font-semibold">
-                  Ubicacion
-                </h1>
-              </div>
-              <div className="w-[80%] my-3">
-                <img
-                  src="https://img2.freepnges.com/20231226/czo/transparent-icon-map-pinned-location-city-name-nearby-park-map-with-pinned-location-road-sign-and-1710956059592.webp"
-                  alt="ubicacion vehiculo"
-                  className="rounded-xl"
-                />
-              </div>
-            </div>
-
-            <div className="flex flex-row items-center">
+          <div className="flex flex-col shadow-2xl w-full md:w-[295px] h-auto bg-[#222222] px-5 py-5  items-center ">
+            <div className="flex flex-col gap-3 items-center">
               <div className="flex flex-row items-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -409,16 +452,16 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
                   <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                   <path d="M17 3.34a10 10 0 1 1 -14.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 14.995 -8.336zm-1.051 6.844a1 1 0 0 0 -1.152 -.663l-.113 .03l-2.684 .895l-2.684 -.895l-.113 -.03a1 1 0 0 0 -.628 1.884l.109 .044l2.316 .771v.976l-1.832 2.75l-.06 .1a1 1 0 0 0 .237 1.21l.1 .076l.101 .06a1 1 0 0 0 1.21 -.237l.076 -.1l1.168 -1.752l1.168 1.752l.07 .093a1 1 0 0 0 1.653 -1.102l-.059 -.1l-1.832 -2.75v-.977l2.316 -.771l.109 -.044a1 1 0 0 0 .524 -1.221zm-3.949 -4.184a1.5 1.5 0 1 0 0 3a1.5 1.5 0 0 0 0 -3z" />
                 </svg>
-                <h1 className="text-gray-100 text-sm md:text-base ml-1 mr-2">
+                <h1 className="text-gray-200 font-semibold text-sm md:text-xl  ml-1 mr-2">
                   Disponibilidad:{" "}
                 </h1>
               </div>
               {postState?.car.availability ? (
-                <span className="bg-[#b0d63f]  text-[#222222] font-semibold  text-[11px] me-2  md:px-2.5 md:py-0.5 rounded ">
+                <span className="bg-[#b0d63f] text-[12px] text-[#222222] font-semibold  md:text-sm me-2  md:px-2.5 md:py-0.5 rounded ">
                   Disponible
                 </span>
               ) : (
-                <span className="bg-red-800  text-gray-300 font-semibold  text-[11px]  me-2  md:px-2.5 md:py-0.5 rounded ">
+                <span className="bg-red-800 text-[12px] text-gray-300 font-semibold  md:text-sm  me-2  md:px-2.5 md:py-0.5 rounded ">
                   No disponible
                 </span>
               )}
@@ -435,7 +478,7 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                 <path d="M6 2a1 1 0 0 1 .993 .883l.007 .117v1.068l13.071 .935a1 1 0 0 1 .929 1.024l-.01 .114l-1 7a1 1 0 0 1 -.877 .853l-.113 .006h-12v2h10a3 3 0 1 1 -2.995 3.176l-.005 -.176l.005 -.176c.017 -.288 .074 -.564 .166 -.824h-5.342a3 3 0 1 1 -5.824 1.176l-.005 -.176l.005 -.176a3.002 3.002 0 0 1 1.995 -2.654v-12.17h-1a1 1 0 0 1 -.993 -.883l-.007 -.117a1 1 0 0 1 .883 -.993l.117 -.007h2zm0 16a1 1 0 1 0 0 2a1 1 0 0 0 0 -2zm11 0a1 1 0 1 0 0 2a1 1 0 0 0 0 -2z" />
               </svg>
-              <h1 className="text-gray-300 text-base md:text-2xl font-semibold ml-1">
+              <h1 className="text-gray-200 text-base md:text-2xl font-semibold ml-1">
                 Reserva
               </h1>
             </div>
