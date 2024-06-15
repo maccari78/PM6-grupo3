@@ -77,7 +77,6 @@ export class UsersController {
     )
     file?: Express.Multer.File,
   ) {
-    console.log(updateUserDto);
     const { city, address, country, state, zip_code, ...rest2 } = updateUserDto;
 
     if (!file)
