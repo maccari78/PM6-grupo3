@@ -50,6 +50,7 @@ const DashboardComprador: React.FC = () => {
 
         const data = await response.json();
         setUserData(data);
+        console.log(data)
       } catch (error: any) {
         console.log(error);
         
@@ -108,14 +109,12 @@ const DashboardComprador: React.FC = () => {
           </h2>
           <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             
-          {userData?.rentals?.map((rent) => (
-            
+          {userData?.rentals?.map((rent) => (       
               <PublicationCard
               key={rent?.id}
-                              carModel={rent?.posts?.car?.model}
-
+              carModel={rent?.posts?.car?.model}
               postDate={rent?.rentalStartDate}
-              author={rent?.posts?.user?.name}
+              author={rent?.posts?.title}
               imageUrl={rent?.posts?.car?.image_url[0]}
             />
             ))}            
