@@ -3,65 +3,50 @@ import { redirect, useRouter } from "next/navigation";
 import React, { useEffect, useState, ChangeEvent, FormEvent } from "react";
 import Swal from "sweetalert2";
 import { io, Socket } from "socket.io-client";
-import { IRentalChat, MessageChat } from "@/interfaces/Ichat";
+import { IRentalChat, IUserChat, MessageChat, TMessageChat } from "@/interfaces/Ichat";
+import Contact from "@/components/Chat/Contact";
+import Message from "@/components/Chat/Message";
 
 const ChatWeb: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [userToken, setUserToken] = useState<string | null>(null);
   const [message, setMessage] = useState<string>("");
-  const [messages, setMessages] = useState<MessageChat[]>([]);
+  const [messages, setMessages] = useState<TMessageChat[]>([]);
   const [room_id, setRoom_id] = useState<string>("");
   const [userStatus, setUserStatus] = useState<string>("");
   const router = useRouter();
   const [socket, setSocket] = useState<Socket | null>(null);
   const [rentalsChats, setRentalsChat] = useState<IRentalChat[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [sender, setSender] = useState<IUserChat | null>(null);
+  const [receiver, setReceiver] = useState<IUserChat | null>(null);
+  const [user, setUser] = useState<IUserChat | null>(null);
+
   const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const apiToken = process.env.NEXT_PUBLIC_API_GET_USERS_TOKEN;
+  const apiChat = process.env.NEXT_PUBLIC_API_CHAT;
 
   if (!apiUrl) {
     throw new Error('Environment variable NEXT_PUBLIC_API_GET_USERS_TOKEN is not set');
   }
- 
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
-  };
-  useEffect(() => {
-    if (typeof window !== "undefined" && window.localStorage) {
-      const userSession = localStorage.getItem("userSession");
-      if (userSession) {
-        const parsedSession = JSON.parse(userSession);
-        setUserToken(parsedSession.token);  
-      } else {
-        setLoading(true)
-        Swal.fire({
-          title: "Error de acceso",
-          text: "Necesitas estar logueado para ingresar",
-          icon: "error"
-        });
-        redirect("/login")
-      }
-    }
-  }, [router]);
 
-  const recibeMensaje = (data: MessageChat) =>
+  const recibeMensaje = (data: TMessageChat) =>
     setMessages((state) => [...state, data]);
-// Conexion continua con el back para mensajes instantaneos
+
   useEffect(() => {
     if (userToken) {
-      const newSocket = io("http://localhost:80/chat", {
+      const newSocket = io(`${apiChat}`, {
         transports: ["websocket"],
         auth: { token: userToken },
       });
 
       newSocket.on("connect", () => {
         setUserStatus("Conectado");
-        console.log("Conectado");
       });
 
       newSocket.on("disconnect", () => {
         setUserStatus("Desconectado");
-        console.log("Desconectado");
       });
 
       newSocket.on(room_id, recibeMensaje);
@@ -74,23 +59,33 @@ const ChatWeb: React.FC = () => {
       };
     }
   }, [userToken, room_id]);
-// fetch de los mensajes
+
   useEffect(() => {
     const fetchMessages = async () => {
       if (room_id) {
         try {
           const response = await fetch(`${apiUrl}/chat/${room_id}/messages`);
+          const response2 = await fetch(`${apiToken}`, {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${userToken}`,
+              "Content-Type": "application/json",
+            },
+          });
           if (!response.ok) {
             throw new Error("Error fetching messages");
           }
-          console.log(response)
-          const data: MessageChat[] = await response.json();
-          console.log(data)
-          // Ordenar mensajes por fecha de creación
+          const data: TMessageChat[] = await response.json();
+          if (data.length > 0) {
+            setSender(data[0].sender as IUserChat);  
+            setReceiver(data[0].receiver as IUserChat);  
+          }
           const sortedMessages = data.sort((a, b) => new Date(a.date_created || "").getTime() - new Date(b.date_created || "").getTime());
           setMessages(sortedMessages);
-          console.log(sortedMessages)
-
+          if (response2.ok) { 
+            const data2 = await response2.json();
+            setUser(data2);
+          }
         } catch (error) {
           console.error("Error al obtener los mensajes:", error);
           setError("Error al obtener los mensajes.");
@@ -103,7 +98,28 @@ const ChatWeb: React.FC = () => {
     }
   }, [room_id, apiUrl]);
 
-  // Fetch para setear los Rooms id
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.localStorage) {
+      const userSession = localStorage.getItem("userSession");
+      if (userSession) {
+        const parsedSession = JSON.parse(userSession);
+        setUserToken(parsedSession.token);
+      } else {
+        setLoading(true);
+        Swal.fire({
+          title: "Error de acceso",
+          text: "Necesitas estar logueado para ingresar",
+          icon: "error",
+        });
+        redirect("/login");
+      }
+    }
+  }, [router]);
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -122,7 +138,8 @@ const ChatWeb: React.FC = () => {
 
         const data: IRentalChat[] = await response.json();
         setRentalsChat(data);
-        if (data.length > 0) {
+        console.log(data)
+        if (data.length > 0) { 
           setRoom_id(data[0].room_id);
         }
       } catch (error: any) {
@@ -144,9 +161,18 @@ const ChatWeb: React.FC = () => {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const meMessage: MessageChat = {
-      sender: "Me",
-      receiver: "userReceiverState(?)",
+    if (!sender || !receiver) {
+      console.error("No se han establecido el remitente o el receptor.");
+      return;
+    }
+    if(!user) {console.error("No se han establecido el remitente o el receptor.");
+      return;
+    }
+
+    
+    const meMessage: TMessageChat = {
+      sender: sender.id === user.id ? sender : user,  
+      receiver: receiver.id === user.id ? user : receiver,
       message,
       room_id,
       date_created: new Date(),
@@ -188,81 +214,48 @@ const ChatWeb: React.FC = () => {
 
         {/* Contact List */}
         <div className="overflow-y-auto h-screen p-3 mb-9 pb-20">
-          <Contact name="Alicia" message="¡Hurra!" avatarUrl="https://placehold.co/200x/ffa8e4/ffffff.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato" />
-          <Contact name="Martín" message="¡Esa pizzería fue increíble! Deberíamos ir de nuevo alguna vez. 🍕" avatarUrl="https://placehold.co/200x/ad922e/ffffff.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato" />
-          <Contact name="Carlos" message="Hola, ¿tienes alguna recomendación para una buena película?" avatarUrl="https://placehold.co/200x/2e83ad/ffffff.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato" />
-          <Contact name="David" message="¡Acabo de terminar de leer un gran libro! Fue tan cautivador." avatarUrl="https://placehold.co/200x/c2ebff/0f0b14.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato" />
-          <Contact name="Elena" message="¿Cuál es el plan para este fin de semana? ¿Algo divertido?" avatarUrl="https://placehold.co/200x/e7c2ff/7315d1.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato" />
-          <Contact name="Fiona" message="Escuché que hay una nueva exposición en el museo de arte. ¿Te interesa?" avatarUrl="https://placehold.co/200x/ffc2e2/ffdbdb.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato" />
-          <Contact name="Jorge" message="Probé ese nuevo café en el centro. ¡El café fue fantástico!" avatarUrl="https://placehold.co/200x/f83f3f/4f4f4f.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato" />
-          <Contact name="Hannah" message="Estoy planeando un viaje de senderismo el próximo mes. ¿Quieres unirte?" avatarUrl="https://placehold.co/200x/dddddd/999999.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato" />
-          <Contact name="Ian" message="Pongámonos al día pronto. ¡Ha pasado demasiado tiempo!" avatarUrl="https://placehold.co/200x/70ff33/501616.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato" />
-          <Contact name="Juan" message="¿Recuerdas ese chiste tan gracioso que me contaste? ¡No puedo dejar de reír!" avatarUrl="https://placehold.co/200x/30916c/ffffff.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato" />
+
         </div>
       </div>
 
       {/* Main Chat Area */}
       <div className="flex flex-col flex-1 h-screen">
         {/* Chat Header */}
-        <header className="bg-white p-4 text-gray-700">
-          <h1 className="text-2xl font-semibold">Alicia</h1>
+        <header className="bg-gray-300 p-4 text-gray-700">
+          <h1 className="text-2xl font-semibold">{ sender?.id !== user?.id ? sender?.name : receiver?.name }</h1>
         </header>
 
         {/* Chat Messages */}
-        <div className="flex-1 overflow-y-auto p-4 pb-36">
-          <Message incoming={true} avatarUrl="https://placehold.co/200x/ffa8e4/ffffff.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato" text="Hola Bob, ¿cómo te va?" />
-          <Message incoming={false} avatarUrl="https://placehold.co/200x/b7a8ff/ffffff.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato" text="¡Hola Alicia! Estoy bien, acabo de terminar un gran libro. ¿Y tú?" />
-          <Message incoming={true} avatarUrl="https://placehold.co/200x/ffa8e4/ffffff.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato" text="¡Ese libro suena interesante! ¿De qué trata?" />
-          <Message incoming={false} avatarUrl="https://placehold.co/200x/b7a8ff/ffffff.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato" text="Se trata de un astronauta varado en Marte, tratando de sobrevivir. ¡Muy emocionante!" />
-          <Message incoming={true} avatarUrl="https://placehold.co/200x/ffa8e4/ffffff.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato" text="¡Estoy intrigada! ¿Puedo pedirte prestado el libro cuando termines?" />
-          <Message incoming={false} avatarUrl="https://placehold.co/200x/b7a8ff/ffffff.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato" text="¡Por supuesto! Lo dejaré en tu casa mañana." />
-          <Message incoming={true} avatarUrl="https://placehold.co/200x/ffa8e4/ffffff.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato" text="¡Gracias, eres el mejor!" />
-          <Message incoming={false} avatarUrl="https://placehold.co/200x/b7a8ff/ffffff.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato" text="¡En cualquier momento! Déjame saber cómo te gusta. 😊" />
-          <Message incoming={true} avatarUrl="https://placehold.co/200x/ffa8e4/ffffff.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato" text="Entonces, ¿pizza la próxima semana, verdad?" />
-          <Message incoming={false} avatarUrl="https://placehold.co/200x/b7a8ff/ffffff.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato" text="¡Absolutamente! No puedo esperar para nuestra cita de pizza. 🍕" />
-          <Message incoming={true} avatarUrl="https://placehold.co/200x/ffa8e4/ffffff.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato" text="¡Hurra!" />
+        <div className="flex-1 bg-gray-400 overflow-y-auto p-4 pb-36">
+        {Array.isArray(messages) && messages.length > 0 ? (
+          messages.map((msg, index) => {
+            const text = `${msg.message ?? 'Mensaje no disponible'}`;
+            return (
+              <Message
+                key={index}
+                incoming={msg.sender?.id !== user?.id}
+                avatarUrl={ msg.sender?.id === user?.id ? user?.image_url ?? "" : msg.sender?.image_url ?? ""}
+                text={text}
+              />
+            );
+          })
+        ) : (
+          <p>No hay mensajes</p>
+        )}
         </div>
-
         {/* Chat Input */}
         <footer className="bg-white border-t border-gray-300 p-4">
+        <form onSubmit={handleSubmit}>
           <div className="flex items-center">
-            <input type="text" placeholder="Escribe un mensaje..." className="w-full p-2 rounded-md border border-gray-400 focus:outline-none focus:border-blue-500" />
-            <button className="bg-indigo-500 text-white px-4 py-2 rounded-md ml-2">Enviar</button>
+            <input type="text" value={message} onChange={handleChange} placeholder="Escribe un mensaje..." className="w-full p-2 rounded-md border border-gray-400 focus:outline-none focus:border-blue-500" />
+            <button type="submit" className="bg-indigo-500 text-white px-4 py-2 rounded-md ml-2">Enviar</button>
           </div>
+          </form>
         </footer>
       </div>
     </div>
   );
 };
 
-const Contact: React.FC<{ name: string; message: string; avatarUrl: string }> = ({ name, message, avatarUrl }) => (
-  <div className="flex items-center mb-4 cursor-pointer hover:bg-gray-100 p-2 rounded-md">
-    <div className="w-12 h-12 bg-gray-300 rounded-full mr-3">
-      <img src={avatarUrl} alt={`${name} Avatar`} className="w-12 h-12 rounded-full" />
-    </div>
-    <div className="flex-1">
-      <h2 className="text-lg font-semibold">{name}</h2>
-      <p className="text-gray-600">{message}</p>
-    </div>
-  </div>
-);
-
-const Message: React.FC<{ incoming: boolean; avatarUrl: string; text: string }> = ({ incoming, avatarUrl, text }) => (
-  <div className={`flex mb-4 cursor-pointer ${incoming ? '' : 'justify-end'}`}>
-    {incoming && (
-      <div className="w-9 h-9 rounded-full flex items-center justify-center mr-2">
-        <img src={avatarUrl} alt="User Avatar" className="w-8 h-8 rounded-full" />
-      </div>
-    )}
-    <div className={`flex max-w-96 ${incoming ? 'bg-white text-gray-700' : 'bg-indigo-500 text-white'} rounded-lg p-3 gap-3`}>
-      <p>{text}</p>
-    </div>
-    {!incoming && (
-      <div className="w-9 h-9 rounded-full flex items-center justify-center ml-2">
-        <img src={avatarUrl} alt="My Avatar" className="w-8 h-8 rounded-full" />
-      </div>
-    )}
-  </div>
-);
 
 export default ChatWeb;
