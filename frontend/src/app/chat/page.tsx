@@ -6,6 +6,9 @@ import { io, Socket } from "socket.io-client";
 import { IRentalChat, IUserChat, MessageChat, TMessageChat } from "@/interfaces/Ichat";
 import Contact from "@/components/Chat/Contact";
 import Message from "@/components/Chat/Message";
+import SkeletonDashboard from "@/components/sketelons/SkeletonDashboard";
+import LoaderBasic from "@/components/Loaders/loaderBasic";
+import { Spinner } from "flowbite-react";
 
 const ChatWeb: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -22,6 +25,8 @@ const ChatWeb: React.FC = () => {
   const [sender, setSender] = useState<IUserChat | null>(null);
   const [receiver, setReceiver] = useState<IUserChat | null>(null);
   const [user, setUser] = useState<IUserChat | null>(null);
+  const [msgLoader, setMsgLoader] = useState<boolean>(true)
+  const [userLoader, setUserLoader] = useState<boolean>(true)
 
   const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
   const apiToken = process.env.NEXT_PUBLIC_API_GET_USERS_TOKEN;
@@ -79,8 +84,6 @@ const ChatWeb: React.FC = () => {
           if(data.length === 0) {
             setSender(user);
             setReceiver(user);
-            console.log(sender, receiver);
-
           }
           if (data.length > 0) {
             setSender(data[0].sender as IUserChat);  
@@ -96,6 +99,9 @@ const ChatWeb: React.FC = () => {
           console.error("Error al obtener los mensajes:", error);
           setError("Error al obtener los mensajes.");
         }
+        finally{
+          setMsgLoader(false)
+        }
       }
     };
 
@@ -104,16 +110,13 @@ const ChatWeb: React.FC = () => {
     }
   }, [room_id, apiUrl]);
 
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
-  };
-
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
       const userSession = localStorage.getItem("userSession");
       if (userSession) {
         const parsedSession = JSON.parse(userSession);
         setUserToken(parsedSession.token);
+        setLoading(false)
       } else {
         setLoading(true);
         Swal.fire({
@@ -126,9 +129,10 @@ const ChatWeb: React.FC = () => {
     }
   }, [router]);
 
+  // Fetch donde seteo el Room_ID
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);
+      
       try {
         const response = await fetch(`${apiUrl}/rentals/token`, {
           method: "GET",
@@ -144,7 +148,6 @@ const ChatWeb: React.FC = () => {
 
         const data: IRentalChat[] = await response.json();
         setRentalsChat(data);
-        console.log(data)
         if (data.length > 0) { 
           setRoom_id(data[0].room_id);
         }
@@ -152,7 +155,10 @@ const ChatWeb: React.FC = () => {
         console.error(error);
         setError("Error al obtener los datos de alquileres.");
       } finally {
-        setLoading(false);
+        setTimeout(() => {
+          setUserLoader(false)
+      }, 1500)
+        
       }
     };
 
@@ -193,7 +199,11 @@ const ChatWeb: React.FC = () => {
   };
   const handleRoom = (room_id:string) =>{
     setRoom_id(room_id)
-    console.log(room_id)
+    setMsgLoader(true)  
+  }
+
+    if (loading) {
+      return <SkeletonDashboard />;
     }
   return (
     <div className="flex h-screen overflow-hidden">
@@ -232,12 +242,17 @@ const ChatWeb: React.FC = () => {
       <div className="flex flex-col flex-1 h-screen">
         {/* Chat Header */}
         <header className="bg-gray-300 p-4 text-gray-700">
-          <h1 className="text-2xl font-semibold">{ sender?.id !== user?.id ? sender?.name : receiver?.name }</h1>
+          {
+            userLoader ? <LoaderBasic/> : <h1 className="text-2xl font-semibold">{ sender?.id !== user?.id ? sender?.name : receiver?.name }</h1>
+          }
+          
         </header>
 
         {/* Chat Messages */}
         <div className="flex-1 bg-gray-400 overflow-y-auto p-4 pb-36">
-        {Array.isArray(messages) && messages.length > 0 ? (
+        {msgLoader ? (<div className="text-center">
+        <Spinner aria-label="Center-aligned spinner example" />
+      </div>) : (Array.isArray(messages) && messages.length > 0 ? (
           messages.map((msg, index) => {
             const text = `${msg.message ?? 'Mensaje no disponible'}`;
             return (
@@ -251,7 +266,7 @@ const ChatWeb: React.FC = () => {
           })
         ) : (
           <p>No hay mensajes</p>
-        )}
+        ))}
         </div>
         {/* Chat Input */}
         <footer className="bg-white border-t border-gray-300 p-4">
