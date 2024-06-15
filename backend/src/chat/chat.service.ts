@@ -90,8 +90,7 @@ export class ChatService {
       where: { room_id: room_id },
       order: { date_created: 'DESC' },
     });
-    if (chatHistory === null)
-      throw new NotFoundException('Historial de chat vacio');
+
     return chatHistory;
   }
 }

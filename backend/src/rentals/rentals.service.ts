@@ -278,11 +278,21 @@ export class RentalsService {
       .leftJoinAndSelect('rental.users', 'user')
       .where('user.email = :email', { email: payload.sub })
       .getMany();
-    if (rentals?.length === 0)
+
+    if (!rentals.length) {
       throw new NotFoundException(
         'No hay registros de chats en la base de datos',
       );
-    return rentals;
+    }
+    const rentalIds = rentals.map((rental) => rental.id);
+    const completeRentals = await this.rentalRepository
+      .createQueryBuilder('rental')
+      .leftJoinAndSelect('rental.users', 'user')
+      .leftJoinAndSelect('rental.posts', 'post')
+      .whereInIds(rentalIds)
+      .getMany();
+
+    return completeRentals;
   }
   //  ! POR SI ALGUNA VEZ SUCEDE LO MISMO, CON ESTO SE PUEDEN RECUPERAR RELACIONES DE POST CON RENTALS
   // async putRelation() {

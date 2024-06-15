@@ -76,6 +76,12 @@ const ChatWeb: React.FC = () => {
             throw new Error("Error fetching messages");
           }
           const data: TMessageChat[] = await response.json();
+          if(data.length === 0) {
+            setSender(user);
+            setReceiver(user);
+            console.log(sender, receiver);
+
+          }
           if (data.length > 0) {
             setSender(data[0].sender as IUserChat);  
             setReceiver(data[0].receiver as IUserChat);  
@@ -204,10 +210,10 @@ const ChatWeb: React.FC = () => {
       {Array.isArray(rentalsChats) && rentalsChats.length > 0 ? (
         rentalsChats.map((rental) => (
           <div key={rental.id}>
-            {rental.users.map((userdata, userIndex) => (
+            {rental.users.filter((userdata)=> userdata.id !== user?.id).map((userdata, userIndex) => (
               <Contact
                 key={userIndex}
-                name={userdata.name ?? "Usuario"}
+                name={`${userdata.name} in ${rental.posts?.title}`}
                 avatarUrl={userdata.image_url}
                 onClick={() => handleRoom(rental.room_id)}
               />
