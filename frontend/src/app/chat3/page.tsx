@@ -3,20 +3,21 @@ import { redirect, useRouter } from "next/navigation";
 import React, { useEffect, useState, ChangeEvent, FormEvent } from "react";
 import Swal from "sweetalert2";
 import { io, Socket } from "socket.io-client";
-import { IRentalChat, MessageChat } from "@/interfaces/Ichat";
+import { IRentalChat, MessageChat, TMessageChat } from "@/interfaces/Ichat";
 
 const ChatWeb: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [userToken, setUserToken] = useState<string | null>(null);
   const [message, setMessage] = useState<string>("");
-  const [messages, setMessages] = useState<MessageChat[]>([]);
+  const [messages, setMessages] = useState<TMessageChat[]>([]);
   const [room_id, setRoom_id] = useState<string>("");
   const [userStatus, setUserStatus] = useState<string>("");
   const router = useRouter();
   const [socket, setSocket] = useState<Socket | null>(null);
   const [rentalsChats, setRentalsChat] = useState<IRentalChat[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [] = useState()
 
   const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -24,7 +25,7 @@ const ChatWeb: React.FC = () => {
     throw new Error('Environment variable NEXT_PUBLIC_API_GET_USERS_TOKEN is not set');
   }
 
-  const recibeMensaje = (data: MessageChat) =>
+  const recibeMensaje = (data: TMessageChat) =>
     setMessages((state) => [...state, data]);
 
   useEffect(() => {
@@ -63,7 +64,7 @@ const ChatWeb: React.FC = () => {
           if (!response.ok) {
             throw new Error("Error fetching messages");
           }
-          const data: MessageChat[] = await response.json();
+          const data: TMessageChat[] = await response.json();
           console.log(data)
           // Ordenar mensajes por fecha de creación
           const sortedMessages = data.sort((a, b) => new Date(a.date_created || "").getTime() - new Date(b.date_created || "").getTime());
@@ -102,6 +103,10 @@ const ChatWeb: React.FC = () => {
       }
     }
   }, [router]);
+  const getUsersdata = ()=>{
+
+  }
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -143,7 +148,7 @@ const ChatWeb: React.FC = () => {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const meMessage: MessageChat = {
+    const meMessage: TMessageChat = {
       sender: "Me",
       receiver: "userReceiverState(?)",
       message,

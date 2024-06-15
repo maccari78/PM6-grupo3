@@ -114,13 +114,14 @@ const ChatWeb: React.FC = () => {
             "Content-Type": "application/json",
           },
         });
-
+        console.log(response)
         if (!response.ok) {
           throw new Error("Error fetching user data");
         }
 
         const data: IRentalChat[] = await response.json();
         setRentalsChat(data);
+        console.log(data)
         if (data.length > 0) {
           setRoom_id(data[0].room_id);
         }

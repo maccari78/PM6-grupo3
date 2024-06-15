@@ -71,4 +71,46 @@ export interface Isender{
     updatedAt:Date
     userGoogle:boolean
 }
+
+export interface ITUserChat {
+    id: string;
+    email: string;
+    name: string;
+    password: string;
+    nDni: number;
+    nExpiration: string | null;
+    phone: string;
+    image_url: string;
+    public_id: string | null;
+    userGoogle: boolean;
+    aboutMe: string | null;
+    roles: string;
+    isDeleted: boolean;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface ITRentalChat {
+    id: string;
+    rentalStartDate: string;
+    rentalEndDate: string;
+    daysRemaining: number;
+    room_id: string;
+    totalCost: string;
+    createdAt: string;
+    updatedAt: string;
+    users: IUserChat[];
+}
+
+export interface TMessageChat {
+    sender?: ITUserChat;
+    receiver?:ITUserChat;
+    message?: string;
+    room_id?: string;
+    image?: string;
+    date_created?: Date;
+}
+
+
+
   
