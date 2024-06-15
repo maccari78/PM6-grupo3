@@ -6,9 +6,6 @@ import { IReview } from "./interfaces/IReview";
 import Swal from "sweetalert2";
 import { format } from "date-fns";
 
-
-
-
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 const Reviews: React.FC<{ reviews: IReview[] | undefined; idPost: string }> = ({
@@ -22,17 +19,14 @@ const Reviews: React.FC<{ reviews: IReview[] | undefined; idPost: string }> = ({
   const [responseDta, setResponseDta] = useState();
   const [loadingButton, setLoadingButton] = useState<boolean>(false);
 
-
   useEffect(() => {
     if (typeof window !== undefined && window.localStorage) {
       const userSession = window.localStorage.getItem("userSession");
-
 
       if (userSession) {
         const parsedSession = JSON.parse(userSession);
         setToken(parsedSession.token);
       }
-
     }
   }, []);
 
@@ -42,7 +36,6 @@ const Reviews: React.FC<{ reviews: IReview[] | undefined; idPost: string }> = ({
     event.preventDefault();
 
     if (rating && commentDta) {
-
       setLoadingButton(true);
       try {
         const res = await fetch(`${apiBaseUrl}/reviews/${idPost}`, {
@@ -87,8 +80,8 @@ const Reviews: React.FC<{ reviews: IReview[] | undefined; idPost: string }> = ({
 
   return (
     <div className="flex flex-col items-center  bg-[#444343]">
-      <div className="py-6 px-10 bg-[#C4FF0D] rounded-2xl">
-        <h1 className="text-2xl font-semibold text-[#222222]">Reseñas</h1>
+      <div className="py-3 px-3 md:py-6 md:px-10 bg-[#C4FF0D] rounded-2xl">
+        <h1 className="md:text-2xl font-semibold text-[#222222]">Reseñas</h1>
       </div>
       <div className="flex flex-col md:flex-row w-[80%] gap-10 md:gap-0  justify-between mt-10 md:my-10">
         {token ? (
@@ -191,7 +184,6 @@ const Reviews: React.FC<{ reviews: IReview[] | undefined; idPost: string }> = ({
                     Enviar
                   </button>
                 )}
-
               </div>
             </form>
           </div>
@@ -226,8 +218,7 @@ const Reviews: React.FC<{ reviews: IReview[] | undefined; idPost: string }> = ({
           </div>
         )}
 
-
-        <div className="flex flex-col w-full md:w-[50%]">
+        <div className="flex flex-col gap-9 w-full md:w-[50%]">
           {reviews?.length! > 0 ? (
             reviews?.map((review) => {
               const dateUserStr = review.user.createdAt;
@@ -238,7 +229,6 @@ const Reviews: React.FC<{ reviews: IReview[] | undefined; idPost: string }> = ({
               const dateReviewed = new Date(dateReviewStr);
               const reviewedDate = format(dateReviewed, "MM/dd/yyyy");
 
-        
               return (
                 <article
                   key={review.id}
@@ -255,14 +245,11 @@ const Reviews: React.FC<{ reviews: IReview[] | undefined; idPost: string }> = ({
                         {review.user.name}
                       </p>
                       <p className="text-base text-gray-400">
-
                         Se unio el {joinUsDate}
-
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center mb-1 space-x-1 rtl:space-x-reverse">
-
                     {review.rating === 1 && (
                       <>
                         <svg
@@ -513,9 +500,6 @@ const Reviews: React.FC<{ reviews: IReview[] | undefined; idPost: string }> = ({
 
                   <footer className="mb-5 text-sm text-gray-400">
                     <p>Publico la reseña el {reviewedDate}</p>
-
-                    
-
                   </footer>
                   <p className="mb-2 text-gray-200">{review.comment}</p>
                   <aside>
