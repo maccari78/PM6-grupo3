@@ -33,7 +33,7 @@ export class Posts {
   @Column({ default: false })
   isDeleted: boolean;
 
-  @OneToMany(() => Chat, (chat) => chat.post, { cascade: true })
+  @OneToMany(() => Chat, (chat) => chat.post)
   room_id: Chat[];
 
   //..........relations start........//
@@ -42,7 +42,7 @@ export class Posts {
   user: User;
 
   //..........relations start........//
-  @OneToOne(() => Car)
+  @OneToOne(() => Car,{ cascade: true })
   @JoinColumn({ name: 'carId' })
   car: Car;
 
@@ -56,5 +56,12 @@ export class Posts {
   created_at: Timestamp;
 
   @UpdateDateColumn()
-  updated_at: Timestamp;  
+  updated_at: Timestamp;
+  
+  //..........relations start........//
+  @OneToMany(() => Review, (review) => review.post,{ cascade: true })
+  review: Review[];
+
+  @OneToOne(() => Rental, (rentalss) => rentalss.posts,{ cascade: true })
+   rental: Rental;
 }

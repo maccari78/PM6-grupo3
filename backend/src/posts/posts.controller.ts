@@ -17,6 +17,7 @@ import {
   UnauthorizedException,
   UseGuards,
   Patch,
+  NotFoundException,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -160,10 +161,20 @@ export class PostsController {
   }
 
   @Delete(':id')
-  @UseGuards(RolesGuard)
-  @Roles(Role.User, Role.Admin)
-  deletePostsByIdController(@Param('id', ParseUUIDPipe) id: string) {
-    return this.postsService.DeletePostsServices(id);
+  async deletePostsByIdController(@Param('id', ParseUUIDPipe) id: string) {
+    try {
+      await this.postsService.DeletePostsServices(id);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      }
+      throw error; // throw other errors for global exception handler to catch
+    }
+    
+    
+    
+    // return this.postsService.DeletePostsServices(id);
+
   }
 
   @Patch('soft-delete/:id')

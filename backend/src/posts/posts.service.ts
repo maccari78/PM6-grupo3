@@ -16,6 +16,7 @@ import { User } from 'src/users/entities/user.entity';
 import { JwtPayload } from 'src/rentals/interfaces/payload.interfaces';
 import { JwtService } from '@nestjs/jwt';
 import { FiltersPosts } from './interfaces/filter.interfaces';
+import { Review } from 'src/reviews/entities/review.entity';
 import { Rental } from 'src/rentals/entities/rental.entity';
 
 @Injectable()
@@ -25,6 +26,7 @@ export class PostsService {
     @InjectRepository(Car) private carRepository: Repository<Car>,
     @InjectRepository(Posts) private postRepository: Repository<Posts>,
     @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(Review) private reviewRepository: Repository<Review>,
     @InjectRepository(Rental) private rentalRepository: Repository<Rental>,
     private jwtService: JwtService,
   ) {}
@@ -222,17 +224,37 @@ export class PostsService {
   }
 
   async DeletePostsServices(id: string) {
-    const postsFind = await this.postRepository.findOne({ where: { id } });
-    if (!postsFind)
-      throw new NotFoundException(
+    const post  = await this.postRepository.findOne({ where: { id }, 
+       relations: ['review', 'car',"rental"]
+    });
+    if (!post ) throw new NotFoundException(
         `No se pudo obtener la publicación con ${id}`,
       );
 
-    const posts = await this.postRepository.delete(postsFind.id);
-    if (posts.affected === 0)
-      throw new BadRequestException('No se pudo borrar la publicación');
 
-    return 'Publicación eliminada';
+    //  const posts = await this.postRepository.delete(postsFind.id);
+     try {
+      // Eliminar las relaciones de la publicación
+      if (post.review) {
+        await this.reviewRepository.remove(post.review);
+      }
+      if (post.car) {
+        await this.carRepository.remove(post.car);
+      }
+      if (post.rental) {
+        await this.rentalRepository.remove(post.rental);
+      }
+
+      // Finalmente, eliminar la publicación
+      const deleteResult = await this.postRepository.remove(post);
+
+      return deleteResult;
+    } catch (error) {
+      throw new BadRequestException(`Error al intentar eliminar la publicación: ${error.message}`);
+    }
+
+    //  return 'Publicación eliminada';
+
   }
 
   async softDelete(id: string): Promise<{ message: string }> {
