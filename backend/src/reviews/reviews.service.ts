@@ -35,16 +35,19 @@ export class ReviewsService {
       secret,
     });
     // busca el post por id y carga las relaciones necesarias
-    const searchposts = await this.postsService.findOne({    where: { id },
-      relations: ['review'] }); 
-    if (!searchposts) throw new UnauthorizedException('No se encontro publicación');
+    const searchposts = await this.postsService.findOne({
+      where: { id },
+      relations: ['review'],
+    });
+    if (!searchposts)
+      throw new UnauthorizedException('No se encontro publicación');
 
     if (!payload) throw new UnauthorizedException('token invalido 3');
 
     // Busca el usuario por email y carga las relaciones necesarias
     const searchuser = await this.userService.findOne({
       where: { email: payload.sub },
-      relations: ['reviews']
+      relations: ['reviews'],
     });
     if (!searchuser) throw new UnauthorizedException('Usuario no encontrado');
 
@@ -67,12 +70,11 @@ export class ReviewsService {
     await this.userService.save(searchuser);
     // return 'Reseña realizada';
 
-     // Devolver la entidad de reseña completa con las relaciones
-    return await this.reviewService.findOne({ 
+    // Devolver la entidad de reseña completa con las relaciones
+    return await this.reviewService.findOne({
       where: { id: review.id },
-      relations: ['user', 'post']
+      relations: ['user', 'post'],
     });
-
   }
 
   //Services | Get All

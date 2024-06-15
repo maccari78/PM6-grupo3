@@ -1,3 +1,4 @@
+import { MapLocationProps } from "@/components/MapLocation/MapLocation";
 import { IReview } from "@/components/Reviews/interfaces/IReview";
 
 export interface IPost {
@@ -11,6 +12,12 @@ export interface IPost {
     email: string;
     image_url: string;
     phone: string;
+    addresses: [
+      {
+        latitude: number | null;
+        longitude: number | null;
+      }
+    ];
   };
   car: {
     id: string;

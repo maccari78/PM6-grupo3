@@ -109,7 +109,6 @@ export class PostsService {
     if (!postsId) {
       return `publicación con ${id} no encontrado`;
     }
-
     return postsId;
   }
 

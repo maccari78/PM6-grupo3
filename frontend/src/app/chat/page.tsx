@@ -1,15 +1,28 @@
 "use client"
-import { IUserData } from '@/interfaces/IUser';
-import { redirect, useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
-import Swal from 'sweetalert2';
+import { redirect, useRouter } from "next/navigation";
+import React, { useEffect, useState, ChangeEvent, FormEvent } from "react";
+import Swal from "sweetalert2";
+import { io, Socket } from "socket.io-client";
+import { IRentalChat, MessageChat } from "@/interfaces/Ichat";
 
 const ChatWeb: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [userToken, setUserToken] = useState<string | null>(null);
-  
   const [loading, setLoading] = useState<boolean>(true);
+  const [userToken, setUserToken] = useState<string | null>(null);
+  const [message, setMessage] = useState<string>("");
+  const [messages, setMessages] = useState<MessageChat[]>([]);
+  const [room_id, setRoom_id] = useState<string>("");
+  const [userStatus, setUserStatus] = useState<string>("");
   const router = useRouter();
+  const [socket, setSocket] = useState<Socket | null>(null);
+  const [rentalsChats, setRentalsChat] = useState<IRentalChat[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+  if (!apiUrl) {
+    throw new Error('Environment variable NEXT_PUBLIC_API_GET_USERS_TOKEN is not set');
+  }
+ 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
@@ -30,6 +43,122 @@ const ChatWeb: React.FC = () => {
       }
     }
   }, [router]);
+
+  const recibeMensaje = (data: MessageChat) =>
+    setMessages((state) => [...state, data]);
+// Conexion continua con el back para mensajes instantaneos
+  useEffect(() => {
+    if (userToken) {
+      const newSocket = io("http://localhost:80/chat", {
+        transports: ["websocket"],
+        auth: { token: userToken },
+      });
+
+      newSocket.on("connect", () => {
+        setUserStatus("Conectado");
+        console.log("Conectado");
+      });
+
+      newSocket.on("disconnect", () => {
+        setUserStatus("Desconectado");
+        console.log("Desconectado");
+      });
+
+      newSocket.on(room_id, recibeMensaje);
+
+      setSocket(newSocket);
+
+      return () => {
+        newSocket.off(room_id, recibeMensaje);
+        newSocket.close();
+      };
+    }
+  }, [userToken, room_id]);
+// fetch de los mensajes
+  useEffect(() => {
+    const fetchMessages = async () => {
+      if (room_id) {
+        try {
+          const response = await fetch(`${apiUrl}/chat/${room_id}/messages`);
+          if (!response.ok) {
+            throw new Error("Error fetching messages");
+          }
+          console.log(response)
+          const data: MessageChat[] = await response.json();
+          console.log(data)
+          // Ordenar mensajes por fecha de creación
+          const sortedMessages = data.sort((a, b) => new Date(a.date_created || "").getTime() - new Date(b.date_created || "").getTime());
+          setMessages(sortedMessages);
+          console.log(sortedMessages)
+
+        } catch (error) {
+          console.error("Error al obtener los mensajes:", error);
+          setError("Error al obtener los mensajes.");
+        }
+      }
+    };
+
+    if (room_id) {
+      fetchMessages();
+    }
+  }, [room_id, apiUrl]);
+
+  // Fetch para setear los Rooms id
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`${apiUrl}/rentals/token`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Error fetching user data");
+        }
+
+        const data: IRentalChat[] = await response.json();
+        setRentalsChat(data);
+        if (data.length > 0) {
+          setRoom_id(data[0].room_id);
+        }
+      } catch (error: any) {
+        console.error(error);
+        setError("Error al obtener los datos de alquileres.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (userToken) {
+      fetchData();
+    }
+  }, [userToken, apiUrl]);
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setMessage(e.target.value);
+  };
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const meMessage: MessageChat = {
+      sender: "Me",
+      receiver: "userReceiverState(?)",
+      message,
+      room_id,
+      date_created: new Date(),
+    };
+    setMessages((prevMessages) => [...prevMessages, meMessage]);
+
+    if (socket) {
+      socket.emit("posts", meMessage);
+    }
+
+    setMessage("");
+  };
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}

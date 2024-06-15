@@ -3,13 +3,13 @@
 # Alquiler de Autos: YouDrive
 
 ## Integrantes del equipo:
-- Front End: Geronimo Kramar - email: gerokramar@gmail.com - Github: 'GeroKramar' - Argentina, AMBA
-- Front End: Camila Fabre - email: camilafabre98@gmail.com - Github: 'cfcamilafabre' - Argentina, Tandil
-- Front End: Camilo Sierra - email: camilofullstack@gmail.com - Github: 'CAndresSierra' - Colombia, Barranquilla
-- Back End: Victor Emanuel Elias Cuello - email: ema.cuello1010@gmail.com - Github: 'emacuello' - Argentina, AMBA
-- Back End: Juan Carlos Alvarez Martinez - email: alvarez.majuan@hotmail.com - Github: 'AlvarezMar' - Mexico, DF
-- Back End: Darvin Ricardo Alania Inoecencio - email: darvin.alania@gmail.com - Github: 'DAlaniaInocecio' - Peru, Lima
-- Back End: Danilo Maccari - email: maccari78@gmail.com - Github: 'maccari78' - Argentina, Bahia Blanca
+- Front End: Geronimo Kramar - email: gerokramar@gmail.com - Github: 'GeroKramar' - Argentina, AMBA, GMT-3
+- Front End: Camila Fabre - email: camilafabre98@gmail.com - Github: 'cfcamilafabre' - Argentina, Tandil, GMT-3
+- Front End: Camilo Sierra - email: camilofullstack@gmail.com - Github: 'CAndresSierra' - Colombia, Barranquilla, GMT-5
+- Back End: Victor Emanuel Elias Cuello - email: ema.cuello1010@gmail.com - Github: 'emacuello' - Argentina, AMBA, GMT-3
+- Back End: Juan Carlos Alvarez Martinez - email: alvarez.majuan@hotmail.com - Github: 'AlvarezMar' - Mexico, DF, GMT-6
+- Back End: Darvin Ricardo Alania Inoecencio - email: darvin.alania@gmail.com - Github: 'DAlaniaInocecio' - Peru, Lima, GMT-5
+- Back End: Danilo Maccari - email: maccari78@gmail.com - Github: 'maccari78' - Argentina, Bahia Blanca, GMT-3
 
 ## Caso de negocio
 

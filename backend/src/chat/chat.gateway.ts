@@ -47,6 +47,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       client.disconnect();
       return;
     }
+    console.log(message);
+
     client.broadcast.emit(`${payload.room_id}`, message);
   }
 }

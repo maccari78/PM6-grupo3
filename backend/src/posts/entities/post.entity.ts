@@ -46,6 +46,12 @@ export class Posts {
   @JoinColumn({ name: 'carId' })
   car: Car;
 
+  @OneToMany(() => Rental, rental => rental.posts)
+  rentals: Rental[];
+  
+  @OneToMany(() => Review, (review) => review.post)
+  review: Review[];
+
   @CreateDateColumn()
   created_at: Timestamp;
 
