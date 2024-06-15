@@ -11,8 +11,7 @@ const CallToAction = () => {
      <button></button> 
     </div>
     <div>
-        <img>
-        </img>
+        <img></img>
     </div>
     </>
   )
