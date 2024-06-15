@@ -1,12 +1,15 @@
+"use client";
+
 import { useEffect } from "react";
+
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
 
 export interface MapLocationProps {
-  lat: number | null | undefined;
-  lon: number | null | undefined;
+  lat: number | null;
+  lon: number | null;
 }
 const MapLocation: React.FC<MapLocationProps> = ({ lat, lon }) => {
   useEffect(() => {
@@ -29,20 +32,13 @@ const MapLocation: React.FC<MapLocationProps> = ({ lat, lon }) => {
   }, [lat, lon]);
 
   return (
-    <div id="map" className="h-[200px] w-[200px]">
-      {lat === undefined ? (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100%",
-            backgroundColor: "#f0f0f0",
-            color: "black",
-            fontWeight: "bold",
-          }}
-        >
-          <p>Ubicación no disponible</p>
+    <div
+      id="map"
+      className="h-[200px] w-[200px] shadow-2xl md:h-[300px] md:w-[400px] rounded-xl"
+    >
+      {lat === null ? (
+        <div className="flex shadow-xl  rounded-xl justify-center items-center h-full bg-gray-300">
+          <p className="font-bold text-xl">Ubicación no disponible</p>
         </div>
       ) : null}
     </div>

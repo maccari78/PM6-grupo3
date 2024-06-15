@@ -12,7 +12,12 @@ export interface IPost {
     email: string;
     image_url: string;
     phone: string;
-    addresses: MapLocationProps;
+    addresses: [
+      {
+        latitude: number | null;
+        longitude: number | null;
+      }
+    ];
   };
   car: {
     id: string;

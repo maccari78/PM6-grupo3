@@ -80,8 +80,8 @@ const Reviews: React.FC<{ reviews: IReview[] | undefined; idPost: string }> = ({
 
   return (
     <div className="flex flex-col items-center  bg-[#444343]">
-      <div className="py-6 px-10 bg-[#C4FF0D] rounded-2xl">
-        <h1 className="text-2xl font-semibold text-[#222222]">Reseñas</h1>
+      <div className="py-3 px-3 md:py-6 md:px-10 bg-[#C4FF0D] rounded-2xl">
+        <h1 className="md:text-2xl font-semibold text-[#222222]">Reseñas</h1>
       </div>
       <div className="flex flex-col md:flex-row w-[80%] gap-10 md:gap-0  justify-between mt-10 md:my-10">
         {token ? (
