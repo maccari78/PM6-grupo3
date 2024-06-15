@@ -9,20 +9,13 @@ import React, { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 
 const apiUrl = process.env.NEXT_PUBLIC_API_GET_USERS_TOKEN;
-const rentalsApiUrl = process.env.NEXT_PUBLIC_API_GET_RENTALS;
-
 if (!apiUrl) {
   throw new Error('Environment variable NEXT_PUBLIC_API_GET_USERS_TOKEN is not set');
-}
-
-if (!rentalsApiUrl) {
-  throw new Error('Environment variable NEXT_PUBLIC_API_GET_RENTALS is not set');
 }
 
 const DashboardVendedor: React.FC = () => {
   const [userToken, setUserToken] = useState<string | null>(null);
   const [userData, setUserData] = useState<IUserData | null >(null);
-  const [rentals, setRentals] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
 
@@ -73,39 +66,7 @@ const DashboardVendedor: React.FC = () => {
     }
   }, [userToken]);
 
-  useEffect(() => {
-    const fetchRentals = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(rentalsApiUrl, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${userToken}`,
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error('Error fetching rentals data');
-        }
-
-        const data = await response.json();
-        setRentals(data);
-      } catch (error: any) {
-        throw new Error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (userToken) {
-      fetchRentals();
-    }
-  }, [userToken]);
-
   console.log(userData)
-  console.log(rentals)
-
 if (loading) {
   return <SkeletonDashboard />;
 }
@@ -131,15 +92,15 @@ if (loading) {
       <div className="bg-[#333333] rounded-lg shadow-md p-6 mb-6">
         <h2 className="text-xl font-semibold text-[#C4FF0D]">Tus alquileres Recientes</h2>
         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {rentals.map((rental) => (
-              <RentalCard
-                key={rental.id}
-                carModel={rental.carModel}
-                rentalStartDate={rental.rentalStartDate}
-                rentalEndDate={rental.rentalEndDate}
-                daysRemaining={rental.daysRemaining}
-                // imageUrl={rental.post.car.imageUrl}
-              />
+          
+               {userData?.rentals.map((rent) => (
+          <SaleCard
+          carModel={rent.posts.car.brand}
+                   saleDate={rent.rentalStartDate}
+                   price={rent.totalCost}
+          imageUrl={rent.posts.car.image_url[0]}
+        />
+              
             ))}
           {/* Agrega más SaleCards según sea necesario */}
         </div>
@@ -150,14 +111,14 @@ if (loading) {
         <h2 className="text-xl font-semibold text-[#C4FF0D]">Tus Vehículos Listados</h2>
         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {userData?.post.map((rent) => (
-          // eslint-disable-next-line react/jsx-key
           <ListedCarCard
-            key={rent.id}
-            carModel={rent.title}
-            price={rent.price}
-            imageUrl={rent.car?.image_url[0]}
-          />              
-          ))}
+          carModel={rent.title}
+          price={rent.price}
+          imageUrl={rent.car?.image_url[0]}
+        />
+              
+            ))}
+
           {/* Agrega más ListedCarCards según sea necesario */}
         </div>
       </div>
@@ -190,31 +151,11 @@ if (loading) {
     );
 };
 
-// Componente para mostrar un alquiler reciente
-interface RentalCardProps {
-  carModel: string;
-  rentalStartDate: string;
-  rentalEndDate: string;
-  daysRemaining: number;
-  // imageUrl: string;
-}
-
-const RentalCard: React.FC<RentalCardProps> = ({ carModel, rentalStartDate, rentalEndDate, daysRemaining, /* imageUrl */ }) => (
-  <div className="bg-[#2d2d2d] p-4 rounded-lg shadow">
-    <div className="mt-2">
-      <h4 className="text-slate-100 font-bold text-lg">{carModel}</h4>
-      <p className="text-slate-400 text-sm mt-1">Fecha de inicio: {new Date(rentalStartDate).toLocaleDateString()}</p>
-      <p className="text-slate-400 text-sm mt-1">Fecha de fin: {new Date(rentalEndDate).toLocaleDateString()}</p>
-      <p className="text-gray-100 font-semibold mt-2">Días restantes: {daysRemaining}</p>
-    </div>
-  </div>
-);
-
 // Componente para mostrar una venta reciente
 interface SaleCardProps {
   carModel: string;
   saleDate: string;
-  price: string;
+  price: number;
   imageUrl: string;
 }
 
@@ -230,6 +171,7 @@ const SaleCard: React.FC<SaleCardProps> = ({ carModel, saleDate, price, imageUrl
 );
 
 // Componente para mostrar un vehículo listado
+
 const ListedCarCard: React.FC<ListedCarCardProps> = ({ carModel, price, imageUrl }) => (
   <div className="bg-[#2d2d2d] p-4 rounded-lg shadow">
     <img className="w-full h-32 object-cover rounded-t-lg" src={imageUrl} alt={carModel} />

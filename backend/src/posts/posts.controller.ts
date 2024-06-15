@@ -4,7 +4,6 @@ import {
   Post,
   Body,
   Param,
-  Delete,
   Put,
   ParseUUIDPipe,
   UploadedFiles,
@@ -15,9 +14,7 @@ import {
   Headers,
   Query,
   UnauthorizedException,
-  UseGuards,
   Patch,
-  NotFoundException,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -26,7 +23,7 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { FiltersPosts } from './interfaces/filter.interfaces';
 // import { TokenGuard } from './guards/token.guard';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { RolesGuard } from 'src/users/utils/roles.guard';
+// import { RolesGuard } from 'src/users/utils/roles.guard';
 import { Role } from 'src/users/utils/roles.enum';
 import { Roles } from 'src/users/utils/roles.decorator';
 // import { RolesGuard } from 'src/users/utils/roles.guard';
@@ -56,6 +53,7 @@ export class PostsController {
 
   @Get('filter')
   getPostsByFilter(@Query() filter: FiltersPosts) {
+    console.log(filter);
     return this.postsService.getPostsByFilterServices(filter);
   }
   @Get('available')
@@ -158,23 +156,6 @@ export class PostsController {
     }
     console.log(updatePostDto);
     return this.postsService.UpdatePostsServices(id, updatePostDto, token);
-  }
-
-  @Delete(':id')
-  async deletePostsByIdController(@Param('id', ParseUUIDPipe) id: string) {
-    try {
-      await this.postsService.DeletePostsServices(id);
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw new NotFoundException(error.message);
-      }
-      throw error; // throw other errors for global exception handler to catch
-    }
-    
-    
-    
-    // return this.postsService.DeletePostsServices(id);
-
   }
 
   @Patch('soft-delete/:id')

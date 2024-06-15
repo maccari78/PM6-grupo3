@@ -42,13 +42,13 @@ export class Posts {
   user: User;
 
   //..........relations start........//
-  @OneToOne(() => Car,{ cascade: true })
+  @OneToOne(() => Car, { cascade: true })
   @JoinColumn({ name: 'carId' })
   car: Car;
 
-  @OneToMany(() => Rental, rental => rental.posts)
+  @OneToMany(() => Rental, (rental) => rental.posts)
   rentals: Rental[];
-  
+
   // @OneToMany(() => Review, (review) => review.post)
   // review: Review[];
 
@@ -57,11 +57,9 @@ export class Posts {
 
   @UpdateDateColumn()
   updated_at: Timestamp;
-  
+
   //..........relations start........//
+
   @OneToMany(() => Review, (reviews) => reviews.post,{ cascade: true })
   review: Review[];
-
-  @OneToOne(() => Rental, (rentalss) => rentalss.posts,{ cascade: true })
-   rental: Rental;
 }
