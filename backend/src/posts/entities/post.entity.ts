@@ -49,10 +49,14 @@ export class Posts {
   @OneToMany(() => Rental, (rental) => rental.posts)
   rentals: Rental[];
 <<<<<<< HEAD
+<<<<<<< HEAD
   
 =======
 
 >>>>>>> 52ef47685fdc7f74a530cdcb3a351127a176443b
+=======
+
+>>>>>>> a62eb7f2e12d4ea6c78a703c43db1a419fffbe01
   // @OneToMany(() => Review, (review) => review.post)
   // review: Review[];
 
@@ -62,14 +66,18 @@ export class Posts {
   @UpdateDateColumn()
   updated_at: Timestamp;
 <<<<<<< HEAD
+<<<<<<< HEAD
   
   //..........relations start........//
   @OneToMany(() => Review, (reviews) => reviews.post,{ cascade: true })
   review: Review[];
 =======
 >>>>>>> 52ef47685fdc7f74a530cdcb3a351127a176443b
+=======
+>>>>>>> a62eb7f2e12d4ea6c78a703c43db1a419fffbe01
 
   //..........relations start........//
-  @OneToMany(() => Review, (review) => review.post, { cascade: true })
+
+  @OneToMany(() => Review, (reviews) => reviews.post,{ cascade: true })
   review: Review[];
 }
