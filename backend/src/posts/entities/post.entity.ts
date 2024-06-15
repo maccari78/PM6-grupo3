@@ -49,8 +49,8 @@ export class Posts {
   @OneToMany(() => Rental, rental => rental.posts)
   rentals: Rental[];
   
-  @OneToMany(() => Review, (review) => review.post)
-  review: Review[];
+  // @OneToMany(() => Review, (review) => review.post)
+  // review: Review[];
 
   @CreateDateColumn()
   created_at: Timestamp;
@@ -59,7 +59,7 @@ export class Posts {
   updated_at: Timestamp;
   
   //..........relations start........//
-  @OneToMany(() => Review, (review) => review.post,{ cascade: true })
+  @OneToMany(() => Review, (reviews) => reviews.post,{ cascade: true })
   review: Review[];
 
   @OneToOne(() => Rental, (rentalss) => rentalss.posts,{ cascade: true })
