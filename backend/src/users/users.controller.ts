@@ -1,4 +1,20 @@
-import { Controller, Get, Body, Param, Delete, Put, ParseUUIDPipe, UseInterceptors, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, Headers, UploadedFile, UseGuards, Patch } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Body,
+  Param,
+  Delete,
+  Put,
+  ParseUUIDPipe,
+  UseInterceptors,
+  ParseFilePipe,
+  MaxFileSizeValidator,
+  FileTypeValidator,
+  Headers,
+  UploadedFile,
+  UseGuards,
+  Patch,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -21,9 +37,16 @@ export class UsersController {
 
   @ApiBearerAuth()
   @Get('token')
-  @Roles(Role.User, Role.Admin)
-  getUserByToken(@Headers('Authorization') token: string) {
-    return this.usersService.getUserByToken(token);
+  // @Roles(Role.User, Role.Admin)
+  getUserForRent(@Headers('Authorization') token: string) {
+    return this.usersService.getUserByRent(token);
+  }
+  @ApiBearerAuth()
+  @Get('dashboard')
+  getUserForDashboard(@Headers('Authorization') token: string) {
+    console.log(token);
+
+    return this.usersService.getUserForDashboard(token);
   }
 
   @Get(':id')
@@ -33,7 +56,7 @@ export class UsersController {
 
   @ApiBearerAuth()
   @Put('update')
-  @Roles(Role.User, Role.Admin)
+  // @Roles(Role.User, Role.Admin)
   @UseInterceptors(FileInterceptor('file'))
   update(
     @Body() updateUserDto: UpdateUserDto,
@@ -58,9 +81,18 @@ export class UsersController {
     const { city, address, country, state, zip_code, ...rest2 } = updateUserDto;
 
     if (!file)
-      return this.usersService.update(token, rest2, { city, address, country, state, zip_code });
-    return this.usersService.update( token, rest2,
-      { city, address, country, state, zip_code }, file,
+      return this.usersService.update(token, rest2, {
+        city,
+        address,
+        country,
+        state,
+        zip_code,
+      });
+    return this.usersService.update(
+      token,
+      rest2,
+      { city, address, country, state, zip_code },
+      file,
     );
   }
 

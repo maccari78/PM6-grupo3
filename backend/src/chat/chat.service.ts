@@ -66,8 +66,8 @@ export class ChatService {
   async createChatWithImage(newChat: Chat) {
     const messageContent: MessageChat = {
       message: newChat.message,
-      sender: newChat.sender.name,
-      receiver: newChat.receiver.name,
+      sender: newChat.sender,
+      receiver: newChat.receiver,
       room_id: newChat.room_id,
       image: newChat.image,
       date_created: newChat.date_created,
@@ -77,8 +77,8 @@ export class ChatService {
   async createChatWithoutImage(newChat: Chat) {
     const messageContent: MessageChat = {
       message: newChat.message,
-      sender: newChat.sender.name,
-      receiver: newChat.receiver.name,
+      sender: newChat.sender,
+      receiver: newChat.receiver,
       room_id: newChat.room_id,
       date_created: newChat.date_created,
     };

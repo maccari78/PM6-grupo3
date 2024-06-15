@@ -20,7 +20,7 @@ const Products: React.FC = () => {
   const [posts, setPosts] = useState<IPost[]>([]);
   const [postsQT, setPostQT] = useState<number>(9);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [filters, setFilters] = useState<any>(null);
+  const [filters, setFilters] = useState<any>();
   const [notShowFilter, setNotShowFilter] = useState(true);
 
   useEffect(() => {
@@ -48,8 +48,9 @@ const Products: React.FC = () => {
     const fetchData = async () => {
       try {
         const queryParams = new URLSearchParams(filters);
+        const queryString = queryParams.toString().replace(/\+/g, "%20");
         const response = await fetch(
-          `${apiBaseUrl}/posts/filter?${queryParams}`,
+          `${apiBaseUrl}/posts/filter?${queryString}`,
           {
             method: "GET",
             headers: {

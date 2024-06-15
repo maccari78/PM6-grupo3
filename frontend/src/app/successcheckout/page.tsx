@@ -40,9 +40,18 @@ const Success = () => {
   });
 
   return (
-    <div className="flex flex-col bg-[#444343] min-h-screen items-center">
-      <div className="flex flex-col mt-10 gap-3 items-center">
-        <h1 className="text-3xl text-[#c3ff0da9]">¡Compra exitosa!</h1>
+    <div className="flex flex-col bg-[url('/background_register_2.svg')] min-h-screen items-center">
+      <div className="flex flex-col mt-10 gap-3 items-center justify-centers">
+        <h1 className="text-[15px] md:text-3xl text-[#c3ff0da9]">
+          ¡Renta realizada con exito!
+        </h1>
+        <p className="text-[10px] text-center md:text-lg text-gray-100">
+          En unos minutos te llegara a tu E-mail la confirmacion de tu pago y
+          sus detalles. ¡Gracias por elegirnos!
+        </p>
+        <div className="md:w-1/2 text-center">
+          <img src="https://i.gifer.com/PXAH.gif" alt="" />
+        </div>
         <Link href="/">
           {" "}
           <button
@@ -54,14 +63,16 @@ const Success = () => {
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              className="w-6 h-6"
+              className="w-5 h-5 md:w-6 md:h-6"
             >
               <path stroke="none" d="M0 0h24v24H0z" fill="none" />
               <path d="M5 12l14 0" />
               <path d="M5 12l6 6" />
               <path d="M5 12l6 -6" />
             </svg>
-            Volver a la pagina principal
+            <p className="text-[15px] md:text-lg hover:text-[#c3ff0da9]">
+              Volver a la pagina principal
+            </p>
           </button>
         </Link>
       </div>

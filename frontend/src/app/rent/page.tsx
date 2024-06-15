@@ -92,18 +92,16 @@ if (loading) {
       <div className="bg-[#333333] rounded-lg shadow-md p-6 mb-6">
         <h2 className="text-xl font-semibold text-[#C4FF0D]">Tus alquileres Recientes</h2>
         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          
+               {userData?.rentals.map((rent) => (
           <SaleCard
-            carModel="Toyota Corolla 2021"
-            saleDate="01/06/2024"
-            price="$20,000"
-            imageUrl="https://via.placeholder.com/150"
-          />
-          <SaleCard
-            carModel="Honda Civic 2020"
-            saleDate="15/05/2024"
-            price="$18,000"
-            imageUrl="https://via.placeholder.com/150"
-          />
+          carModel={rent.posts.car.brand}
+                   saleDate={rent.rentalStartDate}
+                   price={rent.totalCost}
+          imageUrl={rent.posts.car.image_url[0]}
+        />
+              
+            ))}
           {/* Agrega más SaleCards según sea necesario */}
         </div>
       </div>

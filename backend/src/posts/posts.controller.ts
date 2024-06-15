@@ -4,7 +4,6 @@ import {
   Post,
   Body,
   Param,
-  Delete,
   Put,
   ParseUUIDPipe,
   UploadedFiles,
@@ -15,7 +14,6 @@ import {
   Headers,
   Query,
   UnauthorizedException,
-  UseGuards,
   Patch,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
@@ -25,7 +23,7 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { FiltersPosts } from './interfaces/filter.interfaces';
 // import { TokenGuard } from './guards/token.guard';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { RolesGuard } from 'src/users/utils/roles.guard';
+// import { RolesGuard } from 'src/users/utils/roles.guard';
 import { Role } from 'src/users/utils/roles.enum';
 import { Roles } from 'src/users/utils/roles.decorator';
 // import { RolesGuard } from 'src/users/utils/roles.guard';
@@ -55,7 +53,12 @@ export class PostsController {
 
   @Get('filter')
   getPostsByFilter(@Query() filter: FiltersPosts) {
+    console.log(filter);
     return this.postsService.getPostsByFilterServices(filter);
+  }
+  @Get('available')
+  getPostsByDate() {
+    return this.postsService.getPostsByDate();
   }
 
   @Get(':id')
@@ -153,13 +156,6 @@ export class PostsController {
     }
     console.log(updatePostDto);
     return this.postsService.UpdatePostsServices(id, updatePostDto, token);
-  }
-
-  @Delete(':id')
-  @UseGuards(RolesGuard)
-  @Roles(Role.User, Role.Admin)
-  deletePostsByIdController(@Param('id', ParseUUIDPipe) id: string) {
-    return this.postsService.DeletePostsServices(id);
   }
 
   @Patch('soft-delete/:id')

@@ -8,6 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from 'src/rentals/interfaces/payload.interfaces';
 import { Address } from 'src/addresses/entities/address.entity';
 import { UpdateAddressDto } from 'src/addresses/dto/update-address.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -20,11 +21,18 @@ export class UsersService {
   ) {}
 
   async findAll() {
-    const users = await this.userRepository.find({ where: { isDeleted: false } });
+    const users = await this.userRepository.find({
+      where: { isDeleted: false },
+    });
 
     if (users.length === 0 || !users)
       throw new NotFoundException('No se encontraron usuarios');
-    return users;
+    const usersWithoutPassword = users.map((user) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password, ...rest } = user;
+      return rest;
+    });
+    return usersWithoutPassword;
   }
 
   async findOne(id: string) {
@@ -45,7 +53,7 @@ export class UsersService {
     return rest;
   }
 
-  async getUserByToken(token: string) {
+  async getUserByRent(token: string) {
     const currentUser = token?.split(' ')[1];
     if (!currentUser)
       throw new NotFoundException('No hay un usuario autenticado');
@@ -63,6 +71,66 @@ export class UsersService {
         'post.car',
         'rentals',
         'rentals.posts.car',
+        'rentals.posts',
+        'rentals.users',
+        'notifications',
+        'addresses',
+        'reviews',
+      ],
+    });
+    if (!user) throw new NotFoundException('Usuario no encontrado');
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars, prefer-const
+    const { password, rentals, ...rest } = user;
+    const userId = rest.id;
+
+    const filterRentals = rentals.filter(
+      (rental) => rental.posts?.user?.id === userId,
+    );
+
+    const returnUser: Omit<User, 'password'> = {
+      id: rest.id,
+      email: rest.email,
+      name: rest.name,
+      nDni: rest.nDni,
+      rExpiration: rest.rExpiration,
+      phone: rest.phone,
+      image_url: rest.image_url,
+      public_id: rest.public_id,
+      userGoogle: rest.userGoogle,
+      aboutMe: rest.aboutMe,
+      roles: rest.roles,
+      isDeleted: rest.isDeleted,
+      createdAt: rest.createdAt,
+      updatedAt: rest.updatedAt,
+      car: rest.car,
+      post: rest.post,
+      notifications: rest.notifications,
+      addresses: rest.addresses,
+      reviews: rest.reviews,
+      rentals: filterRentals,
+    };
+    return returnUser;
+  }
+  async getUserForDashboard(token: string) {
+    const currentUser = token?.split(' ')[1];
+    if (!currentUser)
+      throw new NotFoundException('No hay un usuario autenticado');
+    const payload: JwtPayload = await this.jwtService.verify(currentUser, {
+      secret: process.env.JWT_SECRET,
+    });
+
+    if (!payload) throw new NotFoundException('Error al decodificar token');
+    const user = await this.userRepository.findOne({
+      where: { email: payload.sub, isDeleted: false },
+      relations: [
+        'car',
+        'car.post',
+        'post',
+        'post.car',
+        'rentals',
+        'rentals.posts.car',
+        'rentals.posts.user',
+        'rentals.users',
         'notifications',
         'addresses',
         'reviews',
@@ -70,9 +138,36 @@ export class UsersService {
     });
     if (!user) throw new NotFoundException('Usuario no encontrado');
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, ...rest } = user;
+    const { password, rentals, ...rest } = user;
+    const userId = rest.id;
+    const filterRentals = rentals.filter(
+      (rental) => rental?.posts?.user?.id !== userId,
+    );
+    const returnUser: Omit<User, 'password'> = {
+      id: rest.id,
+      email: rest.email,
+      name: rest.name,
+      nDni: rest.nDni,
+      rExpiration: rest.rExpiration,
+      phone: rest.phone,
+      image_url: rest.image_url,
+      public_id: rest.public_id,
+      userGoogle: rest.userGoogle,
+      aboutMe: rest.aboutMe,
+      roles: rest.roles,
+      isDeleted: rest.isDeleted,
+      createdAt: rest.createdAt,
+      updatedAt: rest.updatedAt,
+      car: rest.car,
+      post: rest.post,
+      notifications: rest.notifications,
+      addresses: rest.addresses,
+      reviews: rest.reviews,
+      rentals: filterRentals,
+    };
+    console.log(returnUser);
 
-    return rest;
+    return returnUser;
   }
 
   async update(
@@ -94,7 +189,12 @@ export class UsersService {
       relations: ['addresses'],
     });
     if (!user) throw new NotFoundException('Usuario no encontrado');
+    if (updateUserDto.password) {
+      const hashPass = await bcrypt.hash(updateUserDto.password, 10);
+      await this.userRepository.update(user.id, { password: hashPass });
 
+      delete updateUserDto.password;
+    }
     const updateUser = await this.userRepository.update(user.id, updateUserDto);
 
     const adress = user.addresses[0!];
@@ -113,7 +213,7 @@ export class UsersService {
     if (updateUser.affected === 0)
       throw new NotFoundException('Error al actualizar usuario');
     if (!file) {
-      return 'Usuario actualizado con exito';
+      return { message: 'Usuario actualizado con exito' };
     }
 
     const uploadedImage = await this.fileUploadService.updateProfilePicture(
@@ -151,16 +251,20 @@ export class UsersService {
 
   async softDelete(id: string): Promise<{ message: string }> {
     const car = await this.userRepository.findOneBy({ id });
-    
+
     if (!car) {
-      throw new NotFoundException(`El usuario con ID ${id} no se ha encontrado`);
+      throw new NotFoundException(
+        `El usuario con ID ${id} no se ha encontrado`,
+      );
     }
     await this.userRepository.update(id, { isDeleted: true });
     return { message: 'El usuario a sido borrado logicamente con exito' };
   }
 
   async findByEmail(email: string) {
-    const user = await this.userRepository.findOne({ where: { email, isDeleted: false } });
+    const user = await this.userRepository.findOne({
+      where: { email, isDeleted: false },
+    });
 
     if (!user) throw new NotFoundException('Usuario no encontrado');
     return user;
