@@ -101,6 +101,7 @@ const ChatWeb: React.FC = () => {
         }
         finally{
           setMsgLoader(false)
+          setUserLoader(false)
         }
       }
     };
@@ -154,11 +155,6 @@ const ChatWeb: React.FC = () => {
       } catch (error: any) {
         console.error(error);
         setError("Error al obtener los datos de alquileres.");
-      } finally {
-        setTimeout(() => {
-          setUserLoader(false)
-      }, 1500)
-        
       }
     };
 
@@ -199,7 +195,7 @@ const ChatWeb: React.FC = () => {
   };
   const handleRoom = (room_id:string) =>{
     setRoom_id(room_id)
-    setMsgLoader(true)  
+    setMsgLoader(true)
   }
 
     if (loading) {
@@ -208,7 +204,7 @@ const ChatWeb: React.FC = () => {
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
-      <div className="w-1/4 bg-white border-r border-gray-300">
+      <div className="w-1/4 bg-gra-300 border-r border-gray-300">
         {/* Sidebar Header */}
         <header className="p-4 border-b border-gray-300 flex justify-between items-center bg-[#313139] text-white">
           <h1 className="text-2xl font-semibold">Chat Web</h1>
