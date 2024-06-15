@@ -59,6 +59,7 @@ export class Posts {
   updated_at: Timestamp;
 
   //..........relations start........//
-  @OneToMany(() => Review, (review) => review.post, { cascade: true })
+
+  @OneToMany(() => Review, (reviews) => reviews.post,{ cascade: true })
   review: Review[];
 }
