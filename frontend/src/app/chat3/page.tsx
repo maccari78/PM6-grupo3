@@ -3,20 +3,23 @@ import { redirect, useRouter } from "next/navigation";
 import React, { useEffect, useState, ChangeEvent, FormEvent } from "react";
 import Swal from "sweetalert2";
 import { io, Socket } from "socket.io-client";
-import { IRentalChat, MessageChat } from "@/interfaces/Ichat";
+import { IRentalChat, IUserChat, TMessageChat } from "@/interfaces/Ichat";
 
 const ChatWeb: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [userToken, setUserToken] = useState<string | null>(null);
   const [message, setMessage] = useState<string>("");
-  const [messages, setMessages] = useState<MessageChat[]>([]);
+  const [messages, setMessages] = useState<TMessageChat[]>([]);
   const [room_id, setRoom_id] = useState<string>("");
   const [userStatus, setUserStatus] = useState<string>("");
+  
   const router = useRouter();
   const [socket, setSocket] = useState<Socket | null>(null);
   const [rentalsChats, setRentalsChat] = useState<IRentalChat[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [sender, setSender] = useState<IUserChat | null>(null);
+  const [receiver, setReceiver] = useState<IUserChat | null>(null);
 
   const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -24,7 +27,7 @@ const ChatWeb: React.FC = () => {
     throw new Error('Environment variable NEXT_PUBLIC_API_GET_USERS_TOKEN is not set');
   }
 
-  const recibeMensaje = (data: MessageChat) =>
+  const recibeMensaje = (data: TMessageChat) =>
     setMessages((state) => [...state, data]);
 
   useEffect(() => {
@@ -63,12 +66,15 @@ const ChatWeb: React.FC = () => {
           if (!response.ok) {
             throw new Error("Error fetching messages");
           }
-          const data: MessageChat[] = await response.json();
-          console.log(data)
+          const data: TMessageChat[] = await response.json();
+          if (data.length > 0) {
+            setSender(data[0].sender as IUserChat);  
+            setReceiver(data[0].receiver as IUserChat);  
+          }
           // Ordenar mensajes por fecha de creación
           const sortedMessages = data.sort((a, b) => new Date(a.date_created || "").getTime() - new Date(b.date_created || "").getTime());
           setMessages(sortedMessages);
-          console.log(sortedMessages)
+          console.log(sortedMessages);
         } catch (error) {
           console.error("Error al obtener los mensajes:", error);
           setError("Error al obtener los mensajes.");
@@ -91,6 +97,10 @@ const ChatWeb: React.FC = () => {
       if (userSession) {
         const parsedSession = JSON.parse(userSession);
         setUserToken(parsedSession.token);
+        // Aquí puedes realizar una llamada a la API para obtener los detalles del usuario actual
+        // y establecer el estado `currentUser`
+        // Ejemplo:
+        
       } else {
         setLoading(true);
         Swal.fire({
@@ -114,14 +124,13 @@ const ChatWeb: React.FC = () => {
             "Content-Type": "application/json",
           },
         });
-        console.log(response)
+
         if (!response.ok) {
           throw new Error("Error fetching user data");
         }
 
         const data: IRentalChat[] = await response.json();
         setRentalsChat(data);
-        console.log(data)
         if (data.length > 0) {
           setRoom_id(data[0].room_id);
         }
@@ -144,9 +153,14 @@ const ChatWeb: React.FC = () => {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const meMessage: MessageChat = {
-      sender: "Me",
-      receiver: "userReceiverState(?)",
+    if (!sender || !receiver) {
+      console.error("No se han establecido el remitente o el receptor.");
+      return;
+    }
+
+    const meMessage: TMessageChat = {
+      sender: sender,  
+      receiver: receiver,
       message,
       room_id,
       date_created: new Date(),
@@ -176,7 +190,7 @@ const ChatWeb: React.FC = () => {
           messages.map((msg, index) => (
             <div key={index}>
               <p>
-                {typeof msg.sender === 'string' ? msg.sender : 'Usuario'}: {typeof msg.message === 'string' ? msg.message : 'Mensaje no disponible'}
+                {msg.sender?.name ?? 'Usuario'}: {msg.message ?? 'Mensaje no disponible'}
               </p>
             </div>
           ))
