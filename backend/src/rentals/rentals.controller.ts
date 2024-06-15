@@ -1,35 +1,14 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  Delete,
-  Headers,
-  BadRequestException,
-  ParseUUIDPipe,
-  Put,
-  Res /* UseGuards */,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Headers, BadRequestException, ParseUUIDPipe, Put, Res /* UseGuards */, UnauthorizedException } from '@nestjs/common';
 import { RentalsService } from './rentals.service';
 import { CreateRentalDto } from './dto/create-rental.dto';
 import { UpdateRentalDto } from './dto/update-rental.dto';
 import { Response } from 'express';
 import { ApiBearerAuth } from '@nestjs/swagger';
-// import { RolesGuard } from 'src/users/utils/roles.guard';
-// import { Role } from 'src/users/utils/roles.enum';
-// import { Roles } from 'src/users/utils/roles.decorator';
 
-// @ApiBearerAuth()
-// @ApiTags('RENTALS')
 @Controller('rentals')
-//@UseGuards(RolesGuard)
-//@Roles(Role.User, Role.Admin)
 export class RentalsController {
   constructor(private readonly rentalsService: RentalsService) {}
 
-  // @ApiBearerAuth()
   @Post(':id')
   async create(
     @Body() createRentalDto: CreateRentalDto,
