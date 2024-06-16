@@ -53,11 +53,13 @@ const Reviews: React.FC<{ reviews: IReview[] | undefined; idPost: string }> = ({
         const resDta = await res.text();
         console.log(resDta);
 
-        Swal.fire({
+        await Swal.fire({
           title: "¡Gracias por dejar tu reseña!",
-          text: "reseña realizada",
+          text: "Reseña realizada",
           icon: "success",
         });
+
+        window.location.reload();
       } catch (error: any) {
         console.log(error.message);
       } finally {
