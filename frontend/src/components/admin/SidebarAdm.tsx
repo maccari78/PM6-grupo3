@@ -1,24 +1,37 @@
 import React from 'react';
 
-const SidebarAdm: React.FC = () => {
+interface SidebarProps {
+  onSelect: (section: string) => void;
+}
+
+const SidebarAdm: React.FC<SidebarProps> = ({ onSelect }) => {
   return (
     <aside className="w-64 bg-gray-800 text-white flex flex-col">
       <div className="p-4 text-2xl font-semibold">
         Admin Dashboard
       </div>
       <nav className="flex-grow">
-        <a href="#" className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
+        <button
+          className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 w-full text-left"
+          onClick={() => onSelect('dashboard')}
+        >
           Dashboard
-        </a>
-        <a href="#" className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
+        </button>
+        <button
+          className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 w-full text-left"
+          onClick={() => onSelect('users')}
+        >
           Users
-        </a>
-        <a href="#" className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
-          Settings
-        </a>
+        </button>
+        <button
+          className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 w-full text-left"
+          onClick={() => onSelect('reviews')}
+        >
+          Reviews
+        </button>
       </nav>
     </aside>
   );
-}
+};
 
 export default SidebarAdm;
