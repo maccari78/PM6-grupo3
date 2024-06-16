@@ -127,7 +127,6 @@ const ChatWeb: React.FC = () => {
         }
         finally{
           setMsgLoader(false)
-          setUserLoader(false)
         }
       }
     };
@@ -182,6 +181,11 @@ const ChatWeb: React.FC = () => {
       } catch (error: any) {
         console.error(error);
         setError("Error al obtener los datos de alquileres.");
+      } finally {
+        setTimeout(() => {
+          setUserLoader(false)
+      }, 1500)
+        
       }
     };
 
@@ -223,6 +227,7 @@ const ChatWeb: React.FC = () => {
   const handleRoom = (room_id:string) =>{
     setRoom_id(room_id)
     setMsgLoader(true)
+    
   }
 
     if (loading) {
