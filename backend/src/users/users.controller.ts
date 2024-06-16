@@ -39,8 +39,8 @@ export class UsersController {
 
   @ApiBearerAuth()
   @Get('token')
-  @Roles(Role.User, Role.Admin, Role.SuperAdmin)
-  @UseGuards(RolesGuard)
+  // @Roles(Role.User, Role.Admin, Role.SuperAdmin)
+  // @UseGuards(RolesGuard)
   getUserForRent(@Headers('Authorization') token: string) {
     return this.usersService.getUserByRent(token);
   }
