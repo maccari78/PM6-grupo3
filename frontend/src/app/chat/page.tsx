@@ -224,6 +224,7 @@ const ChatWeb: React.FC = () => {
   };
   const handleRoom = (room_id:string) =>{
     setRoom_id(room_id)
+    setMsgLoader(true)
     
   }
 
