@@ -94,7 +94,7 @@ const DashboardComprador: React.FC = () => {
         {/* Sección de reservas activas */}
         <div className="bg-[#2d2d2d] rounded-lg shadow-md p-6 mb-2">
           <h2 className="text-2xl font-semibold text-[#C4FF0D]">
-            Reservas activas
+            Tus vehiculos tomados en alquiler
           </h2>
           <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {userData?.rentals?.length !== 0 ? (userData?.rentals?.map((rent) => (
@@ -114,7 +114,7 @@ const DashboardComprador: React.FC = () => {
         {/* Sección de publicaciones recientes */}
         <div className="bg-[#2d2d2d] rounded-lg shadow-md p-6">
           <h2 className="text-2xl font-semibold text-[#C4FF0D]">
-            Historial de reservas
+            Historial de alquileres
           </h2>
           <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             
