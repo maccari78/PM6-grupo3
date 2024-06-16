@@ -103,7 +103,7 @@ const DashboardComprador: React.FC = () => {
                 carModel={rent?.posts?.car?.model}
                 reservationDate={rent?.rentalStartDate}
                 reservationEndDate={rent?.rentalEndDate}
-                price={rent?.totalCost}
+                price={`$ ${rent?.totalCost}`}
                 imageUrl={rent?.posts?.car?.image_url[0]}
               />
             ))) : (

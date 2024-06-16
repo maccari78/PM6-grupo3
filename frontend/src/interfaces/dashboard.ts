@@ -7,7 +7,7 @@ export interface ReservationCardProps {
 	carModel: string;
 	reservationDate: string;
 	reservationEndDate: string;
-	price: number | null | undefined;
+	price: number | string | undefined;
 	imageUrl: string | undefined;
 }
 export interface ListedCarCardProps {
