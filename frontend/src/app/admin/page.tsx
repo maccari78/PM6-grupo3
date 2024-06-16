@@ -1,4 +1,5 @@
 "use client"
+import CarPostCard from '@/components/admin/CarPostCard';
 import OrderStats from '@/components/admin/OrderStats';
 import RevenueStats from '@/components/admin/RevenueStats';
 import ReviewsAdm from '@/components/admin/ReviewsAdm';
@@ -10,6 +11,7 @@ import React, { useState } from 'react'
 const page = () => {
   const [selectedSection, setSelectedSection] = useState('dashboard');
 
+  
   return (
     <div className="flex min-h-screen">
       <SidebarAdm onSelect={setSelectedSection} />
@@ -19,6 +21,9 @@ const page = () => {
             <UserStats />
             <RevenueStats />
             <OrderStats />
+            <div className="col-span-1 md:col-span-2 lg:col-span-3">
+              <CarPostCard />
+            </div>
           </div>
         )}
         {selectedSection === 'users' && <UserTable />}
