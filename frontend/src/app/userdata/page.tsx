@@ -96,23 +96,7 @@ const UserProfile: React.FC = () => {
           </p>
         </div>
         <div className="px-6 py-4">
-          <h3 className="text-lg font-medium text-gray-100">Reviews</h3>
-          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {userData?.reviews?.length !== 0 ? (userData?.reviews?.map((review) => (
-              <ReviewCard
-              key={review.id}
-              rating={review.rating}
-              comment={review.comment}
-              createdAt={review.created_at}
-              />
-             
-          ))) : (
-              <p className='text-gray-300 text-m'>No hay reviews disponibles</p>
-            )}
-          </div>
-        </div>
-        <div className="px-6 py-4">
-        <h3 className="text-lg font-medium text-gray-100">Sale Posts</h3>
+        <h3 className="text-xl font-semibold text-[#C4FF0D]">Alquileres publicados</h3>
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
         {userData?.post?.length !== 0 ? (userData?.post?.map((rent) => (
               
@@ -128,6 +112,20 @@ const UserProfile: React.FC = () => {
             )}
           
         </div>
+        <h3 className="text-lg font-medium text-gray-100">Comentarios</h3>
+          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {userData?.reviews?.length !== 0 ? (userData?.reviews?.map((review) => (
+              <ReviewCard
+              key={review.id}
+              rating={review.rating}
+              comment={review.comment}
+              createdAt={review.created_at}
+              />
+             
+          ))) : (
+              <p className='text-gray-300 text-m'>No hay comentarios disponibles</p>
+            )}
+          </div>
       </div>
       </div>
     </div>

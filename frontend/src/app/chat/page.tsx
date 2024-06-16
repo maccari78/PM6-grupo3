@@ -33,7 +33,7 @@ const ChatWeb: React.FC = () => {
     id: "HOLA",
     email: "HOLA",
     name: "OLA",
-    password: "ASDDA",
+    password: "****",
     nDni: 123,
     nExpiration: "string | null",
     phone: "string",

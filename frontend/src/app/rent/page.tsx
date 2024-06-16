@@ -90,10 +90,11 @@ if (loading) {
       
       {/* Sección de ventas recientes */}
       <div className="bg-[#333333] rounded-lg shadow-md p-6 mb-6">
-        <h2 className="text-xl font-semibold text-[#C4FF0D]">Tus alquileres Recientes</h2>
+        <h2 className="text-xl font-semibold text-[#C4FF0D]">Tus vehiculos puestos en alquiler</h2>
         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           
                {userData?.rentals?.length !== 0 ? (userData?.rentals.map((rent) => (
+          // eslint-disable-next-line react/jsx-key
           <SaleCard
           carModel={rent.posts.car.brand}
                    saleDate={rent.rentalStartDate}
@@ -113,6 +114,7 @@ if (loading) {
         <h2 className="text-xl font-semibold text-[#C4FF0D]">Tus Vehículos Listados</h2>
         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {userData?.post?.length !== 0 ? (userData?.post.map((rent) => (
+          // eslint-disable-next-line react/jsx-key
           <ListedCarCard
           carModel={rent.title}
           price={rent.price}
@@ -127,9 +129,9 @@ if (loading) {
         </div>
       </div>
 
-      {/* Sección de estadísticas de ventas */}
+      {/* Sección de estadísticas de alquileres */}
       <div className="bg-[#333333] rounded-lg shadow-md p-6">
-        <h2 className="text-xl font-semibold text-[#C4FF0D]">Estadísticas de Ventas</h2>
+        <h2 className="text-xl font-semibold text-[#C4FF0D]">Estadísticas de Alquileres</h2>
         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <StatCard
             title="Alquileres Totales"
@@ -168,7 +170,7 @@ const SaleCard: React.FC<SaleCardProps> = ({ carModel, saleDate, price, imageUrl
     <img className="w-full h-32 object-cover rounded-t-lg" src={imageUrl} alt={carModel} />
     <div className="mt-2">
       <h4 className="text-slate-100 font-bold text-lg">{carModel}</h4>
-      <p className="text-slate-400 text-sm mt-1">Fecha de venta: {saleDate}</p>
+      <p className="text-slate-400 text-sm mt-1">Fecha de alquiler: {saleDate}</p>
       <p className="text-gray-100 font-semibold mt-2">{price}</p>
     </div>
   </div>
