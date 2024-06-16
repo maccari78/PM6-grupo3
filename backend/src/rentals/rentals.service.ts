@@ -278,10 +278,44 @@ export class RentalsService {
       .leftJoinAndSelect('rental.users', 'user')
       .where('user.email = :email', { email: payload.sub })
       .getMany();
-    if (rentals?.length === 0)
+
+    if (!rentals.length) {
       throw new NotFoundException(
         'No hay registros de chats en la base de datos',
       );
-    return rentals;
+    }
+    const rentalIds = rentals.map((rental) => rental.id);
+    const completeRentals = await this.rentalRepository
+      .createQueryBuilder('rental')
+      .leftJoinAndSelect('rental.users', 'user')
+      .leftJoinAndSelect('rental.posts', 'post')
+      .whereInIds(rentalIds)
+      .getMany();
+
+    return completeRentals;
   }
+  //  ! POR SI ALGUNA VEZ SUCEDE LO MISMO, CON ESTO SE PUEDEN RECUPERAR RELACIONES DE POST CON RENTALS
+  // async putRelation() {
+  //   const rentals = await this.rentalRepository
+  //     .createQueryBuilder('rental')
+  //     .leftJoinAndSelect('rental.posts', 'post')
+  //     .getMany();
+
+  //   return Promise.all(
+  //     rentals.map(async (rental) => {
+  //       if (!rental.posts && rental.room_id) {
+  //         const postId = rental.room_id.substring(0, 36);
+  //         console.log(postId);
+
+  //         const post = await this.postRepository
+  //           .createQueryBuilder('rental')
+  //           .where('id = :id', { id: postId })
+  //           .getOne();
+  //         if (!post) throw new NotFoundException('Publicacion no encontrada');
+  //         rental.posts = post;
+  //         await this.rentalRepository.save(rental);
+  //       }
+  //     }),
+  //   );
+  // }
 }

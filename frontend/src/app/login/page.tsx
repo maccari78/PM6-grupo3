@@ -62,6 +62,7 @@ const Login = () => {
       }
 
       const json = await response.json();
+
       const token = json;
       localStorage.setItem("userSession", JSON.stringify(token));
       setSession({ token });
