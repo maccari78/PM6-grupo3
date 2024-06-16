@@ -77,20 +77,59 @@ const Navbar: React.FC = () => {
             alt="Logo de la aplicacion You Drive"
           />
         </Link>
-        <form className="flex gap-4 w-1/2 md:w-52">
-          <input
-            type="string"
-            placeholder="Buscar"
-            className="h-8 rounded-md focus:outline-none text-black p-2 w-full"
-          />
-          <button type="button" className="b-none bg-transparent">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 512 512"
-              className="h-4 fill-white"
+      </div>
+      <div className=" md:w-[400px]">
+        <form className="flex items-center">
+          <div className="relative w-full">
+            <input
+              type="text"
+              id="voice-search"
+              className="bg-gray-300 border rounded-l-2xl text-sm outline-none text-gray-900  focus:border-[#c2e94e] block w-full pl-10 p-2.5 placeholder-gray-500"
+              placeholder="vehiculo, Marca etc..."
+              required
+            />
+            <button
+              type="reset"
+              className="flex absolute inset-y-0 right-0 items-center pr-3"
             >
-              <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="w-4 h-4 stroke-gray-800"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M18 6l-12 12" />
+                <path d="M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          <button
+            type="submit"
+            className="inline-flex items-center rounded-r-2xl py-2.5 px-3  text-sm font-medium text-[#222222] bg-[#c2e94e] border border-[#c2e94e] hover:bg-[#94b338] focus:ring-4 focus:outline-none duration-300"
+          >
+            <svg
+              aria-hidden="true"
+              className="mr-2 -ml-1 w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              ></path>
             </svg>
+            Buscar
           </button>
         </form>
       </div>
@@ -153,9 +192,24 @@ const Navbar: React.FC = () => {
                 </Link>
                 <button
                   type="button"
-                  className="block px-4 mt-2 text-start py-2 text-sm w-fullex hover:text-[#C4FF0D] duration-300 text-gray-300 hover:bg-[#494949]"
+                  className="flex flex-row gap-2 px-4 mt-2 text-start py-2 text-sm w-full duration-300 text-red-700 hover:bg-[#494949]"
                   onClick={handleLogOut}
                 >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="w-5 h-5"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M10 8v-2a2 2 0 0 1 2 -2h7a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-7a2 2 0 0 1 -2 -2v-2" />
+                    <path d="M15 12h-12l3 -3" />
+                    <path d="M6 15l-3 -3" />
+                  </svg>
                   Cerrar sesión
                 </button>
               </div>

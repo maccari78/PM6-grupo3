@@ -86,9 +86,24 @@ const Dropdown: React.FC = () => {
             </Link>
             <button
               type="button"
-              className="block px-4 mt-2 text-start py-2 text-sm w-full hover:text-[#C4FF0D] duration-300 text-gray-300 hover:bg-[#494949]"
+              className="flex flex-row gap-2 px-4 mt-2 text-start py-2 text-sm w-full  duration-300 text-red-700 hover:bg-[#494949]"
               onClick={handleLogOut}
             >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="w-5 h-5"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M10 8v-2a2 2 0 0 1 2 -2h7a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-7a2 2 0 0 1 -2 -2v-2" />
+                <path d="M15 12h-12l3 -3" />
+                <path d="M6 15l-3 -3" />
+              </svg>
               Cerrar sesión
             </button>
           </div>

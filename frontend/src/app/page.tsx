@@ -9,13 +9,12 @@ const handleSearch = (
   returnDate: string
 ) => {
   console.log("Searching for:", { location, pickupDate, returnDate });
-
 };
 export default function Home() {
   return (
     <div className="bg-[#444343] text-white flex flex-col min-h-screen">
       <section className="w-full h-full flex justify-center">
-        <div className="w-full bg-no-repeat bg-contain md:bg-cover md:shadow-xl h-[150px]  bg-home flex justify-center items-center md:h-[600px] bg-top">
+        <div className="w-full bg-no-repeat bg-cover  md:shadow-xl h-[150px]  bg-home  flex justify-center items-center md:h-[600px] bg-top">
           <div className="flex flex-col mb-16 justify-between items-center h-full ">
             <div className="flex-grow"></div>
             <a
@@ -27,12 +26,12 @@ export default function Home() {
           </div>
         </div>
       </section>
-      <div className="md:pt-3 bg-[url('/background_register_2.svg')] flex items-center justify-center">
+      <div className="md:pt-3 bg-[#3d3d3d] flex items-center justify-center">
         <SearchComponent onSearch={handleSearch} />
       </div>
       <section
         id="vehiculos"
-        className="w-full flex flex-col bg-[url('/background_register_2.svg')] justify-around"
+        className="w-full flex flex-col bg-[#3d3d3d] justify-around"
       >
         <div className="flex flex-col w-full justify-center  items-center">
           <h1 className="text-xl mt-4 md:text-4xl font-bold ">¡Vehiculos!</h1>
