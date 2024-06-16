@@ -1,10 +1,10 @@
 import React from 'react';
-import Widget from './Widget';
-
+import StatCard from './StatCard';
+import { FaShoppingCart } from 'react-icons/fa';
 
 const OrderStats: React.FC = () => {
   return (
-    <Widget title="Orders" value="75" />
+    <StatCard title="Orders" value="75" icon={FaShoppingCart} color="purple" />
   );
 }
 

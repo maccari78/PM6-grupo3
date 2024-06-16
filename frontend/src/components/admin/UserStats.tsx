@@ -1,10 +1,10 @@
 import React from 'react';
-import Widget from './Widget';
-
+import StatCard from './StatCard';
+import { FaUsers } from 'react-icons/fa';
 
 const UserStats: React.FC = () => {
   return (
-    <Widget title="Users" value="120" />
+    <StatCard title="Users" value="120" icon={FaUsers} color="blue" />
   );
 }
 

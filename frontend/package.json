@@ -25,7 +25,6 @@
     "react-dom": "^18",
     "react-icons": "^5.2.1",
     "react-leaflet": "^4.2.1",
-    "recharts": "^2.12.7",
     "socket.io-client": "^4.7.5",
     "stripe": "^15.10.0",
     "sweetalert": "^2.1.2",

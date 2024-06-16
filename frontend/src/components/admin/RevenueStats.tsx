@@ -1,9 +1,10 @@
 import React from 'react';
-import Widget from './Widget';
+import StatCard from './StatCard';
+import { FaDollarSign } from 'react-icons/fa';
 
 const RevenueStats: React.FC = () => {
   return (
-    <Widget title="Revenue" value="$5,000" />
+    <StatCard title="Revenue" value="$5,000" icon={FaDollarSign} color="green" />
   );
 }
 

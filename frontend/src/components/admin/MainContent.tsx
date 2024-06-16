@@ -2,6 +2,10 @@ import React from 'react';
 import UserStats from './UserStats';
 import RevenueStats from './RevenueStats';
 import OrderStats from './OrderStats';
+import ChartWidget from './ChartWidget';
+import SimpleBarChart from './ChartWidget';
+import UserTable from './UserTable';
+import ReviewsAdm from './Reviews';
 
 
 const MainContent: React.FC = () => {
@@ -10,8 +14,15 @@ const MainContent: React.FC = () => {
       <UserStats />
       <RevenueStats />
       <OrderStats />
+      <div className="col-span-1 md:col-span-2 lg:col-span-3">
+        <UserTable />
+      </div>
+      <div className="col-span-1 md:col-span-2 lg:col-span-3">
+        <ReviewsAdm />
+      </div>
     </main>
   );
 }
+
 
 export default MainContent;
