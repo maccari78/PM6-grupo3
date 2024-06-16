@@ -4,7 +4,7 @@ import { FaDollarSign } from 'react-icons/fa';
 
 const RevenueStats: React.FC = () => {
   return (
-    <StatCard title="Revenue" value="$5,000" icon={FaDollarSign} color="green" />
+    <StatCard title="Beneficios" value="$5,000" icon={FaDollarSign} color="green" />
   );
 }
 

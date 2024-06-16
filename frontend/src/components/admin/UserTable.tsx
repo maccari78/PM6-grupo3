@@ -34,18 +34,10 @@ const initialUsers: User[] = [
 
 const UserTable: React.FC = () => {
   const [users, setUsers] = useState<User[]>(initialUsers);
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [editingUserId, setEditingUserId] = useState<number | null>(null);
-
-  const handleSort = (field: keyof User) => {
-    const sortedUsers = [...users].sort((a, b) => {
-      if (a[field] < b[field]) return sortOrder === 'asc' ? -1 : 1;
-      if (a[field] > b[field]) return sortOrder === 'asc' ? 1 : -1;
-      return 0;
-    });
-    setUsers(sortedUsers);
-    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-  };
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [sortField, setSortField] = useState<keyof User | null>(null);
 
   const handleEdit = (userId: number) => {
     setEditingUserId(editingUserId === userId ? null : userId);
@@ -60,26 +52,50 @@ const UserTable: React.FC = () => {
     setEditingUserId(null);
   };
 
+  const handleSort = (field: keyof User) => {
+    const sortedUsers = [...users].sort((a, b) => {
+      if (a[field] < b[field]) return sortOrder === 'asc' ? -1 : 1;
+      if (a[field] > b[field]) return sortOrder === 'asc' ? 1 : -1;
+      return 0;
+    });
+    setUsers(sortedUsers);
+    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    setSortField(field);
+  };
+
+  const filteredUsers = users.filter(user =>
+    user.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="bg-white p-4 rounded-lg shadow-sm">
       <h2 className="text-lg font-semibold mb-4">User Management</h2>
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Buscar por nombre de usuario"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="p-2 border rounded-md w-full"
+        />
+      </div>
       <table className="w-full table-auto">
         <thead>
           <tr>
             <th className="px-4 py-2 cursor-pointer" onClick={() => handleSort('name')}>
-              Name <FaSort />
+              Nombre {sortField === 'name' && <FaSort />}
             </th>
             <th className="px-4 py-2 cursor-pointer" onClick={() => handleSort('email')}>
-              Email <FaSort />
+              Email {sortField === 'email' && <FaSort />}
             </th>
             <th className="px-4 py-2 cursor-pointer" onClick={() => handleSort('role')}>
-              Role <FaSort />
+              Role {sortField === 'role' && <FaSort />}
             </th>
-            <th className="px-4 py-2">Actions</th>
+            <th className="px-4 py-2">Acciones</th>
           </tr>
         </thead>
         <tbody>
-          {users.map(user => (
+          {filteredUsers.map(user => (
             <React.Fragment key={user.id}>
               <tr className="border-t">
                 <td className="px-4 py-2">{user.name}</td>
@@ -112,7 +128,7 @@ const UserTable: React.FC = () => {
                         }}
                       >
                         <div className="mb-2">
-                          <label className="block text-sm font-medium">Name</label>
+                          <label className="block text-sm font-medium">Nombre</label>
                           <input
                             type="text"
                             value={user.name}

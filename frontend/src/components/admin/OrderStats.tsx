@@ -4,7 +4,7 @@ import { FaShoppingCart } from 'react-icons/fa';
 
 const OrderStats: React.FC = () => {
   return (
-    <StatCard title="Orders" value="75" icon={FaShoppingCart} color="purple" />
+    <StatCard title="Publicaciones" value="75" icon={FaShoppingCart} color="purple" />
   );
 }
 
