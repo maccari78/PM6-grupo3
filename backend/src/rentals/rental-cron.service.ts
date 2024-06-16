@@ -28,7 +28,7 @@ export class RentalCronService {
 
       if (rental.daysRemaining <= 0) {
         rental.posts.car.availability = true;
-        await this.carRepository.save(rental);
+        await this.carRepository.save(rental.posts.car);
       }
 
       await this.rentalRepository.save(rental);
