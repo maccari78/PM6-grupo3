@@ -175,7 +175,7 @@ Si hay conflictos durante el merge, resuélvelos en tu máquina local y realiza 
 - chat(id, message, image, room_id, date_created, senderId, receiverId, postId)
 - notifications(id, template_message, createdAt, user_id, )
 - posts(id, title, description, price, created_at, updated_at, userId, carId, reviewId, isDeleted)
-- rentals(id, rentalStartDate, rentalEndDate, createdAt, updatedAt, postsId, totalCost)
+- rentals(id, rentalStartDate, rentalEndDate, daysRemaining, createdAt, updatedAt, postsId, totalCost)
 - reviews(id, rating, comment, created_at, updated_at, userId, postId)
 - user_rental(rental_id, user_id)
 - users(id, email, name, password, nDni, rExpiration, phone, image_url, public_id, userGoogle, aboutMe, roles, createdAt, updatedAt, isDeleted)
