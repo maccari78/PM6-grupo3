@@ -18,17 +18,17 @@ export class RentalCronService {
   async handleCron() {
     const rentals = await this.rentalRepository.find({
       where: {
-        daysRemaining: MoreThan(0)
+        daysRemaining: MoreThan(0),
       },
-      relations: ['car']
+      relations: ['posts', 'posts.car'],
     });
 
     for (const rental of rentals) {
       rental.daysRemaining -= 1;
 
       if (rental.daysRemaining <= 0) {
-        rental.car.available = true;
-        await this.carRepository.save(rental.car);
+        rental.posts.car.availability = true;
+        await this.carRepository.save(rental);
       }
 
       await this.rentalRepository.save(rental);

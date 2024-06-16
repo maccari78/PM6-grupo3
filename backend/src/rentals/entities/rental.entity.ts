@@ -49,5 +49,4 @@ export class Rental {
 
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
-  car: any;
 }
