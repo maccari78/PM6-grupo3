@@ -6,7 +6,7 @@ interface SidebarProps {
 
 const SidebarAdm: React.FC<SidebarProps> = ({ onSelect }) => {
   return (
-    <aside className="w-64 bg-gray-800 text-white flex flex-col">
+    <aside className="w-64 bg-[#2f2e2e] text-white flex flex-col">
       <div className="p-4 text-2xl font-semibold">
         Admin Dashboard
       </div>
