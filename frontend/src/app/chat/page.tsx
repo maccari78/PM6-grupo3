@@ -1,6 +1,6 @@
 "use client"
 import { redirect, useRouter } from "next/navigation";
-import React, { useEffect, useState, ChangeEvent, FormEvent } from "react";
+import React, { useEffect, useState, ChangeEvent, FormEvent, useRef } from "react";
 import Swal from "sweetalert2";
 import { io, Socket } from "socket.io-client";
 import { IRentalChat, IUserChat, MessageChat, TMessageChat } from "@/interfaces/Ichat";
@@ -28,7 +28,7 @@ const ChatWeb: React.FC = () => {
      id: 'HOLA',
     email: 'HOLA',
     name: 'OLA',
-    password: '****',
+    password: 'ASDDA',
     nDni: 123,
     nExpiration: 'string | null',
     phone: 'string',
@@ -43,7 +43,17 @@ const ChatWeb: React.FC = () => {
   });
   const [msgLoader, setMsgLoader] = useState<boolean>(true)
   const [userLoader, setUserLoader] = useState<boolean>(true)
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+    const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
+
+  const scrollToBottom = () => {
+    if (messagesContainerRef.current && messagesEndRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
+  };
+
+  
   const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
   const apiToken = process.env.NEXT_PUBLIC_API_GET_USERS_TOKEN;
   const apiChat = process.env.NEXT_PUBLIC_API_CHAT;
@@ -85,7 +95,13 @@ const ChatWeb: React.FC = () => {
     const fetchMessages = async () => {
       if (room_id) {
         try {
-          const response = await fetch(`${apiUrl}/chat/${room_id}/messages`);
+          const response = await fetch(`${apiUrl}/chat/${room_id}/messages`, {
+            method: "GET",
+             headers: {
+            Authorization: `Bearer ${userToken}`,
+            "Content-Type": "application/json",
+          },
+          });
           const response2 = await fetch(`${apiToken}`, {
             method: "GET",
             headers: {
@@ -118,7 +134,7 @@ const ChatWeb: React.FC = () => {
             setReceiver(data[0].receiver as IUserChat);  
           }
           const sortedMessages = data.sort((a, b) => new Date(a.date_created || "").getTime() - new Date(b.date_created || "").getTime());
-          setMessages(sortedMessages);
+          setMessages(data);
           
         } catch (error) {
           console.error("Error al obtener los mensajes:", error);
@@ -126,6 +142,7 @@ const ChatWeb: React.FC = () => {
         }
         finally{
           setMsgLoader(false)
+          setUserLoader(false)
         }
       }
     };
@@ -179,11 +196,6 @@ const ChatWeb: React.FC = () => {
       } catch (error: any) {
         console.error(error);
         setError("Error al obtener los datos de alquileres.");
-      } finally {
-        setTimeout(() => {
-          setUserLoader(false)
-      }, 1500)
-        
       }
     };
 
@@ -222,10 +234,12 @@ const ChatWeb: React.FC = () => {
 
     setMessage("");
   };
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
   const handleRoom = (room_id:string) =>{
     setRoom_id(room_id)
     setMsgLoader(true)
-    
   }
 
     if (loading) {
@@ -243,13 +257,14 @@ const ChatWeb: React.FC = () => {
         {/* Contact List */}
         
         <div className="overflow-y-auto h-screen p-3 mb-9 pb-20">
-      {Array.isArray(rentalsChats) && rentalsChats.length > 0 ? (
+      {!userLoader ? (Array.isArray(rentalsChats) && rentalsChats.length > 0 ? (
         rentalsChats.map((rental) => (
           <div key={rental.id}>
             {rental.users.filter((userdata)=> userdata.id !== user?.id).map((userdata, userIndex) => (
               <Contact
                 key={userIndex}
-                name={`${userdata.name} in ${rental.posts?.title}`}
+                name={userdata.name}
+                posts={`en ${rental.posts?.title}`}
                 avatarUrl={userdata.image_url}
                 onClick={() => handleRoom(rental.room_id)}
               />
@@ -259,7 +274,7 @@ const ChatWeb: React.FC = () => {
         ))
       ) : (
         <p>No hay mensajes</p>
-      )}
+      )): ( <LoaderBasic/> )}
     </div>
        
       </div>
@@ -275,21 +290,23 @@ const ChatWeb: React.FC = () => {
         </header>
 
         {/* Chat Messages */}
-        <div className="flex-1 bg-gray-400 overflow-y-auto p-4 pb-36">
-        {msgLoader ? (<div className="text-center">
-        <Spinner aria-label="Center-aligned spinner example" />
-      </div>) : (Array.isArray(messages) && messages.length > 0 ? (
-          messages.map((msg, index) => {
+        <div className="flex-1 bg-gray-400 overflow-y-auto p-4" ref={messagesContainerRef}>
+        {msgLoader ? (<LoaderBasic/>) : (Array.isArray(messages) && messages.length > 0 ? (
+           <>
+          {messages.map((msg, index) => {
             const text = `${msg.message ?? 'Mensaje no disponible'}`;
             return (
               <Message
                 key={index}
                 incoming={msg.sender?.id !== user?.id}
-                avatarUrl={ msg.sender?.id === user?.id ? user?.image_url ?? "" : msg.sender?.image_url ?? ""}
+                avatarUrl={msg.sender?.id === user?.id ? user?.image_url ?? "" : msg.sender?.image_url ?? ""}
                 text={text}
               />
             );
-          })
+          })}
+          <div ref={messagesEndRef} />
+        </>
+            
         ) : (
           <p>No hay mensajes</p>
         ))}

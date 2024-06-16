@@ -1,55 +1,58 @@
-import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { ROLES_KEY } from './roles.decorator';
 import { Role } from './roles.enum';
-import { UsersService } from '../users.service';
 import { JwtService } from '@nestjs/jwt';
+import { JwtPayload } from 'src/rentals/interfaces/payload.interfaces';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
-    private usersService: UsersService,
     private jwtService: JwtService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
+    const requiredRoles = this.reflector.getAllAndOverride<Role[]>('roles', [
       context.getHandler(),
       context.getClass(),
     ]);
+    console.log(requiredRoles);
+
     if (!requiredRoles) {
       return true;
     }
 
     const request = context.switchToHttp().getRequest();
-    const authHeader = request.headers.authorization;
-    if (!authHeader) {
-      throw new UnauthorizedException('No authorization header');
-    }
-
-    const token = authHeader.split(' ')[1];
+    const token = request.headers['authorization']?.split(' ')[1] ?? '';
     if (!token) {
-      throw new UnauthorizedException('No token found');
+      throw new UnauthorizedException('No se encontro ningun token');
+    }
+    const secret = process.env.JWT_SECRET;
+    const payload: JwtPayload = this.jwtService.verify(token, {
+      secret,
+    });
+
+    if (!payload) {
+      throw new UnauthorizedException(
+        'No estas autorizado acceder a esta ruta',
+      );
     }
 
-    let decodedToken;
-    try {
-      decodedToken = this.jwtService.verify(token);
-    } catch (error) {
-      throw new UnauthorizedException('Invalid token');
+    const authorization = requiredRoles.some((role) =>
+      payload.role?.includes(role),
+    );
+
+    if (!authorization) {
+      throw new UnauthorizedException(
+        'No estas autorizado acceder a esta ruta',
+      );
     }
 
-    if (!decodedToken || !decodedToken.sub) {
-      throw new UnauthorizedException('Invalid token payload');
-    }
-
-    const userEntity = await this.usersService.findByEmail(decodedToken.sub);
-    if (!userEntity) {
-      throw new UnauthorizedException('No estas autorizado acceder a esta ruta');
-    }
-
-    return requiredRoles.some((role) => userEntity.roles.includes(role));
+    return true;
   }
 }
-
