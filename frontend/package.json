@@ -23,6 +23,7 @@
     "react-chatbotify": "^1.7.0",
     "react-datepicker": "^6.9.0",
     "react-dom": "^18",
+    "react-icons": "^5.2.1",
     "react-leaflet": "^4.2.1",
     "socket.io-client": "^4.7.5",
     "stripe": "^15.10.0",
