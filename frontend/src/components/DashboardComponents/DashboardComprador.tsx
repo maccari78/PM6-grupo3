@@ -92,16 +92,17 @@ const DashboardComprador: React.FC = () => {
         </div>
 
         {/* Sección de reservas activas */}
-        <div className="bg-[#2d2d2d] rounded-lg shadow-md p-6 mb-2">
+        <div className="bg-[rgb(45,45,45)] rounded-lg shadow-md p-6 mb-2">
           <h2 className="text-2xl font-semibold text-[#C4FF0D]">
-            Tus vehiculos tomados en alquiler
+            Tus alquileres activos
           </h2>
           <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {userData?.rentals?.length !== 0 ? (userData?.rentals?.map((rent) => (
               <ReservationCard
                 key={rent?.id}
                 carModel={rent?.posts?.car?.model}
-                reservationDate={rent?.rentalEndDate}
+                reservationDate={rent?.rentalStartDate}
+                reservationEndDate={rent?.rentalEndDate}
                 price={rent?.totalCost}
                 imageUrl={rent?.posts?.car?.image_url[0]}
               />

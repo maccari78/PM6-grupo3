@@ -96,8 +96,8 @@ const UserProfile: React.FC = () => {
           </p>
         </div>
         <div className="px-6 py-4">
-        <h3 className="text-xl font-semibold text-[#C4FF0D]">Alquileres publicados</h3>
-        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <h3 className="text-xl font-semibold pb-1 text-[#C4FF0D]">Alquileres publicados</h3>
+        <div className="mt-4 grid grid-cols-1 gap-4 pb-5 sm:grid-cols-3">
         {userData?.post?.length !== 0 ? (userData?.post?.map((rent) => (
               
               <SalePostCard
@@ -123,7 +123,7 @@ const UserProfile: React.FC = () => {
               />
              
           ))) : (
-              <p className='text-gray-300 text-m'>No hay comentarios disponibles</p>
+              <p className='text-gray-300 text-m pb-4 mb-2'>No hay comentarios disponibles</p>
             )}
           </div>
       </div>
