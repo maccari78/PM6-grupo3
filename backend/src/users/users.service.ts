@@ -9,6 +9,7 @@ import { JwtPayload } from 'src/rentals/interfaces/payload.interfaces';
 import { Address } from 'src/addresses/entities/address.entity';
 import { UpdateAddressDto } from 'src/addresses/dto/update-address.dto';
 import * as bcrypt from 'bcrypt';
+import { AddressesService } from 'src/addresses/addresses.service';
 
 @Injectable()
 export class UsersService {
@@ -16,7 +17,7 @@ export class UsersService {
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(Address) private addressRepository: Repository<Address>,
     private fileUploadService: FileUploadService,
-
+    private addressesService: AddressesService,
     private jwtService: JwtService,
   ) {}
 
@@ -71,6 +72,7 @@ export class UsersService {
         'post.car',
         'rentals',
         'rentals.posts.car',
+        'rentals.posts.user',
         'rentals.posts',
         'rentals.users',
         'notifications',
@@ -176,6 +178,8 @@ export class UsersService {
     updateAdress?: UpdateAddressDto,
     file?: Express.Multer.File,
   ) {
+    console.log(updateUserDto);
+
     const currentUser = token?.split(' ')[1];
     if (!currentUser)
       throw new NotFoundException('No hay un usuario autenticado');
@@ -195,13 +199,15 @@ export class UsersService {
 
       delete updateUserDto.password;
     }
+
     const updateUser = await this.userRepository.update(user.id, updateUserDto);
 
     const adress = user.addresses[0!];
 
-    if (adress) {
-      await this.addressRepository.update(adress.id, updateAdress);
+    if (updateAdress.address) {
+      await this.addressesService.updateAddress(adress.id, updateAdress);
     }
+
     if (!adress && this.hasDefinedValue(updateAdress)) {
       const addresses = this.hasDefinedValue(updateAdress);
       if (addresses !== false) {

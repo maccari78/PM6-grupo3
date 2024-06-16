@@ -69,6 +69,9 @@ const UserProfile: React.FC = () => {
   if (loading) {
     return <SkeletonDashboard />;
   } 
+
+  console.log(userData);
+  
   return (
         <>
         <div className='bg-[#313139] p-6'></div>
@@ -85,7 +88,7 @@ const UserProfile: React.FC = () => {
         </div>
         <div className="text-center mt-2">
           <h2 className="text-lg font-medium text-gray-100">{userData?.name}</h2>
-          <p className="text-sm text-gray-300">Buenos Aires, Argentina</p>
+          <p className="text-sm text-gray-300">{userData?.addresses.length !== 0 ? `${userData?.addresses[0]?.city}, ${userData?.addresses[0]?.country}` : ''}</p>
         </div>
         <div className="px-6 py-4">
           <p className="text-gray-100 text-base">
@@ -95,7 +98,7 @@ const UserProfile: React.FC = () => {
         <div className="px-6 py-4">
           <h3 className="text-lg font-medium text-gray-100">Reviews</h3>
           <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {userData?.reviews.map((review) => (
+          {userData?.reviews?.length !== 0 ? (userData?.reviews?.map((review) => (
               <ReviewCard
               key={review.id}
               rating={review.rating}
@@ -103,13 +106,15 @@ const UserProfile: React.FC = () => {
               createdAt={review.created_at}
               />
              
-            ))}
+          ))) : (
+              <p className='text-gray-300 text-m'>No hay reviews disponibles</p>
+            )}
           </div>
         </div>
         <div className="px-6 py-4">
         <h3 className="text-lg font-medium text-gray-100">Sale Posts</h3>
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
-        {userData?.post?.map((rent) => (
+        {userData?.post?.length !== 0 ? (userData?.post?.map((rent) => (
               
               <SalePostCard
               key={rent.id}
@@ -118,7 +123,9 @@ const UserProfile: React.FC = () => {
             price={rent.price}
             imageUrl={rent.car?.image_url[0]}
             />
-            ))}
+        ))) : (
+              <p className='text-gray-300 text-m'>No hay publicaciones disponibles</p>
+            )}
           
         </div>
       </div>

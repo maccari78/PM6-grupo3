@@ -1,4 +1,17 @@
-import { Controller, Get, Post, Body, Param, Delete, Headers, BadRequestException, ParseUUIDPipe, Put, Res /* UseGuards */, UnauthorizedException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Headers,
+  BadRequestException,
+  ParseUUIDPipe,
+  Put,
+  Res /* UseGuards */,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { RentalsService } from './rentals.service';
 import { CreateRentalDto } from './dto/create-rental.dto';
 import { UpdateRentalDto } from './dto/update-rental.dto';
@@ -42,6 +55,11 @@ export class RentalsController {
       throw new UnauthorizedException('No hay un usuario autenticado');
     return this.rentalsService.getChat(currentUser);
   }
+
+  // @Get('relations')
+  // putRelation() {
+  //   return this.rentalsService.putRelation();
+  // }
   @Get('/sucess/:id')
   paymentSucess(@Param('id', ParseUUIDPipe) id: string, @Res() res: Response) {
     const payment = this.rentalsService.paymentSucess(id);

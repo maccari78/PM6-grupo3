@@ -53,8 +53,6 @@ export class AddressesService {
     rest.latitude = Number(rest.latitude);
     rest.longitude = Number(rest.latitude);
 
-    console.log(rest);
-
     const updatedAddress = this.addressWithGeolocation(
       foundAddress.user.id,
       rest,
@@ -87,8 +85,6 @@ export class AddressesService {
       await this.geolocation.getCordinates(fullAddress);
 
     if (latitude) {
-      console.log(typeof latitude);
-
       await this.addressRepository.update(
         { user: { id: userId } },
         {
