@@ -216,6 +216,7 @@ const VehicleForm = () => {
               <option value="Mazda">Mazda</option>
               <option value="Ford">Ford</option>
               <option value="Ferrari">Ferrari</option>
+              <option value="Otra">Otra...</option>
             </select>
             {errors.brand && (
               <span className="text-red-500">{errors.brand}</span>
@@ -241,6 +242,7 @@ const VehicleForm = () => {
               <option value="Negro">Negro</option>
               <option value="Blanco">Blanco</option>
               <option value="Rojo">Rojo</option>
+              <option value="Otro">Otro...</option>
             </select>
             {errors.color && (
               <span className="text-red-500">{errors.color}</span>
@@ -292,9 +294,7 @@ const VehicleForm = () => {
               </option>
               <option value="Menos de 50.000km">Menos de 50.000km</option>
               <option value="50.000km - 100.000km">50.000km - 100.000km</option>
-              <option value="100.000km - 150.000km">
-                100.000km - 150.000km
-              </option>
+              <option value="100.000km - 150.000km">100.000km - 150.000km</option>
               <option value="Más de 150.000km">Más de 150.000km</option>
             </select>
             {errors.mileage && (
@@ -316,12 +316,7 @@ const VehicleForm = () => {
           {errors.image && <span className="text-red-500">{errors.image}</span>}
         </div>
         <div className="flex justify-center">
-          <button
-            type="submit"
-            className="mb-6 w-32 items-center bg-[#C4FF0D] text-[#222222] py-2 rounded"
-          >
-            Publicar
-          </button>
+          <button type="submit" className="mb-6 w-32 items-center bg-[#C4FF0D] text-[#222222] py-2 rounded">Publicar</button>
         </div>
       </form>
     </div>
