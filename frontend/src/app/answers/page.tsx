@@ -22,7 +22,7 @@ const FAQ = () => {
       answer: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae, temporibus repudiandae? Perspiciatis qui quas totam dignissimos ab sequi labore ipsum laudantium at? Tempora nostrum ea odit distinctio, ex explicabo ipsum?",
     },
     {
-      question: "¿Como funcionan las reservas?",
+      question: "¿Cómo funcionan las reservas?",
       answer: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae, temporibus repudiandae? Perspiciatis qui quas totam dignissimos ab sequi labore ipsum laudantium at? Tempora nostrum ea odit distinctio, ex explicabo ipsum?",
     },
   ];
@@ -33,7 +33,7 @@ const FAQ = () => {
 
   return (
     <div className="font-sans text-white m-0 bg-[url('/background_register_2.svg')] bg-no-repeat bg-cover relative z-3 w-full pt-[70px] px-[30px] pb-[44px] flex justify-center items-center min-h-screen bg-gray-900 h-min ">
-    <div className="max-w-2xl mx-auto p-10 bg-black/10 text-white">
+    <div className="w-1/2 mx-auto p-10 bg-black/10 text-white">
       <h2 className="text-3xl font-bold mb-4">Preguntas Frecuentes</h2>
       {faqs.map((faq, index) => (
         <div key={index} className="mb-4 border-b">
