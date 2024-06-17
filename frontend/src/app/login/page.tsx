@@ -1,4 +1,5 @@
 "use client";
+import SkeletonDashboard from "@/components/sketelons/SkeletonDashboard";
 import { validateLogin } from "@/helpers/validateLogin";
 import { IErrorlogin, Ilogin } from "@/interfaces/ILogin";
 import Link from "next/link";
@@ -29,6 +30,7 @@ const Login = () => {
   });
   const [errorAPI, setErrorAPI] = useState<ApiError | null>(null);
   const [session, setSession] = useState({ token: null });
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserData({
@@ -44,6 +46,7 @@ const Login = () => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setIsLoading(true)
     try {
       const response = await fetch(apiUrl, {
         method: "POST",
@@ -57,6 +60,7 @@ const Login = () => {
       });
 
       if (!response.ok) {
+        setIsLoading(false)
         const errorData: ApiError = await response.json();
         throw errorData;
       }
@@ -83,6 +87,7 @@ const Login = () => {
       });
       router.push("/");
     } catch (err) {
+      setIsLoading(false)
       if (typeof err === "object" && err !== null && "message" in err) {
         // Si el error es un objeto y contiene la propiedad 'message'
         const apiError = err as ApiError;
@@ -103,19 +108,23 @@ const Login = () => {
       } else {
         // Otro tipo de error
         const unknownError: ApiError = {
-          message: "An unknown error occurred",
+          message: "Ha ocurrido un error desconocido",
           error: "Unknown Error",
           statusCode: 500,
         };
         setErrorAPI(unknownError);
         Swal.fire({
-          title: "Porfavor intentelo mas tarde",
+          title: "Por favor intentelo más tarde",
           text: `${unknownError.message}`,
           icon: "error",
         });
       }
     }
   };
+
+  if (isLoading) {
+    return <SkeletonDashboard></SkeletonDashboard>
+  }
   return (
     <>
       <div className="min-h-screen bg-[url('/background_register_2.svg')] flex flex-col justify-center sm:py-12">

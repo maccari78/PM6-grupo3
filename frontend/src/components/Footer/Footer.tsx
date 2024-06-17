@@ -19,12 +19,12 @@ const Footer = () => {
                 </h2>
                 <ul className="text-gray-400 font-medium">
                   <li className="mb-4">
-                    <Link href="#" className="hover:underline">
+                    <Link href="/answers" className="hover:underline">
                       Como alquilar
                     </Link>
                   </li>
                   <li>
-                    <a href="#" className="hover:underline">
+                    <a href="/answers" className="hover:underline">
                       Preguntas frecuentes
                     </a>
                   </li>

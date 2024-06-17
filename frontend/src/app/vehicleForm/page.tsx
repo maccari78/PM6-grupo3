@@ -6,6 +6,8 @@ import IErrorsVehicleForm from "../../interfaces/IErrorsVehicleForm";
 import axios from "axios";
 import { redirect, useRouter } from "next/navigation";
 import Loader from "@/components/Loaders/loaderAuth";
+import SkeletonDashboard from "@/components/sketelons/SkeletonDashboard";
+import Swal from "sweetalert2";
 
 const VehicleForm = () => {
   const apiUrl = process.env.NEXT_PUBLIC_API_POSTS;
@@ -86,6 +88,10 @@ const VehicleForm = () => {
     }));
   };
 
+  const hasErrors = (): boolean => {
+    return  Object.values(vehicleData).some(value => value === '' || value == 0 || value === null);
+};
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -122,7 +128,7 @@ const VehicleForm = () => {
         })
         .then((response) => {
           if (response.data) {
-            alert(`Vehiculo publicado correctamente`);
+            Swal.fire("Vehiculo creado correctamente!");
             setIsLoading(false)
             setVehicleData({
               title: "",
@@ -141,7 +147,7 @@ const VehicleForm = () => {
           }
         })
         .catch((error) => {
-          alert("Ha ocurrido un error en la conexión");
+          Swal.fire("Ha ocurrido un error en la conexión");
           setIsLoading(false)
           console.error("Error:", error);
         });
@@ -149,7 +155,7 @@ const VehicleForm = () => {
   };
 
   return (
-    isLoading ? <Loader></Loader> :
+    isLoading ? <SkeletonDashboard/> :
     <div className="font-sans text-white m-0 bg-[url('/background_register_2.svg')] bg-no-repeat bg-cover relative z-3 w-full pt-[70px] px-[30px] pb-[44px] justify-center items-center min-h-screen bg-gray-900 h-min flex flex-col ">
       <div className="flex flex-col gap-2 p-4 items-center">
         <h1 className=" text-4xl font-semibold">
@@ -322,7 +328,7 @@ const VehicleForm = () => {
           {errors.image && <span className="text-red-500">{errors.image}</span>}
         </div>
         <div className="flex justify-center">
-          <button type="submit" className="mb-6 w-32 items-center bg-[#C4FF0D] text-[#222222] py-2 rounded">Publicar</button>
+          <button type="submit" disabled={hasErrors()} className="mb-6 w-32 items-center bg-[#C4FF0D] text-[#222222] py-2 rounded disabled:bg-slate-300">Publicar</button>
         </div>
       </form>
     </div>
