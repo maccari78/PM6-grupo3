@@ -39,7 +39,7 @@ const ChatWeb: React.FC = () => {
     id: "HOLA",
     email: "HOLA",
     name: "OLA",
-    password: "****",
+    password: "ASDDA",
     nDni: 123,
     nExpiration: "string | null",
     phone: "string",
@@ -211,6 +211,8 @@ const ChatWeb: React.FC = () => {
           setRoom_id(data[0].room_id);
         }
       } catch (error: any) {
+        setMsgLoader(false);
+        setUserLoader(false);
         console.error(error);
         setError("Error al obtener los datos de alquileres.");
       }
@@ -292,7 +294,7 @@ const ChatWeb: React.FC = () => {
                 </div>
               ))
             ) : (
-              <p>No hay mensajes</p>
+              <p>No hay registros de contactos</p>
             )
           ) : (
             <LoaderBasic />
