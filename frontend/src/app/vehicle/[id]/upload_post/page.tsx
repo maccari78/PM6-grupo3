@@ -5,6 +5,7 @@ import IVehicleData from "../../../../interfaces/IVehicleData";
 import IErrorsVehicleForm from "../../../../interfaces/IErrorsVehicleForm";
 import axios from 'axios';
 import { useRouter, useParams } from "next/navigation";
+import SkeletonDashboard from "@/components/sketelons/SkeletonDashboard";
 
 const UploadPost = () => {
     const { id } = useParams(); 
@@ -49,7 +50,18 @@ const UploadPost = () => {
                         Authorization: `Bearer ${token}`
                     }
                 });
-                setVehicleData(response.data);
+                const vehicleProps = {
+                    title: response.data.title,
+                    description: response.data.description,
+                    price: response.data.price,
+                    color: response.data.car.color,
+                    model: response.data.car.model,
+                    file: response.data.image_url,
+                    brand: response.data.car.brand,
+                    year: response.data.car.year,
+                    mileage: response.data.car.mileage
+                }
+                setVehicleData(vehicleProps);
                 setIsLoading(false);
 
                 if (response.data.ownerId === userSession) {
@@ -61,27 +73,24 @@ const UploadPost = () => {
             }
         };
 
-        if (token && userSession) {
-            fetchVehicleData();
-        }
-    }, [token]);
+      fetchVehicleData();
+        
+    }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value, files } = e.target as HTMLInputElement;
 
-        setVehicleData((prevData) => {
-            if (prevData) {
-                return {
-                    ...prevData,
-                    [name]:value
-                };
-            }
-            return prevData;
-        })
-    };
-
-    const handleBlur = (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        const { name, value } = event.target;
+        if (name === "file") {
+            setVehicleData(prevData => ({
+                ...prevData,
+                [name]: files
+            }));
+        } else {
+            setVehicleData(prevData => ({
+                ...prevData,
+                [name]: value
+            }));
+        }
 
         setErrors(prevErrors => ({
             ...prevErrors,
@@ -109,12 +118,12 @@ const UploadPost = () => {
             formData.append("mileage", vehicleData.mileage);
     
             // Si hay archivos, adjuntarlos al formData
-            if (vehicleData.file) {
-                Array.from(vehicleData.file).forEach(file => {
-                    formData.append("file", file);
-                });
+            if (vehicleData.file && vehicleData.file.length > 0) {
+                for (let i = 0; i < vehicleData.file.length; i++) {
+                    formData.append("file", vehicleData.file[i]);
+                }
             }
-    
+            setIsLoading(true)
             try {
                 // Enviar los datos al servidor
                 const response = await axios.put(apiUrl, formData, {
@@ -125,15 +134,18 @@ const UploadPost = () => {
                 });
     
                 console.log('Respuesta del servidor:', response);
-                if (response.data && response.data.success) {
+                if (response.data) {
                     alert('El vehículo se ha actualizado correctamente');
+                    setIsLoading(false)
                     router.push("/");
                 } else {
                     const errorMessage = response.data?.message || 'Respuesta del servidor no válida.';
                     alert(errorMessage);
+                    setIsLoading(false)
                 }
             } catch (error) {
                 console.error('Error al actualizar el vehículo:', error);
+                setIsLoading(false)
                 alert('Hubo un error al intentar actualizar el vehículo.');
             }
         }
@@ -142,7 +154,11 @@ const UploadPost = () => {
         // if (!isOwner) {
         //     return <div>No tienes permiso para editar esta publicación.</div>;
         // }
-    
+
+        if (isLoading) {
+            return <SkeletonDashboard />;
+          }
+        
 
     return (
         <div className="bg-gradient-to-bl from-[#222222] to-[#313139] font-sans text-white">
@@ -159,7 +175,6 @@ const UploadPost = () => {
                         type="text"
                         value={vehicleData.title}
                         onChange={handleChange}
-                        onBlur={handleBlur}
                         required
                         className="w-full px-3 mt-3 py-2 border rounded text-[#222222]"
                     />
@@ -171,7 +186,6 @@ const UploadPost = () => {
                         name='description'
                         value={vehicleData.description}
                         onChange={handleChange}
-                        onBlur={handleBlur}
                         required
                         className="w-full px-3 mt-3 py-2 border rounded text-[#222222]"
                     />
@@ -185,7 +199,6 @@ const UploadPost = () => {
                             type="number"
                             value={vehicleData.price}
                             onChange={handleChange}
-                            onBlur={handleBlur}
                             required
                             className="w-full px-3 mt-3 py-2 border rounded text-[#222222]"
                         />
@@ -197,7 +210,6 @@ const UploadPost = () => {
                             name='brand'
                             value={vehicleData.brand}
                             onChange={handleChange}
-                            onBlur={handleBlur}
                             required
                             className="w-full px-3 mt-3 py-2 border rounded text-[#222222]"
                         >
@@ -218,7 +230,6 @@ const UploadPost = () => {
                             name='color'
                             value={vehicleData.color}
                             onChange={handleChange}
-                            onBlur={handleBlur}
                             required
                             className="w-full px-3 mt-3 py-2 border rounded text-[#222222]"
                         >
@@ -239,7 +250,6 @@ const UploadPost = () => {
                             type="text"
                             value={vehicleData.model}
                             onChange={handleChange}
-                            onBlur={handleBlur}
                             required
                             className="w-full px-3 mt-3 py-2 border rounded text-[#222222]"
                         />
@@ -254,7 +264,6 @@ const UploadPost = () => {
                             type="number"
                             value={vehicleData.year}
                             onChange={handleChange}
-                            onBlur={handleBlur}
                             required
                             className="w-full px-3 mt-3 py-2 border rounded text-[#222222]"
                         />
@@ -266,7 +275,6 @@ const UploadPost = () => {
                             name='mileage'
                             value={vehicleData.mileage}
                             onChange={handleChange}
-                            onBlur={handleBlur}
                             required
                             className="w-full px-3 mt-3 py-2 border rounded text-[#222222]"
                         >
@@ -288,7 +296,6 @@ const UploadPost = () => {
                         multiple
                         className="w-full px-3 mt-3 py-4 border rounded text-slate-50"
                         onChange={handleChange}
-                        onBlur={handleBlur}
                     />
                     {errors.image && <span className="text-red-500">{errors.image}</span>}
                 </div>
