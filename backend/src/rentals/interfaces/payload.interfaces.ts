@@ -11,6 +11,7 @@ export interface JwtPayload extends JsonObject {
   exp?: number;
   azp?: string;
   scope?: string;
+  role?: string;
 }
 
 export interface GoogleTokenPayload {

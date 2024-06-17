@@ -51,7 +51,6 @@ const Reviews: React.FC<{ reviews: IReview[] | undefined; idPost: string }> = ({
         });
 
         const resDta = await res.text();
-        console.log(resDta);
 
         await Swal.fire({
           title: "¡Gracias por dejar tu reseña!",

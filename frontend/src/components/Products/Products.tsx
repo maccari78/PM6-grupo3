@@ -33,8 +33,7 @@ const Products: React.FC = () => {
         if (Array.isArray(data)) {
           setPosts(data);
         } else {
-          console.error("Expected an array but received:", data);
-          setPosts([]);
+          console.error("Se espera un array pero se recibio", data);
         }
       } catch (error: any) {
         console.log(error.message);
@@ -90,6 +89,7 @@ const Products: React.FC = () => {
   const nPosts: IPost[] = Array.isArray(posts)
     ? posts.slice(intIndex, endIndex)
     : [];
+
   const nPages: number = Math.ceil(posts.length / postsQT);
 
   return (
