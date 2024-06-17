@@ -12,7 +12,7 @@ const DashboardComprador: React.FC = () => {
   const [userToken, setUserToken] = useState<string | null>(null);
   const [userData, setUserData] = useState<IUserData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [totalPrice, SetTotalPrice ] = useState<number>(0)
+  const [totalPrice, SetTotalPrice] = useState<number>(0);
   const router = useRouter();
 
   useEffect(() => {
@@ -22,11 +22,11 @@ const DashboardComprador: React.FC = () => {
         const parsedSession = JSON.parse(userSession);
         setUserToken(parsedSession.token);
       } else {
-        setLoading(false)
+        setLoading(false);
         Swal.fire({
           title: "Error de acceso",
           text: "Necesitas estar logueado para ingresar",
-          icon: "error"
+          icon: "error",
         });
         redirect("/login");
       }
@@ -51,10 +51,9 @@ const DashboardComprador: React.FC = () => {
 
         const data = await response.json();
         setUserData(data);
-        
       } catch (error: any) {
         console.log(error);
-        
+
         throw new Error(error);
       } finally {
         setLoading(false);
@@ -65,10 +64,13 @@ const DashboardComprador: React.FC = () => {
       fetchData();
     }
   }, [userToken]);
-  
+
   useEffect(() => {
     if (userData?.rentals) {
-      const total = userData.rentals.reduce((acc, element) => acc + Number(element.totalCost), 0);
+      const total = userData.rentals.reduce(
+        (acc, element) => acc + Number(element.totalCost),
+        0
+      );
       SetTotalPrice(total);
     }
   }, [userData]);
@@ -97,17 +99,20 @@ const DashboardComprador: React.FC = () => {
             Tus alquileres activos
           </h2>
           <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {userData?.rentals?.length !== 0 ? (userData?.rentals?.map((rent) => (
-              <ReservationCard
-                key={rent?.id}
-                carModel={rent?.posts?.car?.model}
-                reservationDate={rent?.rentalStartDate}
-                reservationEndDate={rent?.rentalEndDate}
-                price={`$ ${rent?.totalCost}`}
-                imageUrl={rent?.posts?.car?.image_url[0]}
-              />
-            ))) : (
-              <p className='text-gray-300 text-m'>No hay reservas activas</p>
+            {userData?.rentals?.length !== 0 ? (
+              userData?.rentals?.map((rent) => (
+                <ReservationCard
+                  key={rent?.id}
+                  carModel={rent?.posts?.car?.model}
+                  reservationDate={rent?.rentalStartDate}
+                  reservationEndDate={rent?.rentalEndDate}
+                  price={`$ ${rent?.totalCost}`}
+                  imageUrl={rent?.posts?.car?.image_url[0]}
+                  idPost={rent.posts.id}
+                />
+              ))
+            ) : (
+              <p className="text-gray-300 text-m">No hay reservas activas</p>
             )}
           </div>
         </div>
@@ -118,20 +123,21 @@ const DashboardComprador: React.FC = () => {
             Historial de alquileres
           </h2>
           <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            
-          {userData?.rentals?.length !== 0 ? (userData?.rentals?.map((rent) => 
-           (      
-              <PublicationCard
-              key={rent?.id}
-              carModel={rent?.posts?.car?.model}
-              postDate={rent?.rentalStartDate}
-              author={rent?.posts?.title}
-              imageUrl={rent?.posts?.car?.image_url[0]}
-            />
-            
-          ))) : (
-              <p className='text-gray-300 text-m'>No hay reservas disponibles</p>
-            )}            
+            {userData?.rentals?.length !== 0 ? (
+              userData?.rentals?.map((rent) => (
+                <PublicationCard
+                  key={rent?.id}
+                  carModel={rent?.posts?.car?.model}
+                  postDate={rent?.rentalStartDate}
+                  author={rent?.posts?.title}
+                  imageUrl={rent?.posts?.car?.image_url[0]}
+                />
+              ))
+            ) : (
+              <p className="text-gray-300 text-m">
+                No hay reservas disponibles
+              </p>
+            )}
           </div>
         </div>
       </div>
