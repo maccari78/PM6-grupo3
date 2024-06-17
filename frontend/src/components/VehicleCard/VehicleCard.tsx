@@ -66,6 +66,7 @@ const VehicleCard: React.FC<ICar> = ({
             {description.length > 70 ? descriptionReduce : description}
           </p>
         </div>
+        
 
         <div className="flex w-full justify-between items-center mt-5">
           <span className="bg-[#b0d63f]  text-[#222222] font-semibold  text-[12px]  me-2 px-2.5 py-0.5 rounded ">

@@ -99,6 +99,7 @@ const ChatWeb: React.FC = () => {
         newSocket.close();
       };
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userToken, room_id]);
 
   useEffect(() => {
@@ -162,6 +163,7 @@ const ChatWeb: React.FC = () => {
     if (room_id) {
       fetchMessages();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [room_id, apiUrl]);
 
   useEffect(() => {
