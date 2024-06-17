@@ -5,11 +5,12 @@ import passport from 'passport';
 import session from 'express-session';
 import './notifications/CronJobs.service';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { Logger } from './middleweare/logger';
 
 async function bootstrap() {
   const PORT = process.env.PORT_HTTP || 3001;
   const app = await NestFactory.create(AppModule);
-
+  app.use(Logger);
   const options = new DocumentBuilder()
     .setTitle('You Drive')
     .setDescription('The car rental API')
