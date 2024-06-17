@@ -167,7 +167,6 @@ export class UsersService {
       reviews: rest.reviews,
       rentals: filterRentals,
     };
-    console.log(returnUser);
 
     return returnUser;
   }
@@ -178,10 +177,10 @@ export class UsersService {
     updateAdress?: UpdateAddressDto,
     file?: Express.Multer.File,
   ) {
-    console.log(updateUserDto);
     const { password, ...rest } = updateUserDto;
 
     const currentUser = token?.split(' ')[1];
+
     if (!currentUser)
       throw new NotFoundException('No hay un usuario autenticado');
     const payload: JwtPayload = await this.jwtService.verify(currentUser, {
