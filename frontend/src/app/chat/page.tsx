@@ -1,9 +1,14 @@
-"use client"
+"use client";
 import { redirect, useRouter } from "next/navigation";
 import React, { useEffect, useState, ChangeEvent, FormEvent, useRef } from "react";
 import Swal from "sweetalert2";
 import { io, Socket } from "socket.io-client";
-import { IRentalChat, IUserChat, MessageChat, TMessageChat } from "@/interfaces/Ichat";
+import {
+  IRentalChat,
+  IUserChat,
+  MessageChat,
+  TMessageChat,
+} from "@/interfaces/Ichat";
 import Contact from "@/components/Chat/Contact";
 import Message from "@/components/Chat/Message";
 import SkeletonDashboard from "@/components/sketelons/SkeletonDashboard";
@@ -25,26 +30,29 @@ const ChatWeb: React.FC = () => {
   const [sender, setSender] = useState<IUserChat | null>(null);
   const [receiver, setReceiver] = useState<IUserChat | null>(null);
   const [user, setUser] = useState<IUserChat | null>({
+
      id: 'HOLA',
     email: 'HOLA',
     name: 'OLA',
     password: 'ASDDA',
     nDni: 123,
-    nExpiration: 'string | null',
-    phone: 'string',
-    image_url: 'string',
-    public_id: 'string | null',
+    nExpiration: "string | null",
+    phone: "string",
+    image_url: "string",
+    public_id: "string | null",
     userGoogle: true,
-    aboutMe: 'string | null',
-    roles: 'string',
+    aboutMe: "string | null",
+    roles: "string",
     isDeleted: false,
-    createdAt: 'string',
-    updatedAt: 'string'
+    createdAt: "string",
+    updatedAt: "string",
   });
+
   const [msgLoader, setMsgLoader] = useState<boolean>(true)
   const [userLoader, setUserLoader] = useState<boolean>(true)
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
     const messagesContainerRef = useRef<HTMLDivElement | null>(null);
+
 
 
   const scrollToBottom = () => {
@@ -59,7 +67,9 @@ const ChatWeb: React.FC = () => {
   const apiChat = process.env.NEXT_PUBLIC_API_CHAT;
 
   if (!apiUrl) {
-    throw new Error('Environment variable NEXT_PUBLIC_API_GET_USERS_TOKEN is not set');
+    throw new Error(
+      "Environment variable NEXT_PUBLIC_API_GET_USERS_TOKEN is not set"
+    );
   }
 
   const recibeMensaje = (data: TMessageChat) =>
@@ -114,25 +124,26 @@ const ChatWeb: React.FC = () => {
           }
           const data: TMessageChat[] = await response.json();
           console.log(data);
-          if (response2.ok) { 
+          if (response2.ok) {
             console.log(response2);
-            
+
             const data2 = await response2.json();
             console.log(data2);
-            
+
             setUser(data2 as IUserChat);
           }
           if (data.length === 0) {
-            console.log('ENTRAR');
+            console.log("ENTRAR");
             console.log(user);
-            
+
             setSender(user);
             setReceiver(user);
           }
           if (data.length > 0) {
-            setSender(data[0].sender as IUserChat);  
-            setReceiver(data[0].receiver as IUserChat);  
+            setSender(data[0].sender as IUserChat);
+            setReceiver(data[0].receiver as IUserChat);
           }
+
           const sortedMessages = data.sort((a, b) => new Date(a.date_created || "").getTime() - new Date(b.date_created || "").getTime());
           setMessages(data);
           
@@ -143,6 +154,7 @@ const ChatWeb: React.FC = () => {
         finally{
           setMsgLoader(false)
           setUserLoader(false)
+
         }
       }
     };
@@ -158,7 +170,7 @@ const ChatWeb: React.FC = () => {
       if (userSession) {
         const parsedSession = JSON.parse(userSession);
         setUserToken(parsedSession.token);
-        setLoading(false)
+        setLoading(false);
       } else {
         setLoading(true);
         Swal.fire({
@@ -174,7 +186,6 @@ const ChatWeb: React.FC = () => {
   // Fetch donde seteo el Room_ID
   useEffect(() => {
     const fetchData = async () => {
-      
       try {
         const response = await fetch(`${apiUrl}/rentals/token`, {
           method: "GET",
@@ -190,7 +201,7 @@ const ChatWeb: React.FC = () => {
 
         const data: IRentalChat[] = await response.json();
         setRentalsChat(data);
-        if (data.length > 0) { 
+        if (data.length > 0) {
           setRoom_id(data[0].room_id);
         }
       } catch (error: any) {
@@ -214,13 +225,13 @@ const ChatWeb: React.FC = () => {
       console.error("No se han establecido el remitente o el receptor.");
       return;
     }
-    if(!user) {console.error("No se han establecido el remitente o el receptor.");
+    if (!user) {
+      console.error("No se han establecido el remitente o el receptor.");
       return;
     }
 
-    
     const meMessage: TMessageChat = {
-      sender: sender.id === user.id ? sender : user,  
+      sender: sender.id === user.id ? sender : user,
       receiver: receiver.id === user.id ? user : receiver,
       message,
       room_id,
@@ -242,9 +253,10 @@ const ChatWeb: React.FC = () => {
     setMsgLoader(true)
   }
 
-    if (loading) {
-      return <SkeletonDashboard />;
-    }
+
+  if (loading) {
+    return <SkeletonDashboard />;
+  }
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
@@ -255,7 +267,7 @@ const ChatWeb: React.FC = () => {
         </header>
 
         {/* Contact List */}
-        
+
         <div className="overflow-y-auto h-screen p-3 mb-9 pb-20">
       {!userLoader ? (Array.isArray(rentalsChats) && rentalsChats.length > 0 ? (
         rentalsChats.map((rental) => (
@@ -277,16 +289,20 @@ const ChatWeb: React.FC = () => {
       )): ( <LoaderBasic/> )}
     </div>
        
+
       </div>
 
       {/* Main Chat Area */}
       <div className="flex flex-col flex-1 h-screen">
         {/* Chat Header */}
         <header className="bg-gray-300 p-4 text-gray-700">
-          {
-            userLoader ? <LoaderBasic/> : <h1 className="text-2xl font-semibold">{ sender?.id !== user?.id ? sender?.name : receiver?.name }</h1>
-          }
-          
+          {userLoader ? (
+            <LoaderBasic />
+          ) : (
+            <h1 className="text-2xl font-semibold">
+              {sender?.id !== user?.id ? sender?.name : receiver?.name}
+            </h1>
+          )}
         </header>
 
         {/* Chat Messages */}
@@ -313,17 +329,27 @@ const ChatWeb: React.FC = () => {
         </div>
         {/* Chat Input */}
         <footer className="bg-white border-t border-gray-300 p-4">
-        <form onSubmit={handleSubmit}>
-          <div className="flex items-center">
-            <input type="text" value={message} onChange={handleChange} placeholder="Escribe un mensaje..." className="w-full p-2 rounded-md border border-gray-400 focus:outline-none focus:border-blue-500" />
-            <button type="submit" className="bg-[#C4FF0D] text-gray-900 hover:bg-[#dcff73] px-4 py-2 rounded-md ml-2">Enviar</button>
-          </div>
+          <form onSubmit={handleSubmit}>
+            <div className="flex items-center">
+              <input
+                type="text"
+                value={message}
+                onChange={handleChange}
+                placeholder="Escribe un mensaje..."
+                className="w-full p-2 rounded-md border border-gray-400 focus:outline-none focus:border-blue-500"
+              />
+              <button
+                type="submit"
+                className="bg-[#C4FF0D] text-gray-900 hover:bg-[#dcff73] px-4 py-2 rounded-md ml-2"
+              >
+                Enviar
+              </button>
+            </div>
           </form>
         </footer>
       </div>
     </div>
   );
 };
-
 
 export default ChatWeb;
