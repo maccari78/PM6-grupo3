@@ -85,12 +85,12 @@ const Dropdown: React.FC<{
 
   return (
     <div
-      className="relative w-[170px] inline-block text-left"
+      className="relative w-[200px] inline-block text-left"
       ref={dropdownRef}
     >
       <button
         onClick={toggleDropdown}
-        className="hidden md:flex  flex-row gap-1 items-center justify-center w-full px-2 py-2 text-sm hover:underline hover:bg-[#444343] duration-200 rounded-md focus:outline-none"
+        className="hidden md:flex  flex-row gap-1 items-center justify-center w-full py-1 text-sm hover:underline hover:bg-[#444343] duration-200 rounded-md focus:outline-none"
       >
         <div className="w-[20%]">
           <img
@@ -99,7 +99,7 @@ const Dropdown: React.FC<{
             className="rounded-full"
           />
         </div>
-        <p className="text-gray-200 text-[13px] ">{userDta?.name}</p>
+        <p className="text-gray-200 text-[13px] w-[55%]">{userDta?.name}</p>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"

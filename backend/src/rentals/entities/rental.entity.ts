@@ -4,10 +4,10 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToOne,
   ManyToMany,
   JoinTable,
   JoinColumn,
+  ManyToOne,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { Posts } from 'src/posts/entities/post.entity';
@@ -37,7 +37,7 @@ export class Rental {
   })
   users: User[];
 
-  @OneToOne(() => Posts)
+  @ManyToOne(() => Posts)
   @JoinColumn()
   posts: Posts;
 
@@ -49,5 +49,4 @@ export class Rental {
 
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
-  car: any;
 }
