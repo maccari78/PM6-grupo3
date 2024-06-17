@@ -96,25 +96,27 @@ const Dropdown: React.FC<{
           <img
             src={userDta?.image_url}
             alt="imagen de usuario"
-            className="rounded-full"
+            className="rounded-full w-8 h-8"
           />
         </div>
-        <p className="text-gray-200 text-[13px] w-[55%]">{userDta?.name}</p>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="w-5 h-4 stroke-gray-200"
-        >
-          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-          <path d="M12 5l0 14" />
-          <path d="M18 13l-6 6" />
-          <path d="M6 13l6 6" />
-        </svg>
+        <div className="flex flex-row items-center">
+          <p className="text-gray-200 ">{userDta?.name}</p>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="w-5 h-4 stroke-gray-200"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M12 5l0 14" />
+            <path d="M18 13l-6 6" />
+            <path d="M6 13l6 6" />
+          </svg>
+        </div>
       </button>
 
       {isOpen && (
