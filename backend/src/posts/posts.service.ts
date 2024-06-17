@@ -154,6 +154,27 @@ export class PostsService {
     return 'Publicación insertada';
   }
 
+  async cancel(id: string) {
+    const reservation = await this.postRepository.findOne(
+      {where: {id},  relations: ['car',"rentals"]},);
+    if (!reservation) throw new Error('Reservation not found');
+
+    reservation.isDeleted = false;
+    reservation.car.availability = true;
+    
+    //Delete rental when cancel reservation
+    await Promise.all(
+      reservation.rentals.map(async (rental) => {
+         await this.rentalRepository.delete(rental.id);
+      }
+    ))
+
+    await this.postRepository.save(reservation);
+    
+  }
+
+
+
   async UpdatePostsServices(
     id: string,
     posts: UpdatePostDto,
