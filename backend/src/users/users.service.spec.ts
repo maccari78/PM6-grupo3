@@ -15,16 +15,19 @@ describe('UsersService', () => {
       id: '1',
       name: 'User 1',
       email: 'test1@hotmail.com',
+      password: process.env.PASS_TESTING,
     },
     {
       id: '2',
       name: 'User 2',
       email: 'test2@hotmail.com',
+      password: process.env.PASS_TESTING,
     },
     {
       id: '3',
       name: 'User 3',
       email: 'test3@hotmail.com',
+      password: process.env.PASS_TESTING,
     },
   ];
 
