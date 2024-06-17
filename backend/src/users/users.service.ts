@@ -258,6 +258,52 @@ export class UsersService {
 
     return hasDefinedValue ? result : false;
   }
+  async putByID(
+    id: string,
+    updateUserDto: UpdateUserDto,
+    updateAdress?: UpdateAddressDto,
+    file?: Express.Multer.File,
+  ) {
+    const user = await this.userRepository.findOne({
+      where: { id },
+      relations: ['addresses'],
+    });
+    if (!user) throw new NotFoundException('Usuario no encontrado');
+    const { password, ...rest } = updateUserDto;
+    await this.changePassword(password, user.password, user.id);
+
+    const updateUser = await this.userRepository.update(user.id, rest);
+
+    const adress = user.addresses[0!];
+
+    if (updateAdress.address) {
+      await this.addressesService.updateAddress(adress.id, updateAdress);
+    }
+
+    if (!adress && this.hasDefinedValue(updateAdress)) {
+      const addresses = this.hasDefinedValue(updateAdress);
+      if (addresses !== false) {
+        const newAddress = await this.addressRepository.save(addresses);
+        user.addresses = [newAddress];
+        await this.userRepository.save(user);
+      }
+    }
+    if (updateUser.affected === 0)
+      throw new NotFoundException('Error al actualizar usuario');
+    if (!file) {
+      return { message: 'Usuario actualizado con exito' };
+    }
+
+    const uploadedImage = await this.fileUploadService.updateProfilePicture(
+      user.id,
+      file,
+    );
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    if (!uploadedImage)
+      throw new NotFoundException('Error al actualizar imagen');
+    return { message: 'Usuario actualizado con exito' };
+  }
 
   async remove(id: string) {
     const user = await this.userRepository.findOneBy({ id });

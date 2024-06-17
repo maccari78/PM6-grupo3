@@ -100,6 +100,46 @@ export class UsersController {
       file,
     );
   }
+  @ApiBearerAuth()
+  @Put(':id')
+  @Roles(Role.Admin, Role.SuperAdmin)
+  @UseGuards(RolesGuard)
+  putByID(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateUserDto: UpdateUserDto,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({
+            maxSize: 1000000,
+            message: 'El archivo es demasiado grande',
+          }),
+          new FileTypeValidator({
+            fileType: /(jpg|jpeg|png|webp)$/,
+          }),
+        ],
+        fileIsRequired: false,
+      }),
+    )
+    file?: Express.Multer.File,
+  ) {
+    const { city, address, country, state, zip_code, ...rest2 } = updateUserDto;
+
+    if (!file)
+      return this.usersService.putByID(id, rest2, {
+        city,
+        address,
+        country,
+        state,
+        zip_code,
+      });
+    return this.usersService.putByID(
+      id,
+      rest2,
+      { city, address, country, state, zip_code },
+      file,
+    );
+  }
 
   @Delete(':id')
   @Roles(Role.Admin)

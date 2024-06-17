@@ -63,8 +63,6 @@ export class RentalsService {
       where: { id: findPost.car.id },
     });
     if (!findCar) throw new NotFoundException('Vehiculo no encontrado');
-    if (findCar.availability === false)
-      throw new BadRequestException('El vehiculo ya se encuentra alquilado');
 
     // Calcular la duración del alquiler en días
     const startDate = new Date(rentalStartDate);
@@ -143,11 +141,13 @@ export class RentalsService {
       throw new BadRequestException(
         'Error al crear el contrato, verifique las relaciones con otras entidades',
       );
-    const carUpdate = await this.carRepository.update(findPost.car.id, {
-      availability: false,
-    });
-    if (carUpdate.affected === 0)
-      throw new BadRequestException('Error al actualizar el vehiculo');
+    if (findPost.car?.availability) {
+      const carUpdate = await this.carRepository.update(findPost.car.id, {
+        availability: false,
+      });
+      if (carUpdate.affected === 0)
+        throw new BadRequestException('Error al actualizar el vehiculo');
+    }
     await this.rentalPrevRepository.delete(findRentalPrev.id);
     return rental.id;
   }
