@@ -112,7 +112,6 @@ export class PostsController {
   @Post('cancel/:id')
   async cancelReservation(@Param('id') id: string) {
     const cancelPost = await this.postsService.cancel(id);
-    // if(!cancelPost) {return 'No se pudo cancelar la reserva'}
     return cancelPost
   }
 
