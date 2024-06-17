@@ -66,23 +66,7 @@ const VehicleCard: React.FC<ICar> = ({
             {description.length > 70 ? descriptionReduce : description}
           </p>
         </div>
-        <div className="mt-2 flex justify-end">
-          {carAvailability ? (
-            <span className="flex flex-row justify-evenly gap-2 items-center  border-[#454645] border-[1px] w-[120px] me-2  md:px-2.5 md:py-0.5 rounded ">
-              <span className="flex w-3 h-3  bg-[#C4FF0D] rounded-full"></span>
-              <p className="text-gray-100 font-semibold  text-[11px] ">
-                Disponible
-              </p>
-            </span>
-          ) : (
-            <span className="flex flex-row justify-evenly items-center  border-[#454645] border-[1px] w-[120px] me-2  md:px-2.5 md:py-0.5 rounded ">
-              <span className="flex w-3 h-3  bg-red-800 rounded-full"></span>
-              <p className="text-gray-100 font-semibold  text-[11px] ">
-                No disponible
-              </p>
-            </span>
-          )}
-        </div>
+        
 
         <div className="flex w-full justify-between items-center mt-5">
           <span className="bg-[#b0d63f]  text-[#222222] font-semibold  text-[12px]  me-2 px-2.5 py-0.5 rounded ">
