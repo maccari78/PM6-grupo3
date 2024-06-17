@@ -1,5 +1,8 @@
 import { MapLocationProps } from "@/components/MapLocation/MapLocation";
 import { IReview } from "@/components/Reviews/interfaces/IReview";
+import { IUser } from "@/interfaces/IUser";
+import { ITRentalChat } from "@/interfaces/Ichat";
+import { IRentalPost } from "./IRentalPost";
 
 export interface IPost {
   id: string;
@@ -30,4 +33,5 @@ export interface IPost {
     image_url: string[];
   };
   review: IReview[];
+  rentals: IRentalPost[];
 }

@@ -5,11 +5,13 @@ import ButtonCheckout from "@/components/ButtonCheckout/ButtonCheckout";
 import DateRangePicker from "@/components/DateRangePicker/DateRangePicker";
 import Reviews from "@/components/Reviews/Reviews";
 import { IPost } from "@/components/VehiclesComponent/interfaces/IPost";
-import { IUserData } from "@/interfaces/IUser";
+import { IUser, IUserData } from "@/interfaces/IUser";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Button, Tooltip } from "flowbite-react";
 import SkeletonDashboard from "@/components/sketelons/SkeletonDashboard";
+import { IRentalPost } from "@/components/VehiclesComponent/interfaces/IRentalPost";
+import CalendarPost from "@/components/CalendarPost/CalendarPost";
 const DynamicMapLocation = dynamic(
   () => import("../../../components/MapLocation/MapLocation"),
   { ssr: false }
@@ -44,6 +46,12 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [mediaRating, setMediaRating] = useState<number>();
   const [totalReviews, setTotalReviews] = useState<number>();
+  const [rentals, setRentals] = useState<IRentalPost[]>();
+  const [showCalendar, setShowCalendar] = useState<boolean>(false);
+  const [startDateRentals, setStartDateRentals] = useState<
+    string[] | undefined
+  >();
+  const [endDateRentals, setEndtDateRentals] = useState<string[] | undefined>();
 
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
@@ -63,6 +71,24 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
         const data: IPost = await post.json();
         setPostState(data);
         setTotalReviews(data.review.length);
+        const rentals = data.rentals.map((rental) => {
+          return {
+            ...rental,
+            users: rental.users.filter((user) => user.id !== data.user.id),
+          };
+        });
+
+        setRentals(rentals);
+        const startDate = rentals.map((rental) => {
+          return rental.rentalStartDate;
+        });
+
+        const endDate = rentals.map((rental) => {
+          return rental.rentalEndDate;
+        });
+
+        setStartDateRentals(startDate);
+        setEndtDateRentals(endDate);
       } catch (error: any) {
         console.log(error.message);
       } finally {
@@ -130,6 +156,10 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
 
   const handleEndDate = (date: string) => {
     setEndDate(date);
+  };
+
+  const handleShowCalendar = () => {
+    setShowCalendar(!showCalendar);
   };
 
   if (loading) {
@@ -680,14 +710,14 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
             </div>
             <div className="mt-5 flex flex-col">
               <div className="flex flex-row w-full h-[50%]  gap-3 justify-start">
-                <div className="w-[50px] ">
+                <div className=" w-[50px] ">
                   <img
                     src={postState?.user.image_url}
                     alt="Foto de perfil usuario"
-                    className="rounded-full h-[70%]"
+                    className="rounded-full h-auto"
                   />
                 </div>
-                <div className="flex flex-col items-start">
+                <div className="flex flex-col  justify-center">
                   <h1 className="text-gray-100 text-sm md:text-lg ">
                     {postState?.user.name}
                   </h1>
@@ -772,6 +802,8 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
               </div>
               <div className="flex w-full justify-center">
                 <ButtonCheckout
+                  startDateRentals={startDateRentals}
+                  endDateRentals={endDateRentals}
                   postState={postState}
                   id={params.id}
                   pricePost={pricePost}
@@ -791,62 +823,52 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
               )}
             </div>
           </div>
+
+          <div className="flex flex-col mt-5 rounded-b-xl rounded-t-xl w-full gap-5 shadow-2xl md:w-[295px] h-[290px] bg-[#222222] px-5 py-5 border-b-[2px] border-t-[2px] border-gray-300 items-center">
+            <h1 className="text-xl text-gray-200 font-semibold">
+              ¡No te preocupes!
+            </h1>
+            <p className="text-justify text-gray-300">
+              Puedes ver este calendario para saber que fechas estan ocupadas
+              por otros usuarios y reservar para otra fecha
+            </p>
+            <button
+              onClick={handleShowCalendar}
+              className="flex flex-row hover:bg-[#303030] px-3 py-3 rounded-xl duration-200"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="w-6 h-6 stroke-[#b0d63f]"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z" />
+                <path d="M16 3v4" />
+                <path d="M8 3v4" />
+                <path d="M4 11h16" />
+                <path d="M11 15h1" />
+                <path d="M12 15v3" />
+              </svg>
+              <p className="text-[#b0d63f]">Ver calendario</p>
+            </button>
+          </div>
         </div>
       </div>
 
       <Reviews reviews={postState?.review} idPost={params.id} />
+      {showCalendar && (
+        <CalendarPost
+          handleShowCalendar={handleShowCalendar}
+          rentals={rentals}
+        />
+      )}
     </>
   );
 };
 
 export default VehicleDetail;
-
-{
-  /* <>
-<svg
-  className="w-7 h-7 text-yellow-300"
-  aria-hidden="true"
-  xmlns="http://www.w3.org/2000/svg"
-  fill="currentColor"
-  viewBox="0 0 22 20"
->
-  <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
-</svg>
-<svg
-  className="w-7 h-7 text-yellow-300"
-  aria-hidden="true"
-  xmlns="http://www.w3.org/2000/svg"
-  fill="currentColor"
-  viewBox="0 0 22 20"
->
-  <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
-</svg>
-<svg
-  className="w-7 h-7 text-yellow-300"
-  aria-hidden="true"
-  xmlns="http://www.w3.org/2000/svg"
-  fill="currentColor"
-  viewBox="0 0 22 20"
->
-  <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
-</svg>
-<svg
-  className="w-7 h-7 text-gray-300 dark:text-gray-500"
-  aria-hidden="true"
-  xmlns="http://www.w3.org/2000/svg"
-  fill="currentColor"
-  viewBox="0 0 22 20"
->
-  <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
-</svg>
-<svg
-  className="w-7 h-7 text-gray-300 dark:text-gray-500"
-  aria-hidden="true"
-  xmlns="http://www.w3.org/2000/svg"
-  fill="currentColor"
-  viewBox="0 0 22 20"
->
-  <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
-</svg>
-</> */
-}
