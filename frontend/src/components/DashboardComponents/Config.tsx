@@ -10,6 +10,7 @@ const Config = () => {
   const [userData, setUserData] = useState<IUserData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [newProfilePicture, setNewProfilePicture] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const router = useRouter();
   const [isPasswordEnabled, setIsPasswordEnabled] = useState(false)
   
@@ -88,6 +89,11 @@ const Config = () => {
 
   const handlePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(e.target.files[0]);
       setNewProfilePicture(e.target.files[0]);
     }
   };
@@ -176,17 +182,31 @@ const Config = () => {
   if (loading) {
     return <SkeletonDashboard />;
   }
-
+const handleRemoveImage = () => {
+    setImagePreview(null);
+    setNewProfilePicture(null);
+  };
   return (
     <>
       <div className="bg-[#313139]">
-        <div className="flex flex-col items-center p-4">
-          <img
+        <div className="flex flex-col items-center p-4 font text-indigo-50">
+          {imagePreview === null ? (<><img
             src={userData?.image_url}
             alt="Profile"
             className="w-32 h-32 rounded-full"
           />
-          <input type="file" onChange={handlePictureChange} />
+            <input type="file" onChange={handlePictureChange} />
+            </>
+          ) : (
+            <>
+            <img
+            src={imagePreview}
+            alt="Profile"
+            className="w-32 h-32 rounded-full"                
+            />
+            <button type="button" onClick={handleRemoveImage} className="bg-indigo-50 hover:bg-[#C4FF0D] text-slate-950 font-bold mt-2 py-1 px-1 border border-slate-950 rounded text-sm">Eliminar imagen</button>
+                </>
+          )}
         </div>
         <div className="flex flex-col items-center">
 
