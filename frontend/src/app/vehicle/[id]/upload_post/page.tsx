@@ -6,6 +6,7 @@ import IErrorsVehicleForm from "../../../../interfaces/IErrorsVehicleForm";
 import axios from 'axios';
 import { useRouter, useParams } from "next/navigation";
 import SkeletonDashboard from "@/components/sketelons/SkeletonDashboard";
+import Swal from "sweetalert2";
 
 const UploadPost = () => {
     const { id } = useParams(); 
@@ -98,6 +99,10 @@ const UploadPost = () => {
         }));
     };
 
+    const hasErrors = (): boolean => {
+        return  Object.values(vehicleData).some(value => value === '' || value == 0 || value === null);
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
     
@@ -135,18 +140,24 @@ const UploadPost = () => {
     
                 console.log('Respuesta del servidor:', response);
                 if (response.data) {
-                    alert('El vehículo se ha actualizado correctamente');
+                    Swal.fire("Vehiculo actualizado correctamente!");
                     setIsLoading(false)
                     router.push("/");
                 } else {
                     const errorMessage = response.data?.message || 'Respuesta del servidor no válida.';
-                    alert(errorMessage);
+                    Swal.fire({
+                        title: "Error",
+                        text: `${errorMessage}`
+                      });
                     setIsLoading(false)
                 }
             } catch (error) {
                 console.error('Error al actualizar el vehículo:', error);
                 setIsLoading(false)
-                alert('Hubo un error al intentar actualizar el vehículo.');
+                Swal.fire({
+                    title: "Error",
+                    text: "Hubo un error al intentar actualizar la publicación"
+                  });
             }
         }
     };
@@ -296,11 +307,12 @@ const UploadPost = () => {
                         multiple
                         className="w-full px-3 mt-3 py-4 border rounded text-slate-50"
                         onChange={handleChange}
+                        required
                     />
                     {errors.image && <span className="text-red-500">{errors.image}</span>}
                 </div>
                 <div className="flex justify-center">
-                    <button type="submit" className="mb-6 w-32 items-center bg-[#C4FF0D] text-[#222222] py-2 rounded">
+                    <button type="submit" disabled={hasErrors()} className="mb-6 w-32 items-center bg-[#C4FF0D] text-[#222222] py-2 rounded disabled:bg-slate-300">
                         Actualizar
                     </button>
                 </div>
