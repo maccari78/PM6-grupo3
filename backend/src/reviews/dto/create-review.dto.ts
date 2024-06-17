@@ -12,6 +12,6 @@ export class CreateReviewDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  @Length(1, 20)
+  @Length(1, 150)
   comment: string;
 }

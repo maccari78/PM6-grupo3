@@ -45,6 +45,7 @@ const DashboardVendedor: React.FC = () => {
       const average = total / userData.rentals.length;
       SetTotalPrice(total);
       SetAveragePrice(average);
+    if(isNaN(average)) SetAveragePrice(0)
     }
   }, [userData]);
 
