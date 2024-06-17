@@ -7,9 +7,9 @@ import axios from 'axios';
 import { useRouter, useParams } from "next/navigation";
 
 const UploadPost = () => {
-    const { id } = useParams(); // Obtener el ID del vehículo desde la URL
+    const { id } = useParams(); 
     const router = useRouter();
-    const apiUrl = `${process.env.NEXT_PUBLIC_API_POSTS}/${id}`; // URL de la API con el ID del vehículo
+    const apiUrl = `${process.env.NEXT_PUBLIC_API_POSTS}/${id}`; 
     if (!apiUrl) {
       throw new Error('Environment variable NEXT_PUBLIC_API_POSTS is not set');
     }
@@ -18,6 +18,7 @@ const UploadPost = () => {
     const [token, setToken] = useState<string | null>(null);
     const [userSession, setUserSession] = useState<string | null>(null);
     const [errors, setErrors] = useState<IErrorsVehicleForm>({});
+    const [isLoading, setIsLoading] = useState<boolean>(true)
     const [vehicleData, setVehicleData] = useState<IVehicleData>({
         title: '',
         description: '',
@@ -41,6 +42,7 @@ const UploadPost = () => {
     // Cargar los datos del vehículo
     useEffect(() => {
         const fetchVehicleData = async () => {
+            setIsLoading(true);
             try {
                 const response = await axios.get(apiUrl, {
                     headers: {
@@ -48,8 +50,8 @@ const UploadPost = () => {
                     }
                 });
                 setVehicleData(response.data);
+                setIsLoading(false);
 
-                // Verificar si el usuario logueado es el propietario
                 if (response.data.ownerId === userSession) {
                     setIsOwner(true);
                 }
@@ -62,27 +64,20 @@ const UploadPost = () => {
         if (token && userSession) {
             fetchVehicleData();
         }
-    }, [apiUrl, token, userSession]);
+    }, [token]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value, files } = e.target as HTMLInputElement;
 
-        if (name === "file") {
-            setVehicleData(prevData => ({
-                ...prevData,
-                [name]: files
-            }));
-        } else {
-            setVehicleData(prevData => ({
-                ...prevData,
-                [name]: value
-            }));
-        }
-
-        setErrors(prevErrors => ({
-            ...prevErrors,
-            [name]: value.trim() === '' ? 'Este campo es requerido' : ''
-        }));
+        setVehicleData((prevData) => {
+            if (prevData) {
+                return {
+                    ...prevData,
+                    [name]:value
+                };
+            }
+            return prevData;
+        })
     };
 
     const handleBlur = (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
