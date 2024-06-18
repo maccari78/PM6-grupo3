@@ -31,8 +31,8 @@ export class UsersController {
 
   @ApiBearerAuth()
   @Get()
-  @Roles(Role.Admin, Role.SuperAdmin)
-  @UseGuards(RolesGuard)
+  // @Roles(Role.Admin, Role.SuperAdmin)
+  // @UseGuards(RolesGuard)
   findAll() {
     return this.usersService.findAll();
   }
@@ -102,8 +102,8 @@ export class UsersController {
   }
   @ApiBearerAuth()
   @Put(':id')
-  @Roles(Role.Admin, Role.SuperAdmin)
-  @UseGuards(RolesGuard)
+  // @Roles(Role.Admin, Role.SuperAdmin)
+  // @UseGuards(RolesGuard)
   putByID(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateUserDto: UpdateUserDto,
