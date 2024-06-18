@@ -46,10 +46,27 @@ const CarPostCard: React.FC = () => {
     setCarPosts(carPosts.filter(post => post.id !== postId));
   };
 
-  const handleSave = (post: IPost) => {
-    setCarPosts(carPosts.map(p => (p.id === post.id ? { ...p, ...editForm } : p)));
-    setEditingCarPostId(null);
-    setEditForm({});
+  const handleSave = async (post: IPost) => {
+    try {
+      const response = await fetch(`${apiUrl}/${post.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(editForm),
+      });
+
+      if (response.ok) {
+        const updatedPost = await response.json();
+        setCarPosts(carPosts.map(p => (p.id === post.id ? updatedPost : p)));
+        setEditingCarPostId(null);
+        setEditForm({});
+      } else {
+        console.error('Failed to update the post');
+      }
+    } catch (error: any) {
+      console.error('Error updating the post:', error.message);
+    }
   };
 
   const handleSort = (field: string) => {
