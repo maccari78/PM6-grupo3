@@ -20,57 +20,60 @@ const Products: React.FC = () => {
   const [posts, setPosts] = useState<IPost[]>([]);
   const [postsQT, setPostQT] = useState<number>(9);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [filters, setFilters] = useState<any>();
+  const [filters, setFilters] = useState<any | null>(null);
   const [notShowFilter, setNotShowFilter] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(apiUrl, {
+  const fetchPosts = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(apiUrl, {
+        method: "GET",
+      });
+      const data: IPost[] = await response.json();
+      if (Array.isArray(data)) {
+        setPosts(data);
+      } else {
+        console.error("Se espera un array pero se recibio", data);
+      }
+    } catch (error: any) {
+      console.log(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchFilters = async () => {
+    setLoading(true);
+    try {
+      const queryParams = new URLSearchParams(filters);
+      const queryString = queryParams.toString().replace(/\+/g, "%20");
+      const response = await fetch(
+        `${apiBaseUrl}/posts/filter?${queryString}`,
+        {
           method: "GET",
-        });
-        const data: IPost[] = await response.json();
-        if (Array.isArray(data)) {
-          setPosts(data);
-        } else {
-          console.error("Se espera un array pero se recibio", data);
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
-      } catch (error: any) {
-        console.log(error.message);
-      }
-    };
+      );
 
-    fetchData();
-  }, [filters === null]);
+      const data: IPost[] = await response.json();
+      if (Array.isArray(data)) {
+        setPosts(data);
+      }
+    } catch (error: any) {
+      console.log(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const queryParams = new URLSearchParams(filters);
-        const queryString = queryParams.toString().replace(/\+/g, "%20");
-        const response = await fetch(
-          `${apiBaseUrl}/posts/filter?${queryString}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        const data: IPost[] = await response.json();
-        if (Array.isArray(data)) {
-          setPosts(data);
-        } else {
-          console.log(`Se espera un array pero se recibio, ${data}`);
-          setPosts([]);
-        }
-      } catch (error: any) {
-        console.log(error.message);
-      }
-    };
     if (filters) {
-      fetchData();
+      fetchFilters();
+    } else {
+      fetchPosts();
     }
   }, [filters]);
 
@@ -100,7 +103,7 @@ const Products: React.FC = () => {
           <ShowAndDeleteFilter deleteFilter={deleteFilter} filters={filters} />
         )}
 
-        {posts.length === 0 ? (
+        {loading ? (
           <div className="flex flex-row items-center">
             <svg
               aria-hidden="true"
@@ -119,9 +122,7 @@ const Products: React.FC = () => {
               />
             </svg>
             <span className="sr-only">Loading...</span>
-            <h1 className="ml-5 md:text-xl">
-              No se encontro ningun vehiculo...
-            </h1>
+            <h1 className="ml-5 md:text-xl">Cargando, espere....</h1>
           </div>
         ) : (
           <>

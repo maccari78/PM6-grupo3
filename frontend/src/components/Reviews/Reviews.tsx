@@ -189,7 +189,7 @@ const Reviews: React.FC<{ reviews: IReview[] | undefined; idPost: string }> = ({
             </form>
           </div>
         ) : (
-          <div className="flex flex-col items-center gap-4 px-5 py-5 border-b-2 border-t-2">
+          <div className="flex flex-col items-center h-[250px] gap-4 px-5 py-5 border-b-2 border-t-2">
             <h1 className="text-xl text-gray-200">
               ¡
               <Link

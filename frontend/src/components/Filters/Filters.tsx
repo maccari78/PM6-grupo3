@@ -183,9 +183,7 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
           </li>
           <li className="flex justify-start items-start">
             <button
-
               onClick={() => handleMileageChange("50.000km - 100.000km")}
-
               className="text-[#222222] text-sm md:text-base  w-full flex justify-start rounded-xl hover:px-2 hover:translate-x-1 hover:bg-[#c3ff0dad] duration-300"
             >
               50.000Km-100.000Km
@@ -193,9 +191,7 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
           </li>
           <li className="flex justify-start items-start">
             <button
-
               onClick={() => handleMileageChange("100.000km - 150.000km")}
-
               className="text-[#222222] text-sm md:text-base  w-full flex justify-start rounded-xl hover:px-2 hover:translate-x-1 hover:bg-[#c3ff0dad] duration-300"
             >
               100.000Km-150.000Km
@@ -203,7 +199,7 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
           </li>
           <li className="flex justify-start items-start">
             <button
-              onClick={() => handleMileageChange("Mas de 150.000km")}
+              onClick={() => handleMileageChange("Más de 150.000km")}
               className="text-[#222222] text-sm md:text-base  w-full flex justify-start rounded-xl hover:px-2 hover:translate-x-1 hover:bg-[#c3ff0dad] duration-300"
             >
               Mas de 150.000Km
