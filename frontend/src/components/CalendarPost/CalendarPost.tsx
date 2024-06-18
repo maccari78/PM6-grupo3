@@ -49,7 +49,7 @@ const CalendarPost: React.FC<{
                               <img
                                 src={user.image_url}
                                 alt="foto de perfil usuario"
-                                className="h-full rounded-full "
+                                className="h-10 w-10 rounded-full "
                               />
                             </td>
                           </React.Fragment>
