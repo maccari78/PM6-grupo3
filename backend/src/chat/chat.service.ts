@@ -45,6 +45,10 @@ export class ChatService {
 
     if (userSender.id !== post.user.id) {
       newChat.receiver = post.user;
+      const newEntry = await this.findAllByRoom_ID(newChat.room_id);
+      if (!newEntry) {
+        // envio de email de notificacion
+      }
       await this.chatRepository.save(newChat);
       if (!newChat) throw new BadRequestException('Error al enviar el chat');
       if (newChat.image) {
@@ -56,6 +60,10 @@ export class ChatService {
     const findUser = await this.usersRepository.findOneBy({ id: receiverId });
     if (!findUser) throw new NotFoundException('Usuario no encontrado');
     newChat.receiver = findUser;
+    const newEntry = await this.findAllByRoom_ID(newChat.room_id);
+    if (!newEntry) {
+      // envio de email de notificacion
+    }
     await this.chatRepository.save(newChat);
     if (!newChat) throw new BadRequestException('Error al enviar el chat');
     if (newChat.image) {
@@ -72,6 +80,7 @@ export class ChatService {
       image: newChat.image,
       date_created: newChat.date_created,
     };
+
     return messageContent;
   }
   async createChatWithoutImage(newChat: Chat) {
@@ -82,6 +91,7 @@ export class ChatService {
       room_id: newChat.room_id,
       date_created: newChat.date_created,
     };
+
     return messageContent;
   }
 
@@ -92,5 +102,10 @@ export class ChatService {
     });
 
     return chatHistory;
+  }
+
+  async findOneChatForEmail(room_id: string) {
+    const chat = await this.chatRepository.findOneBy({ room_id: room_id });
+    return chat;
   }
 }

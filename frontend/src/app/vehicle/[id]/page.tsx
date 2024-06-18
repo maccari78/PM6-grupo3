@@ -12,6 +12,7 @@ import { Button, Tooltip } from "flowbite-react";
 import SkeletonDashboard from "@/components/sketelons/SkeletonDashboard";
 import { IRentalPost } from "@/components/VehiclesComponent/interfaces/IRentalPost";
 import CalendarPost from "@/components/CalendarPost/CalendarPost";
+import CarouselVehicle from "@/components/CarouselVehicle/CarouselVehicle";
 const DynamicMapLocation = dynamic(
   () => import("../../../components/MapLocation/MapLocation"),
   { ssr: false }
@@ -52,6 +53,7 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
     string[] | undefined
   >();
   const [endDateRentals, setEndtDateRentals] = useState<string[] | undefined>();
+  const [imgsPost, setImgsPost] = useState<string[]>();
 
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
@@ -70,6 +72,7 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
         });
         const data: IPost = await post.json();
         setPostState(data);
+        setImgsPost(data.car.image_url);
         setTotalReviews(data.review.length);
         const rentals = data.rentals.map((rental) => {
           return {
@@ -436,11 +439,7 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
             </div>
 
             <div className=" mt-3 ">
-              <img
-                src={postState?.car.image_url[0]}
-                alt="Ford F-150"
-                className="h-auto w-[50%] shadow-xl rounded-t-xl md:rounded-xl"
-              />
+              <CarouselVehicle imgs={imgsPost} />
             </div>
           </div>
 
