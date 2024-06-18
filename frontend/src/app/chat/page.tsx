@@ -1,6 +1,12 @@
 "use client";
 import { redirect, useRouter } from "next/navigation";
-import React, { useEffect, useState, ChangeEvent, FormEvent, useRef } from "react";
+import React, {
+  useEffect,
+  useState,
+  ChangeEvent,
+  FormEvent,
+  useRef,
+} from "react";
 import Swal from "sweetalert2";
 import { io, Socket } from "socket.io-client";
 import {
@@ -30,11 +36,10 @@ const ChatWeb: React.FC = () => {
   const [sender, setSender] = useState<IUserChat | null>(null);
   const [receiver, setReceiver] = useState<IUserChat | null>(null);
   const [user, setUser] = useState<IUserChat | null>({
-
-     id: 'HOLA',
-    email: 'HOLA',
-    name: 'OLA',
-    password: 'ASDDA',
+    id: "HOLA",
+    email: "HOLA",
+    name: "OLA",
+    password: "****",
     nDni: 123,
     nExpiration: "string | null",
     phone: "string",
@@ -48,20 +53,18 @@ const ChatWeb: React.FC = () => {
     updatedAt: "string",
   });
 
-  const [msgLoader, setMsgLoader] = useState<boolean>(true)
-  const [userLoader, setUserLoader] = useState<boolean>(true)
+  const [msgLoader, setMsgLoader] = useState<boolean>(true);
+  const [userLoader, setUserLoader] = useState<boolean>(true);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
-    const messagesContainerRef = useRef<HTMLDivElement | null>(null);
-
-
+  const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
   const scrollToBottom = () => {
     if (messagesContainerRef.current && messagesEndRef.current) {
-      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+      messagesContainerRef.current.scrollTop =
+        messagesContainerRef.current.scrollHeight;
     }
   };
 
-  
   const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
   const apiToken = process.env.NEXT_PUBLIC_API_GET_USERS_TOKEN;
   const apiChat = process.env.NEXT_PUBLIC_API_CHAT;
@@ -99,7 +102,7 @@ const ChatWeb: React.FC = () => {
         newSocket.close();
       };
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userToken, room_id]);
 
   useEffect(() => {
@@ -108,10 +111,10 @@ const ChatWeb: React.FC = () => {
         try {
           const response = await fetch(`${apiUrl}/chat/${room_id}/messages`, {
             method: "GET",
-             headers: {
-            Authorization: `Bearer ${userToken}`,
-            "Content-Type": "application/json",
-          },
+            headers: {
+              Authorization: `Bearer ${userToken}`,
+              "Content-Type": "application/json",
+            },
           });
           const response2 = await fetch(`${apiToken}`, {
             method: "GET",
@@ -145,17 +148,18 @@ const ChatWeb: React.FC = () => {
             setReceiver(data[0].receiver as IUserChat);
           }
 
-          const sortedMessages = data.sort((a, b) => new Date(a.date_created || "").getTime() - new Date(b.date_created || "").getTime());
+          const sortedMessages = data.sort(
+            (a, b) =>
+              new Date(a.date_created || "").getTime() -
+              new Date(b.date_created || "").getTime()
+          );
           setMessages(data);
-          
         } catch (error) {
           console.error("Error al obtener los mensajes:", error);
           setError("Error al obtener los mensajes.");
-        }
-        finally{
-          setMsgLoader(false)
-          setUserLoader(false)
-
+        } finally {
+          setMsgLoader(false);
+          setUserLoader(false);
         }
       }
     };
@@ -163,7 +167,7 @@ const ChatWeb: React.FC = () => {
     if (room_id) {
       fetchMessages();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [room_id, apiUrl]);
 
   useEffect(() => {
@@ -252,11 +256,10 @@ const ChatWeb: React.FC = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
-  const handleRoom = (room_id:string) =>{
-    setRoom_id(room_id)
-    setMsgLoader(true)
-  }
-
+  const handleRoom = (room_id: string) => {
+    setRoom_id(room_id);
+    setMsgLoader(true);
+  };
 
   if (loading) {
     return <SkeletonDashboard />;
@@ -273,6 +276,7 @@ const ChatWeb: React.FC = () => {
         {/* Contact List */}
 
         <div className="overflow-y-auto h-screen p-3 mb-9 pb-20">
+
       {!userLoader ? (Array.isArray(rentalsChats) && rentalsChats.length > 0 ? (
         rentalsChats.map((rental) => (
           <div key={rental.id}>
@@ -310,26 +314,34 @@ const ChatWeb: React.FC = () => {
         </header>
 
         {/* Chat Messages */}
-        <div className="flex-1 bg-gray-400 overflow-y-auto p-4" ref={messagesContainerRef}>
-        {msgLoader ? (<LoaderBasic/>) : (Array.isArray(messages) && messages.length > 0 ? (
-           <>
-          {messages.map((msg, index) => {
-            const text = `${msg.message ?? 'Mensaje no disponible'}`;
-            return (
-              <Message
-                key={index}
-                incoming={msg.sender?.id !== user?.id}
-                avatarUrl={msg.sender?.id === user?.id ? user?.image_url ?? "" : msg.sender?.image_url ?? ""}
-                text={text}
-              />
-            );
-          })}
-          <div ref={messagesEndRef} />
-        </>
-            
-        ) : (
-          <p>No hay mensajes</p>
-        ))}
+        <div
+          className="flex-1 bg-gray-400 overflow-y-auto p-4"
+          ref={messagesContainerRef}
+        >
+          {msgLoader ? (
+            <LoaderBasic />
+          ) : Array.isArray(messages) && messages.length > 0 ? (
+            <>
+              {messages.map((msg, index) => {
+                const text = `${msg.message ?? "Mensaje no disponible"}`;
+                return (
+                  <Message
+                    key={index}
+                    incoming={msg.sender?.id !== user?.id}
+                    avatarUrl={
+                      msg.sender?.id === user?.id
+                        ? user?.image_url ?? ""
+                        : msg.sender?.image_url ?? ""
+                    }
+                    text={text}
+                  />
+                );
+              })}
+              <div ref={messagesEndRef} />
+            </>
+          ) : (
+            <p>No hay mensajes</p>
+          )}
         </div>
         {/* Chat Input */}
         <footer className="bg-white border-t border-gray-300 p-4">

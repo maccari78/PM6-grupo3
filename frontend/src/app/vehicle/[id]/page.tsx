@@ -714,7 +714,7 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
                   <img
                     src={postState?.user.image_url}
                     alt="Foto de perfil usuario"
-                    className="rounded-full h-auto"
+                    className="rounded-full h-10 w-10"
                   />
                 </div>
                 <div className="flex flex-col  justify-center">
@@ -810,6 +810,7 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
                   startDate={startDate}
                   endDate={endDate}
                   userToken={userToken}
+                  isOwner={isOwner}
                 />
                 ;
               </div>
