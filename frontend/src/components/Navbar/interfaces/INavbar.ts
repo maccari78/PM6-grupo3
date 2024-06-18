@@ -7,8 +7,8 @@ export interface Post {
   id: string;
   title: string; // Ajusta según los datos reales de tus posts
   description: string; // Ajusta según los datos reales de tus posts
-  price: number; // Ajusta según los datos reales de tus posts
-
+  price: number;
+  car: Car; // Ajusta según los datos reales de tus posts
 }
 
 export interface Car {
@@ -24,5 +24,6 @@ export interface Car {
   created_at: string; // Puede ser un string o un objeto Date
   updated_at: string; // Puede ser un string o un objeto Date
   isDeleted: boolean;
+  post: Post[];
   // Agrega más propiedades según los datos reales de tus cars
 }
