@@ -1,50 +1,63 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaEdit, FaTrash, FaSort } from 'react-icons/fa';
+import { IPost } from '../VehiclesComponent/interfaces/IPost';
 
-interface CarPost {
-  id: number;
-  title: string;
-  price: number;
-  date: string;
-  image: string;
+
+const apiUrl = process.env.NEXT_PUBLIC_API_POSTS;
+if (!apiUrl) {
+  throw new Error("Environment variable NEXT_PUBLIC_API_POSTS is not set");
 }
-
-const initialCarPosts: CarPost[] = [
-  { id: 1, title: 'Ford Mustang', price: 100, date: '2023-06-01', image: 'https://via.placeholder.com/150' },
-  { id: 2, title: 'Chevrolet Camaro', price: 120, date: '2023-06-05', image: 'https://via.placeholder.com/150' },
-  { id: 3, title: 'Dodge Charger', price: 110, date: '2023-06-10', image: 'https://via.placeholder.com/150' },
-  { id: 4, title: 'BMW M3', price: 130, date: '2023-06-12', image: 'https://via.placeholder.com/150' },
-  { id: 5, title: 'Audi R8', price: 150, date: '2023-06-15', image: 'https://via.placeholder.com/150' },
-];
-
 const CarPostCard: React.FC = () => {
-  const [carPosts, setCarPosts] = useState<CarPost[]>(initialCarPosts);
-  const [editingCarPostId, setEditingCarPostId] = useState<number | null>(null);
-  const [editForm, setEditForm] = useState<Partial<CarPost>>({});
+  const [carPosts, setCarPosts] = useState<IPost[]>([]);
+  const [editingCarPostId, setEditingCarPostId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState<Partial<IPost>>({});
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-  const [sortField, setSortField] = useState<keyof CarPost | null>(null);
+  const [sortField, setSortField] = useState<string | null>(null);
 
-  const handleEdit = (post: CarPost) => {
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(apiUrl, {
+          method: 'GET',
+        });
+        const data: IPost[] = await response.json();
+        if (Array.isArray(data)) {
+          setCarPosts(data);
+        } else {
+          console.error('Expected an array but received:', data);
+          setCarPosts([]);
+        }
+      } catch (error: any) {
+        console.log(error.message);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleEdit = (post: IPost) => {
     setEditingCarPostId(editingCarPostId === post.id ? null : post.id);
     setEditForm(post);
   };
 
-  const handleDelete = (postId: number) => {
+  const handleDelete = (postId: string) => {
     setCarPosts(carPosts.filter(post => post.id !== postId));
   };
 
-  const handleSave = (post: CarPost) => {
+  const handleSave = (post: IPost) => {
     setCarPosts(carPosts.map(p => (p.id === post.id ? { ...p, ...editForm } : p)));
     setEditingCarPostId(null);
     setEditForm({});
   };
 
-  const handleSort = (field: keyof CarPost) => {
+  const handleSort = (field: string) => {
     const sortedPosts = [...carPosts].sort((a, b) => {
-      if (a[field] < b[field]) return sortOrder === 'asc' ? -1 : 1;
-      if (a[field] > b[field]) return sortOrder === 'asc' ? 1 : -1;
+      const aValue = field === 'year' ? a.car.year : a.title;
+      const bValue = field === 'year' ? b.car.year : b.title;
+      if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
+      if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
       return 0;
     });
     setCarPosts(sortedPosts);
@@ -75,16 +88,16 @@ const CarPostCard: React.FC = () => {
           </button>
           <button
             className="flex items-center bg-gray-200 p-2 rounded-md hover:bg-gray-300"
-            onClick={() => handleSort('date')}
+            onClick={() => handleSort('year')}
           >
-            Ordenar por Fecha <FaSort className="ml-2" />
+            Ordenar por Año <FaSort className="ml-2" />
           </button>
         </div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredCarPosts.map(post => (
           <div key={post.id} className="bg-white p-4 rounded-lg shadow-sm">
-            <img src={post.image} alt={post.title} className="w-full h-40 object-cover rounded-md mb-4" />
+            <img src={post.car.image_url[0]} alt={post.title} className="w-full h-40 object-cover rounded-md mb-4" />
             {editingCarPostId === post.id ? (
               <div>
                 <input
@@ -100,9 +113,21 @@ const CarPostCard: React.FC = () => {
                   className="mb-2 p-2 border rounded-md w-full"
                 />
                 <input
-                  type="date"
-                  value={editForm.date || ''}
-                  onChange={(e) => setEditForm({ ...editForm, date: e.target.value })}
+                  type="number"
+                  value={editForm.car?.year || post.car.year}
+                  onChange={(e) => setEditForm({ 
+                    ...editForm, 
+                    car: { 
+                      ...editForm.car, 
+                      year: parseInt(e.target.value), 
+                      brand: post.car.brand,
+                      model: post.car.model,
+                      mileage: post.car.mileage,
+                      color: post.car.color,
+                      availability: post.car.availability,
+                      image_url: post.car.image_url
+                    } 
+                  })}
                   className="mb-2 p-2 border rounded-md w-full"
                 />
                 <button
@@ -116,7 +141,7 @@ const CarPostCard: React.FC = () => {
               <div>
                 <h3 className="text-lg font-semibold mb-2">{post.title}</h3>
                 <p className="text-gray-600 mb-2">${post.price} per day</p>
-                <p className="text-gray-500 mb-2">Available from: {post.date}</p>
+                <p className="text-gray-500 mb-2">Año: {post.car.year}</p>
                 <div className="flex space-x-2">
                   <button
                     className="bg-blue-500 text-white px-2 py-1 rounded-md hover:bg-blue-600"
