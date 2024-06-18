@@ -8,6 +8,8 @@ import { IUserData, Rental } from "@/interfaces/IUser";
 import SkeletonDashboard from "../sketelons/SkeletonDashboard";
 import Swal from "sweetalert2";
 
+const apiUrl = process.env.NEXT_PUBLIC_API_DASHBOARD_USER;
+
 const DashboardComprador: React.FC = () => {
   const [userToken, setUserToken] = useState<string | null>(null);
   const [userData, setUserData] = useState<IUserData | null>(null);
@@ -37,7 +39,7 @@ const DashboardComprador: React.FC = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`http://localhost:3001/users/dashboard`, {
+        const response = await fetch(`${apiUrl}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${userToken}`,
