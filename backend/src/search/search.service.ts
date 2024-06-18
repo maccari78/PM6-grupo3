@@ -26,6 +26,7 @@ export class searchService {
   async search(query: string) {
     const posts = await this.postsRepository
       .createQueryBuilder('post')
+      .leftJoinAndSelect('post.car', 'car') // Incluir la relación con el automóvil
       .where('post.title ILIKE :query', { query: `%${query}%` })
       .orWhere('post.description ILIKE :query', { query: `%${query}%` })
       .orWhere('CAST(post.price AS TEXT) ILIKE :query', { query: `%${query}%` })
@@ -34,6 +35,7 @@ export class searchService {
     const cars = await this.carRepository
       .createQueryBuilder('car')
       .where('car.brand ILIKE :query', { query: `%${query}%` })
+      .leftJoinAndSelect('car.post', 'post') // Incluir la relación con el automóvil
       .orWhere('car.model ILIKE :query', { query: `%${query}%` })
       .orWhere('CAST(car.year AS TEXT) ILIKE :query', { query: `%${query}%` })
       .orWhere('car.mileage ILIKE :query', { query: `%${query}%` })
