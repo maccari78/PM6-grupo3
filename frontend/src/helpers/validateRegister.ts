@@ -7,7 +7,7 @@ export const validateRegister = (values: IRegisterProps): IRegisterErrorProps =>
     const passwordRegex:RegExp = /^(?=.*[A-Z])(?=.*[0-9]).{6,}$/i;
     const nameRegex:RegExp = /^[a-zA-ZÀ-ÿ\s]{2,40}$/;
     const phoneNumberRegex:RegExp = /^\+?(\d{1,3})?[-.\s]?(\d{1,4})?[-.\s]?(\d{1,4})[-.\s]?(\d{1,9})$/;
-    const zipCodeRegex:RegExp = /^\d{4}$/;
+    const zipCodeRegex:RegExp = /(?:[A-Z]?\d{4}|\d{5,6})/;
 ;
 
     if(!emailRegex.test(values.email)){

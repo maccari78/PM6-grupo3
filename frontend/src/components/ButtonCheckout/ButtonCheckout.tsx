@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { IPost } from "../VehiclesComponent/interfaces/IPost";
 import Swal from "sweetalert2";
 import { useState } from "react";
+import { IRentalPost } from "../VehiclesComponent/interfaces/IRentalPost";
 
 interface IRental {
   rentalStartDate: string;
@@ -19,19 +20,25 @@ if (!apiBaseUrl) {
 }
 
 const ButtonCheckout = ({
+  startDateRentals,
+  endDateRentals,
   postState,
   pricePost,
   startDate,
   endDate,
   userToken,
   id,
+  isOwner,
 }: {
+  startDateRentals: string[] | undefined;
+  endDateRentals: string[] | undefined;
   postState: IPost | undefined;
   pricePost: number | undefined;
   startDate: string | undefined;
   endDate: string | undefined;
   userToken: string | undefined;
   id: string;
+  isOwner: boolean;
 }) => {
   const router = useRouter();
 
@@ -43,18 +50,44 @@ const ButtonCheckout = ({
       return;
     }
 
+    if (isOwner) {
+      Swal.fire({
+        icon: "error",
+        title: "¡No puedes reservar!",
+        text: "No puedes reservar una publicacion de tu propiedad",
+      });
+      return;
+    }
+
+    if (startDateRentals && startDate) {
+      const hasError = startDateRentals.some((date) => date === startDate);
+      if (hasError) {
+        Swal.fire({
+          icon: "warning",
+          title: "Elige una fecha valida",
+          text: "Debes elegir una fecha que no haya sido ocupada, mira el calendario para saber que fechas estan ocupadas ",
+        });
+        return;
+      }
+    }
+
+    if (endDateRentals && endDate) {
+      const hasError = endDateRentals.some((date) => date === endDate);
+      if (hasError) {
+        Swal.fire({
+          icon: "warning",
+          title: "Elige una fecha valida",
+          text: "Debes elegir una fecha que no haya sido ocupada, mira el calendario para saber que fechas estan ocupadas ",
+        });
+        return;
+      }
+    }
+
     if (
       typeof window !== "undefined" &&
       window.localStorage.getItem("userSession")
     ) {
-      if (!postState?.car.availability) {
-        Swal.fire({
-          icon: "error",
-          title: "Lo sentimos...",
-          text: "Esta publicacion esta inactiva",
-        });
-        return;
-      } else if (
+      if (
         !startDate ||
         !endDate ||
         startDate.trim() === "" ||

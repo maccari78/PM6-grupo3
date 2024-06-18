@@ -20,9 +20,7 @@ export class TokenGuard implements CanActivate {
       const payload = this.jwtService.verify(token, {
         secret,
       });
-      console.log(payload);
-      payload.iat = new Date(payload.iat * 1000).toLocaleString();
-      payload.exp = new Date(payload.exp * 1000).toLocaleString();
+      console.log(payload, 'PAYLOAD DEL GUARDIAN');
       request.user = payload;
 
       return true;

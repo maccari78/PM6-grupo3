@@ -1,4 +1,5 @@
 export interface IUser {
+  id: string;
   token: string;
   name: string;
   email: string;
@@ -6,6 +7,7 @@ export interface IUser {
   role: string;
   created_at: Date;
   updated_at: Date;
+  image_url: string;
 }
 export interface Address {
   address: string;

@@ -109,6 +109,13 @@ export class PostsController {
     return this.postsService.AddPostsServices(createPostDto, token);
   }
 
+  @Post('cancel/:id')
+  async cancelReservation(@Param('id') id: string) {
+    const cancelPost = await this.postsService.cancel(id);
+    return cancelPost
+  }
+
+
   @ApiBearerAuth()
   @Put(':id')
   @UseInterceptors(FilesInterceptor('file', 5))

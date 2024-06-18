@@ -111,7 +111,7 @@ export interface TMessageChat {
     message?: string;
     room_id?: string;
     image?: string;
-    date_created?: Date;
+    date_created: Date | string;
 }
 
 
