@@ -12,6 +12,8 @@ if (!apiUrl) {
   throw new Error("Environment variable NEXT_PUBLIC_API_POSTS is not set");
 }
 
+const authApi = process.env.NEXT_PUBLIC_API_AUTH_LOGIN;
+
 const Login = () => {
   interface ApiError {
     message: string;
@@ -46,7 +48,7 @@ const Login = () => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setIsLoading(true)
+    setIsLoading(true);
     try {
       const response = await fetch(apiUrl, {
         method: "POST",
@@ -60,7 +62,7 @@ const Login = () => {
       });
 
       if (!response.ok) {
-        setIsLoading(false)
+        setIsLoading(false);
         const errorData: ApiError = await response.json();
         throw errorData;
       }
@@ -87,7 +89,7 @@ const Login = () => {
       });
       router.push("/");
     } catch (err) {
-      setIsLoading(false)
+      setIsLoading(false);
       if (typeof err === "object" && err !== null && "message" in err) {
         // Si el error es un objeto y contiene la propiedad 'message'
         const apiError = err as ApiError;
@@ -123,7 +125,7 @@ const Login = () => {
   };
 
   if (isLoading) {
-    return <SkeletonDashboard></SkeletonDashboard>
+    return <SkeletonDashboard></SkeletonDashboard>;
   }
   return (
     <>
@@ -205,14 +207,15 @@ const Login = () => {
                 >
                   Twitter
                 </button> */}
-                <a href="http://localhost:3001/auth/google/login">
+                <Link href={`${authApi}`}>
+                  s
                   <button
                     type="button"
                     className="transition duration-200 border border-gray-200 text-gray-500 w-full py-2.5 rounded-lg text-sm shadow-sm hover:shadow-md font-normal text-center inline-block"
                   >
                     Google
                   </button>
-                </a>
+                </Link>
 
                 {/* <button
                   type="button"
