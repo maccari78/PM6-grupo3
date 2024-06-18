@@ -27,8 +27,9 @@ const Navbar: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult | null>(null); // Tipo SearchResult o null
+  console.log(results);
 
   useEffect(() => {
     if (
@@ -117,27 +118,29 @@ const Navbar: React.FC = () => {
     };
   }, [isMenuOpen]);
 
-  const search = async (query:string) => {
+  const search = async (query: string) => {
     try {
-      const response = await fetch(`http://localhost:3001/searching?q=${query}`);
-  
+      const response = await fetch(
+        `http://localhost:3001/searching?q=${query}`
+      );
+
       if (!response.ok) {
-        throw new Error('Fallo el buscador fetch en la busqueda de resultados');
+        throw new Error("Fallo el buscador fetch en la busqueda de resultados");
       }
-  
-      const data = await response.json() as SearchResult; // Cast a SearchResult
-  
+
+      const data = (await response.json()) as SearchResult; // Cast a SearchResult
+
       if (!data || (data.posts.length === 0 && data.cars.length === 0)) {
-        throw new Error('No se encontraron resultados');
+        throw new Error("No se encontraron resultados");
       }
-  
+
       return data;
-    } catch (error:any) {
-      console.error('Error during search:', error.message);
-      throw new Error(error.message || 'Busqueda no encontrada');
+    } catch (error: any) {
+      console.error("Error during search:", error.message);
+      throw new Error(error.message || "Busqueda no encontrada");
     }
   };
-  
+
   const handleSearch = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
@@ -147,10 +150,9 @@ const Navbar: React.FC = () => {
       console.error(error);
     }
   };
-  
 
   return (
-    <header className="flex flex-row justify-around items-center bg-[#222222] text-white h-[70px] font-sans">
+    <header className="flex flex-row justify-around items-center bg-[#222222] text-white h-[80px] font-sans">
       <div className="flex flex-row gap-4 items-center">
         <Link href="/">
           <Image
@@ -163,13 +165,16 @@ const Navbar: React.FC = () => {
       </div>
       {/* Searching */}
       <div className=" md:w-[400px]">
-        <form onSubmit={handleSearch} className="flex items-center h-[30px] md:h-[42px]">
+        <form
+          onSubmit={handleSearch}
+          className="flex items-center h-[30px] md:h-[42px]"
+        >
           <div className="relative h-full  w-full">
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              id="voice-search"
+              name="search"
               className="bg-gray-300 h-full border rounded-l-2xl text-sm outline-none text-gray-900  focus:border-[#c2e94e] block w-full pl-3 p-2.5 placeholder-gray-500 placeholder:text-[10px] md:placeholder:text-[13px]"
               placeholder="Titulo, Marca, Modelo etc..."
             />
@@ -218,26 +223,70 @@ const Navbar: React.FC = () => {
           </button>
         </form>
         {results && (
-          <div>
-            <h2>Publicaciones</h2>
+          <div className="absolute flex flex-col gap-5 bg-[#3b3b3b] rounded-2xl mt-1 px-5 py-5 w-[500px]">
             <ul>
-              {results.posts.map((post) => (
-                <li key={post.id}>
-                  {post.title}: {post.description}
-                </li>
-              ))}
+              <h2 className="text-lg font-bold text-[#c2e94e]">
+                Publicaciones:
+              </h2>
+              {results!.posts.map((post) => {
+                const titleSlice = post.title.slice(0, 20);
+
+                return (
+                  <Link key={post.id} href={`vehicle/${post.id}`}>
+                    <li className="flex flex-row gap-5 items-center py-[4px] hover:bg-[#222222]  rounded-xl duration-200">
+                      <div className="w-[50] h-[50px]">
+                        <img
+                          src={post.car.image_url[0]}
+                          alt="imagen carro"
+                          className="w-full h-full rounded-xl"
+                        />
+                      </div>
+                      <p className="text-gray-200 text-[18px]">
+                        {titleSlice}...
+                      </p>
+                      <p className="text-gray-200 text-[18px]">
+                        <strong className="text-[#C4FF0D]">$</strong>
+                        {post.price}
+                      </p>
+                    </li>
+                  </Link>
+                );
+              })}
             </ul>
-            <h2>Autos</h2>
             <ul>
-              {results.cars.map((car) => (
-                <li key={car.id}>
-                  {car.brand} {car.model} ({car.color})
-                </li>
-              ))}
+              <h2 className="text-lg font-bold text-[#c2e94e]">Autos:</h2>
+              {results!.cars.map((car) => {
+                return (
+                  <div key={car.id} className="flex flex-col ">
+                    <div className="flex flex-row items-center gap-1 mb-3 py-1">
+                      <div>
+                        <img
+                          src={car.image_url[0]}
+                          alt="imagen carro"
+                          className="w-[50] h-[50px] rounded-xl"
+                        />
+                      </div>
+                      <p>{car.brand}</p>
+                      <p>{car.model}</p>
+                      <p>({car.color})</p>
+                      {car.post.map((post) => {
+                        return (
+                          <Link key={post.id} href={`vehicle/${post.id}`}>
+                            <li className="flex flex-row gap-5 items-center py-[4px] hover:bg-[#222222] px-4 rounded-xl duration-200">
+                              <p className="text-[#c2e94e] text-[18px] hover:underline">
+                                Ver
+                              </p>
+                            </li>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
             </ul>
           </div>
         )}
-        
       </div>
 
       <div className="hidden md:flex flex-row h-full items-center hover:border-b-[1px] hover:border-b-[#C4FF0D] focus:border-b-[#C4FF0D] duration-150">
@@ -525,3 +574,14 @@ const Navbar: React.FC = () => {
 };
 
 export default Navbar;
+
+{
+  /*  */
+}
+{
+  /* <div className="absolute flex flex-col gap-5 bg-[#3b3b3b] justify-center items-center rounded-2xl mt-1 px-5 py-5 w-[500px]">
+            <h2 className="text-lg font-bold text-[#c2e94e]">
+              No se encontraron resultados...
+            </h2>
+          </div> */
+}
