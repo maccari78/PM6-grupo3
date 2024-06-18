@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Req, Res, UseGuards} from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto, signIn } from 'src/users/dto/create-user.dto';
 import { GoogleAuthGuard } from './utils/auth.guard';
@@ -39,12 +47,14 @@ export class AuthController {
   @UseGuards(GoogleAuthGuard)
   async handleRedirect(@Req() req: Request, @Res() res: Response) {
     const { token, payload } = req.user;
+    const LOGIN_URL = process.env.LOGIN_URL;
+    const GOOGLE_REDIRECT_FRONT = process.env.GOOGLE_REDIRECT_FRONT;
     const createUser = await this.authService.validateUser(payload);
     if (!createUser) {
-      res.redirect(`http://localhost:3000/login`);
+      res.redirect(`${LOGIN_URL}`);
       return { msg: 'Error al crear el usuario' };
     }
-    res.redirect(`http://localhost:3000/auth?token=${token}`);
+    res.redirect(`${GOOGLE_REDIRECT_FRONT}?token=${token}`);
   }
 
   @Get('status')
@@ -58,5 +68,4 @@ export class AuthController {
       return { msg: 'Not Authenticated' };
     }
   }
-
 }
