@@ -6,6 +6,7 @@ import { Address } from 'src/addresses/entities/address.entity';
 import { FileUploadService } from 'src/file-upload/file-upload.service';
 import { AddressesService } from 'src/addresses/addresses.service';
 import { JwtService } from '@nestjs/jwt';
+import { NotFoundException } from '@nestjs/common';
 
 describe('UsersService', () => {
   let usersService: UsersService;
@@ -15,28 +16,53 @@ describe('UsersService', () => {
       id: '1',
       name: 'User 1',
       email: 'test1@hotmail.com',
+      password: process.env.PASS_TESTING,
+      addresses: [{ id: '1', address: 'Test #1' }],
     },
     {
       id: '2',
       name: 'User 2',
       email: 'test2@hotmail.com',
+      password: process.env.PASS_TESTING,
+      addresses: [{ id: '1', address: 'Test #2' }],
     },
     {
       id: '3',
       name: 'User 3',
       email: 'test3@hotmail.com',
+      password: process.env.PASS_TESTING,
+      addresses: [{ id: '1', address: 'Test #3' }],
     },
   ];
 
   const mockNewUser = {
     name: 'User 4',
     email: 'test4@hotmail.com',
+    aboutMe: '',
+    rExpiration: '',
+  };
+
+  const mockUpdateUserDto = {
+    name: 'Updated name',
+    email: 'updatedemail.mail.com',
+    aboutMe: 'My new description',
+    rExpiration: '12/30/30',
+    addresses: [{ id: '1', address: 'Test #4' }],
+  };
+
+  const mockUpdateAddressDto = {
+    address: 'Update Address Dto #1',
   };
 
   const mockAddressRepository = {};
   const mockUsersRepository = {
     find: jest.fn().mockResolvedValue(mockUsers),
-    findOne: jest.fn().mockResolvedValue(undefined),
+    findOne: jest.fn().mockImplementation(({ where: { id } }) => {
+      const user = mockUsers.find((user) => user.id === id);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password, ...userWithoutPass } = user;
+      return userWithoutPass;
+    }),
     findOneBy: jest.fn().mockResolvedValue(undefined),
     save: jest.fn().mockResolvedValue(undefined),
     update: jest.fn().mockImplementation(async (id, user) => {
@@ -50,8 +76,12 @@ describe('UsersService', () => {
   };
 
   const fileUploadService = {};
-  const addressesService = {};
-  const jwtService = {};
+  const addressesService = {
+    updateAddress: jest.fn().mockResolvedValue(undefined),
+  };
+  const jwtService = {
+    verify: jest.fn().mockReturnValue({ sub: 'test1@hotmail.com' }),
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -87,6 +117,25 @@ describe('UsersService', () => {
     expect(usersService).toBeDefined();
   });
 
+  it('findOne() must return user if found', async () => {
+    const user = await usersService.findOne('2');
+
+    expect(user).toBeDefined();
+    expect(user.name).toEqual(mockUsers[1].name);
+    expect(user.email).toEqual(mockUsers[1].email);
+  });
+
+  it('findOne() must return error if no user was found', async () => {
+    mockUsersRepository.findOne = jest.fn().mockResolvedValue(undefined);
+
+    try {
+      await usersService.findOne('1');
+    } catch (error) {
+      expect(error).toBeInstanceOf(NotFoundException);
+      expect(error.message).toEqual('Usuario no encontrado');
+    }
+  });
+
   it('findAll() returns all users', async () => {
     const users = await usersService.findAll();
 
@@ -96,9 +145,11 @@ describe('UsersService', () => {
   });
 
   it('getUserByEmail() must return error if no user was found', async () => {
+    mockUsersRepository.findOne = jest.fn().mockResolvedValue(mockUsers[0]);
     try {
       await usersService.findByEmail('test1@hotmail.com');
     } catch (error) {
+      expect(error).toBeInstanceOf(NotFoundException);
       expect(error.message).toEqual('Usuario no encontrado');
     }
   });
@@ -114,10 +165,32 @@ describe('UsersService', () => {
 
   it('update() must return error if no user was found', async () => {
     try {
-      await usersService.update('1', mockNewUser[0]);
+      await usersService.update('1', mockNewUser);
     } catch (error) {
       expect(error.message).toEqual('No hay un usuario autenticado');
+      expect(error).toBeInstanceOf(NotFoundException);
     }
+  });
+
+  it('update() must return updated user if found', async () => {
+    mockUsersRepository.findOne = jest.fn().mockResolvedValue(mockUsers[0]);
+    mockUsersRepository.update = jest.fn().mockResolvedValue({ affected: 1 });
+
+    const result = await usersService.update(
+      'Bearer validToken',
+      mockUpdateUserDto,
+      mockUpdateAddressDto,
+    );
+
+    expect(result).toEqual({ message: 'Usuario actualizado con exito' });
+    expect(mockUsersRepository.update).toHaveBeenCalledWith(
+      mockUsers[0].id,
+      expect.objectContaining(mockUpdateUserDto),
+    );
+    expect(addressesService.updateAddress).toHaveBeenCalledWith(
+      mockUsers[0].addresses[0].id,
+      mockUpdateAddressDto,
+    );
   });
 
   it('remove() must return error if no user was found', async () => {
