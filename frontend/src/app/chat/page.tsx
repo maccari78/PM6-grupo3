@@ -39,7 +39,7 @@ const ChatWeb: React.FC = () => {
     id: "HOLA",
     email: "HOLA",
     name: "OLA",
-    password: "****",
+    password: "ASDDA",
     nDni: 123,
     nExpiration: "string | null",
     phone: "string",
@@ -211,8 +211,8 @@ const ChatWeb: React.FC = () => {
           setRoom_id(data[0].room_id);
         }
       } catch (error: any) {
-         setMsgLoader(false)
-          setUserLoader(false)
+        setMsgLoader(false);
+        setUserLoader(false);
         console.error(error);
         setError("Error al obtener los datos de alquileres.");
       }
@@ -276,28 +276,30 @@ const ChatWeb: React.FC = () => {
         {/* Contact List */}
 
         <div className="overflow-y-auto h-screen p-3 mb-9 pb-20">
-
-      {!userLoader ? (Array.isArray(rentalsChats) && rentalsChats.length > 0 ? (
-        rentalsChats.map((rental) => (
-          <div key={rental.id}>
-            {rental.users.filter((userdata)=> userdata.id !== user?.id).map((userdata, userIndex) => (
-              <Contact
-                key={userIndex}
-                name={userdata.name}
-                posts={`en ${rental.posts?.title}`}
-                avatarUrl={userdata.image_url}
-                onClick={() => handleRoom(rental.room_id)}
-              />
-              
-            ))}
-          </div>
-        ))
-      ) : (
-        <p>No hay registros de contactos</p>
-      )): ( <LoaderBasic/> )}
-    </div>
-       
-
+          {!userLoader ? (
+            Array.isArray(rentalsChats) && rentalsChats.length > 0 ? (
+              rentalsChats.map((rental) => (
+                <div key={rental.id}>
+                  {rental.users
+                    .filter((userdata) => userdata.id !== user?.id)
+                    .map((userdata, userIndex) => (
+                      <Contact
+                        key={userIndex}
+                        name={userdata.name}
+                        posts={`en ${rental.posts?.title}`}
+                        avatarUrl={userdata.image_url}
+                        onClick={() => handleRoom(rental.room_id)}
+                      />
+                    ))}
+                </div>
+              ))
+            ) : (
+              <p>No hay registros de contactos</p>
+            )
+          ) : (
+            <LoaderBasic />
+          )}
+        </div>
       </div>
 
       {/* Main Chat Area */}
