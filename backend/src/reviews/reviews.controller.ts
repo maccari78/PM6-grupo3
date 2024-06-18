@@ -45,8 +45,8 @@ export class ReviewsController {
   }
   
   @ApiBearerAuth()
-  @UseGuards(RolesGuard)
-  @Roles(Role.User, Role.Admin)
+  // @UseGuards(RolesGuard)
+  // @Roles(Role.User, Role.Admin)
   @Put(':id')
   
   update(
