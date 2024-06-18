@@ -7,6 +7,7 @@ import IRegisterErrorProps from "../../interfaces/IRegisterErrorProps";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Swal from "sweetalert2";
+import SkeletonDashboard from "@/components/sketelons/SkeletonDashboard";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_SIGNUP_URL;
 if (!apiUrl) {
@@ -30,8 +31,8 @@ const Register = () => {
     address: "",
   };
   const [userData, setUserData] = useState<IUserData>(initialUserData);
-
   const [errors, setErrors] = useState<IRegisterErrorProps>({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -81,7 +82,7 @@ const Register = () => {
       nDni: Number(userData.nDni),
       phone: Number(userData.phone),
     };
-
+    setIsLoading(true)
     axios
       .post(apiUrl, auth)
       .then((response) => {
@@ -92,6 +93,7 @@ const Register = () => {
             text: "El usuario pudo registrarse correctamente en la aplicacion",
             icon: "success"
           });
+          setIsLoading(false)
           router.push("/login");
         } else {
           Swal.fire({
@@ -99,6 +101,7 @@ const Register = () => {
             text: `${response.data}`,
             icon: "error"
           });
+          setIsLoading(false)
         }
       })
       .catch((error) => {
@@ -107,11 +110,15 @@ const Register = () => {
           text: "Ha ocurrido un error en la conexión",
           icon: "error"
         });
-       
+       setIsLoading(false)
         console.error("Error:", error);
       });
   };
 
+  if (isLoading) {
+    return <SkeletonDashboard></SkeletonDashboard>
+  }
+  
   return (
     <div className="font-sans text-white m-0 bg-[url('/background_register_2.svg')] bg-no-repeat bg-cover relative z-3 w-full pt-[70px] px-[30px] pb-[44px] flex justify-center items-center min-h-screen bg-gray-900 h-min ">
       <div className="px-20 py-6 rounded-[12px] bg-black/10 ">
