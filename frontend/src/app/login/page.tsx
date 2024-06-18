@@ -44,12 +44,10 @@ const Login = () => {
       ...userData,
       [event.target.name]: event.target.value,
     });
-  };
 
-  useEffect(() => {
     const errors = validateLogin(userData);
     setError(errors);
-  }, [userData]);
+  };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
