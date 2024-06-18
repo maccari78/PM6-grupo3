@@ -7,6 +7,8 @@ import { useEffect, useState, useRef } from "react";
 import Dropdown from "../DropdownNavbar/Dropdown";
 import Swal from "sweetalert2";
 
+import { SearchResult, Post, Car } from "./interfaces/INavbar";
+
 const apiUser = process.env.NEXT_PUBLIC_API_GET_USERS_TOKEN;
 
 export interface IUserDta {
@@ -24,6 +26,9 @@ const Navbar: React.FC = () => {
   const [userDta, setUserDta] = useState<IUserDta | undefined>();
   const [loading, setLoading] = useState<boolean>(true);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState<SearchResult | null>(null); // Tipo SearchResult o null
 
   useEffect(() => {
     if (
@@ -112,6 +117,38 @@ const Navbar: React.FC = () => {
     };
   }, [isMenuOpen]);
 
+  const search = async (query:string) => {
+    try {
+      const response = await fetch(`http://localhost:3001/searching?q=${query}`);
+  
+      if (!response.ok) {
+        throw new Error('Fallo el buscador fetch en la busqueda de resultados');
+      }
+  
+      const data = await response.json() as SearchResult; // Cast a SearchResult
+  
+      if (!data || (data.posts.length === 0 && data.cars.length === 0)) {
+        throw new Error('No se encontraron resultados');
+      }
+  
+      return data;
+    } catch (error:any) {
+      console.error('Error during search:', error.message);
+      throw new Error(error.message || 'Busqueda no encontrada');
+    }
+  };
+  
+  const handleSearch = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    try {
+      const data = await search(query);
+      setResults(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  
+
   return (
     <header className="flex flex-row justify-around items-center bg-[#222222] text-white h-[70px] font-sans">
       <div className="flex flex-row gap-4 items-center">
@@ -124,14 +161,17 @@ const Navbar: React.FC = () => {
           />
         </Link>
       </div>
+      {/* Searching */}
       <div className=" md:w-[400px]">
-        <form className="flex items-center h-[30px] md:h-[42px]">
+        <form onSubmit={handleSearch} className="flex items-center h-[30px] md:h-[42px]">
           <div className="relative h-full  w-full">
             <input
               type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
               id="voice-search"
               className="bg-gray-300 h-full border rounded-l-2xl text-sm outline-none text-gray-900  focus:border-[#c2e94e] block w-full pl-3 p-2.5 placeholder-gray-500 placeholder:text-[10px] md:placeholder:text-[13px]"
-              placeholder="Modelo, Marca etc..."
+              placeholder="Titulo, Marca, Modelo etc..."
             />
             <button
               type="reset"
@@ -177,7 +217,29 @@ const Navbar: React.FC = () => {
             <p className="font-medium text-[#222222] hidden md:flex">Buscar</p>
           </button>
         </form>
+        {results && (
+          <div>
+            <h2>Publicaciones</h2>
+            <ul>
+              {results.posts.map((post) => (
+                <li key={post.id}>
+                  {post.title}: {post.description}
+                </li>
+              ))}
+            </ul>
+            <h2>Autos</h2>
+            <ul>
+              {results.cars.map((car) => (
+                <li key={car.id}>
+                  {car.brand} {car.model} ({car.color})
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        
       </div>
+
       <div className="hidden md:flex flex-row h-full items-center hover:border-b-[1px] hover:border-b-[#C4FF0D] focus:border-b-[#C4FF0D] duration-150">
         <button className="flex flex-row items-center justify-center">
           <Link
@@ -188,6 +250,7 @@ const Navbar: React.FC = () => {
           </Link>
         </button>
       </div>
+
       <div className="hidden md:flex flex-row items-center  font-medium">
         {loading ? (
           <div role="status">
