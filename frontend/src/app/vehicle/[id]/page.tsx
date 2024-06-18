@@ -8,7 +8,7 @@ import { IPost } from "@/components/VehiclesComponent/interfaces/IPost";
 import { IUser, IUserData } from "@/interfaces/IUser";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Button, Carousel, Tooltip } from "flowbite-react";
+import { Button, Tooltip } from "flowbite-react";
 import SkeletonDashboard from "@/components/sketelons/SkeletonDashboard";
 import { IRentalPost } from "@/components/VehiclesComponent/interfaces/IRentalPost";
 import CalendarPost from "@/components/CalendarPost/CalendarPost";
