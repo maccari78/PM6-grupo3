@@ -222,7 +222,7 @@ const About = () => {
                     <FaLinkedin className="w-6 h-6 bg-gray-300 text-[#0A66C2] rounded-[2px]" />
                   </Link>
                   <Link
-                    href=""
+                    href="https://github.com/emacuello"
                     className="px-2 py-2 hover:bg-[#555454] rounded-full duration-200"
                     target="_blank" rel="noreferrer"
                   >
