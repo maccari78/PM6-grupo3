@@ -7,17 +7,17 @@ const VehiclesComponent: React.FC<{ nPosts: IPost[] }> = ({ nPosts }) => {
       {nPosts?.map((post: IPost) => {
         return (
           <VehicleCard
-            key={post.id}
-            id={post.id}
-            description={post.description}
-            carId={post.car.id}
-            carImg={post.car.image_url}
-            carBrand={post.car.brand}
-            carModel={post.car.model}
-            carYear={post.car.year}
-            carMileage={post.car.mileage}
-            carPrice={post.price}
-            carAvailability={post.car.availability}
+            key={post?.id}
+            id={post?.id}
+            description={post?.description}
+            carId={post?.car?.id}
+            carImg={post?.car?.image_url}
+            carBrand={post?.car?.brand}
+            carModel={post?.car?.model}
+            carYear={post?.car?.year}
+            carMileage={post?.car?.mileage}
+            carPrice={post?.price}
+            carAvailability={post?.car?.availability}
           />
         );
       })}
