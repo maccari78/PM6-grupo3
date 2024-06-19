@@ -49,6 +49,9 @@ export class FileUploadService {
 
     if (!car) throw new NotFoundException('Vehiculo no encontrado');
 
+    car.image_url = [];
+    car.public_id = [];
+
     const urls = [];
     const publicIds = [];
 
@@ -57,6 +60,14 @@ export class FileUploadService {
       urls.push(uploadedImage.secure_url);
       publicIds.push(uploadedImage.public_id);
     }
+
+    // if (!Array.isArray(car.image_url)) {
+    //   car.image_url = [];
+    // }
+    // if (!Array.isArray(car.public_id)) {
+    //   car.public_id = [];
+    // }
+
     car.image_url.push(...urls);
     car.public_id.push(...publicIds);
     await this.carsRepository.save(car);
