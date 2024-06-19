@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { IPost } from '../VehiclesComponent/interfaces/IPost';
 
-const searchBarUrl = process.env.NEXT_PUBLIC_API_SEARCH_BAR;
+const searchBarUrl = process.env.NEXT_PUBLIC_API_POSTS;
 if (!searchBarUrl) {
   throw new Error("Environment variable NEXT_PUBLIC_API_POSTS is not set");
 }
@@ -30,7 +30,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({ onSearch }) => {
       location: location,
     });
 
-    const response = await fetch(`${searchBarUrl}?${queryParams.toString()}`);
+    const response = await fetch(`${searchBarUrl}/available?${queryParams.toString()}`);
     const data: IPost[] = await response.json();
     onSearch(data);
     
