@@ -43,6 +43,11 @@ export class RolesGuard implements CanActivate {
       );
     }
 
+    // Allow access if its admin
+    if (payload.role?.includes(Role.Admin)) {
+      return true;
+    }
+
     const authorization = requiredRoles.some((role) =>
       payload.role?.includes(role),
     );

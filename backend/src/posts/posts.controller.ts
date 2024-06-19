@@ -120,8 +120,8 @@ export class PostsController {
   @ApiBearerAuth()
   @Put(':id')
   @UseInterceptors(FilesInterceptor('file', 5))
-  // @UseGuards(RolesGuard)
-  // @Roles(Role.User, Role.Admin)
+  @Roles(Role.User, Role.Admin)
+  @UseGuards(RolesGuard)
   putPostsById(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updatePostDto: UpdatePostDto,
@@ -142,9 +142,6 @@ export class PostsController {
     )
     files?: Express.Multer.File[],
   ) {
-    console.log(id);
-    console.log(headers);
-
     if (!headers) {
       throw new UnauthorizedException('token invalido 1');
     }
@@ -152,7 +149,6 @@ export class PostsController {
     if (!token) {
       throw new UnauthorizedException('token invalido 2');
     }
-    console.log(token);
 
     if (files?.length !== 0 || files) {
       return this.postsService.UpdatePostsServices(

@@ -1,4 +1,5 @@
 'use client'
+import Loader from '@/components/Loaders/loaderAuth';
 import CarPostCard from '@/components/admin/CarPostCard';
 import OrderStats from '@/components/admin/OrderStats';
 import RevenueStats from '@/components/admin/RevenueStats';
@@ -86,7 +87,18 @@ const Page = () => {
   }, [userToken, router]);
 
   if (!rol) {
-    return null; // Renderiza nada mientras se verifica el rol
+    return (
+      <div>
+      <h1 className="mt-4 text-center font-bold font-sans text-4xl">
+        AUTENTICANDO TUS CREDENCIALES...
+      </h1>
+      <div className="flex items-center justify-center h-screen">
+        <div className="flex justify-center items-center">
+          <Loader />
+        </div>
+      </div>
+    </div>
+    )
   }
 
   return (
@@ -103,12 +115,10 @@ const Page = () => {
             </div>
           </div>
         )}
-        {selectedSection === 'users' && <UserTable />}
+        {selectedSection === 'users' && <UserTable userRole={rol} />}
         {selectedSection === 'reviews' && <ReviewsAdm />}
       </div>
     </div>
   );
 };
-
-
 export default Page

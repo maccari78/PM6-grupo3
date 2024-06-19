@@ -76,10 +76,11 @@ export class UsersController {
       return this.usersService.update(token, rest2, { city, address, country, state, zip_code });
     return this.usersService.update( token, rest2, { city, address, country, state, zip_code }, file );
   }
+  
   @ApiBearerAuth()
   @Put(':id')
-  // @Roles(Role.Admin, Role.SuperAdmin)
-  // @UseGuards(RolesGuard)
+  @Roles(Role.Admin, Role.SuperAdmin)
+  @UseGuards(RolesGuard)
   putByID(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateUserDto: UpdateUserDto,
