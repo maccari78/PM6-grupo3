@@ -1,20 +1,4 @@
-import {
-  Controller,
-  Get,
-  Body,
-  Param,
-  Delete,
-  Put,
-  ParseUUIDPipe,
-  UseInterceptors,
-  ParseFilePipe,
-  MaxFileSizeValidator,
-  FileTypeValidator,
-  Headers,
-  UploadedFile,
-  UseGuards,
-  Patch,
-} from '@nestjs/common';
+import { Controller, Get, Body, Param, Delete, Put, ParseUUIDPipe, UseInterceptors, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, Headers,  UploadedFile, UseGuards, Patch } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -44,10 +28,19 @@ export class UsersController {
   getUserForRent(@Headers('Authorization') token: string) {
     return this.usersService.getUserByRent(token);
   }
+
   @ApiBearerAuth()
   @Get('dashboard')
   @Roles(Role.User, Role.Admin, Role.SuperAdmin)
   getUserForDashboard(@Headers('Authorization') token: string) {
+    return this.usersService.getUserForDashboard(token);
+  }
+
+  @ApiBearerAuth()
+  @Get('admin-dashboard')
+  @Roles(Role.Admin, Role.SuperAdmin)
+  @UseGuards(RolesGuard)
+  async getAdminDashboard(@Headers('Authorization') token: string) {
     return this.usersService.getUserForDashboard(token);
   }
 
@@ -62,7 +55,6 @@ export class UsersController {
   @Put('update')
   @Roles(Role.User, Role.Admin, Role.SuperAdmin)
   @UseGuards(RolesGuard)
-  // @Roles(Role.User, Role.Admin)
   @UseInterceptors(FileInterceptor('file'))
   update(
     @Body() updateUserDto: UpdateUserDto,
@@ -70,13 +62,8 @@ export class UsersController {
     @UploadedFile(
       new ParseFilePipe({
         validators: [
-          new MaxFileSizeValidator({
-            maxSize: 1000000,
-            message: 'El archivo es demasiado grande',
-          }),
-          new FileTypeValidator({
-            fileType: /(jpg|jpeg|png|webp)$/,
-          }),
+          new MaxFileSizeValidator({  maxSize: 1000000, message: 'El archivo es demasiado grande' }),
+          new FileTypeValidator({ fileType: /(jpg|jpeg|png|webp)$/ }),
         ],
         fileIsRequired: false,
       }),
@@ -86,19 +73,8 @@ export class UsersController {
     const { city, address, country, state, zip_code, ...rest2 } = updateUserDto;
 
     if (!file)
-      return this.usersService.update(token, rest2, {
-        city,
-        address,
-        country,
-        state,
-        zip_code,
-      });
-    return this.usersService.update(
-      token,
-      rest2,
-      { city, address, country, state, zip_code },
-      file,
-    );
+      return this.usersService.update(token, rest2, { city, address, country, state, zip_code });
+    return this.usersService.update( token, rest2, { city, address, country, state, zip_code }, file );
   }
   @ApiBearerAuth()
   @Put(':id')
@@ -126,19 +102,8 @@ export class UsersController {
     const { city, address, country, state, zip_code, ...rest2 } = updateUserDto;
 
     if (!file)
-      return this.usersService.putByID(id, rest2, {
-        city,
-        address,
-        country,
-        state,
-        zip_code,
-      });
-    return this.usersService.putByID(
-      id,
-      rest2,
-      { city, address, country, state, zip_code },
-      file,
-    );
+      return this.usersService.putByID(id, rest2, { city, address, country, state, zip_code });
+    return this.usersService.putByID( id, rest2, { city, address, country, state, zip_code }, file );
   }
 
   @Delete(':id')
