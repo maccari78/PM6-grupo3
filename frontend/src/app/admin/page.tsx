@@ -6,10 +6,30 @@ import ReviewsAdm from '@/components/admin/ReviewsAdm';
 import SidebarAdm from '@/components/admin/SidebarAdm'
 import UserStats from '@/components/admin/UserStats';
 import UserTable from '@/components/admin/UserTable';
-import React, { useState } from 'react'
+import { redirect, useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react'
+import Swal from 'sweetalert2';
 
 const page = () => {
   const [selectedSection, setSelectedSection] = useState('dashboard');
+  const [userToken, setUserToken] = useState<string | null>(null);
+  const router = useRouter();
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.localStorage) {
+      const userSession = localStorage.getItem("userSession");
+      if (userSession) {
+        const parsedSession = JSON.parse(userSession);
+        setUserToken(parsedSession.token);  
+      } else {
+        Swal.fire({
+          title: "Error de acceso",
+          text: "Necesitas estar logueado para ingresar",
+          icon: "error"
+        });
+        redirect("/login")
+      }
+    }
+  }, [router]);
 
   
   return (
