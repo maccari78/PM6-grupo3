@@ -22,6 +22,8 @@ const UploadPost = ({ params }: { params: { id: string } }) => {
     const [userSession, setUserSession] = useState<string | null>(null);
     const [errors, setErrors] = useState<IErrorsVehicleForm>({});
     const [isLoading, setIsLoading] = useState<boolean>(true)
+    const [imagePreview, setImagePreview] = useState<string[]>([]);
+    const [deleteImage, setDeleteImage] = useState<string[]>([]);
     const [vehicleData, setVehicleData] = useState<IVehicleData>({
         title: '',
         description: '',
@@ -32,13 +34,19 @@ const UploadPost = ({ params }: { params: { id: string } }) => {
         brand: '',
         year: 0,
         mileage: '',
+        image_url: []
     });
 
     useEffect(() => {
         if (typeof window !== "undefined" && window.localStorage) {
-            const userToken = localStorage.getItem('userSession');
-            setToken(userToken);
-            !userToken && router.push("/login");
+            const userSession = localStorage.getItem('userSession');
+            if (userSession) {
+                const parsedSession = JSON.parse(userSession);
+                setToken(parsedSession.token);
+                
+            }
+            !userSession && router.push("/login");
+         
         }
     }, []);
 
@@ -52,6 +60,8 @@ const UploadPost = ({ params }: { params: { id: string } }) => {
                         Authorization: `Bearer ${token}`
                     }
                 });
+                console.log(response.data);
+                
                 const vehicleProps = {
                     title: response.data.title,
                     description: response.data.description,
@@ -61,7 +71,8 @@ const UploadPost = ({ params }: { params: { id: string } }) => {
                     file: response.data.image_url,
                     brand: response.data.car.brand,
                     year: response.data.car.year,
-                    mileage: response.data.car.mileage
+                    mileage: response.data.car.mileage,
+                    image_url: response.data.car.image_url,
                 }
                 setVehicleData(vehicleProps);
                 setIsLoading(false);
@@ -90,6 +101,20 @@ const UploadPost = ({ params }: { params: { id: string } }) => {
                 ...prevData,
                 [name]: files
             }));
+            if(files){
+             const filesArray = Array.from(files);
+      const previewsArray: string[] = [];
+
+      filesArray.forEach(file => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          previewsArray.push(reader.result as string);
+          if (previewsArray.length === filesArray.length) {
+            setImagePreview(previewsArray);
+          }
+        };
+        reader.readAsDataURL(file);
+      });}
         } else {
             setVehicleData(prevData => ({
                 ...prevData,
@@ -132,6 +157,11 @@ const UploadPost = ({ params }: { params: { id: string } }) => {
                     formData.append("file", vehicleData.file[i]);
                 }
             }
+             if (deleteImage.length > 0) {
+                deleteImage.forEach((url) => {
+                    formData.append("image_url", url);
+                });
+            }
             setIsLoading(true)
             try {
 
@@ -173,8 +203,32 @@ const UploadPost = ({ params }: { params: { id: string } }) => {
 
         if (isLoading) {
             return <SkeletonDashboard />;
-          }
-        
+    }
+  
+        const handleRemoveImage = (index: number) => {
+    const updatedPreviews = [...imagePreview];
+    updatedPreviews.splice(index, 1);
+    setImagePreview(updatedPreviews);
+
+    if (vehicleData.file) {
+        const updatedFiles = Array.from(vehicleData.file);
+        updatedFiles.splice(index, 1);
+        setVehicleData(prevData => ({
+            ...prevData,
+            file: updatedFiles.length > 0 ? (updatedFiles as unknown as FileList) : null
+        }));
+    }
+};
+    const handleRemoveExistingImage = (src: string) => {
+    const updatedImageUrls = vehicleData.image_url.filter(url => url !== src);
+    setVehicleData(prevData => ({
+        ...prevData,
+        image_url: updatedImageUrls
+    }));
+
+    setDeleteImage(prevState => [...prevState, src]);
+};
+console.log(vehicleData.image_url, deleteImage);
 
     return (
         <div className="bg-gradient-to-bl from-[#222222] to-[#313139] font-sans text-white">
@@ -321,6 +375,35 @@ const UploadPost = ({ params }: { params: { id: string } }) => {
                         Actualizar
                     </button>
                 </div>
+                {vehicleData.image_url.length > 0 && (<p className="text-[#C4FF0D] text-center text-lg font-semibold mb-5">Tus imagenes actuales</p>)}
+                {vehicleData?.image_url && (vehicleData?.image_url?.map((url) => (<div key={url} style={{ position: 'relative', display: 'inline-block', margin: '10px' }}>                    
+                    <img style={{ width: '200px', height: '200px' }} src={url} alt={url} />                    
+                 <button
+    type="button"
+    onClick={() => handleRemoveExistingImage(url)}
+    className=" bg-red-500 text-white rounded-full relative -top-5 -right-10 p-2"
+>
+    Eliminar Imagen
+</button>
+                </div>)))}
+                {imagePreview.length > 0 && (<p className="text-[#C4FF0D] text-center text-lg font-semibold mb-5">Nuevas imagenes</p>)}
+                 {imagePreview.map((preview, index) => (
+                     <div key={index} style={{ position: 'relative', display: 'inline-block', margin: '10px' }}>
+                       
+            <img
+                src={preview}
+                alt={`preview ${index}`}
+                style={{ width: '200px', height: '200px' }}
+            />
+            <button
+                type="button"
+                onClick={() => handleRemoveImage(index)}
+                    className=" bg-red-500 text-white rounded-full relative -top-5 -right-10 p-2"
+            >
+                Eliminar imagen
+            </button>
+        </div>
+        ))}
             </form>
         </div>
     );

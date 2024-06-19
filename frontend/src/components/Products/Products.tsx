@@ -23,6 +23,7 @@ const Products: React.FC = () => {
   const [filters, setFilters] = useState<any | null>(null);
   const [notShowFilter, setNotShowFilter] = useState(true);
   const [loading, setLoading] = useState<boolean>(true);
+  const [notFound, setNotFound] = useState<boolean>();
 
   const fetchPosts = async () => {
     setLoading(true);
@@ -58,6 +59,12 @@ const Products: React.FC = () => {
         }
       );
 
+      if (!response.ok) {
+        setNotFound(true);
+      } else {
+        setNotFound(false);
+      }
+
       const data: IPost[] = await response.json();
       if (Array.isArray(data)) {
         setPosts(data);
@@ -84,6 +91,7 @@ const Products: React.FC = () => {
   const deleteFilter = () => {
     setFilters(null);
     setNotShowFilter(false);
+    setNotFound(false);
   };
 
   const endIndex = currentPage * postsQT;
@@ -123,6 +131,22 @@ const Products: React.FC = () => {
             </svg>
             <span className="sr-only">Loading...</span>
             <h1 className="ml-5 md:text-xl">Cargando, espere....</h1>
+          </div>
+        ) : notFound ? (
+          <div className="flex flex-col gap-4 items-center justify-center h-full">
+            <div className="w-[40%]">
+              <img
+                src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExdjhwb21iNnE1b3BpdWM2Zjl4NHd2MzlneXgyM2ZyOHVsN3ptNTFycCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/MSU9sITGoHWMGGVn9n/giphy.webp"
+                alt="404 gif"
+                className="rounded-xl w-full"
+              />
+            </div>
+            <h1 className="md:text-3xl text-gray-100">
+              ¡No se encontraron resultados!
+            </h1>
+            <h1 className="text-sm md:text-lg text-[#C4FF0D]">
+              ¡Lo sentimos, no encontramos lo que buscas!
+            </h1>
           </div>
         ) : (
           <>

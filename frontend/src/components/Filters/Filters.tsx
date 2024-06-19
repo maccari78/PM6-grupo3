@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { FiltersProps } from "./interface/IFilterProps";
+import { FaArrowDown } from "react-icons/fa";
 
 const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
   const [selectedModel, setSelectedModel] = useState<string | null>(null);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [selectedMileage, setSelectedMileage] = useState<string | null>(null);
+  const [optionsBrand, setOptionsBrand] = useState<boolean>(false);
+  const [optionsModel, setOptionsModel] = useState<boolean>(false);
 
   const handleBrandChange = (brand: string) => {
     setSelectedBrand(brand);
@@ -38,12 +41,20 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
     });
   };
 
+  const handleOptionsBrandShow = () => {
+    setOptionsBrand(!optionsBrand);
+  };
+
+  const handleOptionsModelShow = () => {
+    setOptionsModel(!optionsModel);
+  };
+
   return (
     <div className="flex flex-col w-[230px] mb-5 md:mb-0 md:w-[235px] justify-around items-center bg-[#A29E9E] px-4 py-5 rounded-lg border-solid border-2 border-[#d4e79c]">
       <div className="mb-5 w-full flex flex-col justify-start">
         <h1 className="text-lg text-[#C4FF0D]">Marca</h1>
         <ul>
-          {["Kia", "Chevrolet", "Mazda", "Ford", "Ferrari", "Toyota", "Honda", "Volkswagen", "Audi", "Jeep", "Mercedes-Benz", "Fiat", "Renault", "Nissan", "Peugeot", "BMW"].map((brand) => (
+          {["Kia", "Chevrolet", "Mazda", "Ford", "Toyota"].map((brand) => (
             <li key={brand}>
               <button
                 onClick={() => handleBrandChange(brand)}
@@ -53,24 +64,86 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
               </button>
             </li>
           ))}
+          <button
+            onClick={handleOptionsBrandShow}
+            className="mt-2 flex flex-row gap-2 text-sm items-center bg-[#b1dd2e] text-[#222222] rounded-xl px-3 py-1 hover:scale-105 duration-200 hover:drop-shadow-2xl hover:shadow-[#c3ff0d92] hover:cursor-pointer"
+          >
+            Ver otras
+            <FaArrowDown className="w-3 h-3 text-[#222222]" />
+          </button>
+        </ul>
+        <ul className="bg-[#222222] mt-[200px]  w-[200px] overflow-y-auto max-h-60 rounded-xl absolute z-40 ">
+          {optionsBrand &&
+            [
+              "Ferrari",
+              "Honda",
+              "Volkswagen",
+              "Audi",
+              "Jeep",
+              "Mercedes-Benz",
+              "Fiat",
+              "Renault",
+              "Nissan",
+              "Peugeot",
+              "BMW",
+            ].map((optionBrand) => {
+              return (
+                <li key={optionBrand}>
+                  <button
+                    onClick={() => handleBrandChange(optionBrand)}
+                    className="text-[#c3ff0dad] text-sm  px-3 py-2  w-full flex justify-start   hover:bg-black duration-300"
+                  >
+                    {optionBrand}
+                  </button>
+                </li>
+              );
+            })}
         </ul>
       </div>
 
       <div className="mb-5 w-full flex flex-col justify-start">
         <h1 className="text-lg text-[#C4FF0D]">Modelo</h1>
         <ul>
-          {["F-150", "Sorento", "Camaro", "Stradale", "Picanto", "Focus", "A3", "Compas", "Corolla", "Golf", "Fiesta", "Territory"].map(
-            (model) => (
-              <li key={model} className="flex justify-start">
-                <button
-                  onClick={() => handleModelChange(model)}
-                  className="text-[#222222] text-sm md:text-base w-full flex justify-start rounded-xl hover:px-2 hover:translate-x-1 hover:bg-[#c3ff0dad] duration-300"
-                >
-                  {model}
-                </button>
-              </li>
-            )
-          )}
+          {["F-150", "Sorento", "Camaro", "Picanto", "Focus"].map((model) => (
+            <li key={model} className="flex justify-start">
+              <button
+                onClick={() => handleModelChange(model)}
+                className="text-[#222222] text-sm md:text-base w-full flex justify-start rounded-xl hover:px-2 hover:translate-x-1 hover:bg-[#c3ff0dad] duration-300"
+              >
+                {model}
+              </button>
+            </li>
+          ))}
+          <button
+            onClick={handleOptionsModelShow}
+            className="mt-2 flex flex-row gap-2 text-sm items-center bg-[#b1dd2e] text-[#222222] rounded-xl px-3 py-1 hover:scale-105 duration-200 hover:drop-shadow-2xl hover:shadow-[#c3ff0d92] hover:cursor-pointer"
+          >
+            Ver otras
+            <FaArrowDown className="w-3 h-3 text-[#222222]" />
+          </button>
+        </ul>
+        <ul className="bg-[#222222] mt-[200px]  w-[200px] overflow-y-auto max-h-60 rounded-xl  z-40 absolute ">
+          {optionsModel &&
+            [
+              "Stradale",
+              "A3",
+              "Compas",
+              "Corolla",
+              "Golf",
+              "Fiesta",
+              "Territory",
+            ].map((optionModel) => {
+              return (
+                <li key={optionModel}>
+                  <button
+                    onClick={() => handleModelChange(optionModel)}
+                    className="text-[#c3ff0dad] text-sm  px-3 py-2  w-full flex justify-start   hover:bg-black duration-300"
+                  >
+                    {optionModel}
+                  </button>
+                </li>
+              );
+            })}
         </ul>
       </div>
 
@@ -212,3 +285,15 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
 };
 
 export default Filters;
+
+// "Ferrari ",
+//             "Honda",
+//             "Volkswagen",
+//             "Audi",
+//             "Jeep",
+//             "Mercedes-Benz",
+//             "Fiat",
+//             "Renault",
+//             "Nissan",
+//             "Peugeot",
+//             "BMW",

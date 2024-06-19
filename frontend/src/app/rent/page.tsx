@@ -67,6 +67,7 @@ const DashboardVendedor: React.FC = () => {
 
         const data = await response.json();
         setUserData(data);
+        console.log(data)
       } catch (error:any) {
         throw new Error(error);
       } finally {
