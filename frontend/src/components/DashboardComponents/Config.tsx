@@ -217,7 +217,7 @@ const Config = () => {
         <div className="flex flex-col items-center">
           <form
             onSubmit={handleSubmit}
-            className="bg-[#A29E9E] shadow-md px-8 mx-32 pt-6 pb-8 flex flex-col max-w-6xl mx-auto rounded-xl"
+            className="bg-[#A29E9E] shadow-md px-8 mx-32 pt-6 pb-8 flex flex-col max-w-6xl rounded-xl"
           >
             <div className="-mx-3 md:flex mb-6">
               <div className="md:w-1/2 px-3 mb-6 md:mb-0">
@@ -296,7 +296,7 @@ const Config = () => {
                 </div>
                 <div className="md:w-1/3 px-3">
                   <label className="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2">
-                    Vencimiento del registro
+                    V. Registro
                   </label>
                   <input
                     className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4"
