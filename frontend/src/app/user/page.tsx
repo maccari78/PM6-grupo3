@@ -15,7 +15,4 @@ const Userpage: FC = () => {
     );
 };
 
-
-
-
 export default Userpage;
