@@ -38,7 +38,7 @@ const VehicleCard: React.FC<ICar> = ({
     <div className="flex flex-col items-center h-[400px] min-h-[100px]  w-[350px]  mb-5 bg-[#222222] rounded-xl shadow-xl md:mr-4">
       <div
         className=" flex h-[196px]  bg-cover rounded-t-xl items-start  w-full"
-        style={{ backgroundImage: `url(${carImg[0]})` }}
+        style={{ backgroundImage: `url(${carImg![0]})` }}
       >
         {carAvailability ? (
           <span className="flex flex-row rounded-tl-xl justify-evenly items-center  w-[110px]   bg-[#222222] md:pr-2.5 md:py-0.5  ">
