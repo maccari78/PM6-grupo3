@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Param, Delete, Query, ParseUUIDPipe, UseGuards, Patch } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Query,
+  ParseUUIDPipe,
+  UseGuards,
+  Patch,
+} from '@nestjs/common';
 import { CarsService, FiltersCars } from './cars.service';
 import { CreateCarDto } from './dto/create-cars.dto';
 import { ApiTags } from '@nestjs/swagger';
@@ -7,9 +18,9 @@ import { Role } from 'src/users/utils/roles.enum';
 import { Roles } from 'src/users/utils/roles.decorator';
 
 @ApiTags('CARS')
-@Controller('cars')
-@UseGuards(RolesGuard)
 @Roles(Role.User, Role.Admin, Role.SuperAdmin)
+// @UseGuards(RolesGuard)
+// @Controller('cars')
 export class CarsController {
   constructor(private readonly carsService: CarsService) {}
 

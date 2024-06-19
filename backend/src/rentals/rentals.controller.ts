@@ -11,18 +11,24 @@ import {
   Put,
   Res /* UseGuards */,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import { RentalsService } from './rentals.service';
 import { CreateRentalDto } from './dto/create-rental.dto';
 import { UpdateRentalDto } from './dto/update-rental.dto';
 import { Response } from 'express';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { Roles } from 'src/users/utils/roles.decorator';
+import { Role } from 'src/users/utils/roles.enum';
+import { RolesGuard } from 'src/users/utils/roles.guard';
 
 @Controller('rentals')
 export class RentalsController {
   constructor(private readonly rentalsService: RentalsService) {}
 
   @Post(':id')
+  @Roles(Role.User, Role.Admin, Role.SuperAdmin)
+  @UseGuards(RolesGuard)
   async create(
     @Body() createRentalDto: CreateRentalDto,
     @Param('id', ParseUUIDPipe) postId: string,
@@ -43,12 +49,17 @@ export class RentalsController {
     return res.json({ url });
   }
 
+  @ApiBearerAuth()
   @Get()
+  @Roles(Role.Admin, Role.SuperAdmin)
+  @UseGuards(RolesGuard)
   findAll() {
     return this.rentalsService.findAll();
   }
 
   @Get('token')
+  @Roles(Role.User, Role.Admin, Role.SuperAdmin)
+  @UseGuards(RolesGuard)
   getChat(@Headers('Authorization') authorization: string) {
     const currentUser = authorization?.split(' ')[1];
     if (!currentUser)
@@ -71,7 +82,7 @@ export class RentalsController {
   paymentCancel(@Param('id', ParseUUIDPipe) id: string, @Res() res: Response) {
     const payment = this.rentalsService.paymentCancel(id);
     const CANCEL_CHECK_URL = process.env.CANCEL_CHECK_URL;
-    if (payment) res.redirect(`${CANCEL_CHECK_URL}/${id}`);
+    if (payment) res.redirect(`${CANCEL_CHECK_URL}`);
   }
 
   @Get(':id')

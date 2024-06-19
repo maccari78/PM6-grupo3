@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 import Swal from 'sweetalert2';
 
-const page = () => {
+const Page = () => {
   const [selectedSection, setSelectedSection] = useState('dashboard');
   const [userToken, setUserToken] = useState<string | null>(null);
   const [userData, setUserData] = useState<IUserAdm | null>(null);
@@ -111,4 +111,4 @@ const page = () => {
 };
 
 
-export default page
+export default Page
