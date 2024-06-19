@@ -45,8 +45,8 @@ export class UsersController {
   }
 
   @Get(':id')
-  @Roles(Role.Admin, Role.SuperAdmin)
-  @UseGuards(RolesGuard)
+  // @Roles(Role.Admin, Role.SuperAdmin)
+  // @UseGuards(RolesGuard)
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.usersService.findOne(id);
   }

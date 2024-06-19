@@ -124,3 +124,26 @@ export interface IUserAdm {
   createdAt: string;
   updatedAt: string;
 }
+export interface IUserDataAdm {
+  id: string;
+  email: string;
+  password: string;
+  name: string;
+  nDni: number;
+  rExpiration: string;
+  aboutMe: string | null;
+  addresses: Address[];
+  car: Car[];
+  createdAt: string;
+  image_url: string;
+  phone: string | null;
+  notifications: Notification[];
+  post: Post[];
+  rentals: Rental[];
+  reviews: Review[];
+  roles: string;
+  updatedAt: string;
+  userGoogle: boolean;
+  zip_code: string;
+  city: string;
+}
