@@ -42,6 +42,7 @@ export class UsersService {
       relations: [
         'car',
         'post',
+        'post.car',
         'rentals',
         'notifications',
         'addresses',
@@ -276,18 +277,15 @@ export class UsersService {
       relations: ['addresses'],
     });
     if (!user) throw new NotFoundException('Usuario no encontrado');
-    const { password,  ...rest } = updateUserDto;
+    const { password, ...rest } = updateUserDto;
 
-
-
-    // //check if the user is there 
+    // //check if the user is there
     // if (roles && roles !== user.roles) {
     //   const currentUser = await this.getCurrentUser(); // Obtener el usuario actual (ajusta según tu lógica de autenticación)
     //   if (currentUser.roles !== Role.SuperAdmin) {
     //     throw new UnauthorizedException('Solo el SuperAdmin puede cambiar roles');
     //   }
     // }
-
 
     await this.changePassword(password, user.password, user.id);
 
