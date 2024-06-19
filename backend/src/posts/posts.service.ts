@@ -18,6 +18,7 @@ import { JwtService } from '@nestjs/jwt';
 import { FiltersPosts } from './interfaces/filter.interfaces';
 import { Review } from 'src/reviews/entities/review.entity';
 import { Rental } from 'src/rentals/entities/rental.entity';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Injectable()
 export class PostsService {
@@ -28,6 +29,7 @@ export class PostsService {
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(Review) private reviewRepository: Repository<Review>,
     @InjectRepository(Rental) private rentalRepository: Repository<Rental>,
+    private notificationService: NotificationsService,
     private jwtService: JwtService,
   ) {}
 
@@ -159,7 +161,7 @@ export class PostsService {
       {where: {id},  relations: ['car',"rentals"]},);
     if (!reservation) throw new Error('Reservation not found');
 
-    reservation.isDeleted = false;
+    reservation.isDeleted = true;
     reservation.car.availability = true;
     
     //Delete rental when cancel reservation
@@ -168,9 +170,52 @@ export class PostsService {
          await this.rentalRepository.delete(rental.id);
       }
     ))
-
+    
     await this.postRepository.save(reservation);
     
+  }
+
+  async sendToCancelReservation (id: string) {
+    // Cancelar la reserva llamando al método cancel
+    await this.cancel(id);
+    console.log(' INICIO Probando de envio de email propietario y inquilino');
+
+
+    // const contractID = await this.cancel(id);
+    // console.log(contractID);
+    // // if (!contractID) throw new NotFoundException('El contrato no fue creado');
+
+    const contract = await this.rentalRepository.findOne({
+      where: { id },
+      relations: ['users', 'posts', ],
+    });
+    // console.log('Este es el contrato:', contract);
+    if (!contract) throw new NotFoundException('Contrato no encontrado');
+    
+    // Obtener el ID del usuario que publicó la reserva
+    const userPosts = contract.posts?.user?.id;
+
+    // Obtener el usuario que realizó la reserva (excluyendo al propietario del post)
+    const userPay = contract.users?.filter((user) => user.id !== userPosts);
+    if (!userPay || userPay.length === 0) throw new NotFoundException('Error al realizar el pago');
+
+    const owner = contract.posts?.user;
+    const contractPost = contract.posts;
+
+    // Enviar notificación al propietario sobre la cancelación
+    await this.notificationService.newNotification(
+      owner.email,
+      'cancelReservation',
+      contractPost,
+    );
+
+    // Enviar notificación al inquilino sobre la cancelación
+    await this.notificationService.newNotification(
+      userPay[0].email,
+      'cancelTenantReservation',
+    );
+    console.log(' FIN Probando de envio de email propietario y inquilino');
+    return 'Reserva cancelada con éxito';
   }
 
 

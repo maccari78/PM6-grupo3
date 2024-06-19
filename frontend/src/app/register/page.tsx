@@ -7,11 +7,14 @@ import IRegisterErrorProps from "../../interfaces/IRegisterErrorProps";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Swal from "sweetalert2";
+import SkeletonDashboard from "@/components/sketelons/SkeletonDashboard";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_SIGNUP_URL;
 if (!apiUrl) {
   throw new Error("Environment variable NEXT_PUBLIC_API_POSTS is not set");
 }
+
+const authApi = process.env.NEXT_PUBLIC_API_AUTH_LOGIN;
 
 const Register = () => {
   const router = useRouter();
@@ -30,8 +33,8 @@ const Register = () => {
     address: "",
   };
   const [userData, setUserData] = useState<IUserData>(initialUserData);
-
   const [errors, setErrors] = useState<IRegisterErrorProps>({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -51,7 +54,6 @@ const Register = () => {
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = event.target;
-    
 
     setErrors((prevState) => ({
       ...prevState,
@@ -81,7 +83,7 @@ const Register = () => {
       nDni: Number(userData.nDni),
       phone: Number(userData.phone),
     };
-
+    setIsLoading(true);
     axios
       .post(apiUrl, auth)
       .then((response) => {
@@ -90,27 +92,33 @@ const Register = () => {
           Swal.fire({
             title: "Usuario registrado correctamente",
             text: "El usuario pudo registrarse correctamente en la aplicacion",
-            icon: "success"
+            icon: "success",
           });
+          setIsLoading(false);
           router.push("/login");
         } else {
           Swal.fire({
             title: "Error al Registrarse",
             text: `${response.data}`,
-            icon: "error"
+            icon: "error",
           });
+          setIsLoading(false);
         }
       })
       .catch((error) => {
         Swal.fire({
           title: "Error al Registrarse",
           text: "Ha ocurrido un error en la conexión",
-          icon: "error"
+          icon: "error",
         });
-       
+        setIsLoading(false);
         console.error("Error:", error);
       });
   };
+
+  if (isLoading) {
+    return <SkeletonDashboard></SkeletonDashboard>;
+  }
 
   return (
     <div className="font-sans text-white m-0 bg-[url('/background_register_2.svg')] bg-no-repeat bg-cover relative z-3 w-full pt-[70px] px-[30px] pb-[44px] flex justify-center items-center min-h-screen bg-gray-900 h-min ">
@@ -296,7 +304,7 @@ const Register = () => {
                   Contraseña
                 </label>
                 <input
-                  type= "text"
+                  type="text"
                   id="password"
                   name="password"
                   className="w-full px-3 py-2 border rounded-lg focus:outline-none text-black focus:border-blue-500"
@@ -343,7 +351,7 @@ const Register = () => {
           </form>
           <div className="flex justify-center">
             <Link
-              href="http://localhost:3001/auth/google/login"
+              href={`${authApi}`}
               className="w-3/4 transition duration-200 border border-gray-200 text-slate-50 hover:shadow-[#c3ff0d92] py-2.5 rounded-lg text-sm shadow-sm hover:shadow-md font-normal text-center"
             >
               Ingresar con Google
