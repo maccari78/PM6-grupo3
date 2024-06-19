@@ -20,6 +20,7 @@ const ReviewsAdm: React.FC = () => {
   const [sortField, setSortField] = useState<string | null>(null);
   const [userToken, setUserToken] = useState<string | null>(null);
   const router = useRouter();
+  const [reload, setReload] = useState<boolean>(true)
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
       const userSession = localStorage.getItem("userSession");
@@ -56,14 +57,35 @@ const ReviewsAdm: React.FC = () => {
     };
 
     fetchData();
-  }, []);
+  }, [reload]);
 
   const handleEdit = (review: IReview) => {
     setEditingReviewId(editingReviewId === review.id ? null : review.id);
     setEditForm(review);
   };
 
-  const handleDelete = (reviewId: string) => {
+  const handleDelete = async(reviewId: string) => {
+    try {
+      const response = await fetch(`${apiUrl}/reviews/${reviewId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        setEditingReviewId(editingReviewId === reviewId ? null : reviewId);
+        Swal.fire('Borrado', 'La Review ah sido borrada', 'success');
+        setReload(false)
+      } else {
+        throw new Error('Error de borrado del review');
+      }
+    } catch (error: any) {
+      console.error('Error delete review:', error.message);
+      Swal.fire('Error', 'No se pudo Eliminar la reseña', 'error');
+    }
+    setReload(true)
     setReviews(reviews.filter(review => review.id !== reviewId));
   };
 
@@ -89,7 +111,7 @@ const ReviewsAdm: React.FC = () => {
         setReviews(reviews.map(r => (r.id === review.id ? updatedReview : r)));
         setEditingReviewId(null);
         setEditForm({});
-        
+        setReload(false)
       } else {
         Swal.fire({
           title: "Error",
@@ -99,6 +121,8 @@ const ReviewsAdm: React.FC = () => {
       }
     } catch (error: any) {
     
+    }finally{
+      setReload(true)
     }
   };
 

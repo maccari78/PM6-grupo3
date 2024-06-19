@@ -187,6 +187,10 @@ const Navbar: React.FC = () => {
     }
   };
 
+  const handleLinkClick = () => {
+    setShowResults(false);
+  };
+
   return (
     <header className="flex flex-row justify-around items-center bg-[#222222] text-white h-[80px] font-sans">
       <div className="flex flex-row gap-4 items-center">
@@ -264,7 +268,7 @@ const Navbar: React.FC = () => {
           <div className="hidden flex-col gap-5 bg-[#3b3b3b] justify-center px-4 rounded-2xl mt-1 py-3 w-[500px]"></div>
         ) : (
           showResults && (
-            <div className="absolute z-40  flex flex-col gap-5 bg-[#3b3b3b] justify-center px-4 rounded-2xl mt-1 py-3 w-[500px]">
+            <div className="absolute z-40 overflow-y-clip  flex flex-col gap-5 bg-[#3b3b3b] justify-center px-4 rounded-2xl mt-1 py-3 w-[500px]">
               {noResults ? (
                 <h2 className="text-lg font-bold text-[#c2e94e]">
                   No se encontraron resultados...
@@ -275,7 +279,11 @@ const Navbar: React.FC = () => {
                     const titleSlice = post.title.slice(0, 20);
 
                     return (
-                      <Link key={post.id} href={`vehicle/${post.id}`}>
+                      <Link
+                        key={post.id}
+                        href={`vehicle/${post.id}`}
+                        onClick={handleLinkClick}
+                      >
                         <li className="flex flex-row gap-5 items-center py-[4px] hover:bg-[#222222]  rounded-xl duration-200">
                           <div className="w-[50] h-[50px]">
                             <img
@@ -312,7 +320,11 @@ const Navbar: React.FC = () => {
                           <p>({car.color})</p>
                           {car.post.map((post) => {
                             return (
-                              <Link key={post.id} href={`vehicle/${post.id}`}>
+                              <Link
+                                key={post.id}
+                                href={`vehicle/${post.id}`}
+                                onClick={handleLinkClick}
+                              >
                                 <li className="flex flex-row gap-5 items-center py-[4px] hover:bg-[#222222] px-4 rounded-xl duration-200">
                                   <p className="text-[#c2e94e] text-[18px] hover:underline">
                                     Ver

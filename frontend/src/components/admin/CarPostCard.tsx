@@ -19,7 +19,9 @@ const CarPostCard: React.FC = () => {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [sortField, setSortField] = useState<string | null>(null);
   const [userToken, setUserToken] = useState<string | null>(null);
+  const [reload, setReload] = useState<boolean>(true)
   const router = useRouter();
+
 
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
@@ -39,6 +41,7 @@ const CarPostCard: React.FC = () => {
         const data: IPost[] = await response.json();
         if (Array.isArray(data)) {
           setCarPosts(data);
+          console.log(data)
         } else {
           console.error('Expected an array but received:', data);
           setCarPosts([]);
@@ -49,7 +52,7 @@ const CarPostCard: React.FC = () => {
     };
 
     fetchData();
-  }, []);
+  }, [reload]);
 
   const handleEdit = (post: IPost) => {
     setEditingCarPostId(editingCarPostId === post.id ? null : post.id);
@@ -66,7 +69,26 @@ const CarPostCard: React.FC = () => {
     });
   };
 
-  const handleDelete = (postId: string) => {
+  const handleDelete = async (postId: string) => {
+    try {
+      const response = await fetch(`${apiUrl}/soft-delete/${postId}`, {
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        setCarPosts(carPosts.filter(post => post.id !== postId));
+        Swal.fire('Borrado logico', 'La publicacion ah sido borrado', 'success');
+      } else {
+        throw new Error('Error de borrado del post');
+      }
+    } catch (error: any) {
+      console.error('Error delete car:', error.message);
+      Swal.fire('Error', 'No se pudo Eliminar la publicacion', 'error');
+    }
     setCarPosts(carPosts.filter(post => post.id !== postId));
   };
 
@@ -86,11 +108,14 @@ const CarPostCard: React.FC = () => {
         setCarPosts(carPosts.map(p => (p.id === post.id ? updatedPost : p)));
         setEditingCarPostId(null);
         setEditForm({});
+        setReload(false)
       } else {
         console.error('Failed to update the post');
       }
     } catch (error: any) {
       console.error('Error updating the post:', error.message);
+    }finally{
+      setReload(true)
     }
   };
 
@@ -161,7 +186,7 @@ const CarPostCard: React.FC = () => {
                 />
                 <input
                   type="number"
-                  value={editForm.price || 0}
+                  value={editForm.price}
                   onChange={(e) => setEditForm({ ...editForm, price: parseInt(e.target.value) })}
                   className="mb-2 p-2 border rounded-md w-full"
                 />
