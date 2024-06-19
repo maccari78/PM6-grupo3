@@ -4,10 +4,12 @@ import IUserData from "../../interfaces/IRegisterProps";
 import { validateRegister } from "@/helpers/validateRegister";
 import axios from "axios";
 import IRegisterErrorProps from "../../interfaces/IRegisterErrorProps";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import Link from "next/link";
 import Swal from "sweetalert2";
 import SkeletonDashboard from "@/components/sketelons/SkeletonDashboard";
+import { LuEye } from "react-icons/lu";
+import { FiEyeOff } from "react-icons/fi";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_SIGNUP_URL;
 if (!apiUrl) {
@@ -35,6 +37,16 @@ const Register = () => {
   const [userData, setUserData] = useState<IUserData>(initialUserData);
   const [errors, setErrors] = useState<IRegisterErrorProps>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [token, setToken] = useState();
+  const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.localStorage) {
+      const userToken = localStorage.getItem("userSession");
+      setToken(JSON.parse(userToken!));
+      userToken && redirect("/");
+    }
+  }, []);
 
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -114,6 +126,10 @@ const Register = () => {
         setIsLoading(false);
         console.error("Error:", error);
       });
+  };
+
+  const handleShowPass = () => {
+    setShowPassword(!showPassword);
   };
 
   if (isLoading) {
@@ -303,16 +319,29 @@ const Register = () => {
                 <label className="block text-white mb-2" htmlFor="password">
                   Contraseña
                 </label>
-                <input
-                  type="text"
-                  id="password"
-                  name="password"
-                  className="w-full px-3 py-2 border rounded-lg focus:outline-none text-black focus:border-blue-500"
-                  required
-                  onChange={handleOnChange}
-                  onBlur={handleBlur}
-                  value={userData.password}
-                />
+                <div className="flex row">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    id="password"
+                    name="password"
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none text-black focus:border-blue-500"
+                    required
+                    onChange={handleOnChange}
+                    onBlur={handleBlur}
+                    value={userData.password}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleShowPass}
+                    className="hover:bg-[#222222] px-2 rounded-xl py-2 flex flex-row justify-center items-center duration-200"
+                  >
+                    {showPassword ? (
+                      <LuEye className=" text-[#a6cc32]" />
+                    ) : (
+                      <FiEyeOff className=" text-[#a6cc32]" />
+                    )}
+                  </button>
+                </div>
                 {errors.password && (
                   <p className="text-red-500 text-sm">{errors.password}</p>
                 )}
@@ -325,7 +354,7 @@ const Register = () => {
                   Confirmar Contraseña
                 </label>
                 <input
-                  type="text"
+                  type={showPassword ? "text" : "password"}
                   id="confirmPassword"
                   name="confirmPassword"
                   className="w-full px-3 py-2 border rounded-lg focus:outline-none text-black focus:border-blue-500"

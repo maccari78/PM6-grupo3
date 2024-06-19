@@ -52,12 +52,14 @@ const About = () => {
                   <Link
                     href="https://www.linkedin.com/in/camilo-sierra-36ba612b2/"
                     className="px-2 py-2 hover:bg-[#555454] rounded-full duration-200"
+                    target="_blank" rel="noreferrer"
                   >
                     <FaLinkedin className="w-6 h-6 bg-gray-300 text-[#0A66C2] rounded-[2px]" />
                   </Link>
                   <Link
                     href="https://github.com/CAndresSierra"
                     className="px-2 py-2 hover:bg-[#555454] rounded-full duration-200"
+                    target="_blank" rel="noreferrer"
                   >
                     <FaGithub className="w-6 h-6 py-[1px] bg-gray-200 text-gray-800 rounded-full" />
                   </Link>
@@ -83,12 +85,14 @@ const About = () => {
                   <Link
                     href="https://www.linkedin.com/in/alvarezmajuan/"
                     className="px-2 py-2 hover:bg-[#555454] rounded-full duration-200"
+                    target="_blank" rel="noreferrer"
                   >
                     <FaLinkedin className="w-6 h-6 bg-gray-300 text-[#0A66C2] rounded-[2px]" />
                   </Link>
                   <Link
                     href="https://github.com/AlvarezMar"
                     className="px-2 py-2 hover:bg-[#555454] rounded-full duration-200"
+                    target="_blank" rel="noreferrer"
                   >
                     <FaGithub className="w-6 h-6 py-[1px] bg-gray-200 text-gray-800 rounded-full" />
                   </Link>
@@ -114,12 +118,14 @@ const About = () => {
                   <Link
                     href="https://www.linkedin.com/in/darvin-ricardo-alania-inocencio-7927392a9/"
                     className="px-2 py-2 hover:bg-[#555454] rounded-full duration-200"
+                    target="_blank" rel="noreferrer"
                   >
                     <FaLinkedin className="w-6 h-6 bg-gray-300 text-[#0A66C2] rounded-[2px]" />
                   </Link>
                   <Link
                     href="https://github.com/DAlaniaInocencio"
                     className="px-2 py-2 hover:bg-[#555454] rounded-full duration-200"
+                    target="_blank" rel="noreferrer"
                   >
                     <FaGithub className="w-6 h-6 py-[1px] bg-gray-200 text-gray-800 rounded-full" />
                   </Link>
@@ -145,12 +151,14 @@ const About = () => {
                   <Link
                     href="https://www.linkedin.com/in/maccari78/"
                     className="px-2 py-2 hover:bg-[#555454] rounded-full duration-200"
+                    target="_blank" rel="noreferrer"
                   >
                     <FaLinkedin className="w-6 h-6 bg-gray-300 text-[#0A66C2] rounded-[2px]" />
                   </Link>
                   <Link
                     href="https://github.com/maccari78"
                     className="px-2 py-2 hover:bg-[#555454] rounded-full duration-200"
+                    target="_blank" rel="noreferrer"
                   >
                     <FaGithub className="w-6 h-6 py-[1px] bg-gray-200 text-gray-800 rounded-full" />
                   </Link>
@@ -176,12 +184,14 @@ const About = () => {
                   <Link
                     href="https://www.linkedin.com/in/camila-fabre/"
                     className="px-2 py-2 hover:bg-[#555454] rounded-full duration-200"
+                    target="_blank" rel="noreferrer"
                   >
                     <FaLinkedin className="w-6 h-6 bg-gray-300 text-[#0A66C2] rounded-[2px]" />
                   </Link>
                   <Link
                     href="https://github.com/cfcamilafabre"
                     className="px-2 py-2 hover:bg-[#555454] rounded-full duration-200"
+                    target="_blank" rel="noreferrer"
                   >
                     <FaGithub className="w-6 h-6 py-[1px] bg-gray-200 text-gray-800 rounded-full" />
                   </Link>
@@ -207,12 +217,14 @@ const About = () => {
                   <Link
                     href="https://www.linkedin.com/in/vcuellojrs/"
                     className="px-2 py-2 hover:bg-[#555454] rounded-full duration-200"
+                    target="_blank" rel="noreferrer"
                   >
                     <FaLinkedin className="w-6 h-6 bg-gray-300 text-[#0A66C2] rounded-[2px]" />
                   </Link>
                   <Link
-                    href=""
+                    href="https://github.com/emacuello"
                     className="px-2 py-2 hover:bg-[#555454] rounded-full duration-200"
+                    target="_blank" rel="noreferrer"
                   >
                     <FaGithub className="w-6 h-6 py-[1px] bg-gray-200 text-gray-800 rounded-full" />
                   </Link>
@@ -238,12 +250,14 @@ const About = () => {
                   <Link
                     href="https://www.linkedin.com/in/gerokramar/"
                     className="px-2 py-2 hover:bg-[#555454] rounded-full duration-200"
+                    target="_blank" rel="noreferrer"
                   >
                     <FaLinkedin className="w-6 h-6 bg-gray-300 text-[#0A66C2] rounded-[2px]" />
                   </Link>
                   <Link
                     href="https://github.com/GeroKramar"
                     className="px-2 py-2 hover:bg-[#555454] rounded-full duration-200"
+                    target="_blank" rel="noreferrer"
                   >
                     <FaGithub className="w-6 h-6 py-[1px] bg-gray-200 text-gray-800 rounded-full" />
                   </Link>
