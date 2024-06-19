@@ -1,6 +1,7 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Notification } from 'src/notifications/entities/notification.entity';
 import { Rental } from 'src/rentals/entities/rental.entity';
 import { Repository } from 'typeorm';
 
@@ -9,6 +10,8 @@ export class MailService {
   constructor(
     private readonly mailerservice: MailerService,
     @InjectRepository(Rental) private rentalsRepository: Repository<Rental>,
+    @InjectRepository(Notification)
+    private notificationsRepository: Repository<Notification>,
   ) {}
   async sendEmail(user, template: string, contractPost?: any) {
     switch (template) {
@@ -122,10 +125,7 @@ export class MailService {
         }
       }
 
-
-
-      case 'cancelOwnerReservation': 
-        {
+      case 'cancelOwnerReservation': {
         //To search totalCost
         const PRICE = user.rentals.filter((post) => ({
           priceTotal: post.totalCost,
@@ -173,12 +173,11 @@ export class MailService {
         }
       }
 
-      case 'cancelTenantReservation':
-        {
+      case 'cancelTenantReservation': {
         // To search name of tenant
         const nameTenant = await this.rentalsRepository.find({
-          where: {posts: {id: contractPost.id}},
-          relations: {users: true},
+          where: { posts: { id: contractPost.id } },
+          relations: { users: true },
         });
         //To search totalCost
         const PRICE = user.rentals.filter((post) => ({
@@ -228,7 +227,6 @@ export class MailService {
       }
 
       case 'cancelReservation': {
-
         try {
           await this.mailerservice.sendMail({
             to: user.email,
@@ -382,9 +380,109 @@ export class MailService {
     }
   }
 
-  async newChat(sender, receiver, template: string) {
-    console.log('Este es el sender', sender);
-    console.log('Este es el receiver', receiver);
-    console.log('Este es el template', template);
+  async newChat(sender, receiver) {
+    console.log('este es el sender', sender);
+    console.log('este es el receiver', receiver);
+
+    function encontrarNotificacionMasReciente(notifications, templateMessage) {
+      // Filtrar las notificaciones por el tipo deseado
+      const notificacionesFiltradas = notifications.filter(
+        (notification) => notification.template_message === templateMessage,
+      );
+
+      // Si no hay notificaciones de ese tipo, regresar null
+      if (notificacionesFiltradas.length === 0) {
+        return null;
+      }
+
+      // Encontrar la notificación más reciente
+      return notificacionesFiltradas.reduce(
+        (notificacionMasReciente, currentNotification) => {
+          return new Date(currentNotification.createdAt) >
+            new Date(notificacionMasReciente.createdAt)
+            ? currentNotification
+            : notificacionMasReciente;
+        },
+      );
+    }
+
+    if (receiver.notifications) {
+      const found = encontrarNotificacionMasReciente(
+        receiver.notifications,
+        'newChat',
+      );
+
+      if (!found) {
+        try {
+          await this.mailerservice.sendMail({
+            to: receiver.email,
+            subject: 'You Drive. Alquila Autos Facilmente',
+            template: 'newChat',
+            context: {
+              receiver: receiver.name,
+              sender: sender.name,
+            },
+            attachments: [
+              {
+                filename: 'logo.png',
+                path: 'https://res.cloudinary.com/dkent00db/image/upload/v1718734167/logo_u94niq.png',
+                cid: 'imagename',
+              },
+            ],
+          });
+
+          const notification = this.notificationsRepository.create({
+            template_message: 'newChat',
+          });
+
+          notification.user = receiver;
+
+          await this.notificationsRepository.save(notification);
+
+          return { message: 'Correo enviado exitosamente' };
+        } catch (error) {
+          console.error(error);
+          throw new BadRequestException(
+            'El correo no pudo ser enviado exitosamente',
+          );
+        }
+      } else {
+        return { message: 'Notificación ya enviada' };
+      }
+    } else {
+      try {
+        await this.mailerservice.sendMail({
+          to: receiver.email,
+          subject: 'You Drive. Alquila Autos Facilmente',
+          template: 'newChat',
+          context: {
+            receiver: receiver.name,
+            sender: sender.name,
+          },
+          attachments: [
+            {
+              filename: 'logo.png',
+              path: 'https://res.cloudinary.com/dkent00db/image/upload/v1718734167/logo_u94niq.png',
+              cid: 'imagename',
+            },
+          ],
+        });
+
+        const notification = this.notificationsRepository.create({
+          template_message: 'newChat',
+        });
+
+        notification.user = receiver;
+
+        await this.notificationsRepository.save(notification);
+
+        return { message: 'Correo enviado exitosamente' };
+      } catch (error) {
+        console.error(error);
+        throw new BadRequestException(
+          'El correo no pudo ser enviado exitosamente',
+        );
+      }
+    }
   }
 }

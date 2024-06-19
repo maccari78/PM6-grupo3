@@ -29,7 +29,7 @@ export class ChatService {
     const postId = room_id.substring(0, 36);
     const post = await this.postsRepository.findOne({
       where: { id: postId },
-      relations: ['user'],
+      relations: ['user', 'user.notifications'],
     });
     if (!post) throw new NotFoundException('Publicacion no encontrada');
 

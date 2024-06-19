@@ -12,6 +12,7 @@ import { CreateChatDto } from './dto/create-chat.dto';
 
 import { Server, Socket } from 'socket.io';
 import { MessageChat } from './interfaces/usersChat.interfaces';
+import { MailService } from 'src/mail/mail.service';
 
 const PORT = Number(process.env.PORT_WS) || 3002;
 @WebSocketGateway(PORT, {
@@ -22,7 +23,10 @@ const PORT = Number(process.env.PORT_WS) || 3002;
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   public server: Server;
-  constructor(private readonly chatService: ChatService) {}
+  constructor(
+    private readonly chatService: ChatService,
+    private readonly mailService: MailService,
+  ) {}
 
   handleConnection(client: Socket) {
     console.log('Client connected: ' + client.id);
@@ -54,11 +58,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       return;
     }
     const message: MessageChat = await this.chatService.create(payload, token);
+
+    await this.mailService.newChat(message.sender, message.receiver);
+
     if (!message) {
       client.disconnect();
       return;
     }
-    console.log(message);
 
     client.broadcast.emit(`${payload.room_id}`, message);
   }
