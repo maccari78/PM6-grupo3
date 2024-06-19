@@ -89,54 +89,71 @@ const ButtonCheckout = ({
         });
         return;
       } else {
-        setLoadingButton(true);
-        try {
-          if (postState) {
-            const rentalData: IRental = {
-              rentalStartDate: startDate!,
-              rentalEndDate: endDate!,
-              price: pricePost!,
+        Swal.fire({
+          title: "¿Estas seguro de reservar?",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Si, ¡Quiero reservar!",
+          cancelButtonText: "Cancelar",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            setLoadingButton(true);
+
+            const callCheckout = async () => {
+              try {
+                if (postState) {
+                  const rentalData: IRental = {
+                    rentalStartDate: startDate!,
+                    rentalEndDate: endDate!,
+                    price: pricePost!,
+                  };
+
+                  window.localStorage.setItem(
+                    "checkoutPost",
+                    JSON.stringify(rentalData)
+                  );
+                  const storageRent =
+                    window.localStorage.getItem("checkoutPost");
+                  const postToRental: IRental = JSON.parse(storageRent!);
+
+                  const res = await fetch(`${apiBaseUrl}/rentals/${id}`, {
+                    method: "POST",
+                    body: JSON.stringify({
+                      rentalStartDate: postToRental.rentalStartDate,
+                      rentalEndDate: postToRental.rentalEndDate,
+                      name: postState.title,
+                      price: postToRental.price,
+                      image_url: postState.car.image_url[0],
+                      description: postState.description,
+                    }),
+                    headers: {
+                      "Content-Type": "application/json",
+                      Authorization: `Bearer ${userToken!}`,
+                    },
+                  });
+
+                  if (!res.ok) {
+                    throw new Error(`Error: ${res.statusText}`);
+                  }
+
+                  const session = await res.json();
+                  window.location.href = session.url;
+                } else {
+                  console.error(
+                    "Error: Missing required postState, startDate, endDate, or pricePost"
+                  );
+                }
+              } catch (error: any) {
+                console.log(error.message);
+              } finally {
+                setLoadingButton(false);
+              }
             };
-
-            window.localStorage.setItem(
-              "checkoutPost",
-              JSON.stringify(rentalData)
-            );
-            const storageRent = window.localStorage.getItem("checkoutPost");
-            const postToRental: IRental = JSON.parse(storageRent!);
-
-            const res = await fetch(`${apiBaseUrl}/rentals/${id}`, {
-              method: "POST",
-              body: JSON.stringify({
-                rentalStartDate: postToRental.rentalStartDate,
-                rentalEndDate: postToRental.rentalEndDate,
-                name: postState.title,
-                price: postToRental.price,
-                image_url: postState.car.image_url[0],
-                description: postState.description,
-              }),
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${userToken!}`,
-              },
-            });
-
-            if (!res.ok) {
-              throw new Error(`Error: ${res.statusText}`);
-            }
-
-            const session = await res.json();
-            window.location.href = session.url;
-          } else {
-            console.error(
-              "Error: Missing required postState, startDate, endDate, or pricePost"
-            );
+            callCheckout();
           }
-        } catch (error: any) {
-          console.log(error.message);
-        } finally {
-          setLoadingButton(false);
-        }
+        });
       }
     } else {
       const Toast = Swal.mixin({
