@@ -1,15 +1,16 @@
 'use client';
 import validate from "@/helpers/validate";
 import { useEffect, useState } from "react";
-import IVehicleData from "../../../../interfaces/IVehicleData";
-import IErrorsVehicleForm from "../../../../interfaces/IErrorsVehicleForm";
+import IVehicleData from "../../../interfaces/IVehicleData";
+import IErrorsVehicleForm from "../../../interfaces/IErrorsVehicleForm";
 import axios from 'axios';
 import { useRouter, useParams } from "next/navigation";
 import SkeletonDashboard from "@/components/sketelons/SkeletonDashboard";
 import Swal from "sweetalert2";
 
-const UploadPost = () => {
-    const { id } = useParams(); 
+
+const UploadPost = ({ params }: { params: { id: string } }) => {
+    const id = params.id; 
     const router = useRouter();
     const apiUrl = `${process.env.NEXT_PUBLIC_API_POSTS}/${id}`; 
     if (!apiUrl) {
@@ -76,7 +77,10 @@ const UploadPost = () => {
 
       fetchVehicleData();
         
-    }, []);
+
+    }, [router]);
+
+
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value, files } = e.target as HTMLInputElement;
@@ -130,6 +134,7 @@ const UploadPost = () => {
             }
             setIsLoading(true)
             try {
+
                 // Enviar los datos al servidor
                 const response = await axios.put(apiUrl, formData, {
                     headers: {
@@ -161,7 +166,7 @@ const UploadPost = () => {
             }
         }
     };
-// Si el usuario no es el propietario, mostrar un mensaje de error o redirigir
+
         // if (!isOwner) {
         //     return <div>No tienes permiso para editar esta publicación.</div>;
         // }

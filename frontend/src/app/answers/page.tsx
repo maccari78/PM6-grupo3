@@ -6,24 +6,24 @@ const FAQ = () => {
 
   const faqs = [
     {
-      question: "¿Qué es You Drive?",
-      answer: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae, temporibus repudiandae? Perspiciatis qui quas totam dignissimos ab sequi labore ipsum laudantium at? Tempora nostrum ea odit distinctio, ex explicabo ipsum?",
+      question: "¿Qué es YouDrive?",
+      answer: "YouDrive es una plataforma innovadora que facilita el alquiler de vehículos de manera rápida y segura, conectando a propietarios de autos con usuarios que necesitan rentar un vehículo por cortos o largos períodos.",
     },
     {
       question: "¿Cómo puedo contactarme con soporte?",
-      answer: "Puedes contactarte con soporte a través de nuestro formulario de contacto o llamando al 123-456-7890.",
+      answer: "Puedes contactarte con soporte llamando al 123-456-7890.",
     },
     {
       question: "¿Cuáles son los requisitos para alquilar mi auto?",
-      answer: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae, temporibus repudiandae? Perspiciatis qui quas totam dignissimos ab sequi labore ipsum laudantium at? Tempora nostrum ea odit distinctio, ex explicabo ipsum?",
+      answer: "Para alquilar tu auto en YouDrive, debes ser propietario del vehículo, tener una licencia de conducir válida, y proporcionar una copia del seguro del auto. También es necesario que el auto cumpla con nuestros estándares de seguridad y mantenimiento.",
     },
     {
       question: "¿YouDrive cobra comisión por alquiler?",
-      answer: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae, temporibus repudiandae? Perspiciatis qui quas totam dignissimos ab sequi labore ipsum laudantium at? Tempora nostrum ea odit distinctio, ex explicabo ipsum?",
+      answer: "Sí, YouDrive cobra una comisión del 5% sobre el monto total del alquiler. Esta comisión cubre los costos de operación y mantenimiento de la plataforma, así como el soporte al cliente.",
     },
     {
       question: "¿Cómo funcionan las reservas?",
-      answer: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae, temporibus repudiandae? Perspiciatis qui quas totam dignissimos ab sequi labore ipsum laudantium at? Tempora nostrum ea odit distinctio, ex explicabo ipsum?",
+      answer: "Las reservas en YouDrive se realizan a través de nuestra plataforma en línea. Los usuarios pueden buscar y seleccionar un vehículo disponible, elegir las fechas de alquiler, y confirmar la reserva realizando el pago correspondiente. Los propietarios recibirán una notificación con los detalles de la reserva y pueden aceptar o rechazar la solicitud.",
     },
   ];
 
