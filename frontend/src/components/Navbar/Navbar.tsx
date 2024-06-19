@@ -337,7 +337,7 @@ const Navbar: React.FC = () => {
           <button className="flex flex-row items-center justify-center">
             <Link
               href="/about"
-              className="text-sm text-gray-100 font-medium hover:text-gray-400 duration-150"
+              className="text-base text-gray-100 font-medium hover:text-gray-400 duration-150"
             >
               Sobre nosotros
             </Link>
@@ -348,7 +348,7 @@ const Navbar: React.FC = () => {
           <button className="flex flex-row items-center justify-center">
             <Link
               href="/answers"
-              className="text-sm text-gray-100 font-medium hover:text-gray-400 duration-150"
+              className="text-base text-gray-100 font-medium hover:text-gray-400 duration-150"
             >
               Preguntas frecuentes
             </Link>
@@ -359,7 +359,7 @@ const Navbar: React.FC = () => {
           <button className="flex flex-row items-center justify-center">
             <Link
               href="/"
-              className="text-sm text-gray-100 font-medium hover:text-gray-400 duration-150"
+              className="text-base text-gray-100 font-medium hover:text-gray-400 duration-150"
             >
               Contacto
             </Link>
