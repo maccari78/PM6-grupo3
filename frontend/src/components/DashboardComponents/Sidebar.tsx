@@ -103,7 +103,7 @@ const Sidebar = () => {
             <small className="text-center text-xs font-medium"></small>
           </Link>
           <Link
-            href={userId ? `/${userId}` : "/"}
+            href={userId ? `/user/${userId}` : "/"}
             className="flex aspect-square min-h-[32px] w-16 flex-col items-center justify-center gap-1 rounded-md p-1.5 text-gray-200 hover:bg-[#202020]"
           >
             <svg
