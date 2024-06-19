@@ -39,6 +39,7 @@ const CarPostCard: React.FC = () => {
         const data: IPost[] = await response.json();
         if (Array.isArray(data)) {
           setCarPosts(data);
+          console.log(data)
         } else {
           console.error('Expected an array but received:', data);
           setCarPosts([]);
@@ -66,7 +67,26 @@ const CarPostCard: React.FC = () => {
     });
   };
 
-  const handleDelete = (postId: string) => {
+  const handleDelete = async (postId: string) => {
+    try {
+      const response = await fetch(`${apiUrl}/soft-delete/${postId}`, {
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        setCarPosts(carPosts.filter(post => post.id !== postId));
+        Swal.fire('Borrado logico', 'La publicacion ah sido borrado', 'success');
+      } else {
+        throw new Error('Error de borrado del post');
+      }
+    } catch (error: any) {
+      console.error('Error delete car:', error.message);
+      Swal.fire('Error', 'No se pudo Eliminar la publicacion', 'error');
+    }
     setCarPosts(carPosts.filter(post => post.id !== postId));
   };
 

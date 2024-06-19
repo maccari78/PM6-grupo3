@@ -159,14 +159,35 @@ const VehicleForm = () => {
     "Chevrolet",
     "Mazda",
     "Ford",
-    "Ferrari",
     "Toyota",
+    "Ferrari",
     "Honda",
     "Volkswagen",
     "Audi",
     "Jeep",
+    "Mercedes-Benz",
+    "Fiat",
     "Renault",
-    "Otra",
+    "Nissan",
+    "Peugeot",
+    "BMW",
+    "Otra...",
+  ];
+
+  const models = [
+    "F-150",
+    "Sorento",
+    "Camaro",
+    "Picanto",
+    "Focus",
+    "Stradale",
+    "A3",
+    "Compas",
+    "Corolla",
+    "Golf",
+    "Fiesta",
+    "Territory",
+    "Otro...",
   ];
 
   return isLoading ? (
@@ -276,15 +297,23 @@ const VehicleForm = () => {
 
           <div className="mb-4 w-1/2">
             <label className="text-slate-50">Modelo</label>
-            <input
+            <select
               name="model"
-              type="text"
               value={vehicleData.model}
               onChange={handleChange}
               onBlur={handleBlur}
               required
               className="w-full px-3 mt-3 py-2 border rounded text-[#222222]"
-            />
+            >
+              <option value="" disabled>
+                Selecciona el modelo...
+              </option>
+              {models.map((model) => (
+                <option key={model} value={model}>
+                  {model}
+                </option>
+              ))}
+            </select>
             {errors.model && (
               <span className="text-red-500">{errors.model}</span>
             )}
