@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { IPost } from "../VehiclesComponent/interfaces/IPost";
 import ShowAndDeleteFilter from "../ShowAndDeleteFilter/ShowAndDeleteFilter";
 import Pagination from "../Pagination/Pagination";
+import SearchComponent from "../Navbar/SearchBar";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_POSTS;
 if (!apiUrl) {
@@ -84,6 +85,14 @@ const Products: React.FC = () => {
     }
   }, [filters]);
 
+  const handleSearch = (searchPosts: IPost[]) => {
+    setFilters(null)
+
+    setTimeout(() => {
+      setPosts(searchPosts);
+    }, 260);
+  }
+
   const handleFilterChange = (newFilters: any) => {
     setFilters(newFilters);
   };
@@ -104,6 +113,9 @@ const Products: React.FC = () => {
   const nPages: number = Math.ceil(posts.length / postsQT);
 
   return (
+    <div>
+      <SearchComponent onSearch={handleSearch}/>
+
     <div className="flex flex-col   items-center mt-5 justify-around md:items-start  md:flex-row md:justify-evenly md:my-10 md:mx-10 ">
       <Filters onFilterChange={handleFilterChange} />
       <div className="flex flex-col justify-center md:w-[70%]">
@@ -159,6 +171,7 @@ const Products: React.FC = () => {
           </>
         )}
       </div>
+    </div>
     </div>
   );
 };

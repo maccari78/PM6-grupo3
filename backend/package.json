@@ -45,6 +45,7 @@
     "cross-fetch": "^4.0.0",
     "dotenv": "^16.4.5",
     "express-session": "^1.18.0",
+    "fuse.js": "^7.0.0",
     "google-auth-library": "^9.10.0",
     "handlebars": "^4.7.8",
     "lodash": "^4.17.21",

@@ -16,10 +16,21 @@ import { Rental } from 'src/rentals/entities/rental.entity';
 import { NotificationsService } from 'src/notifications/notifications.service';
 import { MailService } from 'src/mail/mail.service';
 import { Notification } from 'src/notifications/entities/notification.entity';
+import { Address } from 'src/addresses/entities/address.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Posts, Car, User,Review,Rental,Notification]), UsersModule,
-   ],
+  imports: [
+    TypeOrmModule.forFeature([
+      Posts,
+      Car,
+      User,
+      Review,
+      Rental,
+      Notification,
+      Address,
+    ]),
+    UsersModule,
+  ],
   controllers: [PostsController],
   providers: [
     PostsService,

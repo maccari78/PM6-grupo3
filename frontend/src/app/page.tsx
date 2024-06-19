@@ -3,13 +3,6 @@ import Chatbottt from "@/components/Chatbottt/Chatbottt";
 import SearchComponent from "@/components/Navbar/SearchBar";
 import Products from "@/components/Products/Products";
 
-const handleSearch = (
-  location: string,
-  pickupDate: string,
-  returnDate: string
-) => {
-  console.log("Searching for:", { location, pickupDate, returnDate });
-};
 export default function Home() {
   return (
     <div className="bg-[#444343] text-white flex flex-col min-h-screen">
@@ -27,14 +20,13 @@ export default function Home() {
         </div>
       </section>
       <div className="md:pt-3 bg-[#3d3d3d] flex items-center justify-center">
-        <SearchComponent onSearch={handleSearch} />
       </div>
       <section
         id="vehiculos"
         className="w-full flex flex-col bg-[#3d3d3d] justify-around"
       >
         <div className="flex flex-col w-full justify-center  items-center">
-          <h1 className="text-xl mt-4 md:text-4xl font-bold ">¡Vehiculos!</h1>
+          <h1 className="text-xl mt-4 md:text-4xl font-bold tracking-widest mb-1 italic">¡Vehículos!</h1>
           <p className="text-sm md:text-lg text-[#dcffc1] font-bold">
             Amplia variedad y a los mejores precios del mercado
           </p>
