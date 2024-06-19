@@ -1,6 +1,7 @@
 import { MapLocationProps } from "@/components/MapLocation/MapLocation";
 import { ITRentalChat } from "@/interfaces/Ichat";
 import { IRentalPost } from "./IRentalPost";
+import { IReview } from "@/components/Reviews/interfaces/IReview";
 
 export interface ICar {
   id?: string;
@@ -25,7 +26,7 @@ export interface IUser {
   }[];
 }
 
-export interface IReview {
+export interface IReview2 {
   id: string;
   rating: number;
   comment: string;
@@ -42,6 +43,7 @@ export interface IPost {
   price: number;
   user: IUser;
   car: ICar;
+  rentals: IRentalPost[];
   review: IReview[];
   created_at: string;
   updated_at: string;

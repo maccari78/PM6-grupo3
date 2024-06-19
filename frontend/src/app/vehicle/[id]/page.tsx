@@ -22,8 +22,6 @@ if (!apiPostUrl) {
   throw new Error("Environment variable NEXT_PUBLIC_API_POSTS is not set");
 }
 
-
-
 const VehicleDetail = ({ params }: { params: { id: string } }) => {
   const bookedDates = [
     new Date("2024-06-10T00:00:00Z").toISOString().replace(".000Z", ""),
@@ -46,6 +44,7 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
   >();
   const [endDateRentals, setEndtDateRentals] = useState<string[] | undefined>();
   const [imgsPost, setImgsPost] = useState<string[]>();
+  console.log(postState);
 
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
@@ -66,13 +65,13 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
         setPostState(data);
         setImgsPost(data.car.image_url);
         setTotalReviews(data.review.length);
+
         const rentals = data.rentals.map((rental) => {
           return {
             ...rental,
             users: rental.users.filter((user) => user.id !== data.user.id),
           };
         });
-
         setRentals(rentals);
         const startDate = rentals.map((rental) => {
           return rental.rentalStartDate;
@@ -93,8 +92,6 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
 
     fetchDta();
   }, []);
-
-  
 
   useEffect(() => {
     if (postState) {
@@ -557,8 +554,7 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
 
           <div className="flex flex-col gap-5 pb-4">
             <div>
-              <div className="flex flex-row items-center duration-200 ">
-              </div>
+              <div className="flex flex-row items-center duration-200 "></div>
               <h1 className="font-sans text-lg md:text-2xl font-semibold text-gray-100 ">
                 ¡Reserva!
               </h1>
@@ -746,7 +742,7 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
                   pricePost={pricePost}
                   startDate={startDate}
                   endDate={endDate}
-                  userToken={userToken}                  
+                  userToken={userToken}
                 />
                 ;
               </div>

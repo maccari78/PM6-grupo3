@@ -125,7 +125,7 @@ const ButtonCheckout = ({
                       rentalEndDate: postToRental.rentalEndDate,
                       name: postState.title,
                       price: postToRental.price,
-                      image_url: postState.car.image_url[0],
+                      image_url: postState.car.image_url![0],
                       description: postState.description,
                     }),
                     headers: {

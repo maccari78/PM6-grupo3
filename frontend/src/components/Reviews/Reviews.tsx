@@ -2,9 +2,10 @@
 
 import { ChangeEvent, ChangeEventHandler, useEffect, useState } from "react";
 import Link from "next/link";
-import { IReview } from "./interfaces/IReview";
+
 import Swal from "sweetalert2";
 import { format } from "date-fns";
+import { IReview } from "./interfaces/IReview";
 
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
