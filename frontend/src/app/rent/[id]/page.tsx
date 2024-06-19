@@ -8,6 +8,7 @@ import { useRouter, useParams } from "next/navigation";
 import SkeletonDashboard from "@/components/sketelons/SkeletonDashboard";
 import Swal from "sweetalert2";
 
+
 const UploadPost = ({ params }: { params: { id: string } }) => {
     const id = params.id; 
     const router = useRouter();
@@ -76,7 +77,10 @@ const UploadPost = ({ params }: { params: { id: string } }) => {
 
       fetchVehicleData();
         
+
     }, [router]);
+
+
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value, files } = e.target as HTMLInputElement;
@@ -130,6 +134,7 @@ const UploadPost = ({ params }: { params: { id: string } }) => {
             }
             setIsLoading(true)
             try {
+
                 // Enviar los datos al servidor
                 const response = await axios.put(apiUrl, formData, {
                     headers: {
@@ -161,7 +166,7 @@ const UploadPost = ({ params }: { params: { id: string } }) => {
             }
         }
     };
-// Si el usuario no es el propietario, mostrar un mensaje de error o redirigir
+
         // if (!isOwner) {
         //     return <div>No tienes permiso para editar esta publicación.</div>;
         // }

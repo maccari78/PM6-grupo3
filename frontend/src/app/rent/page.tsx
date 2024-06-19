@@ -130,6 +130,7 @@ if (loading) {
         {userData?.post?.length !== 0 ? (userData?.post.map((rent) => (
           // eslint-disable-next-line react/jsx-key
           <ListedCarCard
+          key = {rent.id}
           carModel={rent.title}
           price={rent.price}
             imageUrl={rent.car?.image_url[0]}
