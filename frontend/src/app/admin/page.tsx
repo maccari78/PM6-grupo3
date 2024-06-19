@@ -6,6 +6,7 @@ import ReviewsAdm from '@/components/admin/ReviewsAdm';
 import SidebarAdm from '@/components/admin/SidebarAdm'
 import UserStats from '@/components/admin/UserStats';
 import UserTable from '@/components/admin/UserTable';
+import { IUserData, IUserDataAdm } from '@/interfaces/IUser';
 import { redirect, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 import Swal from 'sweetalert2';
@@ -14,13 +15,20 @@ const page = () => {
   const [selectedSection, setSelectedSection] = useState('dashboard');
   const [userToken, setUserToken] = useState<string | null>(null);
   const router = useRouter();
+  const [rol, setRol] = useState<string>('user');
+  const apiUrl = process.env.NEXT_PUBLIC_API_GET_USERS_TOKEN;
+if (!apiUrl) {
+  throw new Error('Environment variable NEXT_PUBLIC_API_GET_USERS_TOKEN is not set');
+}
+  
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
       const userSession = localStorage.getItem("userSession");
       if (userSession) {
         const parsedSession = JSON.parse(userSession);
-        setUserToken(parsedSession.token);  
-      } else {
+        setUserToken(parsedSession.token);
+      } 
+      else {
         Swal.fire({
           title: "Error de acceso",
           text: "Necesitas estar logueado para ingresar",
@@ -30,7 +38,27 @@ const page = () => {
       }
     }
   }, [router]);
+  // useEffect(()=>{
+  //   const fetchdata = async ()=>{
+  //     try {
+  //       const response = await fetch(apiUrl, {
+  //         method: "GET",
+  //         headers: {
+  //           Authorization: `Bearer ${userToken}`,
+  //           "Content-Type": "application/json",
+  //         },
+  //       });
+  //       if (!response.ok) {
+  //         throw new Error('Error fetching user data');
+  //       }
+  //       const data = await response.json();
+  //       // setRol(data.roles)
 
+  //     } catch (error:any) {
+  //       throw new Error(error);}
+  //   }
+  //   fetchdata()
+  // },[])
   
   return (
     <div className="flex min-h-screen">
