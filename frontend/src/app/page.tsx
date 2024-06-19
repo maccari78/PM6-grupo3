@@ -26,9 +26,9 @@ export default function Home() {
           </div>
         </div>
       </section>
-      <div className="md:pt-3 bg-[#3d3d3d] flex items-center justify-center">
+      {/* <div className="md:pt-3 bg-[#3d3d3d] flex items-center justify-center">
         <SearchComponent onSearch={handleSearch} />
-      </div>
+      </div> */}
       <section
         id="vehiculos"
         className="w-full flex flex-col bg-[#3d3d3d] justify-around"
