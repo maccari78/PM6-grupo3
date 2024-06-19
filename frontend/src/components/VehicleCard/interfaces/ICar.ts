@@ -1,4 +1,5 @@
 export interface ICar {
+
   id: string;
   description: string;
   carId: string | undefined;
@@ -9,4 +10,5 @@ export interface ICar {
   carMileage: string | undefined;
   carPrice: number | undefined;
   carAvailability: boolean | undefined;
+
 }

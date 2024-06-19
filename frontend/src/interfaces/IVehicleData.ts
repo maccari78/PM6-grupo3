@@ -8,7 +8,7 @@ interface IVehicleData {
 	brand: string;
 	year: number;
 	mileage: string;
-	image_url: string[];
+	image_url?: string[];
 }
 
 export default IVehicleData;

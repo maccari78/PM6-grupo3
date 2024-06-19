@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Loader from "@/components/Loaders/loaderAuth";
 
@@ -32,7 +32,7 @@ const Auth: React.FC = () => {
         AUTENTICANDO TUS CREDENCIALES...
       </h1>
       <div className="flex items-center justify-center h-screen">
-        <div className='flex justify-center items-center"'>
+        <div className="flex justify-center items-center">
           {loading ? <Loader /> : <Loader />}
         </div>
       </div>
@@ -40,4 +40,12 @@ const Auth: React.FC = () => {
   );
 };
 
-export default Auth;
+const PageWrapper: React.FC = () => {
+  return (
+    <Suspense fallback={<Loader />}>
+      <Auth />
+    </Suspense>
+  );
+};
+
+export default PageWrapper;

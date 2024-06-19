@@ -120,8 +120,8 @@ export class PostsController {
   @ApiBearerAuth()
   @Put(':id')
   @UseInterceptors(FilesInterceptor('file', 5))
-  // @UseGuards(RolesGuard)
-  // @Roles(Role.User, Role.Admin)
+  @UseGuards(RolesGuard)
+  @Roles(Role.User, Role.Admin)
   putPostsById(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updatePostDto: UpdatePostDto,

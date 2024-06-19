@@ -1,17 +1,17 @@
-"use client"
-import { IUserAdm } from '@/interfaces/IUser';
-import { redirect, useRouter } from 'next/navigation';
+'use client'
 import React, { useEffect, useState } from 'react';
-import { FaEdit, FaTrash, FaSort } from 'react-icons/fa';
-import { RiCloseFill } from "react-icons/ri";
+import { FaEdit, FaTrash, FaSort, FaBan } from 'react-icons/fa';
+import { IUserAdm } from '@/interfaces/IUser';
 import Swal from 'sweetalert2';
+import { RiCloseFill } from 'react-icons/ri';
+import { useRouter } from 'next/navigation';
 
 const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 if (!apiUrl) {
-  throw new Error("Environment variable NEXT_PUBLIC_API_POSTS is not set");
+  throw new Error("Environment variable NEXT_PUBLIC_API_BASE_URL is not set");
 }
 
-const UserTable: React.FC = () => {
+const UserTable: React.FC<{ userRole: string }> = ({ userRole }) => {
   const [users, setUsers] = useState<IUserAdm[]>([]);
   const [editingUserId, setEditingUserId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<Partial<IUserAdm>>({});
@@ -19,53 +19,69 @@ const UserTable: React.FC = () => {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [sortField, setSortField] = useState<string | null>(null);
   const [userToken, setUserToken] = useState<string | null>(null);
-  const router = useRouter();
+  const [reload, setReload] = useState<boolean>(false)
+  const router = useRouter()
 
   useEffect(() => {
-    if (typeof window !== "undefined" && window.localStorage) {
-      const userSession = localStorage.getItem("userSession");
-      if (userSession) {
-        const parsedSession = JSON.parse(userSession);
-        setUserToken(parsedSession.token);
-      } else {
-        Swal.fire({
-          title: "Error de acceso",
-          text: "Necesitas estar logueado para ingresar",
-          icon: "error"
-        });
-        redirect("/login")
-      }
+    const token = localStorage.getItem('userSession');
+    if (token) {
+      const parsedToken = JSON.parse(token);
+      setUserToken(parsedToken.token);
     }
-  }, [router]);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch(`${apiUrl}/users`, {
           method: 'GET',
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+            'Content-Type': 'application/json'
+          }
         });
-        const data: IUserAdm[] = await response.json();
-        if (Array.isArray(data)) {
-          setUsers(data);
-        } else {
-          console.error('Expected an array but received:', data);
-          setUsers([]);
+
+        if (!response.ok) {
+          throw new Error('Error fetching user data');
         }
+
+        const data: IUserAdm[] = await response.json();
+        setUsers(data);
       } catch (error: any) {
-        console.log(error.message);
+        console.error('Error fetching user data:', error.message);
       }
     };
 
-    fetchData();
-  }, []);
+    if (userToken) {
+      fetchData();
+    }
+  }, [userToken, reload]);
 
   const handleEdit = (user: IUserAdm) => {
     setEditingUserId(editingUserId === user.id ? null : user.id);
     setEditForm(user);
   };
 
-  const handleDelete = (userId: string) => {
-    setUsers(users.filter(user => user.id !== userId));
+  const handleDelete = async (userId: string) => {
+    try {
+      const response = await fetch(`${apiUrl}/users/soft-delete/${userId}`, {
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        setUsers(users.filter(user => user.id !== userId));
+        Swal.fire('Usuario baneado', 'El usuario ha sido baneado correctamente', 'success');
+      } else {
+        throw new Error('Error banning user');
+      }
+    } catch (error: any) {
+      console.error('Error banning user:', error.message);
+      Swal.fire('Error', 'No se pudo banear al usuario', 'error');
+    }
   };
 
   const handleSave = async (user: IUserAdm) => {
@@ -81,15 +97,21 @@ const UserTable: React.FC = () => {
 
       if (response.ok) {
         const updatedUser = await response.json();
-        setUsers(users.map(u => (u.id === user.id ? { ...u, ...editForm } : u)));
+        
+        setUsers(users.map(u => (u.id === user.id ? updatedUser : u)));
         setEditingUserId(null);
         setEditForm({});
+        
+        Swal.fire('Usuario actualizado', 'El usuario ha sido actualizado correctamente', 'success');
+       setReload(false)
       } else {
         console.error('Failed to update the user');
+        Swal.fire('Error', 'No se pudo actualizar el usuario', 'error');
       }
     } catch (error: any) {
       console.error('Error updating the user:', error.message);
     }
+    finally{setReload(true)}
   };
 
   const handleSort = (field: string) => {
@@ -149,7 +171,7 @@ const UserTable: React.FC = () => {
                 <input
                   type="email"
                   placeholder='Email'
-                  value={editForm.email || 'Dato sin cargar'}
+                  value={editForm.email || ''}
                   onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
                   className="mb-2 p-2 border rounded-md w-full"
                 />
@@ -172,6 +194,7 @@ const UserTable: React.FC = () => {
                     roles: e.target.value,
                   })}
                   className="mb-2 p-2 border rounded-md w-full"
+                  disabled={userRole !== 'superadmin'}
                 />
                 <input
                   type="text"
@@ -197,14 +220,13 @@ const UserTable: React.FC = () => {
                     <RiCloseFill />
                   </button>
                 </div>
-
               </div>
             ) : (
               <div>
                 <h3 className="text-lg font-semibold mb-2">{user.name}</h3>
                 <p className="text-gray-600 mb-2">{user.email}</p>
                 <p className="text-gray-500 mb-2">Teléfono: {user.phone}</p>
-                <p className="text-gray-500 mb-2">Rol: {user.roles}</p>
+                {userRole === 'superadmin' && <p className="text-gray-500 mb-2">Rol: {user.roles}</p>}
                 <div className="flex space-x-2">
                   <button
                     className="bg-blue-500 text-white px-2 py-1 rounded-md hover:bg-blue-600"
@@ -212,12 +234,14 @@ const UserTable: React.FC = () => {
                   >
                     <FaEdit />
                   </button>
-                  <button
-                    className="bg-red-500 text-white px-2 py-1 rounded-md hover:bg-red-600"
-                    onClick={() => handleDelete(user.id)}
-                  >
-                    <FaTrash />
-                  </button>
+                  {userRole === 'superadmin' && (
+                    <button
+                      className="bg-red-500 text-white px-2 py-1 rounded-md hover:bg-red-600"
+                      onClick={() => handleDelete(user.id)}
+                    >
+                      <FaBan />
+                    </button>
+                  )}
                 </div>
               </div>
             )}
@@ -229,4 +253,3 @@ const UserTable: React.FC = () => {
 };
 
 export default UserTable;
-
