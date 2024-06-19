@@ -57,11 +57,9 @@ export class FileUploadService {
       urls.push(uploadedImage.secure_url);
       publicIds.push(uploadedImage.public_id);
     }
-
-    await this.carsRepository.update(car.id, {
-      image_url: urls,
-      public_id: publicIds,
-    });
+    car.image_url.push(...urls);
+    car.public_id.push(...publicIds);
+    await this.carsRepository.save(car);
 
     const updatedCar = await this.carsRepository.findOneBy({ id: vehicleId });
 
