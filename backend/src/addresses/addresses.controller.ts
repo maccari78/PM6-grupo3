@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Param, Delete, Query, Put, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Query,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { AddressesService } from './addresses.service';
 import { CreateAddressDto } from './dto/create-address.dto';
 import { UpdateAddressDto } from './dto/update-address.dto';
@@ -15,11 +25,8 @@ export class AddressesController {
   constructor(private readonly addressesService: AddressesService) {}
 
   @Get()
-  getAddresses(
-    @Query('page') page: number = 1,
-    @Query('limit') limit: number = 10,
-  ) {
-    return this.addressesService.getAddresses(page, limit);
+  getAddresses() {
+    return this.addressesService.getAddresses();
   }
 
   @Get(':id')

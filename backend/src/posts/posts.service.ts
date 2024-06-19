@@ -19,6 +19,8 @@ import { FiltersPosts } from './interfaces/filter.interfaces';
 import { Review } from 'src/reviews/entities/review.entity';
 import { Rental } from 'src/rentals/entities/rental.entity';
 import { NotificationsService } from 'src/notifications/notifications.service';
+import { Address } from 'src/addresses/entities/address.entity';
+import Fuse from 'fuse.js';
 
 @Injectable()
 export class PostsService {
@@ -29,6 +31,7 @@ export class PostsService {
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(Review) private reviewRepository: Repository<Review>,
     @InjectRepository(Rental) private rentalRepository: Repository<Rental>,
+    @InjectRepository(Address) private addressRepository: Repository<Address>,
     private notificationService: NotificationsService,
     private jwtService: JwtService,
   ) {}
@@ -157,29 +160,29 @@ export class PostsService {
   }
 
   async cancel(id: string) {
-    const reservation = await this.postRepository.findOne(
-      {where: {id},  relations: ['car',"rentals"]},);
+    const reservation = await this.postRepository.findOne({
+      where: { id },
+      relations: ['car', 'rentals'],
+    });
     if (!reservation) throw new Error('Reservation not found');
 
     reservation.isDeleted = true;
     reservation.car.availability = true;
-    
+
     //Delete rental when cancel reservation
     await Promise.all(
       reservation.rentals.map(async (rental) => {
-         await this.rentalRepository.delete(rental.id);
-      }
-    ))
-    
+        await this.rentalRepository.delete(rental.id);
+      }),
+    );
+
     await this.postRepository.save(reservation);
-    
   }
 
-  async sendToCancelReservation (id: string) {
+  async sendToCancelReservation(id: string) {
     // Cancelar la reserva llamando al método cancel
     await this.cancel(id);
     console.log(' INICIO Probando de envio de email propietario y inquilino');
-
 
     // const contractID = await this.cancel(id);
     // console.log(contractID);
@@ -187,17 +190,18 @@ export class PostsService {
 
     const contract = await this.rentalRepository.findOne({
       where: { id },
-      relations: ['users', 'posts', ],
+      relations: ['users', 'posts'],
     });
     // console.log('Este es el contrato:', contract);
     if (!contract) throw new NotFoundException('Contrato no encontrado');
-    
+
     // Obtener el ID del usuario que publicó la reserva
     const userPosts = contract.posts?.user?.id;
 
     // Obtener el usuario que realizó la reserva (excluyendo al propietario del post)
     const userPay = contract.users?.filter((user) => user.id !== userPosts);
-    if (!userPay || userPay.length === 0) throw new NotFoundException('Error al realizar el pago');
+    if (!userPay || userPay.length === 0)
+      throw new NotFoundException('Error al realizar el pago');
 
     const owner = contract.posts?.user;
     const contractPost = contract.posts;
@@ -217,8 +221,6 @@ export class PostsService {
     console.log(' FIN Probando de envio de email propietario y inquilino');
     return 'Reserva cancelada con éxito';
   }
-
-
 
   async UpdatePostsServices(
     id: string,
@@ -338,21 +340,55 @@ export class PostsService {
     await this.postRepository.save(postsToUpdate);
   }
 
-  async getPostsByDate() {
+  async getPostsByDate(location) {
     // const allPosts = await this.postRepository.find({
     //   relations: ['rental'],
     // });
     // return allPosts;
-
     const posts = await this.postRepository.find({
-      relations: ['car'],
+      relations: ['car', 'car.user.addresses'],
     });
 
     const availablePosts = posts.filter((post) => {
       return post.car.availability === true;
     });
 
-    return availablePosts;
+    if (!location) {
+      return availablePosts;
+    }
+
+    const addresses = availablePosts.flatMap((post) =>
+      post.car.user.addresses.map((address) => ({
+        post,
+        address,
+      })),
+    );
+
+    const fuse = new Fuse(addresses, {
+      keys: ['address.city', 'address.state', 'address.country'],
+      includeScore: true,
+      threshold: 0.49,
+      ignoreLocation: true,
+    });
+
+    const results = fuse.search(location);
+
+    const postsWithAddresses = results.map((result) => {
+      const { post, address } = result.item;
+      return {
+        id: post.id,
+        title: post.title,
+        description: post.description,
+        price: post.price,
+        isDeleted: post.isDeleted,
+        created_at: post.created_at,
+        updated_at: post.updated_at,
+        car: post.car,
+        address,
+      };
+    });
+
+    return postsWithAddresses;
   }
   //Prueba xd
 }

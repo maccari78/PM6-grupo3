@@ -59,8 +59,8 @@ export class PostsController {
     return this.postsService.getPostsByFilterServices(filter);
   }
   @Get('available')
-  getPostsByDate() {
-    return this.postsService.getPostsByDate();
+  getPostsByDate(@Query('location') location: string) {
+    return this.postsService.getPostsByDate(location);
   }
 
   @Get(':id')
@@ -114,9 +114,8 @@ export class PostsController {
   @Post('cancel/:id')
   async cancelReservation(@Param('id') id: string) {
     const cancelPost = await this.postsService.cancel(id);
-    return cancelPost
+    return cancelPost;
   }
-
 
   @ApiBearerAuth()
   @Put(':id')

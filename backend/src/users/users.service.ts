@@ -178,7 +178,11 @@ export class UsersService {
     updateAdress?: UpdateAddressDto,
     file?: Express.Multer.File,
   ) {
+    console.log(token);
+
     console.log(updateUserDto);
+    console.log(updateAdress);
+
     const { password, ...rest } = updateUserDto;
 
     const currentUser = token?.split(' ')[1];
@@ -193,6 +197,9 @@ export class UsersService {
       where: { email: payload.sub, isDeleted: false },
       relations: ['addresses'],
     });
+
+    console.log(user);
+
     if (!user) throw new NotFoundException('Usuario no encontrado');
 
     await this.changePassword(password, user.password, user.id);
@@ -201,7 +208,7 @@ export class UsersService {
 
     const adress = user.addresses[0!];
 
-    if (updateAdress.address) {
+    if (updateAdress.address && user.addresses.length !== 0) {
       await this.addressesService.updateAddress(adress.id, updateAdress);
     }
 
