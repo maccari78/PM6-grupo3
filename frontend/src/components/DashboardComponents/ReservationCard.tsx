@@ -15,27 +15,42 @@ const ReservationCard: React.FC<ReservationCardProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleCancelReservation = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch(`${apiPostUrl}/cancel/${idPost}`, {
-        method: "POST",
-      });
-      await Swal.fire({
-        title: "Reserva cancelada!",
-        text: "Has cancelado la reserva con exito!",
-        icon: "success",
-      });
+    Swal.fire({
+      title: "Estas seguro de cancelar?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Si, cancelar reserva!",
+      cancelButtonText: "Cerrar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const cancelReservation = async () => {
+          setLoading(true);
+          try {
+            const response = await fetch(`${apiPostUrl}/cancel/${idPost}`, {
+              method: "POST",
+            });
+            await Swal.fire({
+              title: "Reserva cancelada!",
+              text: "Has cancelado la reserva con exito!",
+              icon: "success",
+            });
 
-      window.location.reload();
-    } catch (error: any) {
-      Swal.fire({
-        title: "Ha ocurrido un error!",
-        text: `${error.message}`,
-        icon: "error",
-      });
-    } finally {
-      setLoading(false);
-    }
+            window.location.reload();
+          } catch (error: any) {
+            Swal.fire({
+              title: "Ha ocurrido un error!",
+              text: `${error.message}`,
+              icon: "error",
+            });
+          } finally {
+            setLoading(false);
+          }
+        };
+        cancelReservation();
+      }
+    });
   };
 
   return (
