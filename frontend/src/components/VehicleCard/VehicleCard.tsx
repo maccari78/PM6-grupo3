@@ -69,7 +69,9 @@ const VehicleCard: React.FC<ICar> = ({
 
         <div className="flex w-full justify-start  mt-5">
           <p className="text-gray-300 text-[13px]">
-            {description?.length && description?.length > 70 ? descriptionReduce : description}
+            {description?.length && description?.length > 70
+              ? descriptionReduce
+              : description}
           </p>
         </div>
 
@@ -107,7 +109,7 @@ const VehicleCard: React.FC<ICar> = ({
               ) : (
                 <button
                   onClick={handleOnClick}
-                  className="flex flex-row gap-1 font-semibold items-center justify-center relative h-full px-8 py-1 rounded-md text-[#222222] bg-gray-300 isolation-auto z-10 border-2 border-[#C4FF0D] before:absolute before:w-full before:transition-all before:duration-700 before:hover:w-full before:-left-full before:hover:left-0 before:rounded-full before:bg-[#C4FF0D] before:-z-10 before:aspect-square before:hover:scale-150 overflow-hidden before:hover:duration-700"
+                  className="flex flex-row gap-1 font-semibold items-center justify-center relative h-full px-8 py-1 rounded-md text-[#222222] bg-gray-300 isolation-auto  border-2 border-[#C4FF0D] before:absolute before:w-full before:transition-all before:duration-700 before:hover:w-full before:-left-full before:hover:left-0 before:rounded-full before:bg-[#C4FF0D] before:-z-10 before:aspect-square before:hover:scale-150 overflow-hidden before:hover:duration-700"
                 >
                   Ver
                   <svg

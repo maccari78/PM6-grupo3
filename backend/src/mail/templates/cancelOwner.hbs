@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cancelación de reserva - Para el arrendador</title>
+    <title>Renta Cancelada</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -54,22 +54,30 @@
 <body>
     <div class="container">
         <div class="header">
-            <h2>CANCELACIÓN DE LA RESERVA - YouDrive</h2>
+            <h2>Renta Cancelada</h2>
         </div>
         <div class="content">
-            <h1>Lo sentimos, <span style="color: rgb(196, 255, 13) ;"> Se  ha cancelado la reserva</span></h1>
+            <h1>Estimado/a <span style="color: rgb(196, 255, 13) ;">{{owner}}.</span></h1>
 
-            <p style="font-weight: bold; font-style: italic">Detalles de la Reserva<br>
-                arrendatario : $ {{tenant}} <br>
-                Monto pagado : $ {{price}} <br>
-                Operación : Alguiler de vehículos <br>
+            <p>Esperamos que este mensaje le encuentre bien. Lamentamos informarle que la reserva realizada para su vehículo ha sido cancelada por el usuario que habia solicitado el alquiler.</p><br>
 
-                Alquiler desde :  {{newRentalsStart}}  <br>
-                Alquiler hasta :  {{newRentalsEnd}}    <br>
+            <h2>Detalles de la reserva cancelada:</h2>
+            <p>Tu publicación: 
+                <ul>
+                    <li>
+                        <span style="font-weight: bold; color: rgb(196, 255, 13)">{{post}}</span><br>
+                        <span>{{description}}</span>
+                    </li>
+                </ul>
+                Ha sido cancelada por el usuario <span style="font-weight: bold; color: rgb(196, 255, 13)">{{renter}}</span>
+            </p>
 
-            <p style="font-weight: bold; font-style: italic"><span style="color: rgb(196, 255, 13) ;">Si tiene alguna pregunta o necesita asistencia adicional</span><br>
-                Comunicate inmediatamente con nosotros al (01) 354-1830 para ayudarte a verificarla.</p>
+            <p>El vehiculo había sido rentado del día {{rentalStart}} hasta el {{rentalEnd}} por un precio de <span style="font-weight: bold; color: rgb(196, 255, 13)">${{prices}}</span>.</p><br>
 
+            <p>Queremos asegurarle que su vehículo estará disponible nuevamente para otros usuarios y haremos todo lo posible para ayudarle a encontrar un nuevo inquilino lo antes posible.</p>
+
+            <p>Agradecemos su comprensión.</p><br>
+            
             <p style="font-weight: bold; font-style: italic">Atentamente, <br> El equipo de YouDrive</p>
 
             <a href="Aqui iria la url" class="button">You Drive</a>

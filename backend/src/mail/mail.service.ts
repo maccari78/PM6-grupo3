@@ -125,89 +125,36 @@ export class MailService {
         }
       }
 
-      case 'cancelOwnerReservation': {
-        //To search totalCost
-        const PRICE = user.rentals.filter((post) => ({
-          priceTotal: post.totalCost,
-        }));
-        const price = PRICE[PRICE.length - 1].totalCost;
-
-        //To search for first day of rent
-        const rentalsStart = user.rentals.filter((post) => ({
-          rentalStartDate: post.rentalStartDate,
-        }));
-        const RENTALStart =
-          rentalsStart[rentalsStart.length - 1].rentalStartDate;
-
-        //To search for last day of rent
-        const datePayEnd = user.rentals.filter((post) => ({
-          rentalEndDate: post.rentalEndDate,
-        }));
-        const DatePayend = datePayEnd[datePayEnd.length - 1].rentalEndDate;
-
-        try {
-          await this.mailerservice.sendMail({
-            to: user.email,
-            subject: 'You Drive. Alquila Autos Facilmente',
-            template: 'cancelOwnerReservation',
-            context: {
-              owner: user.name,
-              prices: price,
-              newRentalsStart: RENTALStart,
-              newRentalsEnd: DatePayend,
-            },
-            attachments: [
-              {
-                filename: 'logo.png',
-                path: 'https://res.cloudinary.com/dkent00db/image/upload/v1718734167/logo_u94niq.png',
-                cid: 'imagename',
-              },
-            ],
-          });
-          return { message: 'Correo enviado exitosamente' };
-        } catch (error) {
-          console.error(error);
-          throw new BadRequestException(
-            'El correo no pudo ser enviado exitosamente',
-          );
-        }
-      }
-
-      case 'cancelTenantReservation': {
-        // To search name of tenant
-        const nameTenant = await this.rentalsRepository.find({
+      case 'canceled': {
+        const rental = await this.rentalsRepository.find({
           where: { posts: { id: contractPost.id } },
           relations: { users: true },
         });
-        //To search totalCost
+
         const PRICE = user.rentals.filter((post) => ({
           priceTotal: post.totalCost,
         }));
         const price = PRICE[PRICE.length - 1].totalCost;
 
-        //To search for first day of rent
-        const rentalsStart = user.rentals.filter((post) => ({
-          rentalStartDate: post.rentalStartDate,
-        }));
-        const RENTALStart =
-          rentalsStart[rentalsStart.length - 1].rentalStartDate;
+        // console.log('Contrato como llega:', contractPost);
 
-        //To search for last day of rent
-        const datePayEnd = user.rentals.filter((post) => ({
-          rentalEndDate: post.rentalEndDate,
-        }));
-        const DatePayend = datePayEnd[datePayEnd.length - 1].rentalEndDate;
+        // console.log('rental:', rental);
+
+        // console.log('Este es el owner', user.name);
 
         try {
           await this.mailerservice.sendMail({
             to: user.email,
             subject: 'You Drive. Alquila Autos Facilmente',
-            template: 'cancelTenantReservation',
+            template: 'cancelOwner',
             context: {
-              tenant: user.name,
+              owner: user.name,
+              renter: contractPost.rentals[0].users[0].name,
+              post: contractPost.title,
+              description: contractPost.description,
               prices: price,
-              newRentalsStart: RENTALStart,
-              newRentalsEnd: DatePayend,
+              rentalStart: rental[0]?.rentalStartDate,
+              rentalEnd: rental[0]?.rentalEndDate,
             },
             attachments: [
               {
@@ -217,23 +164,19 @@ export class MailService {
               },
             ],
           });
-          return { message: 'Correo enviado exitosamente' };
-        } catch (error) {
-          console.error(error);
-          throw new BadRequestException(
-            'El correo no pudo ser enviado exitosamente',
-          );
-        }
-      }
 
-      case 'cancelReservation': {
-        try {
           await this.mailerservice.sendMail({
-            to: user.email,
+            to: contractPost.rentals[0].users[0].email,
             subject: 'You Drive. Alquila Autos Facilmente',
-            template: 'cancelReservation',
+            template: 'cancelRenter',
             context: {
-              name: user.name,
+              owner: user.name,
+              renter: contractPost.rentals[0].users[0].name,
+              post: contractPost.title,
+              description: contractPost.description,
+              prices: price,
+              rentalStart: rental[0]?.rentalStartDate,
+              rentalEnd: rental[0]?.rentalEndDate,
             },
             attachments: [
               {
@@ -381,9 +324,6 @@ export class MailService {
   }
 
   async newChat(sender, receiver) {
-    console.log('este es el sender', sender);
-    console.log('este es el receiver', receiver);
-
     function encontrarNotificacionMasReciente(notifications, templateMessage) {
       // Filtrar las notificaciones por el tipo deseado
       const notificacionesFiltradas = notifications.filter(

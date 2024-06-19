@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cancelación de reserva - Para cancelador</title>
+    <title>Renta Cancelada</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -54,15 +54,27 @@
 <body>
     <div class="container">
         <div class="header">
-            <h2>CANCELACIÓN DE LA RESERVA - YouDrive</h2>
+            <h2>Confirmación de cancelación</h2>
         </div>
         <div class="content">
-            <h1>Estimado/a {{name}}<span style="color: rgb(196, 255, 13) ;">Confirmación de Cancelación de Reserva</span></h1>
+            <h1>Estimado/a <span style="color: rgb(196, 255, 13) ;">{{renter}}.</span></h1>
 
-            <p style="font-weight: bold; font-style: italic">Lamentamos informarte que tu reserva ha sido cancelada exitosamente.<br>
-                
-            <p style="font-weight: bold; font-style: italic"><span style="color: rgb(196, 255, 13) ;">Si necesitas más información, no dudes en contactarnos.</span><br>
-                Comunicate inmediatamente con nosotros al (01) 354-1830 para ayudarte a verificarla.</p>
+            <p>Esperamos que este mensaje le encuentre bien. Queremos confirmarle que hemos recibido su solicitud de cancelación para la reserva del vehículo que solicitó en alquiler.</p><br>
+
+            <h2>Detalles de la reserva cancelada:</h2>
+            <p>Publicación: 
+                <ul>
+                    <li>
+                        <span style="font-weight: bold; color: rgb(196, 255, 13)">{{post}}</span><br>
+                        <span>{{description}}</span>
+                    </li>
+                </ul>
+                Hecha por el usuario: <span style="font-weight: bold; color: rgb(196, 255, 13)">{{owner}}</span>
+            </p>
+
+            <p>El vehiculo había sido rentado del día {{rentalStart}} hasta el {{rentalEnd}} por un precio de <span style="font-weight: bold; color: rgb(196, 255, 13)">${{prices}}</span>.</p><br>
+
+            <p>Hemos procesado la cancelación de acuerdo con su solicitud. Si tiene alguna pregunta o necesita asistencia adicional, no dude en ponerse en contacto con nosotros.</p>
 
             <p style="font-weight: bold; font-style: italic">Atentamente, <br> El equipo de YouDrive</p>
 

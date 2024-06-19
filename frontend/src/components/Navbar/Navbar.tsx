@@ -187,6 +187,10 @@ const Navbar: React.FC = () => {
     }
   };
 
+  const handleLinkClick = () => {
+    setShowResults(false);
+  };
+
   return (
     <header className="flex flex-row justify-around items-center bg-[#222222] text-white h-[80px] font-sans">
       <div className="flex flex-row gap-4 items-center">
@@ -275,7 +279,11 @@ const Navbar: React.FC = () => {
                     const titleSlice = post.title.slice(0, 20);
 
                     return (
-                      <Link key={post.id} href={`vehicle/${post.id}`}>
+                      <Link
+                        key={post.id}
+                        href={`vehicle/${post.id}`}
+                        onClick={handleLinkClick}
+                      >
                         <li className="flex flex-row gap-5 items-center py-[4px] hover:bg-[#222222]  rounded-xl duration-200">
                           <div className="w-[50] h-[50px]">
                             <img
@@ -312,7 +320,11 @@ const Navbar: React.FC = () => {
                           <p>({car.color})</p>
                           {car.post.map((post) => {
                             return (
-                              <Link key={post.id} href={`vehicle/${post.id}`}>
+                              <Link
+                                key={post.id}
+                                href={`vehicle/${post.id}`}
+                                onClick={handleLinkClick}
+                              >
                                 <li className="flex flex-row gap-5 items-center py-[4px] hover:bg-[#222222] px-4 rounded-xl duration-200">
                                   <p className="text-[#c2e94e] text-[18px] hover:underline">
                                     Ver
