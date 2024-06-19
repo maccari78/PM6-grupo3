@@ -26,23 +26,6 @@ export class PostsService {
     private jwtService: JwtService,
   ) { }
 
-  async findAll(): Promise<Posts[]> {
-    return this.postRepository.find({ where: { isDeleted: false } });
-  }
-
-  async softDelete(id: string): Promise<{ message: string }> {
-    const post = await this.postRepository.findOneBy({ id });
-
-    if (!post) {
-      throw new NotFoundException(`El post con ID ${id} no se ha encontrado`);
-    }
-
-    post.isDeleted = true;
-    await this.postRepository.save(post);
-
-    return { message: 'Post eliminado lógicamente con éxito' };
-  }
-
   async getPostsByFilterServices(filters: FiltersPosts) {
     if (filters.year && typeof filters.year !== 'number') {
       filters.year = Number(filters.year);
@@ -91,6 +74,7 @@ export class PostsService {
 
   async getPostsAllServices() {
     const posts = await this.postRepository.find({
+      where: { isDeleted: false },
       relations: { user: true, car: true, review: true },
     });
 
@@ -299,5 +283,18 @@ export class PostsService {
     });
 
     return postsWithAddresses;
+  }
+
+  async softDelete(id: string): Promise<{ message: string }> {
+    const post = await this.postRepository.findOneBy({ id });
+
+    if (!post) {
+      throw new NotFoundException(`El post con ID ${id} no se ha encontrado`);
+    }
+
+    post.isDeleted = true;
+    await this.postRepository.save(post);
+
+    return { message: 'Post eliminado lógicamente con éxito' };
   }
 }
