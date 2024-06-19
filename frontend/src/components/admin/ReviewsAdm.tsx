@@ -1,63 +1,113 @@
 "use client"
-import React, { useState } from 'react';
-import { FaEdit, FaSort, FaTrash } from 'react-icons/fa';
+import { IReview } from '@/interfaces/Iadmin';
+import { redirect, useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
+import { FaAlignCenter, FaEdit, FaSort, FaTrash } from 'react-icons/fa';
+import Swal from 'sweetalert2';
+import { FiMinimize2 } from "react-icons/fi";
 
-interface Review {
-  id: number;
-  user: string;
-  content: string;
-  rating: number;
-  date: string;
+const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+if (!apiUrl) {
+  throw new Error("Environment variable NEXT_PUBLIC_API_BASE_URL is not set");
 }
 
-const initialReviews: Review[] = [
-  { id: 1, user: 'Juan Pérez', content: 'Excelente servicio!', rating: 5, date: '2023-06-01' },
-  { id: 2, user: 'María Gómez', content: 'Muy buena experiencia.', rating: 4, date: '2023-06-05' },
-  { id: 3, user: 'Carlos Rodríguez', content: 'Podría mejorar.', rating: 3, date: '2023-06-10' },
-  { id: 4, user: 'Ana Fernández', content: 'No me gustó mucho.', rating: 2, date: '2023-06-12' },
-  { id: 5, user: 'Luis García', content: 'Terrible experiencia.', rating: 1, date: '2023-06-15' },
-  { id: 6, user: 'Marta López', content: 'Fantástico! Recomendado.', rating: 5, date: '2023-06-20' },
-  { id: 7, user: 'Pedro Martínez', content: 'Buen servicio, volvería.', rating: 4, date: '2023-06-25' },
-  { id: 8, user: 'Sofía Sánchez', content: 'Regular, hay mejores.', rating: 3, date: '2023-06-28' },
-  { id: 9, user: 'Jorge Díaz', content: 'No satisfecho.', rating: 2, date: '2023-07-01' },
-  { id: 10, user: 'Laura Romero', content: 'Mal servicio.', rating: 1, date: '2023-07-03' },
-  { id: 11, user: 'Miguel Torres', content: 'Me encantó!', rating: 5, date: '2023-07-05' },
-  { id: 12, user: 'Lucía Ramírez', content: 'Muy bueno, volveré.', rating: 4, date: '2023-07-10' },
-  { id: 13, user: 'Francisco Molina', content: 'Aceptable.', rating: 3, date: '2023-07-12' },
-  { id: 14, user: 'Gabriela Ortiz', content: 'No fue lo esperado.', rating: 2, date: '2023-07-15' },
-  { id: 15, user: 'Ricardo Herrera', content: 'Horrible, no recomiendo.', rating: 1, date: '2023-07-18' },
-  { id: 16, user: 'Patricia Cruz', content: 'Excelente calidad.', rating: 5, date: '2023-07-20' },
-  { id: 17, user: 'Enrique Moreno', content: 'Buen trato.', rating: 4, date: '2023-07-22' },
-  { id: 18, user: 'Verónica Castro', content: 'Nada especial.', rating: 3, date: '2023-07-25' },
-  { id: 19, user: 'Oscar Rivas', content: 'Deficiente.', rating: 2, date: '2023-07-28' },
-  { id: 20, user: 'Daniela Peña', content: 'Pésimo.', rating: 1, date: '2023-07-30' },
-];
-
-
 const ReviewsAdm: React.FC = () => {
-  const [reviews, setReviews] = useState<Review[]>(initialReviews);
-  const [editingReviewId, setEditingReviewId] = useState<number | null>(null);
+  const [reviews, setReviews] = useState<IReview[]>([]);
+  const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState<Partial<IReview>>({});
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-  const [sortField, setSortField] = useState<keyof Review | null>(null);
+  const [sortField, setSortField] = useState<string | null>(null);
+  const [userToken, setUserToken] = useState<string | null>(null);
+  const router = useRouter();
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.localStorage) {
+      const userSession = localStorage.getItem("userSession");
+      if (userSession) {
+        const parsedSession = JSON.parse(userSession);
+        setUserToken(parsedSession.token);  
+      } else {
+        Swal.fire({
+          title: "Error de acceso",
+          text: "Necesitas estar logueado para ingresar",
+          icon: "error"
+        });
+        redirect("/login")
+      }
+    }
+  }, [router]);
 
-  const handleEdit = (reviewId: number) => {
-    setEditingReviewId(editingReviewId === reviewId ? null : reviewId);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`${apiUrl}/reviews`, {
+          method: 'GET',
+        });
+        const data: IReview[] = await response.json();
+        if (Array.isArray(data)) {
+          setReviews(data);
+        } else {
+          console.error('Expected an array but received:', data);
+          setReviews([]);
+        }
+      } catch (error: any) {
+        console.log(error.message);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleEdit = (review: IReview) => {
+    setEditingReviewId(editingReviewId === review.id ? null : review.id);
+    setEditForm(review);
   };
 
-  const handleDelete = (reviewId: number) => {
+  const handleDelete = (reviewId: string) => {
     setReviews(reviews.filter(review => review.id !== reviewId));
   };
 
-  const handleSave = (review: Review) => {
-    setReviews(reviews.map(r => (r.id === review.id ? review : r)));
-    setEditingReviewId(null);
+  const handleSave = async (review: IReview) => {
+    try {
+      const response = await fetch(`${apiUrl}/reviews/${review.id}`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+          'Content-Type': 'application/json',
+
+        },
+        body: JSON.stringify(editForm),
+      });
+
+      if (response.ok) {
+        Swal.fire({
+          title: "Buen trabajo!",
+          text: "Datos actualizados correctamente",
+          icon: "success"
+        });
+        const updatedReview = await response.json();
+        setReviews(reviews.map(r => (r.id === review.id ? updatedReview : r)));
+        setEditingReviewId(null);
+        setEditForm({});
+        
+      } else {
+        Swal.fire({
+          title: "Error",
+          text: "No se han podido actualizar los datos",
+          icon: "error"
+        });
+      }
+    } catch (error: any) {
+    
+    }
   };
 
-  const handleSort = (field: keyof Review) => {
+  const handleSort = (field: string) => {
     const sortedReviews = [...reviews].sort((a, b) => {
-      if (a[field] < b[field]) return sortOrder === 'asc' ? -1 : 1;
-      if (a[field] > b[field]) return sortOrder === 'asc' ? 1 : -1;
+      const aValue = field === 'rating' ? a.rating : a.comment;
+      const bValue = field === 'rating' ? b.rating : b.comment;
+      if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
+      if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
       return 0;
     });
     setReviews(sortedReviews);
@@ -66,52 +116,75 @@ const ReviewsAdm: React.FC = () => {
   };
 
   const filteredReviews = reviews.filter(review =>
-    review.user.toLowerCase().includes(searchTerm.toLowerCase())
+    review.user.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow-sm">
-      <h2 className="text-lg font-semibold mb-4">Reviews</h2>
-      <p className="mb-4">Esta sección muestra todas las reseñas de la página. Puedes editar o eliminar las reseñas según sea necesario.</p>
-      <div className="mb-4">
+    <div>
+      <div className="mb-4 flex justify-between items-center">
         <input
           type="text"
           placeholder="Buscar por nombre de usuario"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="p-2 border rounded-md w-full"
+          className="p-2 border rounded-md w-1/3"
         />
+        <div className="flex space-x-4">
+          <button
+            className="flex items-center bg-gray-200 p-2 rounded-md hover:bg-gray-300"
+            onClick={() => handleSort('comment')}
+          >
+            Ordenar por Comentario <FaSort className="ml-2" />
+          </button>
+          <button
+            className="flex items-center bg-gray-200 p-2 rounded-md hover:bg-gray-300"
+            onClick={() => handleSort('rating')}
+          >
+            Ordenar por Calificación <FaSort className="ml-2" />
+          </button>
+        </div>
       </div>
-      <table className="w-full table-auto">
-        <thead>
-          <tr>
-            <th className="px-4 py-2 cursor-pointer" onClick={() => handleSort('user')}>
-              Usuario {sortField === 'user' && <FaSort />}
-            </th>
-            <th className="px-4 py-2 cursor-pointer" onClick={() => handleSort('content')}>
-              Reseña {sortField === 'content' && <FaSort />}
-            </th>
-            <th className="px-4 py-2 cursor-pointer" onClick={() => handleSort('rating')}>
-              Calificación {sortField === 'rating' && <FaSort />}
-            </th>
-            <th className="px-4 py-2 cursor-pointer" onClick={() => handleSort('date')}>
-              Fecha {sortField === 'date' && <FaSort />}
-            </th>
-            <th className="px-4 py-2">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredReviews.map(review => (
-            <React.Fragment key={review.id}>
-              <tr className="border-t">
-                <td className="px-4 py-2">{review.user}</td>
-                <td className="px-4 py-2">{review.content}</td>
-                <td className="px-4 py-2">{review.rating}</td>
-                <td className="px-4 py-2">{review.date}</td>
-                <td className="px-4 py-2 flex space-x-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredReviews.map(review => (
+          <div key={review.id} className="bg-white p-4 rounded-lg shadow-sm">
+            {editingReviewId === review.id ? (
+              <div>
+                <input
+                  type="number"
+                  value={editForm.rating}
+                  onChange={(e) => setEditForm({ ...editForm, rating: parseInt(e.target.value) })}
+                  className="mb-2 p-2 border rounded-md w-full"
+                />
+                <textarea
+                  value={editForm.comment || ''}
+                  onChange={(e) => setEditForm({ ...editForm, comment: e.target.value })}
+                  className="mb-2 p-2 border rounded-md w-full"
+                />
+                <div className='flex justify-evenly'>
+                <button
+                  className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
+                  onClick={() => handleSave(review)}
+                >
+                  Guardar
+                </button>
+                <button
+                    className="bg-red-600 text-white px-4  rounded-md hover:bg-red-500"
+                    onClick={() => handleEdit(review)}
+                  >
+                    <FiMinimize2 />
+                  </button>
+                </div>
+                
+              </div>
+            ) : (
+              <div>
+                <h3 className="text-lg font-semibold mb-2">{review.user.name}</h3>
+                <p className="text-gray-600 mb-2">Calificación: {review.rating}</p>
+                <p className="text-gray-500 mb-2">{review.comment}</p>
+                <div className="flex space-x-2">
                   <button
                     className="bg-blue-500 text-white px-2 py-1 rounded-md hover:bg-blue-600"
-                    onClick={() => handleEdit(review.id)}
+                    onClick={() => handleEdit(review)}
                   >
                     <FaEdit />
                   </button>
@@ -121,77 +194,14 @@ const ReviewsAdm: React.FC = () => {
                   >
                     <FaTrash />
                   </button>
-                </td>
-              </tr>
-              {editingReviewId === review.id && (
-                <tr className="border-t bg-gray-100">
-                  <td colSpan={5} className="px-4 py-4">
-                    <div className="mt-4">
-                      <h3 className="text-lg font-semibold mb-2">Edit Review</h3>
-                      <form
-                        onSubmit={(e) => {
-                          e.preventDefault();
-                          handleSave(review);
-                        }}
-                      >
-                        <div className="mb-2">
-                          <label className="block text-sm font-medium">Usuario</label>
-                          <input
-                            type="text"
-                            value={review.user}
-                            onChange={(e) =>
-                              setReviews(reviews.map(r =>
-                                r.id === review.id ? { ...r, user: e.target.value } : r
-                              ))
-                            }
-                            className="mt-1 p-2 border rounded-md w-full"
-                          />
-                        </div>
-                        <div className="mb-2">
-                          <label className="block text-sm font-medium">Reseña</label>
-                          <textarea
-                            value={review.content}
-                            onChange={(e) =>
-                              setReviews(reviews.map(r =>
-                                r.id === review.id ? { ...r, content: e.target.value } : r
-                              ))
-                            }
-                            className="mt-1 p-2 border rounded-md w-full"
-                          />
-                        </div>
-                        <div className="mb-2">
-                          <label className="block text-sm font-medium">Calificación</label>
-                          <input
-                            type="number"
-                            min="1"
-                            max="5"
-                            value={review.rating}
-                            onChange={(e) =>
-                              setReviews(reviews.map(r =>
-                                r.id === review.id ? { ...r, rating: parseInt(e.target.value) } : r
-                              ))
-                            }
-                            className="mt-1 p-2 border rounded-md w-full"
-                          />
-                        </div>
-                        <button
-                          type="submit"
-                          className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
-                        >
-                          Save
-                        </button>
-                      </form>
-                    </div>
-                  </td>
-                </tr>
-              )}
-            </React.Fragment>
-          ))}
-        </tbody>
-      </table>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
-
-
-export default ReviewsAdm;
+  
+  export default ReviewsAdm;

@@ -1,4 +1,4 @@
-interface IRegisterErrorProps {
+
   name?: string;
   email?: string;
   password?: string;
