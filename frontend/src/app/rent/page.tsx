@@ -103,7 +103,7 @@ if (loading) {
       
       {/* Sección de ventas recientes */}
       <div className="bg-[#333333] rounded-lg shadow-md p-6 mb-6">
-        <h2 className="text-xl font-semibold text-[#C4FF0D]">Tus vehiculos puestos en alquiler</h2>
+        <h2 className="text-xl font-semibold text-[#C4FF0D]">Tus Alquileres Activos</h2>
         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           
                {userData?.rentals?.length !== 0 ? (userData?.rentals.map((rent) => (
@@ -125,7 +125,7 @@ if (loading) {
 
       {/* Sección de vehículos listados */}
       <div className="bg-[#333333] rounded-lg shadow-md p-6 mb-6">
-        <h2 className="text-xl font-semibold text-[#C4FF0D]">Tus Vehículos Listados</h2>
+        <h2 className="text-xl font-semibold text-[#C4FF0D]">Todos tus Vehículos Listados</h2>
         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {userData?.post?.length !== 0 ? (userData?.post.map((rent) => (
           // eslint-disable-next-line react/jsx-key
@@ -133,7 +133,8 @@ if (loading) {
           key = {rent.id}
           carModel={rent.title}
           price={rent.price}
-          imageUrl={rent.car?.image_url[0]}
+            imageUrl={rent.car?.image_url[0]}
+            idPost={rent.id}
         />
               
         ))) : (
@@ -195,16 +196,39 @@ const SaleCard: React.FC<SaleCardProps> = ({ carModel, saleDate,reservationEndDa
 
 // Componente para mostrar un vehículo listado
 
-const ListedCarCard: React.FC<ListedCarCardProps> = ({ carModel, price, imageUrl }) => (
+const ListedCarCard: React.FC<ListedCarCardProps> = ({ carModel, price, imageUrl, idPost }) => (
   <div className="bg-[#2d2d2d] p-4 rounded-lg shadow">
     <img className="w-full h-32 object-cover rounded-t-lg" src={imageUrl} alt={carModel} />
     <div className="mt-2">
       <h4 className=" text-slate-100 font-bold text-lg">{carModel}</h4>
       <p className="text-slate-400 font-semibold mt-2">{`$ ${price}/dia`}</p>
-      <div className="text-center mt-4">
+      <div className="text-center mt-4 flex align-middle justify-between ">
         <button className="px-4 py-2 bg-[#232326] text-white rounded hover:bg-[#131212]">
           Ver más detalles
         </button>
+        
+                    <Link
+                      href={`rent/${idPost}`}
+                      className="text-gray-300 align-middle justify-center content-center text-sm md:text-base hover:text-[#C4FF0D] hover:underline"
+                    >
+                      {" "}
+                      <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="w-6 h-6 fill-[] stroke-[#C4FF0D]  "
+                    >
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                      <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
+                      <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" />
+                      <path d="M16 5l3 3" />
+                    </svg>
+                    </Link>
+          
+
       </div>
     </div>
   </div>

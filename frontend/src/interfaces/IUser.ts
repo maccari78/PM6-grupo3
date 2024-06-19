@@ -108,3 +108,19 @@ export interface IUserData {
   zip_code: string;
   city: string;
 }
+export interface IUserAdm {
+  id: string;
+  email: string;
+  name: string;
+  nDnI: number;
+  nExpiration: string ;
+  phone: string;
+  image_url: string;
+  public_id: string 
+  userGoogle: boolean;
+  aboutMe: string;
+  roles: string;
+  isDeleted: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
