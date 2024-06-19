@@ -62,13 +62,16 @@ const Products: React.FC = () => {
 
       if (!response.ok) {
         setNotFound(true);
+        setCurrentPage(1)
       } else {
         setNotFound(false);
       }
 
       const data: IPost[] = await response.json();
       if (Array.isArray(data)) {
+        setCurrentPage(1)
         setPosts(data);
+        
       }
     } catch (error: any) {
       console.log(error.message);
@@ -101,6 +104,7 @@ const Products: React.FC = () => {
     setFilters(null);
     setNotShowFilter(false);
     setNotFound(false);
+    setCurrentPage(1)
   };
 
   const endIndex = currentPage * postsQT;

@@ -3,7 +3,7 @@ import SkeletonDashboard from "@/components/sketelons/SkeletonDashboard";
 import { validateLogin } from "@/helpers/validateLogin";
 import { IErrorlogin, Ilogin } from "@/interfaces/ILogin";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { LuEye } from "react-icons/lu";
@@ -36,6 +36,15 @@ const Login = () => {
   const [session, setSession] = useState({ token: null });
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [token, setToken] = useState();
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.localStorage) {
+      const userToken = localStorage.getItem("userSession");
+      setToken(JSON.parse(userToken!));
+      userToken && redirect("/");
+    }
+  }, []);
 
   console.log(error.password);
 
