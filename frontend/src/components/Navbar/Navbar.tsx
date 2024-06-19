@@ -264,7 +264,7 @@ const Navbar: React.FC = () => {
           <div className="hidden flex-col gap-5 bg-[#3b3b3b] justify-center px-4 rounded-2xl mt-1 py-3 w-[500px]"></div>
         ) : (
           showResults && (
-            <div className="absolute   flex flex-col gap-5 bg-[#3b3b3b] justify-center px-4 rounded-2xl mt-1 py-3 w-[500px]">
+            <div className="absolute z-40  flex flex-col gap-5 bg-[#3b3b3b] justify-center px-4 rounded-2xl mt-1 py-3 w-[500px]">
               {noResults ? (
                 <h2 className="text-lg font-bold text-[#c2e94e]">
                   No se encontraron resultados...
