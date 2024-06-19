@@ -37,17 +37,17 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  console.log(error.password);
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserData({
       ...userData,
       [event.target.name]: event.target.value,
     });
-  };
 
-  useEffect(() => {
     const errors = validateLogin(userData);
     setError(errors);
-  }, [userData]);
+  };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -158,7 +158,7 @@ const Login = () => {
                   className={
                     error.email
                       ? "border-[1px] focus:outline-[#b7e237] rounded-full px-3 py-2 mt-1 mb-2 text-sm w-full ring-red-500 text-red-700 border-red-600"
-                      : "border-[1px]  focus:outline-[#b7e237] rounded-full px-3 py-2 mt-1 text-sm w-full  "
+                      : "border-[1px]  focus:outline-[#b7e237] rounded-full px-3 py-2 mt-1 text-sm w-full "
                   }
                 />
                 {error.email && (
@@ -167,37 +167,39 @@ const Login = () => {
                 <label className="font-semibold text-sm text-gray-200 pb-1 mt-5 block">
                   Contraseña
                 </label>
-                <div className="flex flex-row items-center justify-center">
-                  <input
-                    id="password-login"
-                    name="password"
-                    value={userData.password}
-                    type={showPassword ? "text" : "password"}
-                    onChange={handleChange}
-                    required
-                    className={
-                      error.password
-                        ? "border-[1px] focus:outline-[#b7e237] rounded-full px-3 py-2 mt-1 mb-2 text-sm w-full ring-red-500 text-red-700 border-red-600"
-                        : "border-[1px]  focus:outline-[#b7e237] rounded-full px-3 py-2 mt-1  text-sm w-full "
-                    }
-                  />
-                  <button
-                    type="button"
-                    onClick={handleShowPass}
-                    className="hover:bg-[#222222] px-2 rounded-xl py-2 flex flex-row justify-center items-center duration-200"
-                  >
-                    {showPassword ? (
-                      <LuEye className=" text-[#a6cc32]" />
-                    ) : (
-                      <FiEyeOff className=" text-[#a6cc32]" />
-                    )}
-                  </button>
+                <div className="flex flex-col">
+                  <div className="flex flex-row items-center justify-center">
+                    <input
+                      id="password-login"
+                      name="password"
+                      value={userData.password}
+                      type={showPassword ? "text" : "password"}
+                      onChange={handleChange}
+                      required
+                      className={
+                        error.password
+                          ? "border-[1px] focus:outline-[#b7e237] rounded-full px-3 py-2 mt-1 mb-2 text-sm w-full ring-red-500 text-red-700 border-red-600"
+                          : "border-[1px]  focus:outline-[#b7e237] rounded-full px-3 py-2 mt-1  text-sm w-full"
+                      }
+                    />
+                    <button
+                      type="button"
+                      onClick={handleShowPass}
+                      className="hover:bg-[#222222] px-2 rounded-xl py-2 flex flex-row justify-center items-center duration-200"
+                    >
+                      {showPassword ? (
+                        <LuEye className=" text-[#a6cc32]" />
+                      ) : (
+                        <FiEyeOff className=" text-[#a6cc32]" />
+                      )}
+                    </button>
+                  </div>
+                  {error.password && (
+                    <p className="text-sm text-red-500  lg:mt-0">
+                      {error.password}
+                    </p>
+                  )}
                 </div>
-                {error.password && (
-                  <p className="text-sm text-red-500 mt-5 lg:mt-0">
-                    {error.password}
-                  </p>
-                )}
                 <button
                   type="submit"
                   className=" w-full h-[30px] mt-5 px-3 py-2 text-sm content-center justify-center items-center  md:h-10 text-[#222222] md:py-5 flex md:text-base font-semibold bg-[#C4FF0D] rounded-lg shadow-lg hover:scale-105 duration-200 hover:drop-shadow-2xl hover:shadow-[#c3ff0d92] hover:cursor-pointer"

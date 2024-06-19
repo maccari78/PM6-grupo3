@@ -122,12 +122,10 @@ export class MailService {
         }
       }
 
-      case 'cancelOwnerReservation': {
-        // arrendatario : $ {{owner}} <br>
-        // Monto pagado : $ {{price}} <br>
-        // Alquiler desde :  {{newRentalsStart}}  <br>
-        // Alquiler hasta :  {{newRentalsEnd}}    <br>
 
+
+      case 'cancelOwnerReservation': 
+        {
         //To search totalCost
         const PRICE = user.rentals.filter((post) => ({
           priceTotal: post.totalCost,
@@ -175,7 +173,13 @@ export class MailService {
         }
       }
 
-      case 'cancelTenantReservation': {
+      case 'cancelTenantReservation':
+        {
+        // To search name of tenant
+        const nameTenant = await this.rentalsRepository.find({
+          where: {posts: {id: contractPost.id}},
+          relations: {users: true},
+        });
         //To search totalCost
         const PRICE = user.rentals.filter((post) => ({
           priceTotal: post.totalCost,
@@ -224,40 +228,14 @@ export class MailService {
       }
 
       case 'cancelReservation': {
-        // To search name of tenant
-        // const nameTenant = await this.rentalsRepository.find({
-        //   where: {posts: {id: contractPost.id}},
-        //   relations: {users: true},
-        // });
-
-        // //To search totalCost
-        // const PRICE = user.rentals.filter((post) => ({
-        //   priceTotal: post.totalCost,
-        // }));
-        // const price = PRICE[PRICE.length - 1].totalCost;
-
-        // //To search for first day of rent
-        // const rentalsStart = user.rentals.filter((post) => ({
-        //   rentalStartDate: post.rentalStartDate,
-        // }));
-        // const RENTALStart = rentalsStart[rentalsStart.length - 1].rentalStartDate;
-
-        // //To search for last day of rent
-        // const datePayEnd = user.rentals.filter((post) => ({
-        //   rentalEndDate: post.rentalEndDate,
-        // }));
-        // const DatePayend = datePayEnd[datePayEnd.length - 1].rentalEndDate;
 
         try {
           await this.mailerservice.sendMail({
             to: user.email,
             subject: 'You Drive. Alquila Autos Facilmente',
-            template: 'cancelTenantReservation',
+            template: 'cancelReservation',
             context: {
               name: user.name,
-              // prices: price,
-              // newRentalsStart: RENTALStart,
-              // newRentalsEnd: DatePayend,
             },
             attachments: [
               {

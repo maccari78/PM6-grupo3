@@ -15,6 +15,7 @@ export interface ListedCarCardProps {
   carModel: string;
   price: string | null | undefined;
   imageUrl: string;
+  idPost: string | undefined;
 }
 export interface PublicationCardProps {
   carModel: string;
