@@ -1,78 +1,38 @@
-"use client";
+'use client'
 import SalePostCard from "@/components/DashboardComponents/PostUser";
 import ReviewCard from "@/components/DashboardComponents/ReviewCard";
 import Sidebar from "@/components/DashboardComponents/Sidebar";
 import SkeletonDashboard from "@/components/sketelons/SkeletonDashboard";
 import { IUserData } from "@/interfaces/IUser";
-import { redirect, useRouter } from "next/navigation";
+import axios from "axios";
 import React, { useEffect, useState } from "react";
-import Swal from "sweetalert2";
 
-const apiUrl = process.env.NEXT_PUBLIC_API_GET_USERS_TOKEN;
-if (!apiUrl) {
-  throw new Error(
-    "Environment variable NEXT_PUBLIC_API_GET_USERS_TOKEN is not set"
-  );
+interface UserPageProps {
+  params: {
+    id: string;
+  };
 }
 
-const UserProfile: React.FC = () => {
-  const [userToken, setUserToken] = useState<string | null>(null);
+const apiUrl = process.env.NEXT_PUBLIC_API_USERS;
+
+const UserProfile = ({ params }: UserPageProps) => {
+  const { id } = params;
   const [userData, setUserData] = useState<IUserData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const router = useRouter();
+
+
+  console.log(id);
 
   useEffect(() => {
-    if (typeof window !== "undefined" && window.localStorage) {
-      const userSession = localStorage.getItem("userSession");
-      if (userSession) {
-        const parsedSession = JSON.parse(userSession);
-        setUserToken(parsedSession.token);
-      } else {
-        setLoading(true);
-        Swal.fire({
-          title: "Error de acceso",
-          text: "Necesitas estar logueado para ingresar",
-          icon: "error",
-        });
-        redirect("/login");
-      }
-    }
-  }, [router]);
+    axios.get(`${apiUrl}/${params.id}`).then((response) => {
+      setUserData(response.data);
+      setLoading(false);
+    });
+  }, []);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(apiUrl, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${userToken}`,
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error("Error fetching user data");
-        }
-
-        const data = await response.json();
-        setUserData(data);
-      } catch (error: any) {
-        throw new Error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (userToken) {
-      fetchData();
-    }
-  }, [userToken]);
   if (loading) {
     return <SkeletonDashboard />;
   }
-
-  console.log(userData);
 
   return (
     <>
