@@ -1,8 +1,8 @@
 'use client';
 import validate from "@/helpers/validate";
 import { useEffect, useState } from "react";
-import IVehicleData from "../../../../interfaces/IVehicleData";
-import IErrorsVehicleForm from "../../../../interfaces/IErrorsVehicleForm";
+import IVehicleData from "@/interfaces/IVehicleData";
+import IErrorsVehicleForm from "@/interfaces/IErrorsVehicleForm";
 import axios from 'axios';
 import { useRouter, useParams } from "next/navigation";
 import SkeletonDashboard from "@/components/sketelons/SkeletonDashboard";
@@ -130,6 +130,7 @@ const UploadPost = () => {
             }
             setIsLoading(true)
             try {
+                // Enviar los datos al servidor
                 const response = await axios.put(apiUrl, formData, {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -160,7 +161,7 @@ const UploadPost = () => {
             }
         }
     };
-        // Si el usuario no es el propietario, mostrar un mensaje de error o redirigir
+// Si el usuario no es el propietario, mostrar un mensaje de error o redirigir
         // if (!isOwner) {
         //     return <div>No tienes permiso para editar esta publicación.</div>;
         // }

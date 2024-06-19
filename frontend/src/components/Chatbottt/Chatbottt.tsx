@@ -23,7 +23,7 @@ const Chatbottt = () => {
     return text;
   }
 
-  const helpOptions = ["Preguntas frecuentes", "Quiero alquilar mi vehiculo", "Quiero crearme una cuenta", "Como desactivar mi cuenta"]; 
+  const helpOptions = ["Preguntas frecuentes", "Quiero alquilar mi vehiculo", "Quiero crearme una cuenta", "Términos y Condiciones"]; 
 	const flow = {
 		start: {
 			message: "Hola, Soy Pepito 👋! Bienvenido a YouDrive, estoy emocionado de que uses nuestro " +
@@ -63,8 +63,8 @@ const Chatbottt = () => {
 				case "Quiero crearme una cuenta":
 					link = "/register";
 					break;
-				case "Como desactivar mi cuenta":
-					link = "#";
+				case "Términos y Condiciones":
+					link = "/terms";
 					break;
 				default:
 					return "unknown_input";

@@ -43,7 +43,7 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
       <div className="mb-5 w-full flex flex-col justify-start">
         <h1 className="text-lg text-[#C4FF0D]">Marca</h1>
         <ul>
-          {["Kia", "Chevrolet", "Mazda", "Ford", "Ferrari"].map((brand) => (
+          {["Kia", "Chevrolet", "Mazda", "Ford", "Ferrari", "Toyota", "Honda", "Volkswagen", "Audi", "Jeep", "Mercedes-Benz", "Fiat", "Renault", "Nissan", "Peugeot", "BMW"].map((brand) => (
             <li key={brand}>
               <button
                 onClick={() => handleBrandChange(brand)}
@@ -59,7 +59,7 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
       <div className="mb-5 w-full flex flex-col justify-start">
         <h1 className="text-lg text-[#C4FF0D]">Modelo</h1>
         <ul>
-          {["F-150", "Sorento", "Camaro", "Stradale", "Picanto"].map(
+          {["F-150", "Sorento", "Camaro", "Stradale", "Picanto", "Focus", "A3", "Compas", "Corolla", "Golf", "Fiesta", "Territory"].map(
             (model) => (
               <li key={model} className="flex justify-start">
                 <button

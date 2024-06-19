@@ -39,7 +39,6 @@ const VehicleForm = () => {
     }
   }, []);
 
-
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
       const token = localStorage.getItem("userSession");
@@ -89,12 +88,13 @@ const VehicleForm = () => {
   };
 
   const hasErrors = (): boolean => {
-    return  Object.values(vehicleData).some(value => value === '' || value == 0 || value === null);
-};
+    return Object.values(vehicleData).some(
+      (value) => value === "" || value == 0 || value === null
+    );
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
 
     // Validar los datos del vehículo
     const validationErrors = validate(vehicleData);
@@ -118,7 +118,7 @@ const VehicleForm = () => {
           formData.append("file", file);
         });
       }
-      setIsLoading(true)
+      setIsLoading(true);
       axios
         .post(apiUrl, formData, {
           headers: {
@@ -129,7 +129,7 @@ const VehicleForm = () => {
         .then((response) => {
           if (response.data) {
             Swal.fire("Vehiculo creado correctamente!");
-            setIsLoading(false)
+            setIsLoading(false);
             setVehicleData({
               title: "",
               description: "",
@@ -148,19 +148,33 @@ const VehicleForm = () => {
         })
         .catch((error) => {
           Swal.fire("Ha ocurrido un error en la conexión");
-          setIsLoading(false)
+          setIsLoading(false);
           console.error("Error:", error);
         });
     }
   };
 
-  return (
-    isLoading ? <SkeletonDashboard/> :
+  const brands = [
+    "Kia",
+    "Chevrolet",
+    "Mazda",
+    "Ford",
+    "Ferrari",
+    "Toyota",
+    "Honda",
+    "Volkswagen",
+    "Audi",
+    "Jeep",
+    "Renault",
+    "Otra",
+  ];
+
+  return isLoading ? (
+    <SkeletonDashboard />
+  ) : (
     <div className="font-sans text-white m-0 bg-[url('/background_register_2.svg')] bg-no-repeat bg-cover relative z-3 w-full pt-[70px] px-[30px] pb-[44px] justify-center items-center min-h-screen bg-gray-900 h-min flex flex-col ">
       <div className="flex flex-col gap-2 p-4 items-center">
-        <h1 className=" text-4xl font-semibold">
-          ¡Publica tu vehículo ahora!
-        </h1>
+        <h1 className=" text-4xl font-semibold">¡Publica tu vehículo ahora!</h1>
         <span className="text-xl">Rápido, sencillo, y gratuito.</span>
       </div>
       <form
@@ -223,12 +237,11 @@ const VehicleForm = () => {
               <option value="" disabled>
                 Selecciona la marca...
               </option>
-              <option value="Kia">Kia</option>
-              <option value="Chevrolet">Chevrolet</option>
-              <option value="Mazda">Mazda</option>
-              <option value="Ford">Ford</option>
-              <option value="Ferrari">Ferrari</option>
-              <option value="Otra">Otra...</option>
+              {brands.map((brand) => (
+                <option key={brand} value={brand}>
+                  {brand}
+                </option>
+              ))}
             </select>
             {errors.brand && (
               <span className="text-red-500">{errors.brand}</span>
@@ -306,7 +319,9 @@ const VehicleForm = () => {
               </option>
               <option value="Menos de 50.000km">Menos de 50.000km</option>
               <option value="50.000km - 100.000km">50.000km - 100.000km</option>
-              <option value="100.000km - 150.000km">100.000km - 150.000km</option>
+              <option value="100.000km - 150.000km">
+                100.000km - 150.000km
+              </option>
               <option value="Más de 150.000km">Más de 150.000km</option>
             </select>
             {errors.mileage && (
@@ -328,7 +343,13 @@ const VehicleForm = () => {
           {errors.image && <span className="text-red-500">{errors.image}</span>}
         </div>
         <div className="flex justify-center">
-          <button type="submit" disabled={hasErrors()} className="mb-6 w-32 items-center bg-[#C4FF0D] text-[#222222] py-2 rounded disabled:bg-slate-300">Publicar</button>
+          <button
+            type="submit"
+            disabled={hasErrors()}
+            className="mb-6 w-32 items-center bg-[#C4FF0D] text-[#222222] py-2 rounded disabled:bg-slate-300"
+          >
+            Publicar
+          </button>
         </div>
       </form>
     </div>
