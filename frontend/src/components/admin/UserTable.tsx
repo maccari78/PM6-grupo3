@@ -19,6 +19,7 @@ const UserTable: React.FC<{ userRole: string }> = ({ userRole }) => {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [sortField, setSortField] = useState<string | null>(null);
   const [userToken, setUserToken] = useState<string | null>(null);
+  const [reload, setReload] = useState<boolean>(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -54,7 +55,7 @@ const UserTable: React.FC<{ userRole: string }> = ({ userRole }) => {
     if (userToken) {
       fetchData();
     }
-  }, [userToken]);
+  }, [userToken, reload]);
 
   const handleEdit = (user: IUserAdm) => {
     setEditingUserId(editingUserId === user.id ? null : user.id);
@@ -63,8 +64,8 @@ const UserTable: React.FC<{ userRole: string }> = ({ userRole }) => {
 
   const handleDelete = async (userId: string) => {
     try {
-      const response = await fetch(`${apiUrl}/users/${userId}`, {
-        method: 'DELETE',
+      const response = await fetch(`${apiUrl}/users/soft-delete/${userId}`, {
+        method: 'PATCH',
         headers: {
           Authorization: `Bearer ${userToken}`,
           'Content-Type': 'application/json',
@@ -100,8 +101,9 @@ const UserTable: React.FC<{ userRole: string }> = ({ userRole }) => {
         setUsers(users.map(u => (u.id === user.id ? updatedUser : u)));
         setEditingUserId(null);
         setEditForm({});
+        
         Swal.fire('Usuario actualizado', 'El usuario ha sido actualizado correctamente', 'success');
-        window.location.reload();
+       setReload(false)
       } else {
         console.error('Failed to update the user');
         Swal.fire('Error', 'No se pudo actualizar el usuario', 'error');
@@ -109,6 +111,7 @@ const UserTable: React.FC<{ userRole: string }> = ({ userRole }) => {
     } catch (error: any) {
       console.error('Error updating the user:', error.message);
     }
+    finally{setReload(true)}
   };
 
   const handleSort = (field: string) => {
