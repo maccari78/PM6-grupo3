@@ -4,7 +4,7 @@ import IUserData from "../../interfaces/IRegisterProps";
 import { validateRegister } from "@/helpers/validateRegister";
 import axios from "axios";
 import IRegisterErrorProps from "../../interfaces/IRegisterErrorProps";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import Link from "next/link";
 import Swal from "sweetalert2";
 import SkeletonDashboard from "@/components/sketelons/SkeletonDashboard";
@@ -35,6 +35,15 @@ const Register = () => {
   const [userData, setUserData] = useState<IUserData>(initialUserData);
   const [errors, setErrors] = useState<IRegisterErrorProps>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [token, setToken] = useState();
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.localStorage) {
+      const userToken = localStorage.getItem("userSession");
+      setToken(JSON.parse(userToken!));
+      userToken && redirect("/");
+    }
+  }, []);
 
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
