@@ -9,8 +9,6 @@ interface Props {
 const CarouselVehicle = ({ imgs }: Props) => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 
-  console.log(imgs);
-
   const handlePrevious = () => {
     setCurrentIndex((prevIndex) =>
       prevIndex - 1 < 0 ? imgs!.length - 1 : prevIndex - 1

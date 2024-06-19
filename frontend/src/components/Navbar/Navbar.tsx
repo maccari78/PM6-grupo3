@@ -6,6 +6,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import Dropdown from "../DropdownNavbar/Dropdown";
 import Swal from "sweetalert2";
+import { MdConnectWithoutContact } from "react-icons/md";
+import { MdOutlineQuestionAnswer } from "react-icons/md";
 
 import { SearchResult, Post, Car } from "./interfaces/INavbar";
 
@@ -330,15 +332,39 @@ const Navbar: React.FC = () => {
         )}
       </div>
 
-      <div className="hidden md:flex flex-row h-full items-center hover:border-b-[1px] hover:border-b-[#C4FF0D] focus:border-b-[#C4FF0D] duration-150">
-        <button className="flex flex-row items-center justify-center">
-          <Link
-            href="/about"
-            className="text-sm text-gray-100 font-medium hover:text-gray-400 duration-150"
-          >
-            Sobre nosotros
-          </Link>
-        </button>
+      <div className="hidden md:flex flex-row gap-10 h-full items-center ">
+        <div className="hidden md:flex flex-row  h-full items-center hover:border-b-[1px] hover:border-b-[#C4FF0D] focus:border-b-[#C4FF0D] duration-150">
+          <button className="flex flex-row items-center justify-center">
+            <Link
+              href="/about"
+              className="text-sm text-gray-100 font-medium hover:text-gray-400 duration-150"
+            >
+              Sobre nosotros
+            </Link>
+          </button>
+        </div>
+
+        <div className="hidden md:flex flex-row  h-full items-center hover:border-b-[1px] hover:border-b-[#C4FF0D] focus:border-b-[#C4FF0D] duration-150">
+          <button className="flex flex-row items-center justify-center">
+            <Link
+              href="/answers"
+              className="text-sm text-gray-100 font-medium hover:text-gray-400 duration-150"
+            >
+              Preguntas frecuentes
+            </Link>
+          </button>
+        </div>
+
+        <div className="hidden md:flex flex-row h-full items-center hover:border-b-[1px] hover:border-b-[#C4FF0D] focus:border-b-[#C4FF0D] duration-150">
+          <button className="flex flex-row items-center justify-center">
+            <Link
+              href="/"
+              className="text-sm text-gray-100 font-medium hover:text-gray-400 duration-150"
+            >
+              Contacto
+            </Link>
+          </button>
+        </div>
       </div>
 
       <div className="hidden md:flex flex-row items-center  font-medium">
@@ -507,6 +533,21 @@ const Navbar: React.FC = () => {
                   </svg>
                   Sobre nosotros
                 </Link>
+                <Link
+                  href="/"
+                  className="flex items-center gap-1 flex-row px-4 py-2 text-sm hover:text-[#C4FF0D] hover:stroke-[#C4FF0D] duration-300 text-gray-300 hover:bg-[#494949]"
+                >
+                  <MdConnectWithoutContact className=" w-5 h-5 text-[#C4FF0D]" />
+                  Contacto
+                </Link>
+                <Link
+                  href="/answers"
+                  className="flex items-center gap-1 flex-row px-4 py-2 text-sm hover:text-[#C4FF0D] hover:stroke-[#C4FF0D] duration-300 text-gray-300 hover:bg-[#494949]"
+                >
+                  <MdOutlineQuestionAnswer className=" w-5 h-5 text-[#C4FF0D]" />
+                  Preguntas frecuentes
+                </Link>
+
                 <button
                   type="button"
                   className="flex flex-row gap-2 px-4 mt-2 text-start py-2 text-sm w-full duration-300 text-red-700 hover:bg-[#494949]"
@@ -532,7 +573,7 @@ const Navbar: React.FC = () => {
               </div>
             </div>
           ) : (
-            <div className="absolute z-50 right-0 w-56 mt-2 origin-top-right top-16 bg-[#222222] divide-y divide-gray-100 rounded-md shadow-lg">
+            <div className="absolute z-50 right-0 w-56 mt-2 origin-top-right top-16 bg-[#333333] divide-y divide-gray-100 rounded-md shadow-lg">
               <div className="py-1">
                 <Link
                   href="/login"
@@ -604,6 +645,20 @@ const Navbar: React.FC = () => {
                     <path d="M15.83 8.36a2.5 2.5 0 1 0 .594 -4.117" />
                   </svg>
                   Sobre nosotros
+                </Link>
+                <Link
+                  href="/"
+                  className="flex items-center gap-1 flex-row px-4 py-2 text-sm hover:text-[#C4FF0D] hover:stroke-[#C4FF0D] duration-300 text-gray-300 hover:bg-[#494949]"
+                >
+                  <MdConnectWithoutContact className=" w-5 h-5 text-[#C4FF0D]" />
+                  Contacto
+                </Link>
+                <Link
+                  href="/answers"
+                  className="flex items-center gap-1 flex-row px-4 py-2 text-sm hover:text-[#C4FF0D] hover:stroke-[#C4FF0D] duration-300 text-gray-300 hover:bg-[#494949]"
+                >
+                  <MdOutlineQuestionAnswer className=" w-5 h-5 text-[#C4FF0D]" />
+                  Preguntas frecuentes
                 </Link>
               </div>
             </div>

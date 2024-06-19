@@ -1,3 +1,8 @@
+import { FaLinkedin } from "react-icons/fa";
+import { FaGithub } from "react-icons/fa6";
+
+import Link from "next/link";
+
 const About = () => {
   return (
     <div className="bg-[#3f3f3f] py-10 sm:py-32 min-h-screen">
@@ -33,7 +38,7 @@ const About = () => {
             <div className="flex items-center gap-x-6">
               <img
                 className="h-16 w-16 rounded-full"
-                src="../../../frontend/public/fotoCamilo"
+                src="/camiloFoto.png"
                 alt="imagen de foto de perfil"
               />
               <div>
@@ -43,6 +48,20 @@ const About = () => {
                 <p className="text-sm font-semibold leading-6 text-[#C4FF0D]">
                   Desarrallor full-stack
                 </p>
+                <div className="flex flex-row gap-1">
+                  <Link
+                    href="https://www.linkedin.com/in/camilo-sierra-36ba612b2/"
+                    className="px-2 py-2 hover:bg-[#555454] rounded-full duration-200"
+                  >
+                    <FaLinkedin className="w-6 h-6 bg-gray-300 text-[#0A66C2] rounded-[2px]" />
+                  </Link>
+                  <Link
+                    href="https://github.com/CAndresSierra"
+                    className="px-2 py-2 hover:bg-[#555454] rounded-full duration-200"
+                  >
+                    <FaGithub className="w-6 h-6 py-[1px] bg-gray-200 text-gray-800 rounded-full" />
+                  </Link>
+                </div>
               </div>
             </div>
           </li>
@@ -50,7 +69,7 @@ const About = () => {
             <div className="flex items-center gap-x-6">
               <img
                 className="h-16 w-16 rounded-full"
-                src=""
+                src="/juanFoto.png"
                 alt="imagen de foto de perfil"
               />
               <div>
@@ -60,6 +79,20 @@ const About = () => {
                 <p className="text-sm font-semibold leading-6 text-[#C4FF0D]">
                   Desarrallor full-stack
                 </p>
+                <div className="flex flex-row gap-1">
+                  <Link
+                    href="https://www.linkedin.com/in/alvarezmajuan/"
+                    className="px-2 py-2 hover:bg-[#555454] rounded-full duration-200"
+                  >
+                    <FaLinkedin className="w-6 h-6 bg-gray-300 text-[#0A66C2] rounded-[2px]" />
+                  </Link>
+                  <Link
+                    href="https://github.com/AlvarezMar"
+                    className="px-2 py-2 hover:bg-[#555454] rounded-full duration-200"
+                  >
+                    <FaGithub className="w-6 h-6 py-[1px] bg-gray-200 text-gray-800 rounded-full" />
+                  </Link>
+                </div>
               </div>
             </div>
           </li>
@@ -67,7 +100,7 @@ const About = () => {
             <div className="flex items-center gap-x-6">
               <img
                 className="h-16 w-16 rounded-full"
-                src=""
+                src="/darvinFoto.png"
                 alt="imagen de foto de perfil"
               />
               <div>
@@ -77,6 +110,20 @@ const About = () => {
                 <p className="text-sm font-semibold leading-6 text-[#C4FF0D]">
                   Desarrallor full-stack
                 </p>
+                <div className="flex flex-row gap-1">
+                  <Link
+                    href="https://www.linkedin.com/in/darvin-ricardo-alania-inocencio-7927392a9/"
+                    className="px-2 py-2 hover:bg-[#555454] rounded-full duration-200"
+                  >
+                    <FaLinkedin className="w-6 h-6 bg-gray-300 text-[#0A66C2] rounded-[2px]" />
+                  </Link>
+                  <Link
+                    href="https://github.com/DAlaniaInocencio"
+                    className="px-2 py-2 hover:bg-[#555454] rounded-full duration-200"
+                  >
+                    <FaGithub className="w-6 h-6 py-[1px] bg-gray-200 text-gray-800 rounded-full" />
+                  </Link>
+                </div>
               </div>
             </div>
           </li>
@@ -84,7 +131,7 @@ const About = () => {
             <div className="flex items-center gap-x-6">
               <img
                 className="h-16 w-16 rounded-full"
-                src=""
+                src="/daniloFoto.png"
                 alt="imagen de foto de perfil"
               />
               <div>
@@ -94,6 +141,20 @@ const About = () => {
                 <p className="text-sm font-semibold leading-6 text-[#C4FF0D]">
                   Desarrallor full-stack
                 </p>
+                <div className="flex flex-row gap-1">
+                  <Link
+                    href="https://www.linkedin.com/in/maccari78/"
+                    className="px-2 py-2 hover:bg-[#555454] rounded-full duration-200"
+                  >
+                    <FaLinkedin className="w-6 h-6 bg-gray-300 text-[#0A66C2] rounded-[2px]" />
+                  </Link>
+                  <Link
+                    href="https://github.com/maccari78"
+                    className="px-2 py-2 hover:bg-[#555454] rounded-full duration-200"
+                  >
+                    <FaGithub className="w-6 h-6 py-[1px] bg-gray-200 text-gray-800 rounded-full" />
+                  </Link>
+                </div>
               </div>
             </div>
           </li>
@@ -101,7 +162,7 @@ const About = () => {
             <div className="flex items-center gap-x-6">
               <img
                 className="h-16 w-16 rounded-full"
-                src=""
+                src="/camilaFoto.png"
                 alt="imagen de foto de perfil"
               />
               <div>
@@ -111,6 +172,20 @@ const About = () => {
                 <p className="text-sm font-semibold leading-6 text-[#C4FF0D]">
                   Desarrallor full-stack
                 </p>
+                <div className="flex flex-row gap-1">
+                  <Link
+                    href="https://www.linkedin.com/in/camila-fabre/"
+                    className="px-2 py-2 hover:bg-[#555454] rounded-full duration-200"
+                  >
+                    <FaLinkedin className="w-6 h-6 bg-gray-300 text-[#0A66C2] rounded-[2px]" />
+                  </Link>
+                  <Link
+                    href="https://github.com/cfcamilafabre"
+                    className="px-2 py-2 hover:bg-[#555454] rounded-full duration-200"
+                  >
+                    <FaGithub className="w-6 h-6 py-[1px] bg-gray-200 text-gray-800 rounded-full" />
+                  </Link>
+                </div>
               </div>
             </div>
           </li>
@@ -118,7 +193,7 @@ const About = () => {
             <div className="flex items-center gap-x-6">
               <img
                 className="h-16 w-16 rounded-full"
-                src=""
+                src="/emanuelFoto.png"
                 alt="imagen de foto de perfil"
               />
               <div>
@@ -128,6 +203,20 @@ const About = () => {
                 <p className="text-sm font-semibold leading-6 text-[#C4FF0D]">
                   Desarrallor full-stack
                 </p>
+                <div className="flex flex-row gap-1">
+                  <Link
+                    href="https://www.linkedin.com/in/vcuellojrs/"
+                    className="px-2 py-2 hover:bg-[#555454] rounded-full duration-200"
+                  >
+                    <FaLinkedin className="w-6 h-6 bg-gray-300 text-[#0A66C2] rounded-[2px]" />
+                  </Link>
+                  <Link
+                    href=""
+                    className="px-2 py-2 hover:bg-[#555454] rounded-full duration-200"
+                  >
+                    <FaGithub className="w-6 h-6 py-[1px] bg-gray-200 text-gray-800 rounded-full" />
+                  </Link>
+                </div>
               </div>
             </div>
           </li>
@@ -135,7 +224,7 @@ const About = () => {
             <div className="flex items-center gap-x-6">
               <img
                 className="h-16 w-16 rounded-full"
-                src=""
+                src="/geronimoFoto.png"
                 alt="imagen de foto de perfil"
               />
               <div>
@@ -145,6 +234,20 @@ const About = () => {
                 <p className="text-sm font-semibold leading-6 text-[#C4FF0D]">
                   Desarrallor full-stack
                 </p>
+                <div className="flex flex-row gap-1">
+                  <Link
+                    href="https://www.linkedin.com/in/gerokramar/"
+                    className="px-2 py-2 hover:bg-[#555454] rounded-full duration-200"
+                  >
+                    <FaLinkedin className="w-6 h-6 bg-gray-300 text-[#0A66C2] rounded-[2px]" />
+                  </Link>
+                  <Link
+                    href="https://github.com/GeroKramar"
+                    className="px-2 py-2 hover:bg-[#555454] rounded-full duration-200"
+                  >
+                    <FaGithub className="w-6 h-6 py-[1px] bg-gray-200 text-gray-800 rounded-full" />
+                  </Link>
+                </div>
               </div>
             </div>
           </li>
