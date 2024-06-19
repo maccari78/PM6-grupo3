@@ -249,10 +249,19 @@ export class PostsService {
 
     if (!findPosts)
       throw new NotFoundException(`No se encontro publicación con ${id}`);
-    if (findPosts.user.id !== user.id)
+    
+    //bug
+    // if (findPosts.user.id !== user.id)
+    //   throw new UnauthorizedException(
+    //     'No tiene permisos para actualizar esta publicación',
+    //   );
+
+    // All admin to update posts
+    if (findPosts.user.id !== user.id && user.roles !== 'admin'){
       throw new UnauthorizedException(
-        'No tiene permisos para actualizar esta publicación',
-      );
+      'No tiene permisos para actualizar esta publicación',
+    );}
+      
     const car = await this.carRepository.findOneBy({
       id: findPosts.car.id,
     });
