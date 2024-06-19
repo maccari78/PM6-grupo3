@@ -358,7 +358,7 @@ const Navbar: React.FC = () => {
         <div className="hidden md:flex flex-row h-full items-center hover:border-b-[1px] hover:border-b-[#C4FF0D] focus:border-b-[#C4FF0D] duration-150">
           <button className="flex flex-row items-center justify-center">
             <Link
-              href="/"
+              href="/contact"
               className="text-[15px] leading-5 text-gray-100 font-medium hover:text-[#C4FF0D] duration-150"
             >
               Contacto
@@ -534,7 +534,7 @@ const Navbar: React.FC = () => {
                   Sobre nosotros
                 </Link>
                 <Link
-                  href="/"
+                  href="/contact"
                   className="flex items-center gap-1 flex-row px-4 py-2 text-sm hover:text-[#C4FF0D] hover:stroke-[#C4FF0D] duration-300 text-gray-300 hover:bg-[#494949]"
                 >
                   <MdConnectWithoutContact className=" w-5 h-5 text-[#C4FF0D]" />
