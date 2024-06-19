@@ -155,8 +155,7 @@ export class PostsController {
     console.log(token);
 
     if (files?.length !== 0 || files) {
-      return this.postsService.UpdatePostsServices(
-        id,
+      return this.postsService.UpdatePostsServices( id,
         updatePostDto,
         token,
         files,

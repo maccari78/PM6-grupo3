@@ -1,21 +1,10 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  Delete,
-  Query,
-  ParseUUIDPipe,
-  UseGuards,
-  Patch,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Query, ParseUUIDPipe, Patch, UseGuards} from '@nestjs/common';
 import { CarsService, FiltersCars } from './cars.service';
 import { CreateCarDto } from './dto/create-cars.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { RolesGuard } from 'src/users/utils/roles.guard';
 import { Role } from 'src/users/utils/roles.enum';
 import { Roles } from 'src/users/utils/roles.decorator';
+import { RolesGuard } from 'src/users/utils/roles.guard';
 
 @ApiTags('CARS')
 @Roles(Role.User, Role.Admin, Role.SuperAdmin)
@@ -50,6 +39,7 @@ export class CarsController {
 
   @Patch('soft-delete/:id')
   @Roles(Role.SuperAdmin)
+  @UseGuards(RolesGuard)
   async softDelete(@Param('id') id: string): Promise<{ message: string }> {
     return this.carsService.softDelete(id);
   }
