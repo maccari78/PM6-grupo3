@@ -5,7 +5,6 @@ import ButtonCheckout from "@/components/ButtonCheckout/ButtonCheckout";
 import DateRangePicker from "@/components/DateRangePicker/DateRangePicker";
 import Reviews from "@/components/Reviews/Reviews";
 import { IPost } from "@/components/VehiclesComponent/interfaces/IPost";
-import { IUser, IUserData } from "@/interfaces/IUser";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Button, Tooltip } from "flowbite-react";
@@ -23,12 +22,7 @@ if (!apiPostUrl) {
   throw new Error("Environment variable NEXT_PUBLIC_API_POSTS is not set");
 }
 
-const apiUserUrl = process.env.NEXT_PUBLIC_API_GET_USERS_TOKEN;
-if (!apiUserUrl) {
-  throw new Error(
-    "Environment variable NEXT_PUBLIC_API_GET_USERS_TOKEN is not set"
-  );
-}
+
 
 const VehicleDetail = ({ params }: { params: { id: string } }) => {
   const bookedDates = [
@@ -42,8 +36,6 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
   const [startDate, setStartDate] = useState<string | undefined>();
   const [userToken, setUserToken] = useState<string | undefined>();
   const [endDate, setEndDate] = useState<string | undefined>();
-  const [userData, setUserData] = useState<IUserData | null>(null);
-  const [isOwner, setIsOwner] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [mediaRating, setMediaRating] = useState<number>();
   const [totalReviews, setTotalReviews] = useState<number>();
@@ -102,36 +94,7 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
     fetchDta();
   }, []);
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await fetch(apiUserUrl, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${userToken!}`,
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error("Error fetching user data");
-        }
-
-        const data = await response.json();
-        setUserData(data);
-
-        if (data.id === postState?.user.id) {
-          setIsOwner(true);
-        }
-      } catch (error: any) {
-        throw new Error(error);
-      }
-    };
-
-    if (userToken) {
-      fetchUserData();
-    }
-  }, [userToken, postState]);
+  
 
   useEffect(() => {
     if (postState) {
@@ -595,31 +558,6 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
           <div className="flex flex-col gap-5 pb-4">
             <div>
               <div className="flex flex-row items-center duration-200 ">
-                {isOwner && (
-                  <>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="w-6 h-6 fill-[] stroke-[#C4FF0D]  "
-                    >
-                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                      <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
-                      <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" />
-                      <path d="M16 5l3 3" />
-                    </svg>
-                    <Link
-                      href={`/vehicle/${params.id}/upload_post`}
-                      className="text-gray-300 text-sm md:text-base hover:text-[#C4FF0D] hover:underline"
-                    >
-                      {" "}
-                      Editar publicación
-                    </Link>
-                  </>
-                )}
               </div>
               <h1 className="font-sans text-lg md:text-2xl font-semibold text-gray-100 ">
                 ¡Reserva!
@@ -808,8 +746,7 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
                   pricePost={pricePost}
                   startDate={startDate}
                   endDate={endDate}
-                  userToken={userToken}
-                  isOwner={isOwner}
+                  userToken={userToken}                  
                 />
                 ;
               </div>

@@ -28,7 +28,6 @@ const ButtonCheckout = ({
   endDate,
   userToken,
   id,
-  isOwner,
 }: {
   startDateRentals: string[] | undefined;
   endDateRentals: string[] | undefined;
@@ -38,7 +37,6 @@ const ButtonCheckout = ({
   endDate: string | undefined;
   userToken: string | undefined;
   id: string;
-  isOwner: boolean;
 }) => {
   const router = useRouter();
 
@@ -47,15 +45,6 @@ const ButtonCheckout = ({
   const fetchCheckout = async () => {
     if (!id) {
       console.error("Error: ID is undefined");
-      return;
-    }
-
-    if (isOwner) {
-      Swal.fire({
-        icon: "error",
-        title: "¡No puedes reservar!",
-        text: "No puedes reservar una publicacion de tu propiedad",
-      });
       return;
     }
 
