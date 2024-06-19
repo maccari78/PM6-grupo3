@@ -19,8 +19,7 @@ import { Roles } from 'src/users/utils/roles.decorator';
 
 @ApiTags('CARS')
 @Roles(Role.User, Role.Admin, Role.SuperAdmin)
-// @UseGuards(RolesGuard)
-// @Controller('cars')
+@Controller('cars')
 export class CarsController {
   constructor(private readonly carsService: CarsService) {}
 
