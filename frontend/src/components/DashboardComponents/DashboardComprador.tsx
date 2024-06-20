@@ -27,7 +27,7 @@ const DashboardComprador: React.FC = () => {
         setLoading(false);
         Swal.fire({
           title: "Error de acceso",
-          text: "Necesitas estar logueado para ingresar",
+          text: "Necesitas iniciar sesión para ingresar",
           icon: "error",
         });
         redirect("/login");
@@ -48,7 +48,7 @@ const DashboardComprador: React.FC = () => {
         });
 
         if (!response.ok) {
-          throw new Error("Error fetching user data");
+          throw new Error("Error al obtener los datos");
         }
 
         const data = await response.json();

@@ -79,12 +79,10 @@ const CarPostCard: React.FC = () => {
       });
 
       if (response.ok) {
-        setCarPosts(carPosts.filter((post) => post.id !== postId));
-        Swal.fire(
-          "Borrado logico",
-          "La publicacion ah sido borrado",
-          "success"
-        );
+
+        setCarPosts(carPosts.filter(post => post.id !== postId));
+        Swal.fire('Borrado logico', 'La publicacion ha sido eliminada', 'success');
+
       } else {
         throw new Error("Error de borrado del post");
       }
