@@ -97,4 +97,8 @@ export class NotificationsService {
 
     return notification;
   }
+
+  async contactDevs(formData: object) {
+    return this.mailService.contactDevs(formData);
+  }
 }

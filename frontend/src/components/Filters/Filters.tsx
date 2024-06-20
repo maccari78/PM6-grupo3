@@ -179,7 +179,7 @@ const Filters: React.FC<{
           <li>
             <div className="inline-flex items-center">
               <label
-                className="relative flex cursor-pointer items-center rounded-full p-2"
+                className="relative flex cursor-pointer items-center rounded-full py-2"
                 htmlFor="checkbox-8"
                 data-ripple-dark="true"
               >
@@ -215,7 +215,7 @@ const Filters: React.FC<{
           <li>
             <div className="flex items-center">
               <label
-                className="relative flex cursor-pointer items-center rounded-full p-2"
+                className="relative flex cursor-pointer items-center rounded-full py-2"
                 htmlFor="checkbox-3"
                 data-ripple-dark="true"
               >
@@ -233,7 +233,7 @@ const Filters: React.FC<{
                     viewBox="0 0 20 20"
                     fill="currentColor"
                     stroke="currentColor"
-                    stroke-width="1"
+                    strokeWidth="1"
                   >
                     <path
                       fillRule="evenodd"
@@ -251,7 +251,7 @@ const Filters: React.FC<{
           <li>
             <div className="inline-flex items-center">
               <label
-                className="relative flex cursor-pointer items-center rounded-full p-2"
+                className="relative flex cursor-pointer items-center rounded-full py-2"
                 htmlFor="checkbox-8"
                 data-ripple-dark="true"
               >
@@ -269,7 +269,7 @@ const Filters: React.FC<{
                     viewBox="0 0 20 20"
                     fill="currentColor"
                     stroke="currentColor"
-                    stroke-width="1"
+                    strokeWidth="1"
                   >
                     <path
                       fillRule="evenodd"
@@ -287,7 +287,7 @@ const Filters: React.FC<{
           <li>
             <div className="inline-flex items-center">
               <label
-                className="relative flex cursor-pointer items-center rounded-full p-2"
+                className="relative flex cursor-pointer items-center rounded-full py-2"
                 htmlFor="checkbox-8"
                 data-ripple-dark="true"
               >
@@ -305,7 +305,7 @@ const Filters: React.FC<{
                     viewBox="0 0 20 20"
                     fill="currentColor"
                     stroke="currentColor"
-                    stroke-width="1"
+                    strokeWidth="1"
                   >
                     <path
                       fillRule="evenodd"
@@ -323,7 +323,7 @@ const Filters: React.FC<{
           <li>
             <div className="flex items-center">
               <label
-                className="relative flex cursor-pointer items-center rounded-full p-2"
+                className="relative flex cursor-pointer items-center rounded-full py-2"
                 htmlFor="checkbox-2"
                 data-ripple-dark="true"
               >
@@ -341,7 +341,7 @@ const Filters: React.FC<{
                     viewBox="0 0 20 20"
                     fill="currentColor"
                     stroke="currentColor"
-                    stroke-width="1"
+                    strokeWidth="1"
                   >
                     <path
                       fillRule="evenodd"

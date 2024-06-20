@@ -36,9 +36,9 @@ const ChatWeb: React.FC = () => {
   const [sender, setSender] = useState<IUserChat | null>(null);
   const [receiver, setReceiver] = useState<IUserChat | null>(null);
   const [user, setUser] = useState<IUserChat | null>({
-    id: "HOLA",
-    email: "HOLA",
-    name: "OLA",
+    id: "Bienvenido",
+    email: "Bienvenido",
+    name: "Bienvenido",
     password: "ASDDA",
     nDni: 123,
     nExpiration: "string | null",
