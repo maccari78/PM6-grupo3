@@ -4,6 +4,8 @@ import VehiclesComponent from "../VehiclesComponent/VehiclesComponent";
 import { useEffect, useState } from "react";
 import { IPost } from "../VehiclesComponent/interfaces/IPost";
 import ShowAndDeleteFilter from "../ShowAndDeleteFilter/ShowAndDeleteFilter";
+import Pagination from "../Pagination/Pagination";
+import SearchComponent from "../Navbar/SearchBar";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_POSTS;
 if (!apiUrl) {
@@ -17,47 +19,82 @@ if (!apiBaseUrl) {
 
 const Products: React.FC = () => {
   const [posts, setPosts] = useState<IPost[]>([]);
-  const [filters, setFilters] = useState<any>(null);
+  const [postsQT, setPostQT] = useState<number>(9);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [filters, setFilters] = useState<any | null>(null);
   const [notShowFilter, setNotShowFilter] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [notFound, setNotFound] = useState<boolean>();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(apiUrl, {
+  const fetchPosts = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(apiUrl, {
+        method: "GET",
+      });
+      const data: IPost[] = await response.json();
+      if (Array.isArray(data)) {
+        setPosts(data);
+      } else {
+        console.error("Se espera un array pero se recibio", data);
+      }
+    } catch (error: any) {
+      console.log(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchFilters = async () => {
+    setLoading(true);
+    try {
+      const queryParams = new URLSearchParams(filters);
+      const queryString = queryParams.toString().replace(/\+/g, "%20");
+      const response = await fetch(
+        `${apiBaseUrl}/posts/filter?${queryString}`,
+        {
           method: "GET",
-        });
-        const data: IPost[] = await response.json();
-        setPosts(data);
-      } catch (error: any) {
-        console.log(error.message);
-      }
-    };
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-    fetchData();
-  }, []);
+      if (!response.ok) {
+        setNotFound(true);
+        setCurrentPage(1)
+      } else {
+        setNotFound(false);
+      }
+
+      const data: IPost[] = await response.json();
+      if (Array.isArray(data)) {
+        setCurrentPage(1)
+        setPosts(data);
+        
+      }
+    } catch (error: any) {
+      console.log(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const queryParams = new URLSearchParams(filters);
-        const response = await fetch(
-          `${apiBaseUrl}/posts/filter?${queryParams}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        const data: IPost[] = await response.json();
-        setPosts(data);
-      } catch (error: any) {
-        console.log(error.message);
-      }
-    };
-
-    fetchData();
+    if (filters) {
+      fetchFilters();
+    } else {
+      fetchPosts();
+    }
   }, [filters]);
+
+  const handleSearch = (searchPosts: IPost[]) => {
+    setFilters(null)
+
+    setTimeout(() => {
+      setPosts(searchPosts);
+    }, 260);
+  }
 
   const handleFilterChange = (newFilters: any) => {
     setFilters(newFilters);
@@ -66,17 +103,31 @@ const Products: React.FC = () => {
   const deleteFilter = () => {
     setFilters(null);
     setNotShowFilter(false);
+    setNotFound(false);
+    setCurrentPage(1)
   };
 
+  const endIndex = currentPage * postsQT;
+  const intIndex = endIndex - postsQT;
+
+  const nPosts: IPost[] = Array.isArray(posts)
+    ? posts.slice(intIndex, endIndex)
+    : [];
+
+  const nPages: number = Math.ceil(posts.length / postsQT);
+
   return (
-    <div className="flex flex-col items-center mt-5 justify-around md:items-start  md:flex-row md:justify-evenly md:my-10 md:mx-10 ">
+    <div>
+      <SearchComponent onSearch={handleSearch}/>
+
+    <div className="flex flex-col   items-center mt-5 justify-around md:items-start  md:flex-row md:justify-evenly md:my-10 md:mx-10 ">
       <Filters onFilterChange={handleFilterChange} />
       <div className="flex flex-col justify-center md:w-[70%]">
         {filters && (
           <ShowAndDeleteFilter deleteFilter={deleteFilter} filters={filters} />
         )}
 
-        {posts.hasOwnProperty("error") ? (
+        {loading ? (
           <div className="flex flex-row items-center">
             <svg
               aria-hidden="true"
@@ -95,14 +146,36 @@ const Products: React.FC = () => {
               />
             </svg>
             <span className="sr-only">Loading...</span>
-            <h1 className="ml-5 md:text-xl">
-              No se encontro ningun vehiculo...
+            <h1 className="ml-5 md:text-xl">Cargando, espere....</h1>
+          </div>
+        ) : notFound ? (
+          <div className="flex flex-col gap-4 items-center justify-center h-full">
+            <div className="w-[40%]">
+              <img
+                src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExdjhwb21iNnE1b3BpdWM2Zjl4NHd2MzlneXgyM2ZyOHVsN3ptNTFycCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/MSU9sITGoHWMGGVn9n/giphy.webp"
+                alt="404 gif"
+                className="rounded-xl w-full"
+              />
+            </div>
+            <h1 className="md:text-3xl text-gray-100">
+              ¡No se encontraron resultados!
+            </h1>
+            <h1 className="text-sm md:text-lg text-[#C4FF0D]">
+              ¡Lo sentimos, no encontramos lo que buscas!
             </h1>
           </div>
         ) : (
-          <VehiclesComponent posts={posts} />
+          <>
+            <VehiclesComponent nPosts={nPosts} />
+            <Pagination
+              setCurrentPage={setCurrentPage}
+              currentPage={currentPage}
+              nPages={nPages}
+            />
+          </>
         )}
       </div>
+    </div>
     </div>
   );
 };

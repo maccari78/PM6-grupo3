@@ -1,11 +1,65 @@
+"use client"
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { IUserData } from "@/interfaces/IUser";
+
+const apiUserUrl = process.env.NEXT_PUBLIC_API_GET_USERS_TOKEN;
 
 const Sidebar = () => {
+  const [userToken, setUserToken] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [userData, setUserData] = useState<IUserData | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.localStorage) {
+      const userSession = localStorage.getItem("userSession");
+      if (userSession) {
+        const parsedSession = JSON.parse(userSession);
+        setUserToken(parsedSession.token);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`${apiUserUrl}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Error fetching user data");
+        }
+
+        const data = await response.json();
+        console.log(data);
+
+        setUserData(data);
+        setUserId(data.id)
+     
+      } catch (error: any) {
+        console.error("Error:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (userToken) {
+      fetchData();
+    }
+  }, [userToken]);
+
+
   return (
     <>
       <div className="relative bg-[#222222]">
-        <nav className="z-20 flex shrink-0 grow-0 justify-around gap-4 border-t border-gray-400 bg-[#222222] p-2.5 shadow-lg backdrop-blur-lg  fixed top-2/4 -translate-y-2/4 left-6 min-h-[auto] min-w-[64px] flex-col rounded-lg border">
+        <nav className="z-20 flex shrink-0 grow-0 justify-around gap-4 md:border-t md:border-gray-400 border-none bg-[#222222] p-2.5 shadow-lg backdrop-blur-lg  md:fixed md:top-2/4 md:-translate-y-2/4 left-6 min-h-[auto] min-w-[64px] md:flex-col row rounded-lg border">
           <Link
             href="/user"
             className="flex aspect-square min-h-[32px] w-16 flex-col items-center justify-center gap-1 rounded-md p-1.5 text-gray-200 hover:bg-[#202020]"
@@ -49,7 +103,7 @@ const Sidebar = () => {
             <small className="text-center text-xs font-medium"></small>
           </Link>
           <Link
-            href="/userdata"
+            href={userId ? `/user/${userId}` : "/"}
             className="flex aspect-square min-h-[32px] w-16 flex-col items-center justify-center gap-1 rounded-md p-1.5 text-gray-200 hover:bg-[#202020]"
           >
             <svg
@@ -96,7 +150,27 @@ const Sidebar = () => {
 
             <small className="text-center text-xs font-medium"> </small>
           </Link>
+          <Link
+            href="/chat"
+            className="flex aspect-square min-h-[32px] w-16 flex-col items-center justify-center gap-1 rounded-md p-1.5 text-gray-200 hover:bg-[#202020]"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="size-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z"
+              />
+            </svg>
 
+            <small className="text-center text-xs font-medium"> </small>
+          </Link>
           <hr className="dark:border-gray-700/60" />
 
           <Link

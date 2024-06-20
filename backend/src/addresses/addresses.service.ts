@@ -18,13 +18,13 @@ export class AddressesService {
     private readonly geolocation: geolocationService,
   ) {}
 
-  async getAddresses(page: number, limit: number) {
-    let addresses = await this.addressRepository.find();
+  async getAddresses() {
+    const addresses = await this.addressRepository.find();
 
-    const start = (page - 1) * limit;
-    const end = start + limit;
+    // const start = (page - 1) * limit;
+    // const end = start + limit;
 
-    addresses = addresses.slice(start, end);
+    // addresses = addresses.slice(start, end);
     return addresses;
   }
 
@@ -47,7 +47,11 @@ export class AddressesService {
 
     if (!foundAddress) throw new NotFoundException('Dirección no encontrada');
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { id, ...rest } = foundAddress;
+
+    rest.latitude = Number(rest.latitude);
+    rest.longitude = Number(rest.latitude);
 
     const updatedAddress = this.addressWithGeolocation(
       foundAddress.user.id,
@@ -73,9 +77,11 @@ export class AddressesService {
     const user = await this.usersRepository.findOneBy({ id: userId });
     if (!user) throw new NotFoundException('Usuario no encontrado');
 
-    const { address, city, state, country, zip_code } = createAddressDto;
+    const { address, city, state, country } = createAddressDto;
 
-    const fullAddress = `${address}, ${city}, ${state}, ${country}, ${zip_code}`;
+    const fullAddress = `${address}, ${city}, ${state}, ${country}`;
+
+    console.log(fullAddress);
 
     const { latitude, longitude } =
       await this.geolocation.getCordinates(fullAddress);

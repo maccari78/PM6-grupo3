@@ -3,14 +3,13 @@
 # Alquiler de Autos: YouDrive
 
 ## Integrantes del equipo:
-
-- Front End: Geronimo Kramar - Github user: 'GeroKramar'
-- Front End: Camila Fabre - Github user: 'cfcamilafabre'
-- Front End: Camilo Sierra - Github user: 'CAndresSierra'
-- Back End: Victor Emanuel Elias Cuello - Github user: 'emacuello'
-- Back End: Juan Carlos Alvarez Martinez - Github user: 'AlvarezMar'
-- Back End: Darvin Ricardo Alania Inoecencio - Github user: 'DAlaniaInocecio'
-- Back End: Danilo Maccari - Github user: 'maccari78'
+- Front End: Geronimo Kramar - email: gerokramar@gmail.com - Github: 'GeroKramar' - Argentina, AMBA, GMT-3
+- Front End: Camila Fabre - email: camilafabre98@gmail.com - Github: 'cfcamilafabre' - Argentina, Tandil, GMT-3
+- Front End: Camilo Sierra - email: camilofullstack@gmail.com - Github: 'CAndresSierra' - Colombia, Barranquilla, GMT-5
+- Back End: Victor Emanuel Elias Cuello - email: ema.cuello1010@gmail.com - Github: 'emacuello' - Argentina, AMBA, GMT-3
+- Back End: Juan Carlos Alvarez Martinez - email: alvarez.majuan@hotmail.com - Github: 'AlvarezMar' - Mexico, DF, GMT-6
+- Back End: Darvin Ricardo Alania Inoecencio - email: darvin.alania@gmail.com - Github: 'DAlaniaInocecio' - Peru, Lima, GMT-5
+- Back End: Danilo Maccari - email: maccari78@gmail.com - Github: 'maccari78' - Argentina, Bahia Blanca, GMT-3
 
 ## Caso de negocio
 
@@ -164,3 +163,21 @@ Si hay conflictos durante el merge, resuélvelos en tu máquina local y realiza 
 ## Revisar y testear:
 
 - Siempre revisa y prueba tu código antes de abrir un PR.
+
+## On Windows terminal
+- cd ~/Onedrive/Work/2024-01-10\ HENRY/modulo6/PM6-grupo3
+- cd ~/Onedrive/Work/2024-01-10\ HENRY/modulo6/PM6-grupo3/backend
+- cd ~/Onedrive/Work/2024-01-10\ HENRY/modulo6/PM6-grupo3/frontend
+
+## Estructura de tablas en Base de datos
+- addresses(id, address, city, state, country, zip_code, latitude, longitude, userId, carId)
+- cars(id, brand, model, year, mileage, color, availavility, image_url, public_id, created_at, updated_at, userId, isDeleted)
+- chat(id, message, image, room_id, date_created, senderId, receiverId, postId)
+- notifications(id, template_message, createdAt, user_id, )
+- posts(id, title, description, price, created_at, updated_at, userId, carId, reviewId, isDeleted)
+- rentals(id, rentalStartDate, rentalEndDate, daysRemaining, createdAt, updatedAt, postsId, totalCost)
+- reviews(id, rating, comment, created_at, updated_at, userId, postId)
+- user_rental(rental_id, user_id)
+- users(id, email, name, password, nDni, rExpiration, phone, image_url, public_id, userGoogle, aboutMe, roles, createdAt, updatedAt, isDeleted)
+
+

@@ -5,9 +5,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
+  // JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
+  // OneToOne,
   PrimaryGeneratedColumn,
   Timestamp,
   UpdateDateColumn,
@@ -58,13 +60,20 @@ export class Car {
   @UpdateDateColumn({ type: 'timestamp' })
   updated_at: Timestamp;
 
-  @OneToOne(() => Posts)
-  @JoinColumn()
-  post: Posts;
+  @Column({ default: false })
+  isDeleted: boolean;
+
+  @OneToMany(() => Posts, (post) => post.car)
+  post: Posts[];
+
+  // @OneToOne(() => Posts)
+  // @JoinColumn()
+  // post: Posts;
 
   @ManyToOne(() => User, (user) => user.car)
   user: User;
 
   @OneToOne(() => Address, (address) => address.car)
   address: Address;
+  rentals: any;
 }

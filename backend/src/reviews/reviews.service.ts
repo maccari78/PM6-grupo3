@@ -34,26 +34,47 @@ export class ReviewsService {
     const payload: JwtPayload = await this.jwtService.verify(currentUser, {
       secret,
     });
-    // `FIND WHERE ID = ${id}`;
-    const searchposts = await this.postsService.findOneBy({ id });
+    // busca el post por id y carga las relaciones necesarias
+    const searchposts = await this.postsService.findOne({
+      where: { id },
+      relations: ['review'],
+    });
     if (!searchposts)
       throw new UnauthorizedException('No se encontro publicación');
 
     if (!payload) throw new UnauthorizedException('token invalido 3');
+
+    // Busca el usuario por email y carga las relaciones necesarias
     const searchuser = await this.userService.findOne({
       where: { email: payload.sub },
+      relations: ['reviews'],
     });
     if (!searchuser) throw new UnauthorizedException('Usuario no encontrado');
 
+    //crea una nueva reseña
     const newReview = this.reviewService.create({ rating, comment });
     newReview.post = searchposts;
     newReview.user = searchuser;
     const review = await this.reviewService.save(newReview);
     if (!review) throw new BadRequestException('No se pudo realizar la reseña');
-    searchuser.reviews = [review];
-    await this.postsService.save({ review: [review] });
+
+    // searchuser.reviews = [review];
+    // searchposts.review = [review];
+
+    // Añade la nueva reseña a la lista de reseñas del usuario y del post
+    searchuser.reviews.unshift(review);
+    searchposts.review.unshift(review);
+
+    //Guarda los cambios en las entidades usuario y post
+    await this.postsService.save(searchposts);
     await this.userService.save(searchuser);
-    return 'Reseña realizada';
+    // return 'Reseña realizada';
+
+    // Devolver la entidad de reseña completa con las relaciones
+    return await this.reviewService.findOne({
+      where: { id: review.id },
+      relations: ['user', 'post'],
+    });
   }
 
   //Services | Get All
@@ -102,10 +123,10 @@ export class ReviewsService {
     if (!ReviewFind)
       throw new NotFoundException(`No se pudo obtener la reseña con ${id}`);
 
-    const review = await this.reviewService.delete(ReviewFind);
-    if (review.affected === 0)
-      throw new BadRequestException('No se pudo borrar la reseña');
+    const review = await this.reviewService.remove(ReviewFind);
+    // if (review.affected === 0)
+    //   throw new BadRequestException('No se pudo borrar la reseña');
 
-    return 'Publicación eliminada';
+    return review;
   }
 }

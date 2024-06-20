@@ -16,8 +16,8 @@ export class ReviewsController {
   //Controllers | Add reviews
   @ApiBearerAuth()
   @Post(":id")
-  @UseGuards(RolesGuard)
-  @Roles(Role.User, Role.Admin)
+  // @UseGuards(RolesGuard)
+  // @Roles(Role.User, Role.Admin)
   create(
     @Body() createReviewDto: CreateReviewDto,
     @Headers('Authorization') headers: string,
@@ -45,8 +45,8 @@ export class ReviewsController {
   }
   
   @ApiBearerAuth()
-  @UseGuards(RolesGuard)
-  @Roles(Role.User, Role.Admin)
+  // @UseGuards(RolesGuard)
+  // @Roles(Role.User, Role.Admin)
   @Put(':id')
   
   update(
@@ -65,8 +65,8 @@ export class ReviewsController {
     return this.reviewsService.updateReview(id, updateReviewDto, token);
   }
 
-  @UseGuards(RolesGuard)
-  @Roles(Role.User, Role.Admin)
+  // @UseGuards(RolesGuard)
+  // @Roles(Role.User, Role.Admin)
   @Delete(':id')
   removeIdController(@Param('id', ParseUUIDPipe) id: string) {
     return this.reviewsService.DeleteReviewsServices(id);

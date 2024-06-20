@@ -1,10 +1,17 @@
 import { ApiProperty, PickType } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsEmail, IsNotEmpty, IsNumber, IsString, MaxLength, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 
 export class CreateUserDto {
   @ApiProperty()
-  @IsEmail()
+  @IsEmail({}, { message: 'El email no es valido' })
   @IsNotEmpty({ message: 'El email es requerido' })
   email: string;
 

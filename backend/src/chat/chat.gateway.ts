@@ -12,8 +12,9 @@ import { CreateChatDto } from './dto/create-chat.dto';
 
 import { Server, Socket } from 'socket.io';
 import { MessageChat } from './interfaces/usersChat.interfaces';
+import { MailService } from 'src/mail/mail.service';
 
-const PORT = Number(process.env.PORT_WS) || 80;
+const PORT = Number(process.env.PORT_WS) || 3002;
 @WebSocketGateway(PORT, {
   namespace: 'chat',
   cors: '*',
@@ -22,7 +23,10 @@ const PORT = Number(process.env.PORT_WS) || 80;
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   public server: Server;
-  constructor(private readonly chatService: ChatService) {}
+  constructor(
+    private readonly chatService: ChatService,
+    private readonly mailService: MailService,
+  ) {}
 
   handleConnection(client: Socket) {
     console.log('Client connected: ' + client.id);
@@ -31,7 +35,18 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   handleDisconnect(client: Socket) {
     console.log('Client disconnected: ' + client.id);
   }
+  @SubscribeMessage('event_join')
+  handleJoinRoom(client: Socket, room: string) {
+    console.log(`El usuario ${client.id} se ha unido al chat ${room}`);
 
+    client.join(`${room}`);
+  }
+  @SubscribeMessage('event_leave')
+  handleRoomLeave(client: Socket, room: string) {
+    console.log(`El usuario ${client.id} ha dejado el chat ${room}`);
+    client.leave(`${room}`);
+  }
+  // cambiar a mensaje de ser necesario
   @SubscribeMessage('posts')
   async handleMessage(
     @ConnectedSocket() client: Socket,
@@ -43,6 +58,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       return;
     }
     const message: MessageChat = await this.chatService.create(payload, token);
+
+    await this.mailService.newChat(message.sender, message.receiver);
+
+    if (!message) {
+      client.disconnect();
+      return;
+    }
+
     client.broadcast.emit(`${payload.room_id}`, message);
   }
 }

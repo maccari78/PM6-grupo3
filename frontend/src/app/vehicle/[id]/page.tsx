@@ -1,22 +1,25 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import ButtonCheckout from "@/components/ButtonCheckout/ButtonCheckout";
 import DateRangePicker from "@/components/DateRangePicker/DateRangePicker";
+import Reviews from "@/components/Reviews/Reviews";
 import { IPost } from "@/components/VehiclesComponent/interfaces/IPost";
-import { IUserData } from "@/interfaces/IUser";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { Button, Tooltip } from "flowbite-react";
+import SkeletonDashboard from "@/components/sketelons/SkeletonDashboard";
+import { IRentalPost } from "@/components/VehiclesComponent/interfaces/IRentalPost";
+import CalendarPost from "@/components/CalendarPost/CalendarPost";
+import CarouselVehicle from "@/components/CarouselVehicle/CarouselVehicle";
+const DynamicMapLocation = dynamic(
+  () => import("../../../components/MapLocation/MapLocation"),
+  { ssr: false }
+);
 
 const apiPostUrl = process.env.NEXT_PUBLIC_API_POSTS;
 if (!apiPostUrl) {
   throw new Error("Environment variable NEXT_PUBLIC_API_POSTS is not set");
-}
-
-const apiUserUrl = process.env.NEXT_PUBLIC_API_GET_USERS_TOKEN;
-if (!apiUserUrl) {
-  throw new Error(
-    "Environment variable NEXT_PUBLIC_API_GET_USERS_TOKEN is not set"
-  );
 }
 
 const VehicleDetail = ({ params }: { params: { id: string } }) => {
@@ -31,8 +34,17 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
   const [startDate, setStartDate] = useState<string | undefined>();
   const [userToken, setUserToken] = useState<string | undefined>();
   const [endDate, setEndDate] = useState<string | undefined>();
-  const [userData, setUserData] = useState<IUserData | null>(null);
-  const [isOwner, setIsOwner] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [mediaRating, setMediaRating] = useState<number>();
+  const [totalReviews, setTotalReviews] = useState<number>();
+  const [rentals, setRentals] = useState<IRentalPost[]>();
+  const [showCalendar, setShowCalendar] = useState<boolean>(false);
+  const [startDateRentals, setStartDateRentals] = useState<
+    string[] | undefined
+  >();
+  const [endDateRentals, setEndtDateRentals] = useState<string[] | undefined>();
+  const [imgsPost, setImgsPost] = useState<string[]>();
+  console.log(postState);
 
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
@@ -44,14 +56,37 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
     }
 
     const fetchDta = async () => {
+      setLoading(true);
       try {
         const post = await fetch(`${apiPostUrl}/${params.id}`, {
           method: "GET",
         });
-        const data = await post.json();
+        const data: IPost = await post.json();
         setPostState(data);
+        setImgsPost(data.car.image_url);
+        setTotalReviews(data.review.length);
+
+        const rentals = data.rentals.map((rental) => {
+          return {
+            ...rental,
+            users: rental.users.filter((user) => user.id !== data.user.id),
+          };
+        });
+        setRentals(rentals);
+        const startDate = rentals.map((rental) => {
+          return rental.rentalStartDate;
+        });
+
+        const endDate = rentals.map((rental) => {
+          return rental.rentalEndDate;
+        });
+
+        setStartDateRentals(startDate);
+        setEndtDateRentals(endDate);
       } catch (error: any) {
         console.log(error.message);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -59,35 +94,20 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
   }, []);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await fetch(apiUserUrl, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${userToken!}`,
-          },
+    if (postState) {
+      const mediaRating = () => {
+        let sumaRating = 0;
+        let cantidadReviews = postState.review.length;
+        postState.review.map((review) => {
+          sumaRating += review.rating;
+          let mediaRating = Math.round(sumaRating / cantidadReviews);
+          setMediaRating(mediaRating);
         });
+      };
 
-        if (!response.ok) {
-          throw new Error("Error fetching user data");
-        }
-
-        const data = await response.json();
-        setUserData(data);
-
-        if (data.id === postState?.user.id) {
-          setIsOwner(true);
-        }
-      } catch (error: any) {
-        throw new Error(error);
-      }
-    };
-
-    if (userToken) {
-      fetchUserData();
+      mediaRating();
     }
-  }, [userToken, postState]);
+  }, [postState]);
 
   const handleSetPrice = (newPrice: number) => {
     setPricePost(newPrice);
@@ -101,25 +121,290 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
     setEndDate(date);
   };
 
+  const handleShowCalendar = () => {
+    setShowCalendar(!showCalendar);
+  };
+
+  if (loading) {
+    return <SkeletonDashboard />;
+  }
+
   return (
     <>
-      <div className="bg-[#444343] flex flex-col items-center md:flex-row  md:items-start justify-evenly min-h-screen pt-10">
+      <div className="bg-[#444343] flex flex-col items-center md:flex-row  md:items-start justify-evenly min-h-screen pt-10 ">
         <div className="flex flex-col w-[70%] md:w-[40%] justify-between my-5">
           <div className="flex flex-col md:justify-start ">
             <h1 className=" text-lg md:text-3xl font-semibold text-gray-100">
               {postState?.title}
             </h1>
-            <div className=" mt-9 ">
-              <img
-                src={postState?.car.image_url[0]}
-                alt="Ford F-150"
-                className="h-auto w-[50%] shadow-xl rounded-t-xl md:rounded-xl"
-              />
+            <div className="flex flex-row  items-end">
+              <div className="flex items-center mb-1 space-x-1 rtl:space-x-reverse mt-3">
+                {mediaRating === 1 && (
+                  <>
+                    <svg
+                      className="w-5 h-5 md:w-7 md:h-7 text-yellow-300"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 22 20"
+                    >
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                    </svg>
+                    <svg
+                      className="w-5 h-5 md:w-7 md:h-7 text-gray-300 dark:text-gray-500"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 22 20"
+                    >
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                    </svg>
+                    <svg
+                      className="w-5 h-5 md:w-7 md:h-7 text-gray-300 dark:text-gray-500"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 22 20"
+                    >
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                    </svg>
+                    <svg
+                      className="w-5 h-5 md:w-7 md:h-7 text-gray-300 dark:text-gray-500"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 22 20"
+                    >
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                    </svg>
+                    <svg
+                      className="w-5 h-5 md:w-7 md:h-7 text-gray-300 dark:text-gray-500"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 22 20"
+                    >
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                    </svg>
+                  </>
+                )}
+
+                {mediaRating === 2 && (
+                  <>
+                    <svg
+                      className="w-5 h-5 md:w-7 md:h-7 text-yellow-300"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 22 20"
+                    >
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                    </svg>
+                    <svg
+                      className="w-5 h-5 md:w-7 md:h-7 text-yellow-300"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 22 20"
+                    >
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                    </svg>
+                    <svg
+                      className="w-5 h-5 md:w-7 md:h-7 text-gray-300 dark:text-gray-500"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 22 20"
+                    >
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                    </svg>
+                    <svg
+                      className="w-5 h-5 md:w-7 md:h-7 text-gray-300 dark:text-gray-500"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 22 20"
+                    >
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                    </svg>
+                    <svg
+                      className="w-5 h-5 md:w-7 md:h-7 text-gray-300 dark:text-gray-500"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 22 20"
+                    >
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                    </svg>
+                  </>
+                )}
+                {mediaRating === 3 && (
+                  <>
+                    <svg
+                      className="w-5 h-5 md:w-7 md:h-7 text-yellow-300"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 22 20"
+                    >
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                    </svg>
+                    <svg
+                      className="w-5 h-5 md:w-7 md:h-7 text-yellow-300"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 22 20"
+                    >
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                    </svg>
+                    <svg
+                      className="w-5 h-5 md:w-7 md:h-7 text-yellow-300"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 22 20"
+                    >
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                    </svg>
+                    <svg
+                      className="w-5 h-5 md:w-7 md:h-7 text-gray-300 dark:text-gray-500"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 22 20"
+                    >
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                    </svg>
+                    <svg
+                      className="w-5 h-5 md:w-7 md:h-7 text-gray-300 dark:text-gray-500"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 22 20"
+                    >
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                    </svg>
+                  </>
+                )}
+
+                {mediaRating === 4 && (
+                  <>
+                    <svg
+                      className="w-5 h-5 md:w-7 md:h-7 text-yellow-300"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 22 20"
+                    >
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                    </svg>
+                    <svg
+                      className="w-5 h-5 md:w-7 md:h-7 text-yellow-300"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 22 20"
+                    >
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                    </svg>
+                    <svg
+                      className="w-5 h-5 md:w-7 md:h-7 text-yellow-300"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 22 20"
+                    >
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                    </svg>
+                    <svg
+                      className="w-5 h-5 md:w-7 md:h-7 text-yellow-300"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 22 20"
+                    >
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                    </svg>
+                    <svg
+                      className="w-5 h-5 md:w-7 md:h-7 text-gray-300 dark:text-gray-500"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 22 20"
+                    >
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                    </svg>
+                  </>
+                )}
+                {mediaRating === 5 && (
+                  <>
+                    <svg
+                      className="w-5 h-5 md:w-7 md:h-7 text-yellow-300"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 22 20"
+                    >
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                    </svg>
+                    <svg
+                      className="w-5 h-5 md:w-7 md:h-7 text-yellow-300"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 22 20"
+                    >
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                    </svg>
+                    <svg
+                      className="w-5 h-5 md:w-7 md:h-7 text-yellow-300"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 22 20"
+                    >
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                    </svg>
+                    <svg
+                      className="w-5 h-5 md:w-7 md:h-7 text-yellow-300"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 22 20"
+                    >
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                    </svg>
+                    <svg
+                      className="w-5 h-5 md:w-7 md:h-7 text-yellow-300"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 22 20"
+                    >
+                      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                    </svg>
+                  </>
+                )}
+              </div>
+              {totalReviews ? (
+                <p className="text-gray-400 text-sm mb-[2px]">
+                  {totalReviews} reseñas
+                </p>
+              ) : (
+                <p className="text-gray-400 text-[15px]">
+                  Esta publicacion no tiene reseñas
+                </p>
+              )}
+            </div>
+
+            <div className=" mt-3 ">
+              <CarouselVehicle imgs={imgsPost} />
             </div>
           </div>
 
           <div className="flex mt-3 flex-col justify-around h-[500px] md:h-[400px] max-h-[100%]">
-            <div className="flex flex-col  pb-4 border-b-[1px] border-b-gray-200">
+            <div className="flex flex-col  pb-4 border-b-[1px] border-[#c2e94e]">
               <h1 className="text-lg md:text-2xl font-semibold text-gray-100">
                 Descripcion
               </h1>
@@ -129,7 +414,7 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
                 </li>
               </ul>
             </div>
-            <div className="flex flex-col border-b-[1px] border-b-gray-200 py-4">
+            <div className="flex flex-col border-b-[1px] border-b-[#c2e94e] py-4">
               <h1 className="text-lg md:text-2xl text-gray-100 font-semibold ">
                 Datos del vehiculo
               </h1>
@@ -269,33 +554,7 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
 
           <div className="flex flex-col gap-5 pb-4">
             <div>
-              <div className="flex flex-row items-center duration-200 ">
-                {isOwner && (
-                  <>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="w-6 h-6 fill-[] stroke-[#C4FF0D]  "
-                    >
-                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                      <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
-                      <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" />
-                      <path d="M16 5l3 3" />
-                    </svg>
-                    <Link
-                      href={`/vehicle/${params.id}/upload_post`}
-                      className="text-gray-300 text-sm md:text-base hover:text-[#C4FF0D] hover:underline"
-                    >
-                      {" "}
-                      Editar publicación
-                    </Link>
-                  </>
-                )}
-              </div>
+              <div className="flex flex-row items-center duration-200 "></div>
               <h1 className="font-sans text-lg md:text-2xl font-semibold text-gray-100 ">
                 ¡Reserva!
               </h1>
@@ -310,10 +569,63 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
                 bookedDates={bookedDates}
               />
             </div>
+
+            <div className="flex flex-col py-4 border-t-[2px] border-t-[#c2e94e] gap-3">
+              <div className="flex flex-row items-center gap-1">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="w-6 h-6 fill-[#c2e94e]"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path d="M18.364 4.636a9 9 0 0 1 .203 12.519l-.203 .21l-4.243 4.242a3 3 0 0 1 -4.097 .135l-.144 -.135l-4.244 -4.243a9 9 0 0 1 12.728 -12.728zm-6.364 3.364a3 3 0 1 0 0 6a3 3 0 0 0 0 -6z" />
+                </svg>
+                <h1 className="text-2xl text-gray-100 font-semibold">
+                  Localizacion
+                </h1>
+              </div>
+              <div className="flex flex-col items-center md:items-start gap-9 md:flex-row">
+                <DynamicMapLocation
+                  lat={postState?.user.addresses[0]?.latitude!}
+                  lon={postState?.user.addresses[0]?.longitude!}
+                />
+                <div className="flex flex-col items-center  gap-3">
+                  <div className="flex flex-row h-[70px] items-center gap-3">
+                    <span className="flex w-3 h-3  bg-blue-500 rounded-full"></span>
+                    <p className="text-gray-100 md:text-xl">
+                      Ubicacion del vehiculo
+                    </p>
+                  </div>
+                  <div className="flex flex-col w-[80%] gap-5 bg-gray-200 rounded-xl px-3 py-3 items-center">
+                    <p className="font-bold text-2xl text-center text-[#222222]">
+                      Deja tu reseña aca abajo
+                    </p>
+                    <div className="flex justify-center items-center rounded-3xl px-1 py-1 animate-bounce bg-[#222222]">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="w-8 h-8e stroke-[#C4FF0D]"
+                      >
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M12 5l0 14" />
+                        <path d="M18 13l-6 6" />
+                        <path d="M6 13l6 6" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="flex  flex-col w-[70%] md:w-[30%] justify-between items-center my-5">
+        <div className="flex  flex-col h-full  w-[70%] md:w-[30%] justify-center items-center my-5">
           <div className="flex flex-col shadow-2xl rounded-t-xl md:w-[295px] w-full h-[200px] items-center justify-center bg-[#222222] px-5 py-5 md:h-[230px]  border-t-[2px] boder-gray-300">
             <div className="flex flex-row items-center ">
               <svg
@@ -329,44 +641,50 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
                 Propietario
               </h1>
             </div>
-            <div className="my-5">
-              <ol>
-                <li className="text-gray-300 text-sm md:text-base mb-5">
-                  Nombre: {postState?.user.name}
-                </li>
-                <li className="text-gray-300 text-sm md:text-base mb-5">
-                  Email: {postState?.user.email}
-                </li>
-              </ol>
+            <div className="mt-5 flex flex-col">
+              <div className="flex flex-row w-full h-[50%]  gap-3 justify-start">
+                <div className=" w-[50px] ">
+                  <img
+                    src={postState?.user.image_url}
+                    alt="Foto de perfil usuario"
+                    className="rounded-full h-10 w-10"
+                  />
+                </div>
+                <div className="flex flex-col  justify-center">
+                  <h1 className="text-gray-100 text-sm md:text-lg ">
+                    {postState?.user.name}
+                  </h1>
+                  <p className="text-gray-300 text-sm md:text-[12px] mb-5">
+                    {postState?.user.email}
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-row mt-4 justify-center">
+                <Tooltip
+                  content={`+${postState?.user.phone}`}
+                  className="bg-[#b0d63f] text-[#22222]"
+                  arrow={false}
+                  placement="right"
+                  animation="duration-500"
+                >
+                  <Button className="border-[2px] border-[#C4FF0D] rounded-3xl  bg-transparent transition-none  enabled:hover:bg-transparent">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      className="fill-[#C4FF0D] w-4 h-4"
+                    >
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                      <path d="M9 3a1 1 0 0 1 .877 .519l.051 .11l2 5a1 1 0 0 1 -.313 1.16l-.1 .068l-1.674 1.004l.063 .103a10 10 0 0 0 3.132 3.132l.102 .062l1.005 -1.672a1 1 0 0 1 1.113 -.453l.115 .039l5 2a1 1 0 0 1 .622 .807l.007 .121v4c0 1.657 -1.343 3 -3.06 2.998c-8.579 -.521 -15.418 -7.36 -15.94 -15.998a3 3 0 0 1 2.824 -2.995l.176 -.005h4z" />
+                    </svg>
+                  </Button>
+                </Tooltip>
+              </div>
             </div>
           </div>
 
-          <div className="flex flex-col shadow-2xl w-full md:w-[295px] h-[290px] bg-[#222222] px-5 py-5  items-center ">
-            <div className="flex flex-col items-center">
-              <div className="flex flex-row items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="#C4FF0D"
-                  className="w-4 h-4 md:w-6 md:h-6"
-                >
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                  <path d="M18.364 4.636a9 9 0 0 1 .203 12.519l-.203 .21l-4.243 4.242a3 3 0 0 1 -4.097 .135l-.144 -.135l-4.244 -4.243a9 9 0 0 1 12.728 -12.728zm-6.364 3.364a3 3 0 1 0 0 6a3 3 0 0 0 0 -6z" />
-                </svg>
-                <h1 className="text-gray-100 text-base md:text-2xl ml-1 font-semibold">
-                  Ubicacion
-                </h1>
-              </div>
-              <div className="w-[80%] my-3">
-                <img
-                  src="https://img2.freepnges.com/20231226/czo/transparent-icon-map-pinned-location-city-name-nearby-park-map-with-pinned-location-road-sign-and-1710956059592.webp"
-                  alt="ubicacion vehiculo"
-                  className="rounded-xl"
-                />
-              </div>
-            </div>
-
-            <div className="flex flex-row items-center">
+          <div className="flex flex-col shadow-2xl w-full md:w-[295px] h-auto bg-[#222222] px-5 py-5  items-center ">
+            <div className="flex flex-col gap-3 items-center">
               <div className="flex flex-row items-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -377,17 +695,17 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
                   <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                   <path d="M17 3.34a10 10 0 1 1 -14.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 14.995 -8.336zm-1.051 6.844a1 1 0 0 0 -1.152 -.663l-.113 .03l-2.684 .895l-2.684 -.895l-.113 -.03a1 1 0 0 0 -.628 1.884l.109 .044l2.316 .771v.976l-1.832 2.75l-.06 .1a1 1 0 0 0 .237 1.21l.1 .076l.101 .06a1 1 0 0 0 1.21 -.237l.076 -.1l1.168 -1.752l1.168 1.752l.07 .093a1 1 0 0 0 1.653 -1.102l-.059 -.1l-1.832 -2.75v-.977l2.316 -.771l.109 -.044a1 1 0 0 0 .524 -1.221zm-3.949 -4.184a1.5 1.5 0 1 0 0 3a1.5 1.5 0 0 0 0 -3z" />
                 </svg>
-                <h1 className="text-gray-100 text-sm md:text-base ml-1 mr-2">
+                <h1 className="text-gray-200 font-semibold text-sm md:text-xl  ml-1 mr-2">
                   Disponibilidad:{" "}
                 </h1>
               </div>
               {postState?.car.availability ? (
-                <span className="bg-[#b0d63f]  text-[#222222] font-semibold  text-[11px] md:text-sm me-2  md:px-2.5 md:py-0.5 rounded ">
-                  Activa
+                <span className="bg-[#b0d63f] text-[12px] text-[#222222] font-semibold  md:text-sm me-2  md:px-2.5 md:py-0.5 rounded ">
+                  Disponible
                 </span>
               ) : (
-                <span className="bg-red-800  text-gray-300 font-semibold  text-[11px] md:text-sm me-2  md:px-2.5 md:py-0.5 rounded ">
-                  Inactiva
+                <span className="bg-red-800 text-[12px] text-gray-300 font-semibold  md:text-sm  me-2  md:px-2.5 md:py-0.5 rounded ">
+                  No disponible
                 </span>
               )}
             </div>
@@ -403,7 +721,7 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                 <path d="M6 2a1 1 0 0 1 .993 .883l.007 .117v1.068l13.071 .935a1 1 0 0 1 .929 1.024l-.01 .114l-1 7a1 1 0 0 1 -.877 .853l-.113 .006h-12v2h10a3 3 0 1 1 -2.995 3.176l-.005 -.176l.005 -.176c.017 -.288 .074 -.564 .166 -.824h-5.342a3 3 0 1 1 -5.824 1.176l-.005 -.176l.005 -.176a3.002 3.002 0 0 1 1.995 -2.654v-12.17h-1a1 1 0 0 1 -.993 -.883l-.007 -.117a1 1 0 0 1 .883 -.993l.117 -.007h2zm0 16a1 1 0 1 0 0 2a1 1 0 0 0 0 -2zm11 0a1 1 0 1 0 0 2a1 1 0 0 0 0 -2z" />
               </svg>
-              <h1 className="text-gray-300 text-base md:text-2xl font-semibold ml-1">
+              <h1 className="text-gray-200 text-base md:text-2xl font-semibold ml-1">
                 Reserva
               </h1>
             </div>
@@ -417,6 +735,8 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
               </div>
               <div className="flex w-full justify-center">
                 <ButtonCheckout
+                  startDateRentals={startDateRentals}
+                  endDateRentals={endDateRentals}
                   postState={postState}
                   id={params.id}
                   pricePost={pricePost}
@@ -436,8 +756,50 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
               )}
             </div>
           </div>
+
+          <div className="flex flex-col mt-5 rounded-b-xl rounded-t-xl w-full gap-5 shadow-2xl md:w-[295px] h-[290px] bg-[#222222] px-5 py-5 border-b-[2px] border-t-[2px] border-gray-300 items-center">
+            <h1 className="text-xl text-gray-200 font-semibold">
+              ¡No te preocupes!
+            </h1>
+            <p className="text-justify text-gray-300">
+              Puedes ver este calendario para saber que fechas estan ocupadas
+              por otros usuarios y reservar para otra fecha
+            </p>
+            <button
+              onClick={handleShowCalendar}
+              className="flex flex-row hover:bg-[#303030] px-3 py-3 rounded-xl duration-200"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="w-6 h-6 stroke-[#b0d63f]"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z" />
+                <path d="M16 3v4" />
+                <path d="M8 3v4" />
+                <path d="M4 11h16" />
+                <path d="M11 15h1" />
+                <path d="M12 15v3" />
+              </svg>
+              <p className="text-[#b0d63f]">Ver calendario</p>
+            </button>
+          </div>
         </div>
       </div>
+
+      <Reviews reviews={postState?.review} idPost={params.id} />
+      {showCalendar && (
+        <CalendarPost
+          handleShowCalendar={handleShowCalendar}
+          rentals={rentals}
+        />
+      )}
     </>
   );
 };
