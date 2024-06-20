@@ -169,7 +169,7 @@ const Config = () => {
         icon: "success",
         title: "Sus datos se actualizaron correctamente",
       });
-      router.push("/settings");
+      window.location.replace("/settings");
     } catch (error: any) {
       Swal.fire({
         title: "Error al actualizar los datos",
