@@ -642,13 +642,15 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
             </div>
             <div className="mt-5 flex flex-col">
               <div className="flex flex-row w-full h-[50%]  gap-3 justify-start">
+                <Link href={`/user/${postState?.user?.id}`}>
                 <div className=" w-[50px] ">
                   <img
                     src={postState?.user.image_url}
                     alt="Foto de perfil usuario"
                     className="rounded-full h-10 w-10"
-                  />
+                    />
                 </div>
+                    </Link>
                 <div className="flex flex-col  justify-center">
                   <h1 className="text-gray-100 text-sm md:text-lg ">
                     {postState?.user.name}

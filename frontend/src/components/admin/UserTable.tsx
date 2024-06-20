@@ -63,7 +63,18 @@ const UserTable: React.FC<{ userRole: string }> = ({ userRole }) => {
   };
 
   const handleDelete = async (userId: string) => {
-    try {
+    Swal.fire({
+      title: '¿Estás seguro de que deseas borrar este usuario?',
+      text: 'No podrás revertir esta acción',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, borrar',
+      cancelButtonText: 'Cancelar',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+try {
       const response = await fetch(`${apiUrl}/users/soft-delete/${userId}`, {
         method: 'PATCH',
         headers: {
@@ -82,6 +93,9 @@ const UserTable: React.FC<{ userRole: string }> = ({ userRole }) => {
       console.error('Error banning user:', error.message);
       Swal.fire('Error', 'No se pudo banear al usuario', 'error');
     }
+       }
+    })
+    
   };
 
   const handleSave = async (user: IUserAdm) => {
@@ -234,14 +248,14 @@ const UserTable: React.FC<{ userRole: string }> = ({ userRole }) => {
                   >
                     <FaEdit />
                   </button>
-                  {userRole === 'superadmin' && (
+                  {userRole === 'superadmin' ? (
                     <button
                       className="bg-red-500 text-white px-2 py-1 rounded-md hover:bg-red-600"
                       onClick={() => handleDelete(user.id)}
                     >
                       <FaBan />
                     </button>
-                  )}
+                  ):''}
                 </div>
               </div>
             )}
