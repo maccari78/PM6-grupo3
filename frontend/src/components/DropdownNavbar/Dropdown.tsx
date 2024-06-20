@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import Swal from "sweetalert2";
 import { IUserDta } from "../Navbar/Navbar";
+import { MdConnectWithoutContact, MdOutlineQuestionAnswer } from "react-icons/md";
 
 const Dropdown: React.FC<{
   userDta: IUserDta | undefined;
@@ -163,6 +164,46 @@ const Dropdown: React.FC<{
               </svg>
               Centro de ayuda
             </Link>
+            <Link
+                  href="/about"
+                  className="flex items-center gap-1 flex-row px-4 py-2 text-sm hover:text-[#C4FF0D] hover:stroke-[#C4FF0D] duration-300 text-gray-300 hover:bg-[#494949]"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="w-5 h-5 stroke-[#C4FF0D]"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M3 7h10v10h-10z" />
+                    <path d="M6 10h4" />
+                    <path d="M8 10v4" />
+                    <path d="M8.104 17c.47 2.274 2.483 4 4.896 4a5 5 0 0 0 5 -5v-7h-5" />
+                    <path d="M18 18a4 4 0 0 0 4 -4v-5h-4" />
+                    <path d="M13.003 8.83a3 3 0 1 0 -1.833 -1.833" />
+                    <path d="M15.83 8.36a2.5 2.5 0 1 0 .594 -4.117" />
+                  </svg>
+                  Sobre nosotros
+                </Link>
+                <Link
+                  href="/contact"
+                  className="flex items-center gap-1 flex-row px-4 py-2 text-sm hover:text-[#C4FF0D] hover:stroke-[#C4FF0D] duration-300 text-gray-300 hover:bg-[#494949]"
+                >
+                  <MdConnectWithoutContact className=" w-5 h-5 text-[#C4FF0D]" />
+                  Contacto
+                </Link>
+                <Link
+                  href="/answers"
+                  className="flex items-center gap-1 flex-row px-4 py-2 text-sm hover:text-[#C4FF0D] hover:stroke-[#C4FF0D] duration-300 text-gray-300 hover:bg-[#494949]"
+                >
+                  <MdOutlineQuestionAnswer className=" w-5 h-5 text-[#C4FF0D]" />
+                  Preguntas frecuentes
+                </Link>
+
 
             <button
               type="button"
