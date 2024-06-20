@@ -8,7 +8,7 @@ const Footer = () => {
         <div className="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
           <div className="md:flex md:justify-between">
             <div className="mb-6 md:mb-0">
-              <Link href="#" className="flex items-center">
+              <Link href="/" className="flex items-center">
                 <img src="/logo.png" className="h-8 me-3" alt="Logo YouDrive" />
               </Link>
             </div>
@@ -48,7 +48,7 @@ const Footer = () => {
           <div className="sm:flex sm:items-center sm:justify-between">
             <span className="text-sm sm:text-center text-gray-400">
               © 2024{" "}
-              <a href="#" className="hover:underline">
+              <a href="/about" className="hover:underline">
                 YouDrive™
               </a>
               . All Rights Reserved.

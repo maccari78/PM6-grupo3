@@ -34,7 +34,7 @@ const Sidebar = () => {
         });
 
         if (!response.ok) {
-          throw new Error("Error fetching user data");
+          throw new Error("Error al obtener los datos");
         }
 
         const data = await response.json();
@@ -58,8 +58,8 @@ const Sidebar = () => {
 
   return (
     <>
-      <div className="relative bg-[#222222]">
-        <nav className="z-20 flex shrink-0 grow-0 justify-around gap-4 md:border-t md:border-gray-400 border-none bg-[#222222] p-2.5 shadow-lg backdrop-blur-lg  md:fixed md:top-2/4 md:-translate-y-2/4 left-6 min-h-[auto] min-w-[64px] md:flex-col row rounded-lg border">
+      <div className="bg-[#222222]">
+        <nav className="z-20 flex shrink-0 grow-0 justify-around gap-4 md:border-t md:border-gray-400 border-none bg-[#222222] p-2.5 shadow-lg backdrop-blur-lg fixed bottom-0 md:top-2/4 md:-translate-y-2/4 left-0 right-0 md:left-6 min-h-[auto] min-w-[64px] md:flex-col row rounded-lg border md:rounded-lg md:w-fit md:h-fit">
           <Link
             href="/user"
             className="flex aspect-square min-h-[32px] w-16 flex-col items-center justify-center gap-1 rounded-md p-1.5 text-gray-200 hover:bg-[#202020]"

@@ -246,7 +246,7 @@ export class UsersService {
       const user = await this.userRepository.findOneBy({ id });
       if (!user) throw new NotFoundException('Usuario no encontrado');
       const newPassword = await bcrypt.hash(password, 10);
-      if (newPassword)
+      if (!newPassword)
         throw new NotFoundException('Error al cifrar la contraseña');
       await this.userRepository.update(user.id, { password: newPassword });
     }

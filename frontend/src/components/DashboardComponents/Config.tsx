@@ -16,7 +16,7 @@ const Config = () => {
   const [newProfilePicture, setNewProfilePicture] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const router = useRouter();
-  const [loadinData, setLoadingData]= useState<boolean>(true)
+  const [loadinData, setLoadingData] = useState<boolean>(true);
   const [isPasswordEnabled, setIsPasswordEnabled] = useState(false);
 
   const handlePasswordChangeClick = () => {
@@ -101,7 +101,7 @@ const Config = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoadingData(false)
+    setLoadingData(false);
     const formData = new FormData();
     if (newProfilePicture) {
       formData.append("file", newProfilePicture);
@@ -132,52 +132,63 @@ const Config = () => {
       formData.append("zip_code", userData.addresses[0]?.zip_code);
       formData.append("rExpiration", userData.rExpiration);
     }
+    Swal.fire({
+      title: "¿Estás seguro de realizar los cambios?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Aceptar",
+      cancelButtonText: "Cancelar",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await fetch(`${apiUpdateUser}`, {
+            method: "PUT",
+            headers: {
+              Authorization: `Bearer ${userToken}`,
+            },
+            body: formData,
+          });
 
-    try {
-      const response = await fetch(`${apiUpdateUser}`, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${userToken}`,
-        },
-        body: formData,
-      });
+          if (!response.ok) {
+            Swal.fire({
+              title: "Error al actualizar los datos",
+              text: "Los datos no pudieron actualizarse, inténtelo nuevamente",
+              icon: "error",
+            });
+            throw new Error("Error updating user data");
+          }
 
-      if (!response.ok) {
-        Swal.fire({
-          title: "Error al actualizar los datos",
-          text: `Los daton no pudieron actualizarse, intentelo nuevamente`,
-          icon: "error",
-        });
-        throw new Error("Error updating user data");
+          const updatedData = await response.json();
+          // setUserData(updatedData);
+          const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.onmouseenter = Swal.stopTimer;
+              toast.onmouseleave = Swal.resumeTimer;
+            },
+          });
+          setLoadingData(true);
+          Toast.fire({
+            icon: "success",
+            title: "Sus datos se actualizaron correctamente",
+          });
+          window.location.replace("/settings");
+        } catch (error: any) {
+          Swal.fire({
+            title: "Error al actualizar los datos",
+            text: "Los datos no pudieron actualizarse, inténtelo nuevamente",
+            icon: "error",
+          });
+          console.error("Error:", error);
+        }
       }
-
-      const updatedData = await response.json();
-      // setUserData(updatedData);
-      const Toast = Swal.mixin({
-        toast: true,
-        position: "top-end",
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-        didOpen: (toast) => {
-          toast.onmouseenter = Swal.stopTimer;
-          toast.onmouseleave = Swal.resumeTimer;
-        },
-      });
-      setLoadingData(true)
-      Toast.fire({
-        icon: "success",
-        title: "Sus datos se actualizaron correctamente",
-      });
-      router.push("/settings");
-    } catch (error: any) {
-      Swal.fire({
-        title: "Error al actualizar los datos",
-        text: `Los daton no pudieron actualizarse, intentelo nuevamente`,
-        icon: "error",
-      });
-      console.error("Error:", error);
-    }
+    });
   };
 
   if (loading) {
@@ -377,7 +388,9 @@ const Config = () => {
               type="submit"
               className="mt-4 px-4 py-2 bg-[#232326] text-white rounded hover:bg-[#333335]"
             >
-            {loadinData ? "guardar cambios" : <LoaderBasic/>}     
+
+              {loadinData ? "Guardar cambios" : <LoaderBasic />}
+
             </button>
           </form>
         </div>
