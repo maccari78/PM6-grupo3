@@ -68,7 +68,7 @@ export class CreateUserDto {
   @ApiProperty()
   @IsNotEmpty({ message: 'La ciudad es requerida' })
   @IsString()
-  @MaxLength(20)
+  @MaxLength(50)
   city: string;
 
   @ApiProperty()
