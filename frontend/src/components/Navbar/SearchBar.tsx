@@ -55,22 +55,22 @@ const SearchComponent: React.FC<SearchComponentProps> = ({ onSearch }) => {
       </div>
       <button 
         onClick={() => handleSearch('available')} 
-        className="w-full md:w-auto px-4 bg-[#c4ff0d] text-gray-900 rounded-lg hover:bg-lime-600 transition">
+        className="w-full md:w-auto px-4 mt-4 mb-4 bg-[#c4ff0d] text-gray-900 rounded-lg hover:bg-lime-600 transition">
         Buscar
       </button>
 
       <div className='px-4'>
-        <div className="h-full border-l border-gray-500 h-8"></div>
+        <div className="h-full border-l border-gray-500 "></div>
       </div>
 
       <button 
         onClick={() => handleSearch('allavailable')} 
-        className="w-full md:w-auto px-4 bg-[#c4ff0d] text-gray-900 rounded-lg hover:bg-lime-600 transition">
+        className="w-full md:w-auto px-4 mt-4 mb-4 bg-[#c4ff0d] text-gray-900 rounded-lg hover:bg-lime-600 transition">
         Vehículos Disponibles
       </button>
       <button 
         onClick={() => handleSearch('all')} 
-        className="w-full md:w-auto px-4 bg-[#c4ff0d] text-gray-900 rounded-lg hover:bg-lime-600 transition">
+        className="w-full md:w-auto px-4 mt-4 mb-4 bg-[#c4ff0d] text-gray-900 rounded-lg hover:bg-lime-600 transition">
         Todos
       </button>
     </div>
