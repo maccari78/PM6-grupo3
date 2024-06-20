@@ -1,8 +1,15 @@
-import { useState } from "react";
-import { FiltersProps } from "./interface/IFilterProps";
+import { useEffect, useState } from "react";
 import { FaArrowDown } from "react-icons/fa";
+import { IFilter } from "../ShowAndDeleteFilter/ShowAndDeleteFilter";
 
-const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
+export interface FiltersProps {
+  (filters: any): void;
+}
+
+const Filters: React.FC<{
+  onFilterChange: FiltersProps;
+  filters: IFilter | null;
+}> = ({ onFilterChange, filters }) => {
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
   const [selectedModel, setSelectedModel] = useState<string | null>(null);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
@@ -10,10 +17,20 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
   const [optionsBrand, setOptionsBrand] = useState<boolean>(false);
   const [optionsModel, setOptionsModel] = useState<boolean>(false);
 
+  useEffect(() => {
+    setSelectedBrand(filters?.selectedBrand!);
+    setSelectedModel(filters?.selectedModel!);
+    setSelectedColors(filters?.selectedColors! || []);
+    setSelectedMileage(filters?.selectedMileage!);
+  }, [filters]);
+
   const handleBrandChange = (brand: string) => {
     setSelectedBrand(brand);
     onFilterChange({
-      brand,
+      selectedModel,
+      selectedColors,
+      selectedMileage,
+      selectedBrand: brand,
     });
   };
 
@@ -23,21 +40,30 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
       : [color];
     setSelectedColors(newColors);
     onFilterChange({
-      color: newColors,
+      selectedColors: newColors,
+      selectedModel,
+      selectedMileage,
+      selectedBrand,
     });
   };
 
   const handleMileageChange = (mileage: string) => {
     setSelectedMileage(mileage);
     onFilterChange({
-      mileage,
+      selectedMileage: mileage,
+      selectedBrand,
+      selectedColors,
+      selectedModel,
     });
   };
 
   const handleModelChange = (model: string) => {
     setSelectedModel(model);
     onFilterChange({
-      model,
+      selectedModel: model,
+      selectedMileage,
+      selectedBrand,
+      selectedColors,
     });
   };
 
@@ -285,15 +311,3 @@ const Filters: React.FC<FiltersProps> = ({ onFilterChange }) => {
 };
 
 export default Filters;
-
-// "Ferrari ",
-//             "Honda",
-//             "Volkswagen",
-//             "Audi",
-//             "Jeep",
-//             "Mercedes-Benz",
-//             "Fiat",
-//             "Renault",
-//             "Nissan",
-//             "Peugeot",
-//             "BMW",

@@ -44,7 +44,6 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
   >();
   const [endDateRentals, setEndtDateRentals] = useState<string[] | undefined>();
   const [imgsPost, setImgsPost] = useState<string[]>();
-  console.log(postState);
 
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
