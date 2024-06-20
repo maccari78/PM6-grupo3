@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { Posts } from './entities/post.entity';
@@ -24,24 +29,7 @@ export class PostsService {
     @InjectRepository(Rental) private rentalRepository: Repository<Rental>,
     private notificationService: NotificationsService,
     private jwtService: JwtService,
-  ) { }
-
-  async findAll(): Promise<Posts[]> {
-    return this.postRepository.find({ where: { isDeleted: false } });
-  }
-
-  async softDelete(id: string): Promise<{ message: string }> {
-    const post = await this.postRepository.findOneBy({ id });
-
-    if (!post) {
-      throw new NotFoundException(`El post con ID ${id} no se ha encontrado`);
-    }
-
-    post.isDeleted = true;
-    await this.postRepository.save(post);
-
-    return { message: 'Post eliminado lógicamente con éxito' };
-  }
+  ) {}
 
   async getPostsByFilterServices(filters: FiltersPosts) {
     if (filters.year && typeof filters.year !== 'number') {
@@ -52,7 +40,9 @@ export class PostsService {
       filters.price = Number(filters.price);
     }
 
-    const query = this.postRepository.createQueryBuilder('post').leftJoinAndSelect('post.car', 'car');
+    const query = this.postRepository
+      .createQueryBuilder('post')
+      .leftJoinAndSelect('post.car', 'car');
 
     if (filters.brand) {
       query.andWhere('car.brand = :brand', { brand: filters.brand });
@@ -91,6 +81,7 @@ export class PostsService {
 
   async getPostsAllServices() {
     const posts = await this.postRepository.find({
+      where: { isDeleted: false },
       relations: { user: true, car: true, review: true },
     });
 
@@ -112,10 +103,16 @@ export class PostsService {
     return postsId;
   }
 
-  async AddPostsServices( posts: CreatePostDto, currentUser: string, files?: Express.Multer.File[] ) {
+  async AddPostsServices(
+    posts: CreatePostDto,
+    currentUser: string,
+    files?: Express.Multer.File[],
+  ) {
     const { title, description, price, ...rest } = posts;
     const secret = process.env.JWT_SECRET;
-    const payload: JwtPayload = await this.jwtService.verify(currentUser, { secret });
+    const payload: JwtPayload = await this.jwtService.verify(currentUser, {
+      secret,
+    });
 
     console.log(payload);
 
@@ -134,9 +131,13 @@ export class PostsService {
     newPosts.user = user;
 
     const postsSaved = await this.postRepository.save(newPosts);
-    if (!postsSaved) { throw new BadRequestException('No se pudo insertar la publicación'); }
+    if (!postsSaved) {
+      throw new BadRequestException('No se pudo insertar la publicación');
+    }
 
-    if (Array.isArray(postsSaved)) { throw new BadRequestException('postsSaved no es un array'); }
+    if (Array.isArray(postsSaved)) {
+      throw new BadRequestException('postsSaved no es un array');
+    }
 
     await this.postRepository.update(postsSaved.id, { car: newCar });
 
@@ -154,6 +155,12 @@ export class PostsService {
     reservation.isDeleted = true;
     reservation.car.availability = true;
 
+    await this.notificationService.newNotification(
+      reservation.rentals[0].users[1].email,
+      'canceled',
+      reservation,
+    );
+
     await Promise.all(
       reservation.rentals.map(async (rental) => {
         await this.rentalRepository.delete(rental.id);
@@ -163,53 +170,31 @@ export class PostsService {
     await this.postRepository.save(reservation);
   }
 
-  async sendToCancelReservation(id: string) {
-    await this.cancel(id);
-    console.log(' INICIO Probando de envio de email propietario y inquilino');
-
-    const contract = await this.rentalRepository.findOne({ where: { id }, relations: ['users', 'posts'] });
-
-    if (!contract) throw new NotFoundException('Contrato no encontrado');
-
-    const userPosts = contract.posts?.user?.id;
-
-    const userPay = contract.users?.filter((user) => user.id !== userPosts);
-    if (!userPay || userPay.length === 0)
-      throw new NotFoundException('Error al realizar el pago');
-
-    const owner = contract.posts?.user;
-    const contractPost = contract.posts;
-
-    await this.notificationService.newNotification( owner.email, 'cancelReservation', contractPost );
-
-    await this.notificationService.newNotification(
-      userPay[0].email,
-      'cancelTenantReservation',
-    );
-
-    console.log(' FIN Probando de envio de email propietario y inquilino');
-    return 'Reserva cancelada con éxito';
-  }
-
-  async UpdatePostsServices( id: string, posts: UpdatePostDto, token: string, files?: Express.Multer.File[] ) {
+  async UpdatePostsServices(
+    id: string,
+    posts: UpdatePostDto,
+    token: string,
+    files?: Express.Multer.File[],
+  ) {
     const { title, description, price, image_url, ...rest } = posts;
     console.log(id, 'ID EN SERVICE');
 
     const secret = process.env.JWT_SECRET;
     const payload: JwtPayload = await this.jwtService.verify(token, { secret });
     if (!payload) throw new UnauthorizedException('token invalido 3');
-    const user = await this.userRepository.findOne({ where: { email: payload.sub } });
+    const user = await this.userRepository.findOne({
+      where: { email: payload.sub },
+    });
     if (!user) throw new NotFoundException('Usuario no encontrado');
 
-    const findPosts = await this.postRepository.findOne({ where: { id }, relations: ['car', 'user'] });
+    const findPosts = await this.postRepository.findOne({
+      where: { id },
+      relations: ['car', 'user'],
+    });
     console.log(findPosts, 'FIND POSTS EN SERVICE');
 
     if (!findPosts)
       throw new NotFoundException(`No se encontro publicación con ${id}`);
-
-    if (findPosts.user.id !== user.id && user.roles !== 'admin') {
-      throw new UnauthorizedException( 'No tiene permisos para actualizar esta publicación' );
-    }
 
     const car = await this.carRepository.findOneBy({ id: findPosts.car.id });
     if (!car) throw new NotFoundException('Auto no encontrado');
@@ -217,7 +202,11 @@ export class PostsService {
       const updateCar = await this.carRepository.update(car.id, rest);
       if (!updateCar)
         throw new BadRequestException('No se pudo actualizar el auto');
-      const updatePost = await this.postRepository.update(id, { title, description, price });
+      const updatePost = await this.postRepository.update(id, {
+        title,
+        description,
+        price,
+      });
 
       if (!updatePost)
         throw new BadRequestException('No se pudo actualizar la publicación');
@@ -249,22 +238,35 @@ export class PostsService {
   }
 
   async restoreCar(id: string): Promise<void> {
-    const car = await this.carRepository.findOne({ where: { id }, withDeleted: true, relations: ['post'] });
+    const car = await this.carRepository.findOne({
+      where: { id },
+      withDeleted: true,
+      relations: ['post'],
+    });
     if (!car) {
-      throw new NotFoundException( `El automóvil con ID ${id} no se ha encontrado` );
+      throw new NotFoundException(
+        `El automóvil con ID ${id} no se ha encontrado`,
+      );
     }
 
     car.isDeleted = false;
     await this.carRepository.save(car);
 
-    const postsToUpdate = car.post.map((post) => ({ id: post.id, isDeleted: false }));
+    const postsToUpdate = car.post.map((post) => ({
+      id: post.id,
+      isDeleted: false,
+    }));
     await this.postRepository.save(postsToUpdate);
   }
 
   async getPostsByDate(location) {
-    const posts = await this.postRepository.find({ relations: ['car', 'car.user.addresses'] });
+    const posts = await this.postRepository.find({
+      relations: ['car', 'car.user.addresses'],
+    });
 
-    const availablePosts = posts.filter((post) => { return post.car.availability === true });
+    const availablePosts = posts.filter((post) => {
+      return post.car.availability === true;
+    });
 
     if (!location) {
       return availablePosts;
@@ -299,5 +301,18 @@ export class PostsService {
     });
 
     return postsWithAddresses;
+  }
+
+  async softDelete(id: string): Promise<{ message: string }> {
+    const post = await this.postRepository.findOneBy({ id });
+
+    if (!post) {
+      throw new NotFoundException(`El post con ID ${id} no se ha encontrado`);
+    }
+
+    post.isDeleted = true;
+    await this.postRepository.save(post);
+
+    return { message: 'Post eliminado lógicamente con éxito' };
   }
 }

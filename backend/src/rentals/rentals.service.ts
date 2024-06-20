@@ -185,6 +185,7 @@ export class RentalsService {
     const contract = await this.rentalRepository.findOne({
       where: { id },
     });
+
     if (!contract) throw new NotFoundException('Contrato no encontrado');
     const deleted = await this.rentalRepository.delete(id);
     if (deleted.affected === 0)

@@ -4,6 +4,7 @@ import SkeletonDashboard from "../sketelons/SkeletonDashboard";
 import { IUserData } from "@/interfaces/IUser";
 import { redirect, useRouter } from "next/navigation";
 import Swal from "sweetalert2";
+import LoaderBasic from "../Loaders/loaderBasic";
 
 const apiUserUrl = process.env.NEXT_PUBLIC_API_GET_USERS_TOKEN;
 const apiUpdateUser = process.env.NEXT_PUBLIC_API_UPDATE_USER;
@@ -15,6 +16,7 @@ const Config = () => {
   const [newProfilePicture, setNewProfilePicture] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const router = useRouter();
+  const [loadinData, setLoadingData]= useState<boolean>(true)
   const [isPasswordEnabled, setIsPasswordEnabled] = useState(false);
 
   const handlePasswordChangeClick = () => {
@@ -99,7 +101,7 @@ const Config = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    setLoadingData(false)
     const formData = new FormData();
     if (newProfilePicture) {
       formData.append("file", newProfilePicture);
@@ -162,11 +164,12 @@ const Config = () => {
           toast.onmouseleave = Swal.resumeTimer;
         },
       });
+      setLoadingData(true)
       Toast.fire({
         icon: "success",
         title: "Sus datos se actualizaron correctamente",
       });
-      router.push("/settings");
+      window.location.replace("/settings");
     } catch (error: any) {
       Swal.fire({
         title: "Error al actualizar los datos",
@@ -374,7 +377,7 @@ const Config = () => {
               type="submit"
               className="mt-4 px-4 py-2 bg-[#232326] text-white rounded hover:bg-[#333335]"
             >
-              Guardar cambios
+            {loadinData ? "guardar cambios" : <LoaderBasic/>}     
             </button>
           </form>
         </div>
