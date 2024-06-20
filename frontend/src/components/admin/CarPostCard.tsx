@@ -104,8 +104,12 @@ const CarPostCard: React.FC = () => {
       });
 
       if (response.ok) {
-        const updatedPost = { ...post, ...editForm };
+        if(editForm.car && post.car.image_url)
+          editForm.car.image_url = [...post.car.image_url];
+        
+        const updatedPost: IPost = { ...post, ...editForm };   
         setCarPosts(carPosts.map(p => (p.id === post.id ? updatedPost : p)));
+        
         setEditingCarPostId(null);
         setEditForm({});
         setReload(false)
