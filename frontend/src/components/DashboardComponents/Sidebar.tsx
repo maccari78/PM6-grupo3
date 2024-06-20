@@ -34,7 +34,7 @@ const Sidebar = () => {
         });
 
         if (!response.ok) {
-          throw new Error("Error fetching user data");
+          throw new Error("Error al obtener los datos");
         }
 
         const data = await response.json();
