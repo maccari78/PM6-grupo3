@@ -177,93 +177,181 @@ const Filters: React.FC<{
         <h1 className="text-[#C4FF0D]">Color</h1>
         <ul>
           <li>
-            <div className="flex items-center me-4">
-              <input
-                id="blue-checkbox"
-                type="checkbox"
-                value="Azul"
-                checked={selectedColors.includes("Azul")}
-                onChange={() => handleColorChange("Azul")}
-                className=" relative w-4 h-4 rounded-sm appearance-none focus:cursor-pointer focus:outline-none bg-blue-900 checked:bg-blue-700 "
-              />
+            <div className="inline-flex items-center">
               <label
-                htmlFor="blue-checkbox"
-                className="ms-2 text-sm md:text-base  text-[#222222]"
+                className="relative flex cursor-pointer items-center rounded-full p-2"
+                htmlFor="checkbox-8"
+                data-ripple-dark="true"
               >
+                <input
+                  type="checkbox"
+                  className="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-blue-500 checked:bg-blue-500 checked:before:bg-blue-500 hover:before:opacity-10"
+                  id="checkbox-8"
+                  checked={selectedColors.includes("Azul")}
+                  onChange={() => handleColorChange("Azul")}
+                />
+                <div className="pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-3.5 w-3.5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    stroke="currentColor"
+                    stroke-width="1"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    ></path>
+                  </svg>
+                </div>
+              </label>
+              <h1 className="ms-2 text-sm md:text-base  text-[#222222]">
                 Azul
-              </label>
+              </h1>
             </div>
           </li>
           <li>
-            <div className="flex items-center me-4">
-              <input
-                id="green-checkbox"
-                type="checkbox"
-                value="Verde"
-                checked={selectedColors.includes("Verde")}
-                onChange={() => handleColorChange("Verde")}
-                className="relative w-4 h-4 rounded-sm appearance-none focus:cursor-pointer focus:outline-none bg-green-900 checked:bg-green-700 "
-              />
+            <div className="flex items-center">
               <label
-                htmlFor="green-checkbox"
-                className="ms-2 text-sm md:text-base text-[#222222]"
+                className="relative flex cursor-pointer items-center rounded-full p-2"
+                htmlFor="checkbox-3"
+                data-ripple-dark="true"
               >
+                <input
+                  type="checkbox"
+                  className="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-green-500 checked:bg-green-500 checked:before:bg-green-500 hover:before:opacity-10"
+                  id="checkbox-3"
+                  checked={selectedColors.includes("Verde")}
+                  onChange={() => handleColorChange("Verde")}
+                />
+                <div className="pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-3.5 w-3.5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    stroke="currentColor"
+                    stroke-width="1"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    ></path>
+                  </svg>
+                </div>
+              </label>
+              <h1 className="ms-2 text-sm md:text-base  text-[#222222]">
                 Verde
-              </label>
+              </h1>
             </div>
           </li>
           <li>
-            <div className="flex items-center me-4">
-              <input
-                id="black-checkbox"
-                type="checkbox"
-                value="Negro"
-                checked={selectedColors.includes("Negro")}
-                onChange={() => handleColorChange("Negro")}
-                className="relative w-4 h-4 rounded-sm appearance-none focus:cursor-pointer focus:outline-none bg-gray-800 checked:bg-gray-900 "
-              />
+            <div className="inline-flex items-center">
               <label
-                htmlFor="black-checkbox"
-                className="ms-2 text-sm md:text-base  text-[#222222]"
+                className="relative flex cursor-pointer items-center rounded-full p-2"
+                htmlFor="checkbox-8"
+                data-ripple-dark="true"
               >
+                <input
+                  type="checkbox"
+                  className="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-black checked:bg-black checked:before:bg-black hover:before:opacity-10"
+                  id="checkbox-8"
+                  checked={selectedColors.includes("Negro")}
+                  onChange={() => handleColorChange("Negro")}
+                />
+                <div className="pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-3.5 w-3.5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    stroke="currentColor"
+                    stroke-width="1"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    ></path>
+                  </svg>
+                </div>
+              </label>
+              <h1 className="ms-2 text-sm md:text-base  text-[#222222]">
                 Negro
-              </label>
+              </h1>
             </div>
           </li>
           <li>
-            <div className="flex items-center me-4">
-              <input
-                id="white-checkbox"
-                type="checkbox"
-                value="Blanco"
-                checked={selectedColors.includes("Blanco")}
-                onChange={() => handleColorChange("Blanco")}
-                className="relative w-4 h-4 rounded-sm appearance-none focus:cursor-pointer focus:outline-none bg-gray-200 checked:bg-gray-50 "
-              />
+            <div className="inline-flex items-center">
               <label
-                htmlFor="black-checkbox"
-                className="ms-2 text-sm md:text-base text-[#222222]"
+                className="relative flex cursor-pointer items-center rounded-full p-2"
+                htmlFor="checkbox-8"
+                data-ripple-dark="true"
               >
+                <input
+                  type="checkbox"
+                  className="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-white checked:bg-white checked:before:bg-white hover:before:opacity-10"
+                  id="checkbox-8"
+                  checked={selectedColors.includes("Blanco")}
+                  onChange={() => handleColorChange("Blanco")}
+                />
+                <div className="pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-3.5 w-3.5 fill-black stroke-black"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    stroke="currentColor"
+                    stroke-width="1"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    ></path>
+                  </svg>
+                </div>
+              </label>
+              <h1 className="ms-2 text-sm md:text-base  text-[#222222]">
                 Blanco
-              </label>
+              </h1>
             </div>
           </li>
           <li>
-            <div className="flex items-center me-4">
-              <input
-                id="red-checkbox"
-                type="checkbox"
-                value="Rojo"
-                checked={selectedColors.includes("Rojo")}
-                onChange={() => handleColorChange("Rojo")}
-                className="relative w-4 h-4 rounded-sm appearance-none focus:cursor-pointer focus:outline-none bg-red-900 checked:bg-red-700 "
-              />
+            <div className="flex items-center">
               <label
-                htmlFor="red-checkbox"
-                className="ms-2 text-sm md:text-base  text-[#222222]"
+                className="relative flex cursor-pointer items-center rounded-full p-2"
+                htmlFor="checkbox-2"
+                data-ripple-dark="true"
               >
-                Rojo
+                <input
+                  type="checkbox"
+                  className="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-red-500 checked:bg-red-500 checked:before:bg-red-500 hover:before:opacity-10"
+                  id="checkbox-2"
+                  checked={selectedColors.includes("Rojo")}
+                  onChange={() => handleColorChange("Rojo")}
+                />
+                <div className="pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 text-white opacity-0 transition-opacity peer-checked:opacity-100">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-3.5 w-3.5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    stroke="currentColor"
+                    stroke-width="1"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    ></path>
+                  </svg>
+                </div>
               </label>
+              <h1 className="ms-2 text-sm md:text-base text-[#222222]">Rojo</h1>
             </div>
           </li>
         </ul>
