@@ -44,7 +44,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({ onSearch }) => {
 
     <div className="flex flex-col md:flex-row bg-[#313139] text-white rounded-lg p-5 md:space-y-3 md:space-x-4" >
       <div className="flex-1">
-        <label className="block mb-1">Buscar por ciudad, provincia o pais:</label>
+        <label className="block mb-1">Buscar por ciudad, provincia o país:</label>
         <input 
           type="text" 
           value={location} 

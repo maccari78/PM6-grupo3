@@ -55,4 +55,9 @@ export class NotificationsController {
   deleteNotification(@Param('id') id: string) {
     return this.notificationsService.deleteNotification(id);
   }
+
+  @Post('contact')
+  contactDevs(@Body() formData: object) {
+    return this.notificationsService.contactDevs(formData);
+  }
 }
