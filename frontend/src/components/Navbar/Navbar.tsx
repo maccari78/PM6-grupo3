@@ -422,7 +422,7 @@ const Navbar: React.FC = () => {
             <span className="sr-only">Loading...</span>
           </div>
         ) : userSession ? (
-          <Dropdown userDta={userDta!} loading={loading} />
+          <Dropdown userDta={userDta!} loading={loading} userRole={userRole} />
         ) : (
           <>
             <Link
