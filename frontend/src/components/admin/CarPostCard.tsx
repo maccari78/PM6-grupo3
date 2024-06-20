@@ -5,6 +5,7 @@ import { IPost } from '../VehiclesComponent/interfaces/IPost';
 import Swal from 'sweetalert2';
 import { redirect, useRouter } from 'next/navigation';
 import { RiCloseFill } from 'react-icons/ri';
+import UploadPost from '@/app/rent/[id]/page';
 
 const apiUrl = process.env.NEXT_PUBLIC_API_POSTS;
 if (!apiUrl) {
@@ -104,8 +105,12 @@ const CarPostCard: React.FC = () => {
       });
 
       if (response.ok) {
-        const updatedPost = { ...post, ...editForm };
+        if(editForm.car && post.car.image_url)
+          editForm.car.image_url = [...post.car.image_url];
+        
+        const updatedPost: IPost = { ...post, ...editForm };   
         setCarPosts(carPosts.map(p => (p.id === post.id ? updatedPost : p)));
+        
         setEditingCarPostId(null);
         setEditForm({});
         setReload(false)
