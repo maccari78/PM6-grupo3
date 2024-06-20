@@ -27,12 +27,28 @@ const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [userDta, setUserDta] = useState<IUserDta | undefined>();
   const [loading, setLoading] = useState<boolean>(true);
-  const menuRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null)
 
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult | null>(null);
   const [noResults, setNoResults] = useState<boolean>(false);
   const [showResults, setShowResults] = useState<boolean>(false);
+  const [isDropdownVisible, setDropdownVisible] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
+
+
+  const handleClickOutsideDos = (event: MouseEvent) => {
+    if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+      setShowResults(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('click', handleClickOutsideDos, true);
+    return () => {
+      document.removeEventListener('click', handleClickOutsideDos, true);
+    };
+  }, []);
 
   useEffect(() => {
     if (
@@ -107,7 +123,9 @@ const Navbar: React.FC = () => {
     if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
       setIsMenuOpen(false);
     }
+
   };
+
 
   useEffect(() => {
     if (isMenuOpen) {
@@ -209,7 +227,7 @@ const Navbar: React.FC = () => {
           onSubmit={handleSearch}
           className="flex items-center h-[30px] md:h-[42px]"
         >
-          <div className="relative h-full  w-full">
+          <div ref={searchRef} className="relative h-full  w-full">
             <input
               type="text"
               value={query}
