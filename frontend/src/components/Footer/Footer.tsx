@@ -48,7 +48,7 @@ const Footer = () => {
           <div className="sm:flex sm:items-center sm:justify-between">
             <span className="text-sm sm:text-center text-gray-400">
               © 2024{" "}
-              <a href="about" className="hover:underline">
+              <a href="/about" className="hover:underline">
                 YouDrive™
               </a>
               . All Rights Reserved.
