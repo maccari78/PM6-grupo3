@@ -100,7 +100,7 @@ export class AuthService {
       .createQueryBuilder('user')
       .where('user.email = :email', { email })
       .getOne();
-
+    if (findUser.isDeleted) return false;
     if (findUser !== null) {
       return true;
     }
