@@ -642,7 +642,7 @@ const VehicleDetail = ({ params }: { params: { vehicleId: string } }) => {
             </div>
             <div className="mt-5 flex flex-col">
               <div className="flex flex-row w-full h-[50%]  gap-3 justify-start">
-                <Link href='/user/[userId]' as={`user/${postState?.user?.id}`}>
+                <Link href='/user/[userId]' as={`/user/${postState?.user?.id}`}>
                 <div className=" w-[50px] ">
                   <img
                     src={postState?.user.image_url}
