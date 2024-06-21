@@ -80,7 +80,7 @@ const VehicleCard: React.FC<ICar> = ({
             Km: {carMileage}
           </span>
           <div className="flex h-[40px]">
-            <Link href={`/vehicle/${id}`}>
+            <Link href='/vehicle/[vehicleId]' as={`/vehicle/${id}`}>
               {loadingOn ? (
                 <button
                   onClick={handleOnClick}

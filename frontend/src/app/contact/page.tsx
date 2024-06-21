@@ -1,4 +1,63 @@
+'use client'
+import { useState } from "react";
+import Swal from "sweetalert2";
+
 const Contact = () => {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: ''
+  })
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+    const handleChange = (
+      e: React.ChangeEvent<
+        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      >
+    )  => {
+      const {name, value} = e.target;
+  
+      setFormData({
+        ...formData,
+        [name]: value
+      })
+    }
+
+    const handleSubmit = async (
+      e: React.FormEvent<
+        HTMLFormElement
+      >
+    )  => {
+      e.preventDefault();
+      try {
+          const response = await fetch(`${apiBaseUrl}/notifications/contact`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+          });
+
+          if (response.ok) {
+            Swal.fire({
+              icon: 'success',
+              title: 'Correo enviado exitosamente',
+              showConfirmButton: false,
+              timer: 1500
+            });
+            setFormData({
+              name: '',
+              email: '',
+              message: ''
+            });
+          } else {
+            alert('Hubo un error al enviar el correo');
+          }
+      } catch (error) {
+          alert('Hubo un error al enviar el correo');
+      }
+  };
+
   return (
     <div className="relative flex items-top justify-center min-h-screen bg-[#3f3f3f] sm:items-center sm:pt-0">
       <div className="max-w-6xl mx-auto sm:px-6 lg:px-8">
@@ -8,10 +67,8 @@ const Contact = () => {
               <h1 className="text-4xl sm:text-5xl text-[#c2e94e] font-extrabold tracking-tight">
                 Contactanos
               </h1>
-              <p className="text-normal text-lg sm:text-2xl font-medium text-gray-400 mt-2">
-                Has tenido una mala experiencia en la pagina?, quieres deja un
-                feedback?, necesitas mas detalles acerca de la idea de negocio
-                que busca esta pagina?{" "}
+              <p className="text-normal text-lg sm:text-2xl  text-gray-400 mt-2">
+              ¿Has tenido una mala experiencia en la página? ¿Quieres dejar feedback? ¿Necesitas más detalles acerca de la idea de negocio que busca esta página?{" "}
               </p>
 
               <div className="flex items-center mt-8  text-gray-400">
@@ -31,14 +88,14 @@ const Contact = () => {
                     d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
                   />
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="1.5"
                     d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
                   />
                 </svg>
                 <div className="ml-4 text-md tracking-wide font-semibold w-40">
-                  Colombia, Argentina, Mexico, Peru
+                  Colombia, Argentina, México, Perú
                 </div>
               </div>
 
@@ -82,12 +139,12 @@ const Contact = () => {
                   />
                 </svg>
                 <div className="ml-4 text-md tracking-wide font-semibold w-40">
-                  youdrive@mail.com
+                proyectofinal.g3.henry@gmail.com
                 </div>
               </div>
             </div>
 
-            <form className="p-6 flex flex-col justify-center">
+            <form className="p-6 flex flex-col justify-center" onSubmit={handleSubmit}>
               <div className="flex flex-col">
                 <label htmlFor="name" className="hidden">
                   Nombre Completo
@@ -98,6 +155,8 @@ const Contact = () => {
                   id="name"
                   placeholder="Nombre completo"
                   className="w-100 mt-2 py-3 px-3 rounded-lg bg-[#222222] border border-gray-700 text-gray-200 font-semibold focus:border-[#C4FF0D] focus:outline-none"
+                  value={formData.name}
+                  onChange={handleChange}
                 />
               </div>
 
@@ -111,6 +170,8 @@ const Contact = () => {
                   id="email"
                   placeholder="Email"
                   className="w-100 mt-2 py-3 px-3 rounded-lg bg-[#222222] border border-gray-700 text-gray-200 font-semibold focus:border-[#C4FF0D] focus:outline-none"
+                  value={formData.email}
+                  onChange={handleChange}
                 />
               </div>
 
@@ -119,10 +180,12 @@ const Contact = () => {
                   Mensaje
                 </label>
                 <textarea
-                  name="tel"
-                  id="tel"
+                  name="message"
+                  id="message"
                   placeholder="Mensaje"
                   className="w-100 mt-2 py-3 px-3 rounded-lg bg-[#222222] border border-gray-700 text-gray-200 font-semibold focus:border-[#C4FF0D] focus:outline-none"
+                  value={formData.message}
+                  onChange={handleChange}
                 ></textarea>
               </div>
 

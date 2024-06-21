@@ -9,22 +9,22 @@ import React, { useEffect, useState } from "react";
 
 interface UserPageProps {
   params: {
-    id: string;
+    userId: string;
   };
 }
 
 const apiUrl = process.env.NEXT_PUBLIC_API_USERS;
 
 const UserProfile = ({ params }: UserPageProps) => {
-  const { id } = params;
+  const { userId } = params;
   const [userData, setUserData] = useState<IUserData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
 
-  console.log(id);
+  
 
   useEffect(() => {
-    axios.get(`${apiUrl}/${params.id}`).then((response) => {
+    axios.get(`${apiUrl}/${params.userId}`).then((response) => {
       setUserData(response.data);
       setLoading(false);
     });

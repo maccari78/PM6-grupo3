@@ -71,7 +71,7 @@ const Success = () => {
               <path d="M5 12l6 -6" />
             </svg>
             <p className="text-[15px] md:text-lg hover:text-[#c3ff0da9]">
-              Volver a la pagina principal
+              Volver a la página principal
             </p>
           </button>
         </Link>

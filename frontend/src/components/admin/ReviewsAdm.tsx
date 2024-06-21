@@ -76,14 +76,14 @@ const ReviewsAdm: React.FC = () => {
 
       if (response.ok) {
         setEditingReviewId(editingReviewId === reviewId ? null : reviewId);
-        Swal.fire('Borrado', 'La Review ah sido borrada', 'success');
+        Swal.fire('Borrado', 'La Review ha sido borrada', 'success');
         setReload(false)
       } else {
         throw new Error('Error de borrado del review');
       }
     } catch (error: any) {
       console.error('Error delete review:', error.message);
-      Swal.fire('Error', 'No se pudo Eliminar la reseña', 'error');
+      Swal.fire('Error', 'No se pudo eliminar la reseña', 'error');
     }
     setReload(true)
     setReviews(reviews.filter(review => review.id !== reviewId));

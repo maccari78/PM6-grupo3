@@ -12,10 +12,12 @@ import { MdOutlineQuestionAnswer } from "react-icons/md";
 import { SearchResult, Post, Car } from "./interfaces/INavbar";
 
 const apiUser = process.env.NEXT_PUBLIC_API_GET_USERS_TOKEN;
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export interface IUserDta {
   name: string;
   image_url: string;
+  roles?: string;
 }
 
 const Navbar: React.FC = () => {
@@ -28,11 +30,29 @@ const Navbar: React.FC = () => {
   const [userDta, setUserDta] = useState<IUserDta | undefined>();
   const [loading, setLoading] = useState<boolean>(true);
   const menuRef = useRef<HTMLDivElement>(null);
-
+  const [userRole, setUserRole] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult | null>(null);
   const [noResults, setNoResults] = useState<boolean>(false);
   const [showResults, setShowResults] = useState<boolean>(false);
+  const [isDropdownVisible, setDropdownVisible] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
+
+  const handleClickOutsideDos = (event: MouseEvent) => {
+    if (
+      searchRef.current &&
+      !searchRef.current.contains(event.target as Node)
+    ) {
+      setShowResults(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("click", handleClickOutsideDos, true);
+    return () => {
+      document.removeEventListener("click", handleClickOutsideDos, true);
+    };
+  }, []);
 
   useEffect(() => {
     if (
@@ -64,6 +84,8 @@ const Navbar: React.FC = () => {
           });
           const data: IUserDta = await res.json();
           setUserDta(data);
+          const roles = data.roles || "";
+          setUserRole(roles);
         } catch (error: any) {
           console.log(error.message);
         } finally {
@@ -125,7 +147,7 @@ const Navbar: React.FC = () => {
     if (query) {
       try {
         const response = await fetch(
-          `http://localhost:3001/searching?q=${query}`
+          `${apiBaseUrl}/searching?q=${query}`
         );
 
         if (!response.ok) {
@@ -209,7 +231,7 @@ const Navbar: React.FC = () => {
           onSubmit={handleSearch}
           className="flex items-center h-[30px] md:h-[42px]"
         >
-          <div className="relative h-full  w-full">
+          <div ref={searchRef} className="relative h-full  w-full">
             <input
               type="text"
               value={query}
@@ -281,7 +303,8 @@ const Navbar: React.FC = () => {
                     return (
                       <Link
                         key={post.id}
-                        href={`vehicle/${post.id}`}
+                        href='/vehicle/[vehicleId]'
+                        as={`vehicle/${post.id}`}
                         onClick={handleLinkClick}
                       >
                         <li className="flex flex-row gap-5 items-center py-[4px] hover:bg-[#222222]  rounded-xl duration-200">
@@ -322,7 +345,8 @@ const Navbar: React.FC = () => {
                             return (
                               <Link
                                 key={post.id}
-                                href={`vehicle/${post.id}`}
+                                href='/vehicle/[vehicleId]'
+                                as={`vehicle/${post.id}`}
                                 onClick={handleLinkClick}
                               >
                                 <li className="flex flex-row gap-5 items-center py-[4px] hover:bg-[#222222] px-4 rounded-xl duration-200">
@@ -401,7 +425,7 @@ const Navbar: React.FC = () => {
             <span className="sr-only">Loading...</span>
           </div>
         ) : userSession ? (
-          <Dropdown userDta={userDta!} loading={loading} />
+          <Dropdown userDta={userDta!} loading={loading}  userRole={userRole}  />
         ) : (
           <>
             <Link
@@ -476,7 +500,30 @@ const Navbar: React.FC = () => {
                   </svg>
                   Mi cuenta
                 </Link>
-
+                {userRole &&
+                  (userRole.includes("admin") ||
+                    userRole.includes("superadmin")) && (
+                    <Link
+                      href="/admin"
+                      className="flex items-center gap-1 flex-row px-4 py-2 text-sm hover:text-[#C4FF0D] duration-300 text-gray-300 hover:bg-[#494949]"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="size-6 stroke-[#C4FF0D]"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 0 0 4.486-6.336l-3.276 3.277a3.004 3.004 0 0 1-2.25-2.25l3.276-3.276a4.5 4.5 0 0 0-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437 1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008Z"
+                        />
+                      </svg>
+                      Administracion
+                    </Link>
+                  )}
                 <Link
                   href="/vehicleForm"
                   className="flex items-center gap-1 flex-row px-4 py-2 text-sm hover:text-[#C4FF0D] hover:stroke-[#C4FF0D] duration-300 text-gray-300 hover:bg-[#494949]"
@@ -682,14 +729,3 @@ const Navbar: React.FC = () => {
 };
 
 export default Navbar;
-
-{
-  /*  */
-}
-{
-  /* <div className="absolute flex flex-col gap-5 bg-[#3b3b3b] justify-center items-center rounded-2xl mt-1 px-5 py-5 w-[500px]">
-            <h2 className="text-lg font-bold text-[#c2e94e]">
-              No se encontraron resultados...
-            </h2>
-          </div> */
-}

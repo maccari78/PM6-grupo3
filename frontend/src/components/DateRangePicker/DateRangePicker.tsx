@@ -96,7 +96,7 @@ const DateRangePicker: React.FC<{
           startDate={startDate}
           endDate={endDate}
           filterDate={isDateAvailable}
-          className="px-3 py-2 w-full flex items-center justify-center border focus:outline-none focus:border-[#C4FF0D] focus:border-[1.5px] bg-gray-100 rounded-md"
+          className="px-3 py-2 w-full flex items-center justify-center border focus:outline-none focus:border-[#C4FF0D] focus:border-[1.5px] bg-gray-100 rounded-md z-50"
           placeholderText="Selecciona la fecha de inicio"
           minDate={new Date()}
           popperPlacement="top-end"
@@ -127,7 +127,7 @@ const DateRangePicker: React.FC<{
           endDate={endDate}
           minDate={startDate ? addDays(startDate, 1) : undefined}
           filterDate={isDateAvailable}
-          className="px-3 py-2 border w-full items-center justify-center focus:outline-none focus:border-[#C4FF0D] focus:border-[1.5px] bg-gray-100 rounded-md"
+          className="px-3 py-2 border w-full items-center justify-center focus:outline-none focus:border-[#C4FF0D] focus:border-[1.5px] bg-gray-100 rounded-md z-50"
           placeholderText="Selecciona la fecha de fin"
           popperPlacement="top-end"
         />

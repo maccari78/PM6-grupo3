@@ -425,4 +425,24 @@ export class MailService {
       }
     }
   }
+  async contactDevs(formData) {
+    try {
+      await this.mailerservice.sendMail({
+        to: 'proyectofinal.g3.henry@gmail.com',
+        subject: 'Contacto desde la web de You Drive',
+        template: 'contact',
+        context: {
+          sender: formData.name,
+          message: formData.message,
+          email: formData.email,
+        },
+      });
+      return { message: 'Correo enviado exitosamente' };
+    } catch (error) {
+      console.error(error);
+      throw new BadRequestException(
+        'El correo no pudo ser enviado exitosamente',
+      );
+    }
+  }
 }

@@ -22,7 +22,7 @@ if (!apiPostUrl) {
   throw new Error("Environment variable NEXT_PUBLIC_API_POSTS is not set");
 }
 
-const VehicleDetail = ({ params }: { params: { id: string } }) => {
+const VehicleDetail = ({ params }: { params: { vehicleId: string } }) => {
   const bookedDates = [
     new Date("2024-06-10T00:00:00Z").toISOString().replace(".000Z", ""),
     new Date("2024-06-15T00:00:00Z").toISOString().replace(".000Z", ""),
@@ -44,7 +44,6 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
   >();
   const [endDateRentals, setEndtDateRentals] = useState<string[] | undefined>();
   const [imgsPost, setImgsPost] = useState<string[]>();
-  console.log(postState);
 
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
@@ -58,7 +57,7 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
     const fetchDta = async () => {
       setLoading(true);
       try {
-        const post = await fetch(`${apiPostUrl}/${params.id}`, {
+        const post = await fetch(`${apiPostUrl}/${params.vehicleId}`, {
           method: "GET",
         });
         const data: IPost = await post.json();
@@ -441,7 +440,7 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
                   <span className="text-sm md:text-base">
                     Marca:{" "}
                     <span className="font-semibold  text-[#c2e94e]">
-                      {postState?.car.brand}
+                      {postState?.car?.brand ? postState?.car.brand : 'No data'}
                     </span>
                   </span>
                 </li>
@@ -467,7 +466,7 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
                   <span className="text-sm md:text-base">
                     Modelo:{" "}
                     <span className="font-semibold text-[#c2e94e]">
-                      {postState?.car.model}
+                      {postState?.car.model ? postState?.car.model : 'No data'}
                     </span>
                   </span>
                 </li>
@@ -643,13 +642,15 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
             </div>
             <div className="mt-5 flex flex-col">
               <div className="flex flex-row w-full h-[50%]  gap-3 justify-start">
+                <Link href='/user/[userId]' as={`/user/${postState?.user?.id}`}>
                 <div className=" w-[50px] ">
                   <img
                     src={postState?.user.image_url}
                     alt="Foto de perfil usuario"
                     className="rounded-full h-10 w-10"
-                  />
+                    />
                 </div>
+                    </Link>
                 <div className="flex flex-col  justify-center">
                   <h1 className="text-gray-100 text-sm md:text-lg ">
                     {postState?.user.name}
@@ -738,7 +739,7 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
                   startDateRentals={startDateRentals}
                   endDateRentals={endDateRentals}
                   postState={postState}
-                  id={params.id}
+                  id={params.vehicleId}
                   pricePost={pricePost}
                   startDate={startDate}
                   endDate={endDate}
@@ -793,7 +794,7 @@ const VehicleDetail = ({ params }: { params: { id: string } }) => {
         </div>
       </div>
 
-      <Reviews reviews={postState?.review} idPost={params.id} />
+      <Reviews reviews={postState?.review} idPost={params.vehicleId} />
       {showCalendar && (
         <CalendarPost
           handleShowCalendar={handleShowCalendar}
