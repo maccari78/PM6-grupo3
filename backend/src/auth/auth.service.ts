@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotAcceptableException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Address } from 'src/addresses/entities/address.entity';
 import { CreateUserDto, signIn } from 'src/users/dto/create-user.dto';
@@ -35,6 +39,7 @@ export class AuthService {
       throw new BadRequestException(
         'Credenciales creadas mediante google, por favor elegir ese metodo de ingreso',
       );
+    if (userDB.isDeleted) throw new NotAcceptableException('Cuenta baneada');
     const pass = await bcrypt.compare(password, userDB.password);
     if (!pass) throw new BadRequestException('Credenciales incorrectas');
     const payload: JwtPayload = { sub: userDB.email, role: userDB.roles };

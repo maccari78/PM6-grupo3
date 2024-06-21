@@ -8,6 +8,7 @@ const Contact = () => {
     email: '',
     message: ''
   })
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
     const handleChange = (
       e: React.ChangeEvent<
@@ -29,7 +30,7 @@ const Contact = () => {
     )  => {
       e.preventDefault();
       try {
-          const response = await fetch('http://localhost:3001/notifications/contact', {
+          const response = await fetch(`${apiBaseUrl}/notifications/contact`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
