@@ -12,6 +12,7 @@ import { MdOutlineQuestionAnswer } from "react-icons/md";
 import { SearchResult, Post, Car } from "./interfaces/INavbar";
 
 const apiUser = process.env.NEXT_PUBLIC_API_GET_USERS_TOKEN;
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export interface IUserDta {
   name: string;
@@ -146,7 +147,7 @@ const Navbar: React.FC = () => {
     if (query) {
       try {
         const response = await fetch(
-          `http://localhost:3001/searching?q=${query}`
+          `${apiBaseUrl}/searching?q=${query}`
         );
 
         if (!response.ok) {
@@ -302,7 +303,8 @@ const Navbar: React.FC = () => {
                     return (
                       <Link
                         key={post.id}
-                        href={`vehicle/${post.id}`}
+                        href='/vehicle/[vehicleId]'
+                        as={`vehicle/${post.id}`}
                         onClick={handleLinkClick}
                       >
                         <li className="flex flex-row gap-5 items-center py-[4px] hover:bg-[#222222]  rounded-xl duration-200">
@@ -343,7 +345,8 @@ const Navbar: React.FC = () => {
                             return (
                               <Link
                                 key={post.id}
-                                href={`vehicle/${post.id}`}
+                                href='/vehicle/[vehicleId]'
+                                as={`vehicle/${post.id}`}
                                 onClick={handleLinkClick}
                               >
                                 <li className="flex flex-row gap-5 items-center py-[4px] hover:bg-[#222222] px-4 rounded-xl duration-200">
@@ -422,7 +425,7 @@ const Navbar: React.FC = () => {
             <span className="sr-only">Loading...</span>
           </div>
         ) : userSession ? (
-          <Dropdown userDta={userDta!} loading={loading} userRole={userRole} />
+          <Dropdown userDta={userDta!} loading={loading}  userRole={userRole}  />
         ) : (
           <>
             <Link
