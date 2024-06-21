@@ -8,9 +8,10 @@ import { useRouter, useParams } from "next/navigation";
 import SkeletonDashboard from "@/components/sketelons/SkeletonDashboard";
 import Swal from "sweetalert2";
 
-const UploadPost = ({ params }: { params: { id: string } }) => {
-  const id = params.id;
+const UploadPost = ({ params }: { params: { rentalId: string } }) => {
+  const id = params.rentalId;
   const router = useRouter();
+  console.log(router);
   const apiUrl = `${process.env.NEXT_PUBLIC_API_POSTS}/${id}`;
   if (!apiUrl) {
     throw new Error("Environment variable NEXT_PUBLIC_API_POSTS is not set");
@@ -57,7 +58,6 @@ const UploadPost = ({ params }: { params: { id: string } }) => {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log(response.data);
 
         const vehicleProps = {
           title: response.data.title,

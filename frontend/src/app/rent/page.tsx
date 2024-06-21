@@ -249,14 +249,15 @@ const ListedCarCard: React.FC<ListedCarCardProps> = ({
       <h4 className=" text-slate-100 font-bold text-lg">{carModel}</h4>
       <p className="text-slate-400 font-semibold mt-2">{`$ ${price}/dia`}</p>
       <div className="text-center mt-4 flex align-middle justify-between ">
-        <Link href={`vehicle/${idPost}`}>
+        <Link href='/vehicle/[vehicleId]' as={`vehicle/${idPost}`}>
           <button className="px-4 py-2 bg-[#232326] text-white rounded hover:bg-[#131212]">
             Ver más detalles
           </button>
         </Link>
 
         <Link
-          href={`rent/${idPost}`}
+          href='/rent/[rentId]'
+          as={`rent/${idPost}`}
           className="text-gray-300 align-middle justify-center content-center text-sm md:text-base hover:text-[#C4FF0D] hover:underline"
         >
           {" "}

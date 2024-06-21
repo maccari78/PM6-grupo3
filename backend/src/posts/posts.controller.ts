@@ -1,4 +1,22 @@
-import { Controller, Get, Post, Body, Param, Put, ParseUUIDPipe, UploadedFiles, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, UseInterceptors, Headers, Query, UnauthorizedException, Patch, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Put,
+  ParseUUIDPipe,
+  UploadedFiles,
+  ParseFilePipe,
+  MaxFileSizeValidator,
+  FileTypeValidator,
+  UseInterceptors,
+  Headers,
+  Query,
+  UnauthorizedException,
+  Patch,
+  UseGuards,
+} from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -31,12 +49,12 @@ export class PostsController {
 
   @Get(':id')
   getPostsByIdController(@Param('id') id: string) {
+    console.log(id);
     return this.postsService.getPostsServiceId(id);
   }
 
   @Post()
   @UseInterceptors(FilesInterceptor('file', 5))
-
   create(
     @Body() createPostDto: CreatePostDto,
     @Headers('Authorization') headers?: string,
@@ -113,7 +131,12 @@ export class PostsController {
     }
 
     if (files?.length !== 0 || files) {
-      return this.postsService.UpdatePostsServices( id, updatePostDto, token, files );
+      return this.postsService.UpdatePostsServices(
+        id,
+        updatePostDto,
+        token,
+        files,
+      );
     }
     console.log(updatePostDto);
     return this.postsService.UpdatePostsServices(id, updatePostDto, token);
