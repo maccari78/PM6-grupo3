@@ -4,10 +4,12 @@ import Swal from "sweetalert2";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    message: "",
-  });
+    name: '',
+    email: '',
+    message: ''
+  })
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -22,19 +24,22 @@ const Contact = () => {
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      const response = await fetch(
-        "http://localhost:3001/notifications/contact",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
+
+    const handleSubmit = async (
+      e: React.FormEvent<
+        HTMLFormElement
+      >
+    )  => {
+      e.preventDefault();
+      try {
+          const response = await fetch(`${apiBaseUrl}/notifications/contact`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+          });
+
 
       if (response.ok) {
         Swal.fire({
