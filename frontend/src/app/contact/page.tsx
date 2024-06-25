@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { useState } from "react";
 import Swal from "sweetalert2";
 
@@ -10,18 +10,20 @@ const Contact = () => {
   })
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-    const handleChange = (
-      e: React.ChangeEvent<
-        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-      >
-    )  => {
-      const {name, value} = e.target;
-  
-      setFormData({
-        ...formData,
-        [name]: value
-      })
-    }
+
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
+
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
 
     const handleSubmit = async (
       e: React.FormEvent<
@@ -38,24 +40,25 @@ const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
             body: JSON.stringify(formData)
           });
 
-          if (response.ok) {
-            Swal.fire({
-              icon: 'success',
-              title: 'Correo enviado exitosamente',
-              showConfirmButton: false,
-              timer: 1500
-            });
-            setFormData({
-              name: '',
-              email: '',
-              message: ''
-            });
-          } else {
-            alert('Hubo un error al enviar el correo');
-          }
-      } catch (error) {
-          alert('Hubo un error al enviar el correo');
+
+      if (response.ok) {
+        Swal.fire({
+          icon: "success",
+          title: "Correo enviado exitosamente",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        setFormData({
+          name: "",
+          email: "",
+          message: "",
+        });
+      } else {
+        alert("Hubo un error al enviar el correo");
       }
+    } catch (error) {
+      alert("Hubo un error al enviar el correo");
+    }
   };
 
   return (
@@ -65,10 +68,12 @@ const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
           <div className="grid grid-cols-1 md:grid-cols-2">
             <div className="p-6 mr-2  bg-[#222222] sm:rounded-lg">
               <h1 className="text-4xl sm:text-5xl text-[#c2e94e] font-extrabold tracking-tight">
-                Contactanos
+                Contáctanos
               </h1>
               <p className="text-normal text-lg sm:text-2xl  text-gray-400 mt-2">
-              ¿Has tenido una mala experiencia en la página? ¿Quieres dejar feedback? ¿Necesitas más detalles acerca de la idea de negocio que busca esta página?{" "}
+                ¿Has tenido una mala experiencia en la página? ¿Quieres dejar
+                feedback? ¿Necesitas más detalles acerca de la idea de negocio
+                que busca esta página?{" "}
               </p>
 
               <div className="flex items-center mt-8  text-gray-400">
@@ -139,12 +144,15 @@ const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
                   />
                 </svg>
                 <div className="ml-4 text-md tracking-wide font-semibold w-40">
-                proyectofinal.g3.henry@gmail.com
+                  proyectofinal.g3.henry@gmail.com
                 </div>
               </div>
             </div>
 
-            <form className="p-6 flex flex-col justify-center" onSubmit={handleSubmit}>
+            <form
+              className="p-6 flex flex-col justify-center"
+              onSubmit={handleSubmit}
+            >
               <div className="flex flex-col">
                 <label htmlFor="name" className="hidden">
                   Nombre Completo
