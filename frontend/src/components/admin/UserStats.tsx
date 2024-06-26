@@ -25,9 +25,15 @@ const UserStats: React.FC = () => {
   }, [router]);
   useEffect(() => {
     const fetchData = async () => {
+const key = process.env.NEXT_PUBLIC_CUSTOM_HEADERS_KEY
       try {
         const response = await fetch(`${apiUrl}/users`, {
           method: 'GET',
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+            [key!]: process.env.NEXT_PUBLIC_CUSTOM_HEADERS_VALUE!,
+            'Content-Type': 'application/json',
+          }
         });
         const data: IUserAdm[] = await response.json();
         if (Array.isArray(data)) {
@@ -41,8 +47,8 @@ const UserStats: React.FC = () => {
       }
     };
 
-    fetchData();
-  }, []);
+    if(userToken)fetchData();
+  }, [apiUrl, userToken]);
   return (
     <StatCard  title="Usuarios" value={users.length} icon={FaUsers} color="blue" />
   );

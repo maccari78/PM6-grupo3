@@ -25,10 +25,13 @@ const Sidebar = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
+      const apiKey = process.env.NEXT_PUBLIC_CUSTOM_HEADERS_KEY;
+
         const response = await fetch(`${apiUserUrl}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${userToken}`,
+            [apiKey!]: process.env.NEXT_PUBLIC_CUSTOM_HEADERS_VALUE!,
             "Content-Type": "application/json",
           },
         });

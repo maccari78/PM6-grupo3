@@ -33,10 +33,16 @@ const CarPostCard: React.FC = () => {
   }, [router]);
   useEffect(() => {
     const fetchData = async () => {
+      const Key = process.env.NEXT_PUBLIC_CUSTOM_HEADERS_KEY
       try {
         const response = await fetch(apiUrl, {
           method: "GET",
+          headers: {
+            Authorization: `HOLA`,
+            "Content-Type": "application/json",
+          },
         });
+        
         const data: IPost[] = await response.json();
         if (Array.isArray(data)) {
           setCarPosts(data);
@@ -69,11 +75,13 @@ const CarPostCard: React.FC = () => {
   };
 
   const handleDelete = async (postId: string) => {
+      const apiKey = process.env.NEXT_PUBLIC_CUSTOM_HEADERS_KEY;
     try {
       const response = await fetch(`${apiUrl}/soft-delete/${postId}`, {
         method: "PATCH",
         headers: {
           Authorization: `Bearer ${userToken}`,
+            [apiKey!]: process.env.NEXT_PUBLIC_CUSTOM_HEADERS_VALUE!,
           "Content-Type": "application/json",
         },
       });
@@ -95,10 +103,12 @@ const CarPostCard: React.FC = () => {
 
   const handleSave = async (post: IPost) => {
     try {
+      const apiKey = process.env.NEXT_PUBLIC_CUSTOM_HEADERS_KEY;
       const response = await fetch(`${apiUrl}/${post.id}`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${userToken}`,
+            [apiKey!]: process.env.NEXT_PUBLIC_CUSTOM_HEADERS_VALUE!,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(editForm),

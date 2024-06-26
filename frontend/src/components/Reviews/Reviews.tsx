@@ -39,6 +39,8 @@ const Reviews: React.FC<{ reviews: IReview[] | undefined; idPost: string }> = ({
     if (rating && commentDta) {
       setLoadingButton(true);
       try {
+      const apiKey = process.env.NEXT_PUBLIC_CUSTOM_HEADERS_KEY;
+
         const res = await fetch(`${apiBaseUrl}/reviews/${idPost}`, {
           method: "POST",
           body: JSON.stringify({
@@ -48,6 +50,7 @@ const Reviews: React.FC<{ reviews: IReview[] | undefined; idPost: string }> = ({
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token!}`,
+            [apiKey!]: process.env.NEXT_PUBLIC_CUSTOM_HEADERS_VALUE!,
           },
         });
 

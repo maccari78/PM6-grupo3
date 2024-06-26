@@ -119,10 +119,12 @@ const VehicleForm = () => {
         });
       }
       setIsLoading(true);
+      const apiKey = process.env.NEXT_PUBLIC_CUSTOM_HEADERS_KEY;
       axios
         .post(apiUrl, formData, {
           headers: {
             Authorization: `Bearer ${userSession}`,
+            [apiKey!]: process.env.NEXT_PUBLIC_CUSTOM_HEADERS_VALUE!,
             "Content-Type": "multipart/form-data",
           },
         })

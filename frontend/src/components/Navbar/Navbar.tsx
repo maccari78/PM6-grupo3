@@ -75,11 +75,13 @@ const Navbar: React.FC = () => {
       if (token) {
         setLoading(true);
         try {
+      const apiKey = process.env.NEXT_PUBLIC_CUSTOM_HEADERS_KEY;
           const res = await fetch(`${apiUser}`, {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token!}`,
+            [apiKey!]: process.env.NEXT_PUBLIC_CUSTOM_HEADERS_VALUE!,              
             },
           });
           const data: IUserDta = await res.json();

@@ -43,11 +43,14 @@ const Page = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      const apiKey = process.env.NEXT_PUBLIC_CUSTOM_HEADERS_KEY;
+
       try {
         const response = await fetch(apiUrl, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${userToken}`,
+            [apiKey!]: process.env.NEXT_PUBLIC_CUSTOM_HEADERS_VALUE!,
             "Content-Type": "application/json",
           },
         });
