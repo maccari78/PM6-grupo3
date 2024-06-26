@@ -100,9 +100,8 @@ export class AuthService {
       .createQueryBuilder('user')
       .where('user.email = :email', { email })
       .getOne();
-    if (findUser.isDeleted) return false;
-    if (findUser !== null) {
-      return true;
+    if (findUser) {
+      if (findUser.isDeleted) return false;
     }
     console.log(
       'Usuario no encontrado. Ingresando datos en la base de datos....',
