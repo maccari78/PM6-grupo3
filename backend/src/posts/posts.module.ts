@@ -17,6 +17,7 @@ import { NotificationsService } from 'src/notifications/notifications.service';
 import { MailService } from 'src/mail/mail.service';
 import { Notification } from 'src/notifications/entities/notification.entity';
 import { Address } from 'src/addresses/entities/address.entity';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -28,6 +29,12 @@ import { Address } from 'src/addresses/entities/address.entity';
       Rental,
       Notification,
       Address,
+    ]),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 5,
+      },
     ]),
     UsersModule,
   ],

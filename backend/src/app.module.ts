@@ -16,6 +16,8 @@ import { JwtConfigModule } from './config/jwt.module';
 import { PassportModule } from '@nestjs/passport';
 import { ChatModule } from './chat/chat.module';
 import { searchModule } from './search/search.module';
+import { ProfanityFilterService } from './profinafy.service';
+import { ProfanityValidator } from './posts/decorators/wordValidator.decorator';
 
 @Module({
   imports: [
@@ -37,7 +39,7 @@ import { searchModule } from './search/search.module';
     searchModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [ProfanityFilterService, ProfanityValidator],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

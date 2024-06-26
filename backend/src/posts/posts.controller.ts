@@ -26,6 +26,8 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Role } from 'src/users/utils/roles.enum';
 import { Roles } from 'src/users/utils/roles.decorator';
 import { RolesGuard } from 'src/users/utils/roles.guard';
+import { CustomHeaderGuard } from 'src/middleweare/protectedEndpoints.guard';
+import { ThrottlerGuard } from '@nestjs/throttler';
 
 @ApiTags('POSTS')
 @Controller('posts')
@@ -33,7 +35,8 @@ export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Get()
-  getPostsAllController() {
+  getPostsAllController(@Headers() headers: any) {
+    console.log(headers);
     return this.postsService.getPostsAllServices();
   }
 
@@ -48,6 +51,7 @@ export class PostsController {
   }
 
   @Get(':id')
+  @UseGuards(CustomHeaderGuard)
   getPostsByIdController(@Param('id') id: string) {
     console.log(id);
     return this.postsService.getPostsServiceId(id);
@@ -55,6 +59,8 @@ export class PostsController {
 
   @Post()
   @UseInterceptors(FilesInterceptor('file', 5))
+  @Roles(Role.User, Role.Admin, Role.SuperAdmin)
+  @UseGuards(ThrottlerGuard, RolesGuard, CustomHeaderGuard)
   create(
     @Body() createPostDto: CreatePostDto,
     @Headers('Authorization') headers?: string,
@@ -66,7 +72,7 @@ export class PostsController {
             message: 'Uno de los archivos es demasiado grande',
           }),
           new FileTypeValidator({
-            fileType: /(jpg|jpeg|png|webp|mp4|avi|mov)$/,
+            fileType: /(jpg|jpeg|png)$/,
           }),
         ],
       }),
@@ -101,7 +107,7 @@ export class PostsController {
   @Put(':id')
   @UseInterceptors(FilesInterceptor('file', 5))
   @Roles(Role.User, Role.Admin)
-  @UseGuards(RolesGuard)
+  @UseGuards(ThrottlerGuard, RolesGuard, CustomHeaderGuard)
   putPostsById(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updatePostDto: UpdatePostDto,
@@ -144,6 +150,7 @@ export class PostsController {
 
   @Patch('soft-delete/:id')
   @Roles(Role.SuperAdmin)
+  @UseGuards(RolesGuard, CustomHeaderGuard)
   async softDelete(@Param('id') id: string): Promise<{ message: string }> {
     return this.postsService.softDelete(id);
   }

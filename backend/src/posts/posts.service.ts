@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -118,7 +119,7 @@ export class PostsService {
 
     if (!payload) throw new UnauthorizedException('token invalido 3');
     const user = await this.userRepository.findOne({
-      where: { email: payload.sub },
+      where: { email: payload.sub, isDeleted: false },
     });
 
     if (!user) throw new NotFoundException('Usuario no encontrado');
@@ -183,7 +184,7 @@ export class PostsService {
     const payload: JwtPayload = await this.jwtService.verify(token, { secret });
     if (!payload) throw new UnauthorizedException('token invalido 3');
     const user = await this.userRepository.findOne({
-      where: { email: payload.sub },
+      where: { email: payload.sub, isDeleted: false },
     });
     if (!user) throw new NotFoundException('Usuario no encontrado');
 
@@ -195,7 +196,8 @@ export class PostsService {
 
     if (!findPosts)
       throw new NotFoundException(`No se encontro publicación con ${id}`);
-
+    if (user.id !== findPosts.user.id)
+      throw new ForbiddenException('No autorizado');
     const car = await this.carRepository.findOneBy({ id: findPosts.car.id });
     if (!car) throw new NotFoundException('Auto no encontrado');
     if (files?.length === 0 || !files) {
