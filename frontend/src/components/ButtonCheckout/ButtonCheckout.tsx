@@ -117,6 +117,7 @@ const ButtonCheckout = ({
                   const storageRent =
                     window.localStorage.getItem("checkoutPost");
                   const postToRental: IRental = JSON.parse(storageRent!);
+      const apiKey = process.env.NEXT_PUBLIC_CUSTOM_HEADERS_KEY;
 
                   const res = await fetch(`${apiBaseUrl}/rentals/${id}`, {
                     method: "POST",
@@ -131,6 +132,8 @@ const ButtonCheckout = ({
                     headers: {
                       "Content-Type": "application/json",
                       Authorization: `Bearer ${userToken!}`,
+            [apiKey!]: process.env.NEXT_PUBLIC_CUSTOM_HEADERS_VALUE!,
+                      
                     },
                   });
 

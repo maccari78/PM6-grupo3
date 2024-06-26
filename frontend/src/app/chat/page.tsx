@@ -107,12 +107,15 @@ const ChatWeb: React.FC = () => {
 
   useEffect(() => {
     const fetchMessages = async () => {
+      const apiKey = process.env.NEXT_PUBLIC_CUSTOM_HEADERS_KEY;
+
       if (room_id) {
         try {
           const response = await fetch(`${apiUrl}/chat/${room_id}/messages`, {
             method: "GET",
             headers: {
               Authorization: `Bearer ${userToken}`,
+            [apiKey!]: process.env.NEXT_PUBLIC_CUSTOM_HEADERS_VALUE!,
               "Content-Type": "application/json",
             },
           });
@@ -120,6 +123,7 @@ const ChatWeb: React.FC = () => {
             method: "GET",
             headers: {
               Authorization: `Bearer ${userToken}`,
+            [apiKey!]: process.env.NEXT_PUBLIC_CUSTOM_HEADERS_VALUE!,
               "Content-Type": "application/json",
             },
           });
@@ -192,11 +196,13 @@ const ChatWeb: React.FC = () => {
   // Fetch donde seteo el Room_ID
   useEffect(() => {
     const fetchData = async () => {
+      const apiKey = process.env.NEXT_PUBLIC_CUSTOM_HEADERS_KEY;
       try {
         const response = await fetch(`${apiUrl}/rentals/token`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${userToken}`,
+            [apiKey!]: process.env.NEXT_PUBLIC_CUSTOM_HEADERS_VALUE!,
             "Content-Type": "application/json",
           },
         });

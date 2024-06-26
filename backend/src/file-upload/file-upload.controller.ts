@@ -1,7 +1,22 @@
-import { Controller, Param, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, UseInterceptors, Post, Delete, UploadedFiles, /* UseGuards */ } from '@nestjs/common';
+import {
+  Controller,
+  Param,
+  UploadedFile,
+  ParseFilePipe,
+  MaxFileSizeValidator,
+  FileTypeValidator,
+  UseInterceptors,
+  Post,
+  Delete,
+  UploadedFiles,
+  UseGuards /* UseGuards */,
+} from '@nestjs/common';
 import { FileUploadService } from './file-upload.service';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
+import { Roles } from 'src/users/utils/roles.decorator';
+import { RolesGuard } from 'src/users/utils/roles.guard';
+import { Role } from 'src/users/utils/roles.enum';
 // import { RolesGuard } from 'src/users/utils/roles.guard';
 
 @ApiTags('FILES')
@@ -11,6 +26,8 @@ export class FileUploadController {
   constructor(private readonly fileUploadService: FileUploadService) {}
 
   @Post('uploadProfilePicture/:id')
+  @Roles(Role.Admin, Role.SuperAdmin)
+  @UseGuards(RolesGuard)
   @UseInterceptors(FileInterceptor('file'))
   async uploadProfilePicture(
     @Param('id') userId: string,
@@ -33,6 +50,8 @@ export class FileUploadController {
   }
 
   @Post('uploadVehicleImages/:id')
+  @Roles(Role.Admin, Role.SuperAdmin)
+  @UseGuards(RolesGuard)
   @UseInterceptors(FilesInterceptor('file', 5))
   async uploadVehicleImages(
     @Param('id') vehicleId: string,
@@ -55,16 +74,22 @@ export class FileUploadController {
   }
 
   @Delete('deleteImage/:id')
+  @Roles(Role.Admin, Role.SuperAdmin)
+  @UseGuards(RolesGuard)
   async deleteImage(@Param('id') publicId: string) {
     return this.fileUploadService.deleteImage(publicId);
   }
 
   @Delete('deleteVehicleImage/:id')
+  @Roles(Role.Admin, Role.SuperAdmin)
+  @UseGuards(RolesGuard)
   async deleteVehicleImage(@Param('id') publicId: string) {
     return this.fileUploadService.deleteVehicleImage(publicId);
   }
 
   @Post('updateProfilePicture/:id')
+  @Roles(Role.Admin, Role.SuperAdmin)
+  @UseGuards(RolesGuard)
   @UseInterceptors(FileInterceptor('file'))
   async updateProfilePicture(
     @Param('id') userId: string,

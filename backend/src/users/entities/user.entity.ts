@@ -29,6 +29,9 @@ export class User {
   @Column({ nullable: true })
   password: string;
 
+  @Column({ default: 5 })
+  points: number;
+
   @Column({ type: 'int', nullable: true })
   nDni: number;
 

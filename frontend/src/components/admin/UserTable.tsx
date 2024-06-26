@@ -33,10 +33,13 @@ const UserTable: React.FC<{ userRole: string }> = ({ userRole }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+      const apiKey = process.env.NEXT_PUBLIC_CUSTOM_HEADERS_KEY;
+
         const response = await fetch(`${apiUrl}/users`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${userToken}`,
+            [apiKey!]: process.env.NEXT_PUBLIC_CUSTOM_HEADERS_VALUE!,          
             'Content-Type': 'application/json'
           }
         });
@@ -74,11 +77,14 @@ const UserTable: React.FC<{ userRole: string }> = ({ userRole }) => {
       cancelButtonText: 'Cancelar',
     }).then(async (result) => {
       if (result.isConfirmed) {
-try {
+        try {
+      const apiKey = process.env.NEXT_PUBLIC_CUSTOM_HEADERS_KEY;
+
       const response = await fetch(`${apiUrl}/users/soft-delete/${userId}`, {
         method: 'PATCH',
         headers: {
           Authorization: `Bearer ${userToken}`,
+            [apiKey!]: process.env.NEXT_PUBLIC_CUSTOM_HEADERS_VALUE!,
           'Content-Type': 'application/json',
         },
       });
@@ -100,10 +106,14 @@ try {
 
   const handleSave = async (user: IUserAdm) => {
     try {
+      const apiKey = process.env.NEXT_PUBLIC_CUSTOM_HEADERS_KEY;
+
       const response = await fetch(`${apiUrl}/users/${user.id}`, {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${userToken}`,
+            [apiKey!]: process.env.NEXT_PUBLIC_CUSTOM_HEADERS_VALUE!,
+
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(editForm),

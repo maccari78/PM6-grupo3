@@ -51,11 +51,13 @@ const UploadPost = ({ params }: { params: { rentalId: string } }) => {
   // Cargar los datos del vehículo
   useEffect(() => {
     const fetchVehicleData = async () => {
+      const apiKey = process.env.NEXT_PUBLIC_CUSTOM_HEADERS_KEY;
       setIsLoading(true);
       try {
         const response = await axios.get(apiUrl, {
           headers: {
             Authorization: `Bearer ${token}`,
+            [apiKey!]: process.env.NEXT_PUBLIC_CUSTOM_HEADERS_VALUE!,
           },
         });
 
@@ -162,11 +164,14 @@ const UploadPost = ({ params }: { params: { rentalId: string } }) => {
         });
       }
       setIsLoading(true);
+      
       try {
+      const apiKey = process.env.NEXT_PUBLIC_CUSTOM_HEADERS_KEY;
         // Enviar los datos al servidor
         const response = await axios.put(apiUrl, formData, {
           headers: {
             Authorization: `Bearer ${token}`,
+            [apiKey!]: process.env.NEXT_PUBLIC_CUSTOM_HEADERS_VALUE!,
             "Content-Type": "multipart/form-data",
           },
         });

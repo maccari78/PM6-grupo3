@@ -56,9 +56,15 @@ const VehicleDetail = ({ params }: { params: { vehicleId: string } }) => {
 
     const fetchDta = async () => {
       setLoading(true);
+      const key = process.env.NEXT_PUBLIC_CUSTOM_HEADERS_KEY;
       try {
         const post = await fetch(`${apiPostUrl}/${params.vehicleId}`, {
           method: "GET",
+          headers: {
+            // Authorization: `Bearer ${userToken}`,
+            [key!]: process.env.NEXT_PUBLIC_CUSTOM_HEADERS_VALUE!,
+            "Content-Type": "application/json",
+          }
         });
         const data: IPost = await post.json();
         setPostState(data);

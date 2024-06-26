@@ -21,6 +21,7 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 import { Roles } from 'src/users/utils/roles.decorator';
 import { Role } from 'src/users/utils/roles.enum';
 import { RolesGuard } from 'src/users/utils/roles.guard';
+import { CustomHeaderGuard } from 'src/middleweare/protectedEndpoints.guard';
 
 @Controller('rentals')
 export class RentalsController {
@@ -28,7 +29,7 @@ export class RentalsController {
 
   @Post(':id')
   @Roles(Role.User, Role.Admin, Role.SuperAdmin)
-  @UseGuards(RolesGuard)
+  @UseGuards(RolesGuard, CustomHeaderGuard)
   async create(
     @Body() createRentalDto: CreateRentalDto,
     @Param('id', ParseUUIDPipe) postId: string,
@@ -59,7 +60,7 @@ export class RentalsController {
 
   @Get('token')
   @Roles(Role.User, Role.Admin, Role.SuperAdmin)
-  @UseGuards(RolesGuard)
+  @UseGuards(RolesGuard, CustomHeaderGuard)
   getChat(@Headers('Authorization') authorization: string) {
     const currentUser = authorization?.split(' ')[1];
     if (!currentUser)

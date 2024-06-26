@@ -90,7 +90,7 @@ export class UsersService {
       (rental) => rental.posts?.user?.id === userId,
     );
 
-    const returnUser: Omit<User, 'password'> = {
+    const returnUser: Omit<User, 'password' | 'points'> = {
       id: rest.id,
       email: rest.email,
       name: rest.name,
@@ -146,7 +146,7 @@ export class UsersService {
     const filterRentals = rentals.filter(
       (rental) => rental?.posts?.user?.id !== userId,
     );
-    const returnUser: Omit<User, 'password'> = {
+    const returnUser: Omit<User, 'password' | 'points'> = {
       id: rest.id,
       email: rest.email,
       name: rest.name,

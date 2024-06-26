@@ -24,7 +24,13 @@ const UserProfile = ({ params }: UserPageProps) => {
   
 
   useEffect(() => {
-    axios.get(`${apiUrl}/${params.userId}`).then((response) => {
+    const key = process.env.NEXT_PUBLIC_CUSTOM_HEADERS_KEY;
+    axios.get(`${apiUrl}/${params.userId}`, {
+      headers: {
+        [key!]: process.env.NEXT_PUBLIC_CUSTOM_HEADERS_VALUE!,
+        "Content-Type": "application/json",
+      },
+    }).then((response) => {
       setUserData(response.data);
       setLoading(false);
     });

@@ -64,12 +64,15 @@ const ReviewsAdm: React.FC = () => {
     setEditForm(review);
   };
 
-  const handleDelete = async(reviewId: string) => {
+  const handleDelete = async (reviewId: string) => {
+      const apiKey = process.env.NEXT_PUBLIC_CUSTOM_HEADERS_KEY;
+    
     try {
       const response = await fetch(`${apiUrl}/reviews/${reviewId}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${userToken}`,
+            [apiKey!]: process.env.NEXT_PUBLIC_CUSTOM_HEADERS_VALUE!,          
           'Content-Type': 'application/json',
         },
       });
@@ -90,11 +93,14 @@ const ReviewsAdm: React.FC = () => {
   };
 
   const handleSave = async (review: IReview) => {
+      const apiKey = process.env.NEXT_PUBLIC_CUSTOM_HEADERS_KEY;
+
     try {
       const response = await fetch(`${apiUrl}/reviews/${review.id}`, {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${userToken}`,
+            [apiKey!]: process.env.NEXT_PUBLIC_CUSTOM_HEADERS_VALUE!,          
           'Content-Type': 'application/json',
 
         },

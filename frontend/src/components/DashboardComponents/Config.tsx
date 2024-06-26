@@ -45,10 +45,13 @@ const Config = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
+      const apiKey = process.env.NEXT_PUBLIC_CUSTOM_HEADERS_KEY;
+
         const response = await fetch(`${apiUserUrl}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${userToken}`,
+            [apiKey!]: process.env.NEXT_PUBLIC_CUSTOM_HEADERS_VALUE!,
             "Content-Type": "application/json",
           },
         });
@@ -143,10 +146,13 @@ const Config = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
+      const apiKey = process.env.NEXT_PUBLIC_CUSTOM_HEADERS_KEY;
           const response = await fetch(`${apiUpdateUser}`, {
             method: "PUT",
             headers: {
               Authorization: `Bearer ${userToken}`,
+            [apiKey!]: process.env.NEXT_PUBLIC_CUSTOM_HEADERS_VALUE!,
+
             },
             body: formData,
           });
