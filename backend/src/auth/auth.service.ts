@@ -102,6 +102,7 @@ export class AuthService {
       .getOne();
     if (findUser) {
       if (findUser.isDeleted) return false;
+      return true;
     }
     console.log(
       'Usuario no encontrado. Ingresando datos en la base de datos....',
