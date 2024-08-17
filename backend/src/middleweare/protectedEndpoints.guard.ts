@@ -17,7 +17,7 @@ export class CustomHeaderGuard implements CanActivate {
     const CUSTOM_HEADER_VALUE = process.env.CUSTOM_HEADER_VALUE;
     console.log(request.headers);
     if (
-      request.headers[CUSTOM_HEADER_KEY.toLowerCase()] === CUSTOM_HEADER_VALUE
+      request.headers[CUSTOM_HEADER_KEY?.toLowerCase()] === CUSTOM_HEADER_VALUE
     ) {
       console.log('paso la verificacion');
 
