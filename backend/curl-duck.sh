@@ -2,6 +2,7 @@
 
 cd /home/ubuntu/backendpf
 
+DUCKDNS_DOMAIN="youdrive-api.duckdns.org"
 
 if [ -f "/home/ubuntu/backendpf/duckdns.env" ]; then
   export $(grep -v '^#' /home/ubuntu/backendpf/duckdns.env | xargs)
@@ -24,24 +25,13 @@ sleep 1
 echo "IP: $IP"
 echo "DUCKDNS_TOKEN: $DUCKDNS_TOKEN"
 
-echo "IP: $IP"
-echo "DUCKDNS_TOKEN: $DUCKDNS_TOKEN"
-
-URL1="https://www.duckdns.org/update?domains=youdrive-api.duckdns.org&token=$DUCKDNS_TOKEN&ip=$IP"
-URL2="https://www.duckdns.org/update?domains=youdrive-grafana.duckdns.org&token=$DUCKDNS_TOKEN&ip=$IP"
-
+URL1="https://www.duckdns.org/update?domains=$DUCKDNS_DOMAIN&token=$DUCKDNS_TOKEN&ip=$IP"
 
 echo "URL1: $URL1"
-echo "URL2: $URL2"
-
 
 response1=$(curl -v -s "$URL1")
 echo "Respuesta 1: $response1"
 
-sleep 2
-
-response2=$(curl -v -s "$URL2")
-echo "Respuesta 2: $response2"
 
 sleep 30
 

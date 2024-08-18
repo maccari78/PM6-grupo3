@@ -106,4 +106,59 @@ ssh -i "youdrive-api.key" ubuntu@tu-ip-publico
 
 El ip público es la que se muestra en la salida de terraform o con el comando `terraform output`
 
+## EC2 Instance
+
+### Requisitos
+
+- DNS, puede ser DuckDNS o Cloudflare o un dominio personalizado, pero está configurado para un subdominio en DuckDNS
+- Un archivo `duckdns.env` con las credenciales de DuckDNS con este formato
+
+  ```
+  DUCKDNS_TOKEN=tu-token
+  ```
+
+Cuando se tenga el subdominio en DuckDNS, se tiene que cambiar la variable del archivo `curl-duck.sh` en la línea 5 y colocar el subdominio que tengas en DuckDNS
+
+### Inicialización
+
+Una vez se cumplen los requisitos, se puede iniciar la instancia con los comandos de terraform
+
+```
+terraform init
+terraform plan
+terraform apply
+```
+
+si todo es correcto, el servidor estará disponible en el subdominio que se haya configurado en DuckDNS, esto puede tardar unos minutos en aparecer, si no aparece, ingresar con la ip pública y verificar que el servidor está corriendo, te dará la bienvenida Nginx Proxy Manager
+
+### Nginx Proxy Manager
+
+Documentación: https://nginxproxymanager.com/guide/
+
+Para poder acceder a la interfaz de administración, se debe ingresar al dominio, o a la ip publica, seguido del puerto 81, por ejemplo: http://tu-ip-publica:81
+
+Una vez dentro, te pedira que ingreses con email y contraseña, que por defecto son:
+
+```
+Email:    admin@example.com
+Password: changeme
+```
+
+Luego de cambiar las credenciales, se puede acceder a la interfaz de administración, donde se puede configurar el proxy, el certificado, las reglas de redireccionamiento, etc.
+
+Navega a Hosts -> Proxy Hosts.
+
+Haz clic en Add Proxy Host.
+
+Configura el proxy para la api:
+
+Domain Names: Pon el nombre de dominio o subdominio que quieres usar (por ejemplo, api.duckdns.org).
+Scheme: http.
+Forward Hostname / IP: youdrive-api (el nombre del servicio den contenedor, otro si lo has cambiado).
+Forward Port: 3001.
+SSL: Configura SSL si es necesario.
+Haz clic en Save.
+
+El proceso es el mismo para el servidor de grafana, solo cambia el dominio y el puerto (3000 segun el compose).
+
 Autor: [Emacuello](https://emacuello.link)
