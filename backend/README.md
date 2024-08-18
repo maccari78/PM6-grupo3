@@ -3,12 +3,17 @@
 ## Requisitos
 
 - AWS Account
-- AWS IAM User con permisos de EC2
+- AWS IAM User con permisos de EC2 y S3 (Opcional)
 - Terraform
 - Ansible
 - AWS CLI con credenciales de IAM
+- AWS S3 Bucket para almacenar el estado de la infraestructura (Opcional)
 
-## Configuración
+# Configuración
+
+## AWS IAM User
+
+Se necesita un usuario con permisos de EC2 y S3, si no se tiene, puedes crear uno y darle los permisos del archivo `aws-permissions.json`
 
 ## SSH Key Pair
 
