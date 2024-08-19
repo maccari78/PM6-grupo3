@@ -1,77 +1,164 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Terraform + AWS
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Requisitos
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+- AWS Account
+- AWS IAM User con permisos de EC2 y S3 (Opcional)
+- Terraform
+- Ansible
+- AWS CLI con credenciales de IAM
+- AWS S3 Bucket para almacenar el estado de la infraestructura (Opcional)
 
-## Description
+# Configuración
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## AWS IAM User
 
-## Installation
+Se necesita un usuario con permisos de EC2 y S3, si no se tiene, puedes crear uno y darle los permisos del archivo `aws-permissions.json`
 
-```bash
-$ npm install
+## SSH Key Pair
+
+Llave pública para conectarse al servidor, la creamos con el siguiente comando
+
+```
+ssh-keygen -t rsa -b 2048 -f "youdrive-api.key"
 ```
 
-## Running the app
+Guardamos la llave pública en un archivo llamado `youdrive-api.key.pub`
 
-```bash
-# development
-$ npm run start
+### Variables de entorno
 
-# watch mode
-$ npm run start:dev
+terraform.tfvars
 
-# production mode
-$ npm run start:prod
+```
+AWS_REGION=us-east-1
+AWS_AMI=ami-0a5b2c1f9f8c8e8b0
+AWS_INSTANCE_TYPE=t2.micro
+SV_NAME=youdrive-api
 ```
 
-## Test
+### Variables
 
-```bash
-# unit tests
-$ npm run test
+#### aws-region
 
-# e2e tests
-$ npm run test:e2e
+Region de AWS
 
-# test coverage
-$ npm run test:cov
+#### aws-ami
+
+Imagen para el servidor
+
+#### aws-instance-type
+
+Tipo de instancia para el servidor
+
+#### sv_name
+
+Nombre del servidor
+
+### Provider
+
+```
+provider "aws" {
+  region = var.aws-region
+}
 ```
 
-## Documentation Swagger
-http://localhost:3001/api#/
+### Key Pair
 
+Llave pública para conectarse al servidor
 
-## Support
+### Security Group
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Grupo de seguridad para el servidor, permite el acceso al servidor por ssh y el acceso web
 
-## Stay in touch
+### Outputs
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Imprime los valores de las IPs y DNS del servidor
 
-## License
+## Deploy
 
-Nest is [MIT licensed](LICENSE).
+```
+# Inicializamos terraform
+terraform init
+```
+
+```
+# Visualizamos los plan de terraform
+terraform plan
+```
+
+```
+# Creamos la infraestructura
+terraform apply
+```
+
+```
+# Visualizamos las IPs y DNS del servidor
+terraform output
+```
+
+Para conectarse al servidor, usamos el comando ssh con la llave pública
+
+```
+
+ssh -i "youdrive-api.key" ubuntu@tu-ip-publico
+
+```
+
+El ip público es la que se muestra en la salida de terraform o con el comando `terraform output`
+
+## EC2 Instance
+
+### Requisitos
+
+- DNS, puede ser DuckDNS o Cloudflare o un dominio personalizado, pero está configurado para un subdominio en DuckDNS
+- Un archivo `duckdns.env` con las credenciales de DuckDNS con este formato
+
+  ```
+  DUCKDNS_TOKEN=tu-token
+  ```
+
+Cuando se tenga el subdominio en DuckDNS, se tiene que cambiar la variable del archivo `curl-duck.sh` en la línea 5 y colocar el subdominio que tengas en DuckDNS
+
+### Inicialización
+
+Una vez se cumplen los requisitos, se puede iniciar la instancia con los comandos de terraform
+
+```
+terraform init
+terraform plan
+terraform apply
+```
+
+si todo es correcto, el servidor estará disponible en el subdominio que se haya configurado en DuckDNS, esto puede tardar unos minutos en aparecer, si no aparece, ingresar con la ip pública y verificar que el servidor está corriendo, te dará la bienvenida Nginx Proxy Manager
+
+### Nginx Proxy Manager
+
+Documentación: https://nginxproxymanager.com/guide/
+
+Para poder acceder a la interfaz de administración, se debe ingresar al dominio, o a la ip publica, seguido del puerto 81, por ejemplo: http://tu-ip-publica:81
+
+Una vez dentro, te pedira que ingreses con email y contraseña, que por defecto son:
+
+```
+Email:    admin@example.com
+Password: changeme
+```
+
+Luego de cambiar las credenciales, se puede acceder a la interfaz de administración, donde se puede configurar el proxy, el certificado, las reglas de redireccionamiento, etc.
+
+Navega a Hosts -> Proxy Hosts.
+
+Haz clic en Add Proxy Host.
+
+Configura el proxy para la api:
+
+Domain Names: Pon el nombre de dominio o subdominio que quieres usar (por ejemplo, api.duckdns.org).
+Scheme: http.
+Forward Hostname / IP: youdrive-api (el nombre del servicio den contenedor, otro si lo has cambiado).
+Forward Port: 3001.
+SSL: Configura SSL si es necesario.
+Haz clic en Save.
+
+El proceso es el mismo para el servidor de grafana, solo cambia el dominio y el puerto (3000 segun el compose).
+
+Autor: [Emacuello](https://emacuello.link)

@@ -1,0 +1,60 @@
+services:
+  nginx-proxy:
+    image: 'jc21/nginx-proxy-manager:latest'
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '81:81'
+      - '443:443'
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+
+  youdrive-api:
+    image: emacuello/youdrive:latest
+    ports:
+      - 3001:3001
+      - 3002:3002
+    networks:
+      - youdrive
+    restart: always
+    env_file:
+      - ./.env.development
+
+  grafana:
+    image: grafana/grafana:latest
+    volumes:      
+      - grafana_data:/var/lib/grafana
+      - ./grafana.ini:/etc/grafana/grafana.ini
+    networks:
+      - youdrive
+    ports:
+      - "3000:3000"
+
+  loki:
+    image: grafana/loki:2.9.2
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./loki-config.yml:/etc/loki/config.yaml
+    depends_on:
+      - youdrive-api
+    networks:
+      - youdrive
+
+  promtail:
+    image: grafana/promtail:2.7.1
+    volumes:
+      - /var/log:/var/log
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./promtail-config.yml:/etc/promtail/config.yml
+    depends_on:
+      - loki
+    networks:
+      - youdrive
+
+networks:
+  youdrive:
+    driver: bridge
+volumes:
+  grafana_data:
